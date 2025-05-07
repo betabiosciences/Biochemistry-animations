@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Protein Emission Shift</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Emission Spectrum of Tryptophan with Protein Conformation Shift</h2>
+
+<div class="controls">
+    <label for="proteinState">Protein State:</label>
+    <select id="proteinState" onchange="updatePlot()">
+        <option value="none">None</option>
+        <option value="folded">Folded</option>
+        <option value="unfolded">Unfolded</option>
+    </select>
+</div>
+
+<div id="plot"></div>
+
+<script>
+    // Function to generate Gaussian data
+    function gaussian(x, peak, amplitude = 1.0, sigma = 5) {
+        return x.map(xi => amplitude * Math.exp(-Math.pow((xi - peak), 2) / (2 * Math.pow(sigma, 2))));
+    }
+
+    // X-axis range: 300 to 400 nm
+    const x = Array.from({ length: 400 }, (_, i) => 300 + i * 0.25);
+
+    // Base spectrum: classical tryptophan emission at 330 nm
+    const baselineY = gaussian(x, 330);
+
+    const baseTrace = {
+        x: x,
+        y: baselineY,
+        mode: 'lines',
+        name: 'Classical Tryptophan (330 nm)',
+        line: { color: 'black', dash: 'dash' }
+    };
+
+    // Plot initialization
+    const layout = {
+        title: 'Emission Spectrum of Tryptophan',
+        xaxis: { title: 'Wavelength (nm)' },
+        yaxis: { title: 'Emission Intensity (a.u.)' },
+        legend: { x: 0, y: 1 },
+    };
+
+    // Function to update the plot based on selection
+    function updatePlot() {
+        const state = document.getElementById("proteinState").value;
+
+        let traces = [baseTrace];
+
+        if (state === "folded") {
+            const foldedY = gaussian(x, 320);
+            traces.push({
+                x: x,
+                y: foldedY,
+                mode: 'lines',
+                name: 'Folded Protein (Blue Shift)',
+                line: { color: 'blue' }
+            });
+        } else if (state === "unfolded") {
+            const unfoldedY = gaussian(x, 350);
+            traces.push({
+                x: x,
+                y: unfoldedY,
+                mode: 'lines',
+                name: 'Unfolded Protein (Red Shift)',
+                line: { color: 'red' }
+            });
+        }
+
+        Plotly.newPlot('plot', traces, layout);
+    }
+
+    // Initial plot
+    updatePlot();
+</script>
+
+</body>
+</html>
