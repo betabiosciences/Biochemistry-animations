@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Protonation vs Deprotonation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .checkboxes {
+      margin-bottom: 30px;
+    }
+
+    .checkboxes label {
+      margin: 0 15px;
+      font-size: 18px;
+    }
+
+    .balance-container {
+      position: relative;
+      width: 300px;
+      height: 150px;
+      margin: 0 auto;
+      transform-origin: center top;
+      transition: transform 0.6s ease;
+    }
+
+    .beam {
+      width: 300px;
+      height: 10px;
+      background-color: #555;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      transform-origin: center;
+    }
+
+    .fulcrum {
+      width: 30px;
+      height: 30px;
+      background-color: #777;
+      position: absolute;
+      top: 70px;
+      left: 135px;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    }
+
+    .label-left, .label-right {
+      position: absolute;
+      top: 10px;
+      width: 100px;
+      font-weight: bold;
+    }
+
+    .label-left {
+      left: 0;
+      color: green;
+    }
+
+    .label-right {
+      right: 0;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Protonation vs Deprotonation Balance</h2>
+
+<div class="checkboxes">
+  <label><input type="checkbox" id="equal" onchange="setBalance(this)"> pH = pKa</label>
+  <label><input type="checkbox" id="greater" onchange="setBalance(this)"> pH &gt; pKa</label>
+  <label><input type="checkbox" id="lesser" onchange="setBalance(this)"> pH &lt; pKa</label>
+</div>
+
+<div class="balance-container" id="balanceContainer">
+  <div class="label-left">Protonated</div>
+  <div class="label-right">Deprotonated</div>
+  <div class="beam" id="beam"></div>
+  <div class="fulcrum"></div>
+</div>
+
+<script>
+  function setBalance(selectedCheckbox) {
+    // Uncheck all checkboxes except the one clicked
+    document.querySelectorAll('.checkboxes input[type=checkbox]').forEach(cb => {
+      if (cb !== selectedCheckbox) cb.checked = false;
+    });
+
+    const beam = document.getElementById("beam");
+
+    if (document.getElementById("equal").checked) {
+      beam.style.transform = "rotate(0deg)";
+    } else if (document.getElementById("greater").checked) {
+      beam.style.transform = "rotate(-15deg)"; // Deprotonation favored (right side down)
+    } else if (document.getElementById("lesser").checked) {
+      beam.style.transform = "rotate(15deg)"; // Protonation favored (left side down)
+    } else {
+      beam.style.transform = "rotate(0deg)";
+    }
+  }
+</script>
+
+</body>
+</html>
