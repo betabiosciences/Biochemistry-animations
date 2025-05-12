@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michaelis-Menten Plot</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.0"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 10px;
+      margin: 0;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      transition: background 1s ease-in-out;
+    }
+    .container {
+      max-width: 100%;
+      margin: auto;
+      animation: fadeIn 1.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .controls {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #chart-wrapper {
+      max-width: 700px;
+      height: 450px;
+      margin: 0 auto;
+      background: white;
+      padding: 15px;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .footer-text {
+      text-align: center;
+      color: grey;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+    .callout {
+      margin: 10px auto;
+      max-width: 600px;
+      background-color: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .callout.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 style="text-align:center">Michaelis-Menten Plot</h2>
+
+    <div class="controls">
+      <strong>Adjust Substrate Concentration [S]:</strong>
+      <button onclick="adjustSubstrate(-5)">- [S]</button>
+      <button onclick="adjustSubstrate(5)">+ [S]</button>
+      <br><br>
+      <strong>Adjust Enzyme Concentration [E]:</strong>
+      <button onclick="adjustEnzyme(-1)">- [E]</button>
+      <button onclick="adjustEnzyme(1)">+ [E]</button>
+      <br><br>
+      <button onclick="resetValues()">Reset</button>
+    </div>
+
+    <div id="calloutBox" class="callout"></div>
+
+    <div id="chart-wrapper">
+      <canvas id="mmChart"></canvas>
+    </div>
+
+    <div class="footer-text">
+      betabiosciences@gmail.com
+    </div>
+  </div>
+
+  <script>
+    let initialKm = 5;
+    let initialE = 1;
+    let initialSMax = 50;
+    let Km = initialKm;
+    let enzymeConc = initialE;
+    let substrateMax = initialSMax;
+    const kcat = 10;
+
+    function Vmax() {
+      return enzymeConc * kcat;
+    }
+
+    function michaelisMenten(S) {
+      return (Vmax() * S) / (Km + S);
+    }
+
+    function generateData() {
+      const S = [];
+      const V = [];
+      for (let i = 0; i <= substrateMax; i += 0.5) {
+        S.push(i);
+        V.push(michaelisMenten(i));
+      }
+      return { S, V };
+    }
+
+    const ctx = document.getElementById('mmChart').getContext('2d');
+    let chart;
+
+    function showCallout(message) {
+      const box = document.getElementById('calloutBox');
+      box.textContent = message;
+      box.classList.add('show');
+      clearTimeout(box.timeout);
+      box.timeout = setTimeout(() => {
+        box.classList.remove('show');
+      }, 6000);
+    }
+
+    function drawChart() {
+      const { S, V } = generateData();
+      const vmaxVal = Vmax();
+      const halfVmax = vmaxVal / 2;
+      const halfVmaxIndex = V.findIndex(v => v >= halfVmax);
+      const approxKm = S[halfVmaxIndex];
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: S,
+          datasets: [
+            {
+              label: 'Reaction Velocity (V)',
+              data: V,
+              borderColor: '#007bff',
+              backgroundColor: 'rgba(0,123,255,0.1)',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0
+            },
+            {
+              label: 'Vmax',
+              data: Array(S.length).fill(vmaxVal),
+              borderDash: [5, 5],
+              borderColor: 'red',
+              fill: false,
+              pointRadius: 0
+            },
+            {
+              label: '1/2 Vmax',
+              data: Array(S.length).fill(halfVmax),
+              borderDash: [5, 5],
+              borderColor: 'green',
+              fill: false,
+              pointRadius: 0
+            },
+            {
+              label: 'Km Line',
+              data: [
+                { x: approxKm, y: 0 },
+                { x: approxKm, y: vmaxVal }
+              ],
+              borderDash: [5, 5],
+              borderColor: 'green',
+              borderWidth: 2,
+              fill: false,
+              showLine: true,
+              tension: 0,
+              pointRadius: 0
+            },
+            {
+              type: 'scatter',
+              label: 'Km Point',
+              data: [{ x: approxKm, y: 0 }],
+              pointBackgroundColor: 'green',
+              pointBorderColor: 'green',
+              pointRadius: 5
+            },
+            {
+              type: 'scatter',
+              label: 'Vmax Point',
+              data: [{ x: 0, y: vmaxVal }],
+              pointBackgroundColor: 'red',
+              pointBorderColor: 'red',
+              pointRadius: 5
+            },
+            {
+              type: 'scatter',
+              label: '1/2 Vmax Point',
+              data: [{ x: 0, y: halfVmax }],
+              pointBackgroundColor: 'orange',
+              pointBorderColor: 'orange',
+              pointRadius: 5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 1500,
+            easing: 'easeOutBounce'
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: `Km = ${Km}, [E] = ${enzymeConc}, kcat = ${kcat}, Vmax = ${vmaxVal}`
+            },
+            legend: {
+              position: 'bottom'
+            },
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'xy'
+              },
+              zoom: {
+                wheel: {
+                  enabled: true
+                },
+                pinch: {
+                  enabled: true
+                },
+                mode: 'xy'
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Substrate Concentration [S]'
+              },
+              type: 'linear',
+              min: 0,
+              max: substrateMax
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Reaction Velocity [V]'
+              },
+              min: 0,
+              max: 1.2 * Vmax()
+            }
+          }
+        }
+      });
+    }
+
+    function adjustSubstrate(change) {
+      substrateMax = Math.max(5, substrateMax + change);
+      drawChart();
+      showCallout("Note: Km and kcat remain unchanged; only the range is adjusted.");
+    }
+
+    function adjustEnzyme(change) {
+      enzymeConc = Math.max(0.1, enzymeConc + change);
+      drawChart();
+      if (change > 0) {
+        showCallout("Vmax increased proportionally with [E]; Km and kcat are constant.");
+      } else {
+        showCallout("Vmax decreased proportionally with [E]; Km and kcat are constant.");
+      }
+    }
+
+    function resetValues() {
+      enzymeConc = initialE;
+      substrateMax = initialSMax;
+      drawChart();
+    }
+
+    drawChart();
+  </script>
+</body>
+</html>
