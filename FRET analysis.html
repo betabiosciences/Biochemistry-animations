@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRET Demonstration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        .condition {
+            width: 100%;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            position: relative;
+            box-sizing: border-box;
+        }
+        @media (min-width: 768px) {
+            .condition {
+                width: 48%;
+            }
+        }
+        .protein-complex {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+            height: 120px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .protein {
+            width: 80px;
+            height: 50px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            font-size: 12px;
+        }
+        .fused-protein {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin: 5px 0;
+        }
+        .bfp {
+            width: 25px;
+            height: 25px;
+            background-color: #1e90ff;
+            border-radius: 50%;
+            margin-right: -10px;
+            z-index: 3;
+        }
+        .gfp {
+            width: 25px;
+            height: 25px;
+            background-color: #32cd32;
+            border-radius: 50%;
+            margin-left: -10px;
+            z-index: 3;
+        }
+        .label {
+            font-weight: bold;
+            margin: 0 8px;
+            z-index: 2;
+            font-size: 12px;
+        }
+        .donor {
+            color: #1e90ff;
+        }
+        .acceptor {
+            color: #32cd32;
+        }
+        .wavelength-label {
+            position: absolute;
+            font-size: 10px;
+            color: #ff4500;
+            white-space: nowrap;
+            z-index: 3;
+        }
+        .cross {
+            position: absolute;
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            z-index: 3;
+        }
+        .no-ret-label {
+            position: absolute;
+            font-size: 12px;
+            color: red;
+            font-weight: bold;
+            z-index: 3;
+            white-space: nowrap;
+        }
+        button {
+            padding: 8px 15px;
+            margin: 10px 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            z-index: 3;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #resetBtn {
+            background-color: #f44336;
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 200px;
+        }
+        #resetBtn:hover {
+            background-color: #d32f2f;
+        }
+        .dialog {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            display: none;
+            z-index: 3;
+            font-size: 14px;
+        }
+        .condition-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            background-color: #eee;
+            padding: 5px;
+            z-index: 3;
+            font-size: 14px;
+        }
+        .squiggle-arrow {
+            position: absolute;
+            height: 2px;
+            background-color: transparent;
+            z-index: 1;
+        }
+        .squiggle-segment {
+            position: absolute;
+            width: 8px;
+            height: 2px;
+            background-color: var(--arrow-color);
+            transform-origin: left center;
+        }
+        .arrowhead {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 8px solid var(--arrow-color);
+            z-index: 2;
+        }
+        .pulse {
+            animation: pulse 2s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { 
+                box-shadow: 0 0 3px -3px currentColor;
+                filter: brightness(1);
+            }
+            to { 
+                box-shadow: 0 0 10px 5px currentColor;
+                filter: brightness(1.3);
+            }
+        }
+        .connector {
+            width: 8px;
+            height: 2px;
+            background-color: #888;
+            z-index: 2;
+        }
+        .ret-arrow {
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background-color: #ff8c00;
+            z-index: 1;
+            animation: retArrowGrow 1.5s ease-in-out forwards;
+        }
+        @keyframes retArrowGrow {
+            0% { width: 0; opacity: 0; }
+            100% { width: var(--arrow-width); opacity: 1; }
+        }
+        .ret-arrow-head {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 10px solid #ff8c00;
+            z-index: 2;
+            animation: retArrowHeadMove 1.5s ease-in-out forwards;
+        }
+        @keyframes retArrowHeadMove {
+            0% { left: var(--start-x); opacity: 0; }
+            100% { left: calc(var(--start-x) + var(--arrow-width)); opacity: 1; }
+        }
+        .ret-label {
+            position: absolute;
+            font-size: 12px;
+            color: #ff8c00;
+            font-weight: bold;
+            z-index: 2;
+            white-space: nowrap;
+            animation: fadeIn 1s ease-in 0.5s forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Emission Spectrum Styles */
+        .spectrum-container {
+            width: 100%;
+            height: 180px;
+            margin-top: 15px;
+            position: relative;
+            display: none;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .spectrum-graph {
+            width: 100%;
+            height: 120px;
+            position: relative;
+        }
+        .spectrum-plot {
+            position: absolute;
+            bottom: 0;
+            left: 30px;
+            width: calc(100% - 30px);
+            height: 100%;
+        }
+        .spectrum-axis {
+            position: absolute;
+            background-color: #333;
+        }
+        .x-axis {
+            width: calc(100% - 30px);
+            height: 1px;
+            bottom: 0;
+            left: 30px;
+        }
+        .y-axis {
+            width: 1px;
+            height: 100%;
+            bottom: 0;
+            left: 30px;
+        }
+        .axis-label {
+            position: absolute;
+            font-size: 10px;
+            color: #333;
+        }
+        .x-label {
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .y-label {
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+        .spectrum-curve {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .spectrum-svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .spectrum-peak-label {
+            position: absolute;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            white-space: nowrap;
+            background-color: rgba(255,255,255,0.9);
+            border: 1px solid #ddd;
+        }
+        .wavelength-markers {
+            position: absolute;
+            bottom: -12px;
+            left: 30px;
+            width: calc(100% - 30px);
+            height: 8px;
+        }
+        .wavelength-marker {
+            position: absolute;
+            bottom: 0;
+            width: 1px;
+            height: 4px;
+            background-color: #333;
+        }
+        .wavelength-label {
+            position: absolute;
+            font-size: 8px;
+            bottom: -15px;
+            transform: translateX(-50%);
+        }
+        
+        .email-text {
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+            margin-top: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="font-size: 1.5rem; text-align: center;">Fluorescence Resonance Energy Transfer (FRET) Demonstration</h1>
+    
+    <div class="container">
+        <div class="condition" id="condition1">
+            <div class="condition-title">Condition 1: Proteins in contact</div>
+            <div class="protein-complex">
+                <div class="fused-protein">
+                    <div class="bfp" id="bfp1"></div>
+                    <div class="connector"></div>
+                    <div class="protein" id="proteinA1">Protein A</div>
+                </div>
+                <div class="label donor">Donor (BFP)</div>
+                <div class="fused-protein">
+                    <div class="protein" id="proteinB1">Protein B</div>
+                    <div class="connector"></div>
+                    <div class="gfp" id="gfp1"></div>
+                </div>
+                <div class="label acceptor">Acceptor (GFP)</div>
+            </div>
+            <button class="startBtn" data-condition="1">START</button>
+            <div class="dialog" id="dialog1"></div>
+
+            <!-- Emission Spectrum for Condition 1 -->
+            <div class="spectrum-container" id="spectrum1">
+                <div class="spectrum-graph">
+                    <div class="spectrum-plot">
+                        <div class="spectrum-curve">
+                            <svg class="spectrum-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path id="spectrum1-curve" d="M0,100 L100,100" stroke="#32cd32" stroke-width="1.5" fill="none" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="spectrum-axis x-axis"></div>
+                    <div class="spectrum-axis y-axis"></div>
+                    <div class="axis-label x-label">Wavelength (nm)</div>
+                    <div class="axis-label y-label">Intensity</div>
+                    
+                    <div class="wavelength-markers">
+                        <div class="wavelength-marker" style="left: 0%;"></div>
+                        <div class="wavelength-label" style="left: 0%;">400</div>
+                        <div class="wavelength-marker" style="left: 25%;"></div>
+                        <div class="wavelength-label" style="left: 25%;">480</div>
+                        <div class="wavelength-marker" style="left: 50%;"></div>
+                        <div class="wavelength-label" style="left: 50%;">520</div>
+                        <div class="wavelength-marker" style="left: 75%;"></div>
+                        <div class="wavelength-label" style="left: 75%;">545</div>
+                        <div class="wavelength-marker" style="left: 100%;"></div>
+                        <div class="wavelength-label" style="left: 100%;">600</div>
+                    </div>
+                    
+                    <div class="spectrum-peak-label" style="left: 75%; top: 20px;">Acceptor (545nm)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="condition" id="condition2">
+            <div class="condition-title">Condition 2: Proteins separated</div>
+            <div class="protein-complex">
+                <div class="fused-protein">
+                    <div class="bfp" id="bfp2"></div>
+                    <div class="connector"></div>
+                    <div class="protein" id="proteinA2">Protein A</div>
+                </div>
+                <div class="label donor">Donor (BFP)</div>
+                <div style="width: 20px;"></div>
+                <div class="fused-protein">
+                    <div class="protein" id="proteinB2">Protein B</div>
+                    <div class="connector"></div>
+                    <div class="gfp" id="gfp2"></div>
+                </div>
+                <div class="label acceptor">Acceptor (GFP)</div>
+            </div>
+            <button class="startBtn" data-condition="2">START</button>
+            <div class="dialog" id="dialog2"></div>
+
+            <!-- Emission Spectrum for Condition 2 -->
+            <div class="spectrum-container" id="spectrum2">
+                <div class="spectrum-graph">
+                    <div class="spectrum-plot">
+                        <div class="spectrum-curve">
+                            <svg class="spectrum-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path id="spectrum2-curve" d="M0,100 L100,100" stroke="#1e90ff" stroke-width="1.5" fill="none" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="spectrum-axis x-axis"></div>
+                    <div class="spectrum-axis y-axis"></div>
+                    <div class="axis-label x-label">Wavelength (nm)</div>
+                    <div class="axis-label y-label">Intensity</div>
+                    
+                    <div class="wavelength-markers">
+                        <div class="wavelength-marker" style="left: 0%;"></div>
+                        <div class="wavelength-label" style="left: 0%;">400</div>
+                        <div class="wavelength-marker" style="left: 25%;"></div>
+                        <div class="wavelength-label" style="left: 25%;">480</div>
+                        <div class="wavelength-marker" style="left: 50%;"></div>
+                        <div class="wavelength-label" style="left: 50%;">520</div>
+                        <div class="wavelength-marker" style="left: 75%;"></div>
+                        <div class="wavelength-label" style="left: 75%;">545</div>
+                        <div class="wavelength-marker" style="left: 100%;"></div>
+                        <div class="wavelength-label" style="left: 100%;">600</div>
+                    </div>
+                    
+                    <div class="spectrum-peak-label" style="left: 25%; top: 20px;">Donor (480nm)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button id="resetBtn">RESET</button>
+    <div class="email-text">betabiosciences@gmail.com</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const startButtons = document.querySelectorAll('.startBtn');
+            const resetButton = document.getElementById('resetBtn');
+            
+            startButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const condition = this.getAttribute('data-condition');
+                    runFRETSimulation(condition);
+                });
+            });
+            
+            resetButton.addEventListener('click', resetAll);
+            
+            function runFRETSimulation(condition) {
+                startButtons.forEach(btn => btn.disabled = true);
+                resetButton.disabled = true;
+                
+                if (condition === '1') {
+                    simulateCondition1();
+                } else {
+                    simulateCondition2();
+                }
+            }
+            
+            function createSquiggleArrow(startX, startY, endX, endY, color, wavelength, id) {
+                const container = document.createElement('div');
+                container.className = 'squiggle-arrow';
+                container.id = id;
+                container.style.setProperty('--arrow-color', color);
+                
+                const dx = endX - startX;
+                const dy = endY - startY;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+                
+                container.style.left = startX + 'px';
+                container.style.top = startY + 'px';
+                container.style.width = length + 'px';
+                container.style.transform = `rotate(${angle}rad)`;
+                container.style.transformOrigin = '0 0';
+                
+                const segmentCount = Math.floor(length / 8);
+                const amplitude = 4;
+                
+                for (let i = 0; i < segmentCount; i++) {
+                    const segment = document.createElement('div');
+                    segment.className = 'squiggle-segment';
+                    segment.style.left = (i * 8) + 'px';
+                    
+                    if (i % 2 === 0) {
+                        segment.style.top = amplitude + 'px';
+                    } else {
+                        segment.style.top = -amplitude + 'px';
+                    }
+                    
+                    container.appendChild(segment);
+                }
+                
+                const arrowhead = document.createElement('div');
+                arrowhead.className = 'arrowhead';
+                arrowhead.style.left = (length - 8) + 'px';
+                arrowhead.style.top = '0px';
+                container.appendChild(arrowhead);
+                
+                const label = document.createElement('div');
+                label.className = 'wavelength-label';
+                label.textContent = wavelength;
+                label.style.left = (length/2 - 12) + 'px';
+                label.style.top = (amplitude * 2) + 'px';
+                label.style.color = color;
+                container.appendChild(label);
+                
+                return container;
+            }
+            
+            function animateSquiggleArrow(id) {
+                const arrow = document.getElementById(id);
+                if (!arrow) return;
+                
+                const segments = arrow.querySelectorAll('.squiggle-segment');
+                let delay = 0;
+                
+                segments.forEach(segment => {
+                    setTimeout(() => {
+                        segment.style.opacity = '1';
+                        segment.style.transition = 'opacity 0.2s ease-in';
+                    }, delay);
+                    delay += 80;
+                });
+                
+                const arrowhead = arrow.querySelector('.arrowhead');
+                setTimeout(() => {
+                    arrowhead.style.opacity = '1';
+                    arrowhead.style.transition = 'opacity 0.4s ease-in';
+                }, delay);
+            }
+            
+            function createSymmetricalPeak(elementId, peakPos, color) {
+                const points = [];
+                const amplitude = 90;
+                const width = 100;
+                const peakWidth = 30;
+                
+                for (let x = 0; x <= width; x++) {
+                    let y = 100;
+                    
+                    if (Math.abs(x - peakPos) < peakWidth/2) {
+                        const normalizedX = (x - peakPos) / (peakWidth/2) * Math.PI/2;
+                        y = 100 - amplitude * Math.pow(Math.cos(normalizedX), 2);
+                    }
+                    
+                    points.push(`${x},${y}`);
+                }
+                
+                const curve = document.getElementById(elementId);
+                curve.setAttribute('d', `M${points.join(' L')}`);
+                curve.setAttribute('stroke', color);
+            }
+            
+            function simulateCondition1() {
+                const proteinContainer = document.querySelector('#condition1 .protein-complex');
+                const bfp = document.getElementById('bfp1');
+                const gfp = document.getElementById('gfp1');
+                const dialog = document.getElementById('dialog1');
+                
+                const bfpRect = bfp.getBoundingClientRect();
+                const gfpRect = gfp.getBoundingClientRect();
+                const containerRect = proteinContainer.getBoundingClientRect();
+                
+                const bfpCenterX = bfpRect.left + bfpRect.width/2 - containerRect.left;
+                const bfpCenterY = bfpRect.top + bfpRect.height/2 - containerRect.top;
+                const gfpCenterX = gfpRect.left + gfpRect.width/2 - containerRect.left;
+                const gfpCenterY = gfpRect.top + gfpRect.height/2 - containerRect.top;
+                const arrowWidth = gfpCenterX - bfpCenterX - 30;
+                
+                // Excitation arrow (380nm)
+                const excitationArrow = createSquiggleArrow(
+                    bfpCenterX - 30, bfpCenterY + 60,
+                    bfpCenterX + 5, bfpCenterY + 5,
+                    '#ff4500',
+                    '380nm',
+                    'excitationArrow1'
+                );
+                proteinContainer.appendChild(excitationArrow);
+                animateSquiggleArrow('excitationArrow1');
+                
+                setTimeout(() => {
+                    bfp.classList.add('pulse');
+                    bfp.classList.add('glow');
+                    
+                    setTimeout(() => {
+                        bfp.classList.remove('pulse');
+                        bfp.classList.remove('glow');
+                        excitationArrow.remove();
+                        
+                        // Create RET arrow
+                        const retArrow = document.createElement('div');
+                        retArrow.className = 'ret-arrow';
+                        retArrow.style.setProperty('--start-x', (bfpCenterX + 15) + 'px');
+                        retArrow.style.setProperty('--arrow-width', arrowWidth + 'px');
+                        retArrow.style.top = (bfpCenterY) + 'px';
+                        retArrow.style.left = (bfpCenterX + 15) + 'px';
+                        proteinContainer.appendChild(retArrow);
+                        
+                        // Create RET arrow head
+                        const retArrowHead = document.createElement('div');
+                        retArrowHead.className = 'ret-arrow-head';
+                        retArrowHead.style.setProperty('--start-x', (bfpCenterX + 15) + 'px');
+                        retArrowHead.style.setProperty('--arrow-width', arrowWidth + 'px');
+                        retArrowHead.style.top = (bfpCenterY - 2) + 'px';
+                        retArrowHead.style.left = (bfpCenterX + 15) + 'px';
+                        proteinContainer.appendChild(retArrowHead);
+                        
+                        // Add RET label
+                        const retLabel = document.createElement('div');
+                        retLabel.className = 'ret-label';
+                        retLabel.textContent = 'RET';
+                        retLabel.style.left = (bfpCenterX + arrowWidth/2 + 5) + 'px';
+                        retLabel.style.top = (bfpCenterY - 20) + 'px';
+                        proteinContainer.appendChild(retLabel);
+                        
+                        setTimeout(() => {
+                            gfp.classList.add('pulse');
+                            gfp.classList.add('glow');
+                            
+                            const emissionArrow = createSquiggleArrow(
+                                gfpCenterX, gfpCenterY - 5,
+                                gfpCenterX, gfpCenterY - 60,
+                                '#32cd32',
+                                '545nm',
+                                'emissionArrow1'
+                            );
+                            proteinContainer.appendChild(emissionArrow);
+                            animateSquiggleArrow('emissionArrow1');
+                            
+                            dialog.textContent = 'RET occurred due to close contact between Protein A and Protein B. Acceptor emission observed.';
+                            dialog.style.display = 'block';
+                            
+                            setTimeout(() => {
+                                createSymmetricalPeak('spectrum1-curve', 75, '#32cd32');
+                                document.getElementById('spectrum1').style.display = 'block';
+                                gfp.classList.remove('pulse');
+                                gfp.classList.remove('glow');
+                                resetButtons();
+                            }, 1500);
+                        }, 1200);
+                    }, 1500);
+                }, 800);
+            }
+            
+            function simulateCondition2() {
+                const proteinContainer = document.querySelector('#condition2 .protein-complex');
+                const bfp = document.getElementById('bfp2');
+                const dialog = document.getElementById('dialog2');
+                
+                const bfpRect = bfp.getBoundingClientRect();
+                const containerRect = proteinContainer.getBoundingClientRect();
+                
+                const bfpCenterX = bfpRect.left + bfpRect.width/2 - containerRect.left;
+                const bfpCenterY = bfpRect.top + bfpRect.height/2 - containerRect.top;
+                
+                // Excitation arrow (380nm)
+                const excitationArrow = createSquiggleArrow(
+                    bfpCenterX - 30, bfpCenterY + 60,
+                    bfpCenterX + 5, bfpCenterY + 5,
+                    '#ff4500',
+                    '380nm',
+                    'excitationArrow2'
+                );
+                proteinContainer.appendChild(excitationArrow);
+                animateSquiggleArrow('excitationArrow2');
+                
+                setTimeout(() => {
+                    bfp.classList.add('pulse');
+                    bfp.classList.add('glow');
+                    
+                    setTimeout(() => {
+                        bfp.classList.remove('pulse');
+                        bfp.classList.remove('glow');
+                        excitationArrow.remove();
+                        
+                        // Add cross and "No RET" label
+                        const cross = document.createElement('div');
+                        cross.className = 'cross';
+                        cross.textContent = '✖';
+                        cross.style.left = (containerRect.width/2 - 12) + 'px';
+                        cross.style.top = (bfpCenterY - 12) + 'px';
+                        proteinContainer.appendChild(cross);
+                        
+                        const noRetLabel = document.createElement('div');
+                        noRetLabel.className = 'no-ret-label';
+                        noRetLabel.textContent = 'No RET';
+                        noRetLabel.style.left = (containerRect.width/2 - 20) + 'px';
+                        noRetLabel.style.top = (bfpCenterY - 35) + 'px';
+                        proteinContainer.appendChild(noRetLabel);
+                        
+                        // Emission arrow (460nm)
+                        const emissionArrow = createSquiggleArrow(
+                            bfpCenterX, bfpCenterY - 5,
+                            bfpCenterX, bfpCenterY - 60,
+                            '#1e90ff',
+                            '460nm',
+                            'emissionArrow2'
+                        );
+                        proteinContainer.appendChild(emissionArrow);
+                        animateSquiggleArrow('emissionArrow2');
+                        
+                        dialog.textContent = 'RET did not occur as the proteins are not in contact. Donor emission observed.';
+                        dialog.style.display = 'block';
+                        
+                        setTimeout(() => {
+                            createSymmetricalPeak('spectrum2-curve', 25, '#1e90ff');
+                            document.getElementById('spectrum2').style.display = 'block';
+                            resetButtons();
+                        }, 1500);
+                    }, 1500);
+                }, 800);
+            }
+            
+            function resetAll() {
+                document.querySelectorAll('.squiggle-arrow, .wavelength-label, .ret-arrow, .ret-arrow-head, .ret-label, .cross, .no-ret-label').forEach(el => el.remove());
+                
+                document.querySelectorAll('.bfp, .gfp').forEach(el => {
+                    el.classList.remove('pulse');
+                    el.classList.remove('glow');
+                });
+                
+                document.querySelectorAll('.dialog, .spectrum-container').forEach(el => {
+                    el.style.display = 'none';
+                    if (el.classList.contains('dialog')) {
+                        el.textContent = '';
+                    }
+                });
+                
+                document.getElementById('spectrum1-curve').setAttribute('d', 'M0,100 L100,100');
+                document.getElementById('spectrum2-curve').setAttribute('d', 'M0,100 L100,100');
+                
+                resetButtons();
+            }
+            
+            function resetButtons() {
+                startButtons.forEach(btn => btn.disabled = false);
+                resetButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
