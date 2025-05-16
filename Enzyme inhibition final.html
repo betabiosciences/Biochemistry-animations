@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enzyme Inhibition Effects</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(120deg, #e0f7fa, #fff);
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #00796b;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0;
+      font-size: 1rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    label:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 105%;
+      top: 0;
+      background: #00796b;
+      color: white;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 25px 0;
+    }
+
+    th, td {
+      padding: 14px;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .arrow {
+      font-size: 40px;
+      font-weight: bold;
+      display: none;
+      animation: blink 1s infinite;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .increase {
+      color: #e53935;
+    }
+
+    .decrease {
+      color: #43a047;
+    }
+
+    .same {
+      color: #1e88e5;
+    }
+
+    /* NEW DIALOG BOX STYLES */
+    .dialog-box {
+      display: none;
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 5px solid #00796b;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .dialog-title {
+      font-weight: bold;
+      color: #00796b;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .dialog-content {
+      line-height: 1.6;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      th, td {
+        font-size: 1rem;
+        padding: 10px;
+      }
+
+      .arrow {
+        font-size: 30px;
+      }
+      
+      .dialog-box {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Enzyme Inhibition Effects</h2>
+
+    <label data-tooltip="Increases Km, no change in Vmax">
+      <input type="checkbox" id="competitive" onclick="selectOnly(this)" /> Competitive Inhibition
+    </label>
+    <label data-tooltip="Decreases both Km and Vmax">
+      <input type="checkbox" id="uncompetitive" onclick="selectOnly(this)" /> Uncompetitive Inhibition
+    </label>
+    <label data-tooltip="Km unchanged, Vmax decreases">
+      <input type="checkbox" id="noncompetitive" onclick="selectOnly(this)" /> Noncompetitive Inhibition
+    </label>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Km</th>
+          <th>Vmax</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="km-arrow" class="arrow">↑</td>
+          <td id="vmax-arrow" class="arrow">↑</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- NEW DIALOG BOX (placed below table) -->
+    <div class="dialog-box" id="inhibitionDialog">
+      <div class="dialog-title" id="dialogTitle">Inhibition Details</div>
+      <div class="dialog-content" id="dialogContent">
+        Select an inhibition type to see detailed information.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inhibition explanations
+    const inhibitionData = {
+      competitive: {
+        title: "Competitive Inhibition",
+        content: "The inhibitor competes with the substrate for binding to the active site. This increases Km (apparent) but doesn't affect Vmax because at high substrate concentrations, the substrate can outcompete the inhibitor."
+      },
+      uncompetitive: {
+        title: "Uncompetitive Inhibition",
+        content: "The inhibitor binds only to the enzyme-substrate complex (ES), not to free enzyme. This decreases both Km (apparent) and Vmax because the inhibitor stabilizes the ES complex but prevents product formation."
+      },
+      noncompetitive: {
+        title: "Noncompetitive Inhibition",
+        content: "The inhibitor binds to both free enzyme and ES complex at a site other than the active site. Km remains unchanged but Vmax decreases because some enzyme is always inhibited regardless of substrate concentration."
+      }
+    };
+
+    function selectOnly(checkbox) {
+      const checkboxes = ["competitive", "uncompetitive", "noncompetitive"];
+      checkboxes.forEach(id => {
+        if (id !== checkbox.id) {
+          document.getElementById(id).checked = false;
+        }
+      });
+      updateArrows();
+      updateDialog(checkbox.id);
+    }
+
+    function resetArrows() {
+      const kmArrow = document.getElementById("km-arrow");
+      const vmaxArrow = document.getElementById("vmax-arrow");
+
+      kmArrow.style.display = "none";
+      vmaxArrow.style.display = "none";
+
+      kmArrow.className = "arrow";
+      vmaxArrow.className = "arrow";
+    }
+
+    function updateArrows() {
+      resetArrows();
+
+      const kmArrow = document.getElementById("km-arrow");
+      const vmaxArrow = document.getElementById("vmax-arrow");
+
+      if (document.getElementById("competitive").checked) {
+        kmArrow.textContent = "↑";
+        kmArrow.classList.add("increase");
+        kmArrow.style.display = "table-cell";
+
+        vmaxArrow.textContent = "↔";
+        vmaxArrow.classList.add("same");
+        vmaxArrow.style.display = "table-cell";
+      } else if (document.getElementById("uncompetitive").checked) {
+        kmArrow.textContent = "↓";
+        kmArrow.classList.add("decrease");
+        kmArrow.style.display = "table-cell";
+
+        vmaxArrow.textContent = "↓";
+        vmaxArrow.classList.add("decrease");
+        vmaxArrow.style.display = "table-cell";
+      } else if (document.getElementById("noncompetitive").checked) {
+        kmArrow.textContent = "↔";
+        kmArrow.classList.add("same");
+        kmArrow.style.display = "table-cell";
+
+        vmaxArrow.textContent = "↓";
+        vmaxArrow.classList.add("decrease");
+        vmaxArrow.style.display = "table-cell";
+      }
+    }
+    
+    // NEW FUNCTION: Update dialog content
+    function updateDialog(inhibitionType) {
+      const dialog = document.getElementById("inhibitionDialog");
+      const title = document.getElementById("dialogTitle");
+      const content = document.getElementById("dialogContent");
+      
+      if (document.getElementById(inhibitionType).checked) {
+        dialog.style.display = "block";
+        title.textContent = inhibitionData[inhibitionType].title;
+        content.textContent = inhibitionData[inhibitionType].content;
+      } else {
+        dialog.style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>
