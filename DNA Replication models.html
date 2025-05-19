@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Replication Models</title>
+    <style>
+        :root {
+            --parental-color: #3498db;
+            --new-color: #e91e63;
+            --bg-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --accent-color: #6c5ce7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+        }
+        
+        .model-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .model-option {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+        }
+        
+        .model-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .model-option input {
+            margin-right: 10px;
+        }
+        
+        .model-option label {
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        
+        .animation-container {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .dna-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 300px;
+            margin: 20px 0;
+        }
+        
+        .generation {
+            margin: 30px 0;
+            width: 100%;
+        }
+        
+        .generation-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            font-size: 1.2em;
+        }
+        
+        .dna-strands {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .dna-duplex {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+        }
+        
+        .dna-strand {
+            height: 20px;
+            width: 150px;
+            margin: 2px 0;
+            position: relative;
+            border-radius: 3px;
+        }
+        
+        .parental {
+            background-color: var(--parental-color);
+        }
+        
+        .new {
+            background-color: var(--new-color);
+        }
+        
+        .mixed {
+            background: linear-gradient(90deg, var(--parental-color) 50%, var(--new-color) 50%);
+        }
+        
+        .mixed-reversed {
+            background: linear-gradient(90deg, var(--new-color) 50%, var(--parental-color) 50%);
+        }
+        
+        .mixed-random {
+            background: linear-gradient(90deg, 
+                var(--parental-color) 30%, 
+                var(--new-color) 30%, 
+                var(--new-color) 60%, 
+                var(--parental-color) 60%, 
+                var(--parental-color) 80%, 
+                var(--new-color) 80%);
+        }
+        
+        .mixed-random-reversed {
+            background: linear-gradient(90deg, 
+                var(--new-color) 20%, 
+                var(--parental-color) 20%, 
+                var(--parental-color) 40%, 
+                var(--new-color) 40%, 
+                var(--new-color) 70%, 
+                var(--parental-color) 70%);
+        }
+        
+        .duplex-count {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+            margin-top: 5px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--card-color);
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-body ul {
+            padding-left: 20px;
+        }
+        
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+        
+        .play-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto 0;
+            transition: background-color 0.3s;
+        }
+        
+        .play-btn:hover {
+            background-color: #5649c0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .model-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .model-option {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .dna-strand {
+                width: 120px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dna-strand {
+                width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DNA Replication Models</h1>
+        
+        <div class="model-options">
+            <div class="model-option" onclick="selectModel('conservative')">
+                <input type="checkbox" id="conservative" name="model">
+                <label for="conservative">Conservative Model</label>
+            </div>
+            
+            <div class="model-option" onclick="selectModel('semiconservative')">
+                <input type="checkbox" id="semiconservative" name="model">
+                <label for="semiconservative">Semiconservative Model</label>
+            </div>
+            
+            <div class="model-option" onclick="selectModel('dispersive')">
+                <input type="checkbox" id="dispersive" name="model">
+                <label for="dispersive">Dispersive Model</label>
+            </div>
+        </div>
+        
+        <div class="animation-container">
+            <div class="dna-container" id="dnaAnimation">
+                <!-- Animation will be inserted here -->
+                <p style="text-align: center;">Select a replication model to view the animation</p>
+            </div>
+            
+            <button class="play-btn" id="playBtn" style="display: none;" onclick="showModelDetails()">
+                Learn About This Model
+            </button>
+        </div>
+
+        <div class="footer">
+            betabiosciences@gmail.com
+        </div>
+    </div>
+    
+    <div class="modal" id="modelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Model Details</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let selectedModel = null;
+        const modelDetails = {
+            conservative: {
+                title: "Conservative Model",
+                bullets: [
+                    "100% conservation of DNA between daughter duplexes",
+                    "One daughter duplex inherits all of the parental DNA whereas the other inherits all nascent DNA",
+                    "Original DNA molecule remains intact after replication",
+                    "Proposed early in DNA research but proven incorrect by the Meselson-Stahl experiment"
+                ]
+            },
+            semiconservative: {
+                title: "Semiconservative Model",
+                bullets: [
+                    "50% conservation of DNA between daughter duplexes",
+                    "Each daughter duplex has one parental strand and one newly synthesized strand",
+                    "This is the correct model of DNA replication as demonstrated by Meselson and Stahl",
+                    "Provides a mechanism for accurate replication with built-in error correction"
+                ]
+            },
+            dispersive: {
+                title: "Dispersive Model",
+                bullets: [
+                    "Random inheritance of DNA between the daughter duplexes",
+                    "Each strand of both daughter duplexes has both parental and nascent DNA",
+                    "Parental DNA is fragmented and interspersed with newly synthesized DNA",
+                    "This model was considered but ruled out by experimental evidence"
+                ]
+            }
+        };
+        
+        function selectModel(model) {
+            // Uncheck all other checkboxes
+            document.querySelectorAll('input[name="model"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Check the selected one
+            document.getElementById(model).checked = true;
+            
+            selectedModel = model;
+            document.getElementById('playBtn').style.display = 'block';
+            animateDNA(model);
+        }
+        
+        function animateDNA(model) {
+            const container = document.getElementById('dnaAnimation');
+            container.innerHTML = '';
+            
+            // Generation 0 - Original DNA
+            let generation0 = document.createElement('div');
+            generation0.className = 'generation';
+            generation0.innerHTML = `
+                <div class="generation-title">Generation 0 (Parental DNA)</div>
+                <div class="dna-strands">
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand parental"></div>
+                        <div class="duplex-count">1 DNA duplex</div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(generation0);
+            
+            // Generation 1
+            let generation1 = document.createElement('div');
+            generation1.className = 'generation';
+            generation1.innerHTML = `
+                <div class="generation-title">Generation 1</div>
+                <div class="dna-strands" id="gen1"></div>
+            `;
+            container.appendChild(generation1);
+            
+            // Generation 2
+            let generation2 = document.createElement('div');
+            generation2.className = 'generation';
+            generation2.innerHTML = `
+                <div class="generation-title">Generation 2</div>
+                <div class="dna-strands" id="gen2"></div>
+            `;
+            container.appendChild(generation2);
+            
+            // Generation 3
+            let generation3 = document.createElement('div');
+            generation3.className = 'generation';
+            generation3.innerHTML = `
+                <div class="generation-title">Generation 3</div>
+                <div class="dna-strands" id="gen3"></div>
+            `;
+            container.appendChild(generation3);
+            
+            // Animate each generation with a delay
+            setTimeout(() => { createGeneration1(model); }, 500);
+            setTimeout(() => { createGeneration2(model); }, 1500);
+            setTimeout(() => { createGeneration3(model); }, 2500);
+        }
+        
+        function createGeneration1(model) {
+            const gen1Container = document.getElementById('gen1');
+            
+            if (model === 'conservative') {
+                gen1Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand parental"></div>
+                        <div class="duplex-count">1 of 2 duplexes (Parental)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">1 of 2 duplexes (New)</div>
+                    </div>
+                `;
+            } else if (model === 'semiconservative') {
+                gen1Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">1 of 2 duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">2 of 2 duplexes</div>
+                    </div>
+                `;
+            } else if (model === 'dispersive') {
+                gen1Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">1 of 2 duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">2 of 2 duplexes</div>
+                    </div>
+                `;
+            }
+        }
+        
+        function createGeneration2(model) {
+            const gen2Container = document.getElementById('gen2');
+            let count = model === 'conservative' ? '4' : '4';
+            
+            if (model === 'conservative') {
+                gen2Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand parental"></div>
+                        <div class="duplex-count">1 of ${count} duplexes (Parental)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">2 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">3 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">4 of ${count} duplexes (New)</div>
+                    </div>
+                `;
+            } else if (model === 'semiconservative') {
+                gen2Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">1 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">2 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">3 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">4 of ${count} duplexes</div>
+                    </div>
+                `;
+            } else if (model === 'dispersive') {
+                gen2Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">1 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">2 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">3 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">4 of ${count} duplexes</div>
+                    </div>
+                `;
+            }
+        }
+        
+        function createGeneration3(model) {
+            const gen3Container = document.getElementById('gen3');
+            let count = model === 'conservative' ? '8' : '8';
+            
+            if (model === 'conservative') {
+                gen3Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand parental"></div>
+                        <div class="duplex-count">1 of ${count} duplexes (Parental)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">2 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">3 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">4 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">5 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">6 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">7 of ${count} duplexes (New)</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">8 of ${count} duplexes (New)</div>
+                    </div>
+                `;
+            } else if (model === 'semiconservative') {
+                gen3Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">1 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand parental"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">2 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">3 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">4 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">5 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">6 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">7 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand new"></div>
+                        <div class="dna-strand new"></div>
+                        <div class="duplex-count">8 of ${count} duplexes</div>
+                    </div>
+                `;
+            } else if (model === 'dispersive') {
+                gen3Container.innerHTML = `
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">1 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">2 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">3 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">4 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">5 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">6 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">7 of ${count} duplexes</div>
+                    </div>
+                    <div class="dna-duplex">
+                        <div class="dna-strand mixed-random"></div>
+                        <div class="dna-strand mixed-random-reversed"></div>
+                        <div class="duplex-count">8 of ${count} duplexes</div>
+                    </div>
+                `;
+            }
+        }
+        
+        function showModelDetails() {
+            if (!selectedModel) return;
+            
+            const modal = document.getElementById('modelModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = modelDetails[selectedModel].title;
+            
+            let bulletsHtml = '<ul>';
+            modelDetails[selectedModel].bullets.forEach(bullet => {
+                bulletsHtml += `<li>${bullet}</li>`;
+            });
+            bulletsHtml += '</ul>';
+            
+            modalBody.innerHTML = bulletsHtml;
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('modelModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside the content
+        window.onclick = function(event) {
+            const modal = document.getElementById('modelModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
