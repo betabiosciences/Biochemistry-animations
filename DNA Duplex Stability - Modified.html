@@ -1,0 +1,530 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Duplex Stability</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        #chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            width: 100%;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4f8;
+            border-radius: 5px;
+            border-left: 5px solid #3498db;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .dna-representation {
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #2c3e50;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 10px;
+            border: 1px solid #333;
+        }
+        
+        .stability-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .stability-value {
+            font-size: 1.5rem;
+        }
+        
+        .reset-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .reset-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .email {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.8rem;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 600px) {
+            .controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .control-group {
+                width: calc(50% - 10px);
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .legend {
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+
+        .dna-high { color: #2ecc71; font-weight: bold; }
+        .dna-medium { color: #f39c12; }
+        .dna-low { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DNA Duplex Stability</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="gcContent">GC Content (%)</label>
+                <input type="range" id="gcContent" min="0" max="100" value="60" step="1">
+                <div class="value-display">
+                    <span>0%</span>
+                    <span>Value: <span id="gcValue">60</span>%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="saltConcentration">Salt Concentration (mM)</label>
+                <input type="range" id="saltConcentration" min="10" max="500" value="200" step="10">
+                <div class="value-display">
+                    <span>10mM</span>
+                    <span>Value: <span id="saltValue">200</span> mM</span>
+                    <span>500mM</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="temperature">Temperature (°C)</label>
+                <input type="range" id="temperature" min="20" max="90" value="25" step="1">
+                <div class="value-display">
+                    <span>20°C</span>
+                    <span>Value: <span id="tempValue">25</span>°C</span>
+                    <span>90°C</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="phValue">pH Value</label>
+                <input type="range" id="phValue" min="3" max="10" value="7" step="0.1">
+                <div class="value-display">
+                    <span>3.0</span>
+                    <span>Value: <span id="phDisplay">7.0</span></span>
+                    <span>10.0</span>
+                </div>
+            </div>
+        </div>
+        
+        <button class="reset-btn" id="resetBtn">Reset to Default Values</button>
+        
+        <div class="stability-display">
+            Relative Stability: <span class="stability-value" id="currentStability">85</span>%
+        </div>
+        
+        <div id="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #e74c3c;"></div>
+                <span>Low Stability (0-40%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #f39c12;"></div>
+                <span>Moderate Stability (40-70%)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2ecc71;"></div>
+                <span>High Stability (70-100%)</span>
+            </div>
+        </div>
+        
+        <div class="dna-representation" id="dnaVisualization">
+            <div>5' - G C G C G C G C G C - 3'</div>
+            <div>3' - C G C G C G C G C G - 5'</div>
+        </div>
+        
+        <div class="info" id="infoBox">
+            <div id="infoContent"></div>
+        </div>
+        
+        <div class="email">betabiosciences@gmail.com</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize chart
+        const ctx = document.getElementById('chart').getContext('2d');
+        
+        // Generate generic indices for the x-axis
+        const indices = Array.from({length: 71}, (_, i) => i);
+        
+        let dnaChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: indices,
+                datasets: [{
+                    label: 'DNA Duplex Stability',
+                    data: [],
+                    borderColor: '#2ecc71',
+                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Relative Stability (%)'
+                        }
+                    },
+                    x: {
+                        display: false,
+                        ticks: {
+                            display: false
+                        },
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+
+        // Store initial values
+        const initialValues = {
+            gcContent: 60,
+            saltConcentration: 200,
+            temperature: 25,
+            phValue: 7
+        };
+
+        // Calculate DNA stability
+        function calculateStability(pH, gcContent, saltConc, temp) {
+            const optimalpH = 7.0;
+            const gcFactor = 0.6 + (gcContent / 100) * 0.8;
+            const saltFactor = 0.7 + Math.log10(saltConc / 50) * 0.3;
+            const tempFactor = 1.2 - Math.pow(temp / 90, 2);
+            const pHDeviation = Math.abs(pH - optimalpH);
+            const pHFactor = Math.exp(-0.8 * Math.pow(pHDeviation, 2));
+            
+            let stability = 80 * gcFactor * saltFactor * tempFactor * pHFactor;
+            return Math.max(5, Math.min(100, stability));
+        }
+
+        // Generate Gaussian curve data
+        function generateGaussianCurve(peakHeight, numPoints = 71) {
+            const mean = numPoints / 2; // Center the peak
+            const sigma = numPoints / 4; // Adjust width for a reasonable curve
+            const data = [];
+            
+            for (let i = 0; i < numPoints; i++) {
+                const x = i - mean;
+                const value = peakHeight * Math.exp(-(x * x) / (2 * sigma * sigma));
+                data.push(Math.max(0, value)); // Ensure non-negative values
+            }
+            
+            return data;
+        }
+
+        // Update information box
+        function showInfo(param, value) {
+            const infoBox = document.getElementById('infoBox');
+            const infoContent = document.getElementById('infoContent');
+            
+            let message = "";
+            switch(param) {
+                case 'gcContent':
+                    message = `GC Content changed to ${value}%. Higher GC content increases stability.`;
+                    break;
+                case 'saltConcentration':
+                    message = `Salt concentration changed to ${value}mM. Higher salt stabilizes DNA.`;
+                    break;
+                case 'temperature':
+                    message = `Temperature changed to ${value}°C. Lower temperatures increase stability.`;
+                    break;
+                case 'phValue':
+                    message = `pH changed to ${value}. Maximum stability occurs at pH 7.0.`;
+                    break;
+            }
+            
+            infoContent.innerHTML = message;
+            infoBox.style.display = 'block';
+        }
+
+        // Update DNA visualization
+        function updateDNAVisualization(stability, gcContent) {
+            const gcPairs = Math.round(gcContent / 10);
+            const atPairs = 10 - gcPairs;
+            
+            let topStrand = '5\' - ';
+            let bottomStrand = '3\' - ';
+            
+            let stabilityClass = 'dna-high';
+            if (stability < 40) stabilityClass = 'dna-low';
+            else if (stability < 70) stabilityClass = 'dna-medium';
+            
+            // Add GC pairs
+            for (let i = 0; i < gcPairs; i++) {
+                if (Math.random() > 0.5) {
+                    topStrand += `<span class="${stabilityClass}">G</span> `;
+                    bottomStrand += `<span class="${stabilityClass}">C</span> `;
+                } else {
+                    topStrand += `<span class="${stabilityClass}">C</span> `;
+                    bottomStrand += `<span class="${stabilityClass}">G</span> `;
+                }
+            }
+            
+            // Add AT pairs
+            for (let i = 0; i < atPairs; i++) {
+                if (Math.random() > 0.5) {
+                    topStrand += `<span class="${stabilityClass}">A</span> `;
+                    bottomStrand += `<span class="${stabilityClass}">T</span> `;
+                } else {
+                    topStrand += `<span class="${stabilityClass}">T</span> `;
+                    bottomStrand += `<span class="${stabilityClass}">A</span> `;
+                }
+            }
+            
+            document.getElementById('dnaVisualization').innerHTML = `
+                <div>${topStrand}- 3'</div>
+                <div>${bottomStrand}- 5'</div>
+            `;
+        }
+
+        // Update chart
+        function updateChart(changedParam = null) {
+            const gcContent = parseInt(document.getElementById('gcContent').value);
+            const saltConc = parseInt(document.getElementById('saltConcentration').value);
+            const temp = parseInt(document.getElementById('temperature').value);
+            const currentpH = parseFloat(document.getElementById('phValue').value);
+            
+            // Update displayed values
+            document.getElementById('gcValue').textContent = gcContent;
+            document.getElementById('saltValue').textContent = saltConc;
+            document.getElementById('tempValue').textContent = temp;
+            document.getElementById('phDisplay').textContent = currentpH.toFixed(1);
+            
+            // Calculate current stability
+            const currentStability = calculateStability(currentpH, gcContent, saltConc, temp);
+            
+            // Update stability display
+            const stabilityElement = document.getElementById('currentStability');
+            stabilityElement.textContent = currentStability.toFixed(1);
+            
+            // Update colors
+            let stabilityColor;
+            if (currentStability < 40) {
+                stabilityColor = '#e74c3c';
+            } else if (currentStability < 70) {
+                stabilityColor = '#f39c12';
+            } else {
+                stabilityColor = '#2ecc71';
+            }
+            
+            stabilityElement.style.color = stabilityColor;
+            
+            // Generate Gaussian curve with peak at current stability
+            const stabilityData = generateGaussianCurve(currentStability);
+            
+            dnaChart.data.datasets[0].data = stabilityData;
+            dnaChart.data.datasets[0].borderColor = stabilityColor;
+            dnaChart.data.datasets[0].backgroundColor = `rgba(${
+                stabilityColor === '#e74c3c' ? '231, 76, 60' : 
+                stabilityColor === '#f39c12' ? '243, 156, 18' : '46, 204, 113'
+            }, 0.1)`;
+            
+            dnaChart.update();
+            
+            // Update DNA visualization
+            updateDNAVisualization(currentStability, gcContent);
+            
+            // Show info
+            if (changedParam) {
+                showInfo(changedParam, 
+                    changedParam === 'phValue' ? currentpH.toFixed(1) : 
+                    changedParam === 'saltConcentration' ? saltConc : 
+                    changedParam === 'temperature' ? temp : gcContent);
+            }
+        }
+
+        // Reset to defaults
+        function resetToDefaults() {
+            document.getElementById('gcContent').value = initialValues.gcContent;
+            document.getElementById('saltConcentration').value = initialValues.saltConcentration;
+            document.getElementById('temperature').value = initialValues.temperature;
+            document.getElementById('phValue').value = initialValues.phValue;
+            updateChart();
+            
+            const infoBox = document.getElementById('infoBox');
+            const infoContent = document.getElementById('infoContent');
+            infoContent.innerHTML = "Reset to default values";
+            infoBox.style.display = 'block';
+        }
+
+        // Event listeners
+        document.getElementById('gcContent').addEventListener('input', () => updateChart('gcContent'));
+        document.getElementById('saltConcentration').addEventListener('input', () => updateChart('saltConcentration'));
+        document.getElementById('temperature').addEventListener('input', () => updateChart('temperature'));
+        document.getElementById('phValue').addEventListener('input', () => updateChart('phValue'));
+        document.getElementById('resetBtn').addEventListener('click', resetToDefaults);
+
+        // Initialize
+        updateChart();
+    </script>
+</body>
+</html>
