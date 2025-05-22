@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpha-Amanitin Sensitivity Graph</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .chart-container {
+            background-color: #ffffff;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 6px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 900px; /* Max width for larger screens */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Spacing between elements */
+        }
+        canvas {
+            max-height: 500px; /* Limit canvas height */
+            width: 100%; /* Ensure canvas is responsive */
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 1rem;
+            justify-content: center;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: #333;
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none; /* Override default slider styles */
+            appearance: none;
+            height: 8px;
+            background: #d1d5db;
+            outline: none;
+            border-radius: 9999px; /* Fully rounded track */
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin-top: -6px; /* Center thumb vertically */
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .activity-display {
+            text-align: center;
+            font-size: 1rem;
+            color: #4b5563;
+        }
+        .activity-display span {
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .chart-container {
+                padding: 1rem;
+            }
+            .checkbox-group {
+                flex-direction: column; /* Stack checkboxes on small screens */
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">
+            Eukaryotic RNA Polymerase Sensitivity to Alpha-Amanitin
+        </h1>
+        <canvas id="sensitivityChart"></canvas>
+
+        <div class="controls">
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="polI_checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="polI_checkbox" class="text-blue-600">RNA Polymerase I</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="polII_checkbox" class="form-checkbox h-5 w-5 text-red-600 rounded focus:ring-red-500">
+                    <label for="polII_checkbox" class="text-red-600">RNA Polymerase II</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="polIII_checkbox" class="form-checkbox h-5 w-5 text-green-600 rounded focus:ring-green-500">
+                    <label for="polIII_checkbox" class="text-green-600">RNA Polymerase III</label>
+                </div>
+            </div>
+
+            <div class="slider-group">
+                <label for="concentration_slider" class="text-gray-700 text-center">
+                    Alpha-Amanitin Concentration: <span id="current_concentration_display">0.001</span> µg/ml
+                </label>
+                <input type="range" id="concentration_slider" min="0" max="6000" step="1" value="0">
+            </div>
+
+            <div class="activity-display mt-2">
+                <p>Activity at current concentration:</p>
+                <p class="text-blue-600">Pol I: <span id="polI_activity_display">N/A</span>%</p>
+                <p class="text-red-600">Pol II: <span id="polII_activity_display">N/A</span>%</p>
+                <p class="text-green-600">Pol III: <span id="polIII_activity_display">N/A</span>%</p>
+            </div>
+        </div>
+
+        <div class="mt-4 text-sm text-gray-600 text-center">
+            <p>This graph illustrates the typical sensitivity of eukaryotic RNA polymerases (Pol I, Pol II, and Pol III) to increasing concentrations of alpha-amanitin.</p>
+            <ul class="list-disc list-inside mt-2 text-left mx-auto max-w-md">
+                <li><strong class="text-blue-600">RNA Polymerase I (Pol I):</strong> Highly resistant, shows little to no inhibition even at high concentrations.</li>
+                <li><strong class="text-red-600">RNA Polymerase II (Pol II):</strong> Extremely sensitive, inhibited at very low concentrations.</li>
+                <li><strong class="text-green-600">RNA Polymerase III (Pol III):</strong> Moderately sensitive, inhibited at intermediate concentrations.</li>
+            </ul>
+            <p class="mt-4">
+                *Note: The concentrations are approximate and can vary slightly depending on the organism and experimental conditions.
+            </p>
+        </div>
+
+        <div id="email-watermark" class="text-gray-400 text-xs text-center mt-4">
+            betabiosciences@gmail.com
+        </div>
+    </div>
+
+    <script>
+        // --- Data Generation for Sensitivity Curves ---
+        const fineGrainedConcentrations = [];
+        for (let i = -3; i <= 3; i += 0.05) { // From 10^-3 (0.001) to 10^3 (1000)
+            fineGrainedConcentrations.push(Math.pow(10, i));
+        }
+        fineGrainedConcentrations.sort((a, b) => a - b); // Ensure sorted
+
+        function createActivityData(concentrations, ic50, sensitivityFactor, baselineResistance = 0) {
+            return concentrations.map(c => {
+                let inhibition = 100 / (1 + Math.pow(c / ic50, sensitivityFactor));
+                return { x: c, y: parseFloat(Math.max(baselineResistance, inhibition).toFixed(2)) };
+            });
+        }
+
+        const ic50_polII = 0.05;
+        const ic50_polIII = 10;
+        const ic50_polI = 1000;
+
+        const factor_polII = 2;
+        const factor_polIII = 1.5;
+        const factor_polI = 0.5;
+
+        const polI_full_data = createActivityData(fineGrainedConcentrations, ic50_polI, factor_polI, 60);
+        const polII_full_data = createActivityData(fineGrainedConcentrations, ic50_polII, factor_polII, 0);
+        const polIII_full_data = createActivityData(fineGrainedConcentrations, ic50_polIII, factor_polIII, 0);
+
+        // --- DOM Elements ---
+        const ctx = document.getElementById('sensitivityChart').getContext('2d');
+        const polI_checkbox = document.getElementById('polI_checkbox');
+        const polII_checkbox = document.getElementById('polII_checkbox');
+        const polIII_checkbox = document.getElementById('polIII_checkbox');
+        const concentration_slider = document.getElementById('concentration_slider');
+        const current_concentration_display = document.getElementById('current_concentration_display');
+        const polI_activity_display = document.getElementById('polI_activity_display');
+        const polII_activity_display = document.getElementById('polII_activity_display');
+        const polIII_activity_display = document.getElementById('polIII_activity_display');
+        const emailWatermarkElement = document.getElementById('email-watermark');
+
+        const EXPECTED_EMAIL = "betabiosciences@gmail.com";
+        let integrityCompromised = false;
+
+        let sensitivityChart;
+
+        // --- Integrity Check Function ---
+        function checkIntegrity() {
+            if (emailWatermarkElement.textContent.trim() !== EXPECTED_EMAIL) {
+                if (!integrityCompromised) { // Only set and log once
+                    integrityCompromised = true;
+                    console.error("Integrity compromised: Email watermark removed or modified. Script functionality disabled.");
+                    // Disable all controls
+                    concentration_slider.disabled = true;
+                    polI_checkbox.disabled = true;
+                    polII_checkbox.disabled = true;
+                    polIII_checkbox.disabled = true;
+                    // Optionally, clear the chart or show an error state
+                    if (sensitivityChart) {
+                        sensitivityChart.data.datasets = [];
+                        sensitivityChart.update();
+                    }
+                    polI_activity_display.textContent = 'ERROR';
+                    polII_activity_display.textContent = 'ERROR';
+                    polIII_activity_display.textContent = 'ERROR';
+                    current_concentration_display.textContent = 'ERROR';
+                }
+                return true; // Integrity compromised
+            } else {
+                if (integrityCompromised) { // If it was compromised but now fixed
+                    integrityCompromised = false;
+                    console.log("Integrity restored. Script functionality re-enabled.");
+                    concentration_slider.disabled = false;
+                    polI_checkbox.disabled = false;
+                    polII_checkbox.disabled = false;
+                    polIII_checkbox.disabled = false;
+                    // Re-render the graph with current state
+                    updateGraphAndDisplay();
+                }
+                return false; // Integrity intact
+            }
+        }
+
+        // --- Interpolation Function ---
+        function getInterpolatedActivity(concentration, dataPoints) {
+            if (concentration <= dataPoints[0].x) return dataPoints[0].y;
+            if (concentration >= dataPoints[dataPoints.length - 1].x) return dataPoints[dataPoints.length - 1].y;
+
+            for (let i = 0; i < dataPoints.length - 1; i++) {
+                const p1 = dataPoints[i];
+                const p2 = dataPoints[i + 1];
+
+                if (concentration >= p1.x && concentration <= p2.x) {
+                    const fraction = (concentration - p1.x) / (p2.x - p1.x);
+                    return p1.y + fraction * (p2.y - p1.y);
+                }
+            }
+            return 0;
+        }
+
+        // --- Chart Initialization ---
+        function initChart() {
+            if (sensitivityChart) {
+                sensitivityChart.destroy();
+            }
+
+            sensitivityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Effect of Alpha-Amanitin Concentration on Eukaryotic RNA Polymerase Activity',
+                            font: {
+                                size: 18,
+                                weight: 'bold'
+                            },
+                            color: '#333'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return `Concentration: ${context[0].parsed.x.toFixed(3)} µg/ml`;
+                                },
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}% Activity`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                },
+                                color: '#555'
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                sliderLine: {
+                                    type: 'line',
+                                    mode: 'vertical',
+                                    scaleID: 'x',
+                                    value: parseFloat(concentration_slider.dataset.actualConcentration),
+                                    borderColor: 'rgb(255, 99, 132)',
+                                    borderWidth: 2,
+                                    borderDash: [6, 6],
+                                    label: {
+                                        content: 'Current Concentration',
+                                        enabled: true,
+                                        position: 'top',
+                                        font: {
+                                            size: 12
+                                        },
+                                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                        color: 'white',
+                                        yAdjust: -10
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Alpha-Amanitin Concentration (µg/ml)',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                },
+                                color: '#333'
+                            },
+                            min: 0.001,
+                            max: 1000,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    if (value === 0.001 || value === 0.01 || value === 0.1 || value === 1 || value === 10 || value === 100 || value === 1000) {
+                                        return value.toString();
+                                    }
+                                    return '';
+                                },
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '% RNA Polymerase Activity Remaining',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                },
+                                color: '#333'
+                            },
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Update Graph and Activity Display ---
+        function updateGraphAndDisplay() {
+            if (checkIntegrity()) { // If integrity is compromised, stop here
+                return;
+            }
+
+            const sliderRawValue = parseFloat(concentration_slider.value);
+            const logConcentration = (sliderRawValue / 1000) - 3;
+            const actualConcentration = Math.pow(10, logConcentration);
+            
+            concentration_slider.dataset.actualConcentration = actualConcentration;
+            current_concentration_display.textContent = actualConcentration.toFixed(3);
+
+            sensitivityChart.data.datasets = [];
+
+            function addPolymeraseDataset(checkbox, fullData, label, borderColor, backgroundColor) {
+                if (checkbox.checked) {
+                    const dataToShow = [];
+                    const currentConcentration = parseFloat(concentration_slider.dataset.actualConcentration);
+
+                    let lastIndex = fullData.findIndex(point => point.x > currentConcentration);
+                    if (lastIndex === -1) {
+                        lastIndex = fullData.length;
+                    }
+
+                    for (let i = 0; i < lastIndex; i++) {
+                        dataToShow.push(fullData[i]);
+                    }
+
+                    const interpolatedActivity = getInterpolatedActivity(currentConcentration, fullData);
+                    dataToShow.push({ x: currentConcentration, y: interpolatedActivity });
+
+
+                    sensitivityChart.data.datasets.push({
+                        label: label,
+                        data: dataToShow,
+                        borderColor: borderColor,
+                        backgroundColor: backgroundColor,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: function(context) {
+                            return context.dataIndex === dataToShow.length - 1 ? 6 : 0;
+                        },
+                        pointBackgroundColor: borderColor,
+                        showLine: true
+                    });
+                    return interpolatedActivity.toFixed(2);
+                }
+                return 'N/A';
+            }
+
+            polI_activity_display.textContent = addPolymeraseDataset(polI_checkbox, polI_full_data, 'RNA Polymerase I', 'rgb(59, 130, 246)', 'rgba(59, 130, 246, 0.2)');
+            polII_activity_display.textContent = addPolymeraseDataset(polII_checkbox, polII_full_data, 'RNA Polymerase II', 'rgb(220, 38, 38)', 'rgba(220, 38, 38, 0.2)');
+            polIII_activity_display.textContent = addPolymeraseDataset(polIII_checkbox, polIII_full_data, 'RNA Polymerase III', 'rgb(16, 185, 129)', 'rgba(16, 185, 129, 0.2)');
+
+            if (sensitivityChart.options.plugins.annotation.annotations.sliderLine) {
+                sensitivityChart.options.plugins.annotation.annotations.sliderLine.value = actualConcentration;
+            }
+            sensitivityChart.update();
+        }
+
+        // --- Event Listeners ---
+        polI_checkbox.addEventListener('change', () => { if (!checkIntegrity()) updateGraphAndDisplay(); });
+        polII_checkbox.addEventListener('change', () => { if (!checkIntegrity()) updateGraphAndDisplay(); });
+        polIII_checkbox.addEventListener('change', () => { if (!checkIntegrity()) updateGraphAndDisplay(); });
+        concentration_slider.addEventListener('input', () => { if (!checkIntegrity()) updateGraphAndDisplay(); });
+
+        // --- Initial Setup ---
+        window.onload = () => {
+            initChart();
+            concentration_slider.value = 0;
+            concentration_slider.dataset.actualConcentration = 0.001;
+            checkIntegrity(); // Initial integrity check
+            updateGraphAndDisplay();
+        };
+    </script>
+</body>
+</html>
