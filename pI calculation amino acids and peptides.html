@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isoelectric point (pI) Calculation Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.0.2"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            color: #333;
+        }
+        /* Custom styles for button active state */
+        .btn-active {
+            background-color: #3b82f6 !important; /* Blue-500 */
+            color: white !important;
+        }
+        .correct-text {
+            color: #10b981; /* Green-500 */
+        }
+        .incorrect-text {
+            color: #ef4444; /* Red-500 */
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Canvas responsiveness */
+        #titrationCurve {
+            max-width: 100%;
+            display: block;
+        }
+        /* Ensure curve container has enough height */
+        #curveContainer {
+            height: 450px; /* Fixed height for consistent chart size */
+            display: flex; /* Use flex to center canvas if needed */
+            flex-direction: column; /* Allow content to stack vertically */
+            justify-content: center;
+            align-items: center;
+        }
+        /* Style for SVG containers */
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px; /* Match original image width */
+            height: 200px; /* Match original image height */
+            margin: auto;
+            background-color: #e0e0e0; /* Placeholder background */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Ensure SVG content stays within bounds */
+        }
+        .svg-container svg {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        .svg-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            fill: #000;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+        /* Custom legend style */
+        .custom-legend {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .custom-legend-color {
+            width: 16px;
+            height: 16px;
+            background-color: rgba(255, 205, 86, 0.2); /* Match buffering range color */
+            border: 1px solid rgba(255, 205, 86, 0.5);
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex flex-col items-center min-h-screen">
+
+    <div class="bg-white p-6 sm:p-10 rounded-xl shadow-lg max-w-4xl w-full">
+
+        <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-6">Isoelectric point (pI) Calculation Tool</h1>
+
+        <section class="mb-8">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-3">What is the Isoelectric Point (pI)?</h2>
+            <p class="text-gray-600 leading-relaxed">
+                The **isoelectric point (pI)** is the pH at which a molecule, such as an amino acid or a protein,
+                carries no net electrical charge. At this specific pH, the molecule exists predominantly
+                in its zwitterionic form, where the number of positive charges equals the number of negative charges.
+                Understanding the pI is crucial in various biochemical applications, including protein purification
+                and electrophoresis.
+            </p>
+        </section>
+
+        <hr class="my-8 border-gray-300">
+
+        <section class="mb-8">
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-4 text-center">Try for Yourself!</h2>
+
+            <p class="text-lg text-gray-700 mb-4 text-center">Whose Isoelectric point are you calculating?</p>
+
+            <div class="flex justify-center space-x-4 mb-8">
+                <button id="aminoAcidBtn" class="px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Amino acid
+                </button>
+                <button id="peptideBtn" class="px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Peptides
+                </button>
+            </div>
+
+            <div id="aminoAcidSection" class="hidden">
+                <div class="mb-6">
+                    <label for="aminoAcidSelect" class="block text-gray-700 text-lg font-medium mb-2">Choose an Amino acid:</label>
+                    <select id="aminoAcidSelect" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                        <option value="">-- Select Amino Acid --</option>
+                        <option value="Alanine">Alanine</option>
+                        <option value="Arginine">Arginine</option>
+                        <option value="Asparagine">Asparagine</option>
+                        <option value="Aspartic Acid">Aspartic Acid</option>
+                        <option value="Cysteine">Cysteine</option>
+                        <option value="Glutamic Acid">Glutamic Acid</option>
+                        <option value="Glutamine">Glutamine</option>
+                        <option value="Glycine">Glycine</option>
+                        <option value="Histidine">Histidine</option>
+                        <option value="Isoleucine">Isoleucine</option>
+                        <option value="Leucine">Leucine</option>
+                        <option value="Lysine">Lysine</option>
+                        <option value="Methionine">Methionine</option>
+                        <option value="Phenylalanine">Phenylalanine</option>
+                        <option value="Proline">Proline</option>
+                        <option value="Serine">Serine</option>
+                        <option value="Threonine">Threonine</option>
+                        <option value="Tryptophan">Tryptophan</option>
+                        <option value="Tyrosine">Tyrosine</option>
+                        <option value="Valine">Valine</option>
+                    </select>
+                </div>
+
+                <div id="aminoAcidDetails" class="hidden bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">Fischer Projection of <span id="aaNameDisplay"></span>:</h3>
+                    <div id="aaStructureContainer" class="svg-container mx-auto my-4">
+                        </div>
+
+                    <div class="mb-4">
+                        <label for="aaTitratableGroups" class="block text-gray-700 text-lg font-medium mb-2">Number of titratable (ionizable) groups in the amino acid:</label>
+                        <div class="flex items-center">
+                            <select id="aaTitratableGroups" class="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 mr-4">
+                                <option value="">-- Select --</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                            </select>
+                            <span id="aaTitratableFeedback" class="text-sm font-semibold"></span>
+                        </div>
+                    </div>
+
+                    <div id="aaPkaValues" class="hidden mb-6 bg-blue-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-blue-800 mb-2">pKa Values:</h4>
+                        <ul id="pKaList" class="list-disc list-inside text-blue-700"></ul>
+                    </div>
+
+                    <div id="aaPiCalculation" class="hidden mb-6">
+                        <label for="aaPiInput" class="block text-gray-700 text-lg font-medium mb-2">pI value of the amino acid:</label>
+                        <div class="flex items-center">
+                            <input type="number" step="0.01" id="aaPiInput" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 mr-4" placeholder="Enter pI value">
+                            <button id="aaPiGoBtn" class="px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                Go
+                            </button>
+                        </div>
+                        <span id="aaPiFeedback" class="text-sm font-semibold mt-2 block"></span>
+                    </div>
+
+                    <div id="titrationCurveSection" class="hidden mb-6 text-center">
+                        <p class="text-lg text-gray-700 mb-4">Display the titration curve</p>
+                        <button id="showTitrationCurveBtn" class="px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                            Show
+                        </button>
+                        <div id="curveContainer" class="mt-6 p-4 bg-white rounded-lg shadow-md border border-gray-200" style="height: 450px;">
+                            <canvas id="titrationCurve"></canvas>
+                            <div class="custom-legend">
+                                <div class="custom-legend-color"></div>
+                                <span>Buffering Range</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="peptideSection" class="hidden">
+                <p class="text-lg text-gray-700 mb-4 text-center">Choose the Amino acids to create a Dipeptide:</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
+                    <div class="w-full sm:w-1/2">
+                        <label for="peptideAa1Select" class="block text-gray-700 text-base font-medium mb-2">First Amino Acid:</label>
+                        <select id="peptideAa1Select" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                            <option value="">-- Select --</option>
+                            <option value="Alanine">Alanine</option>
+                            <option value="Arginine">Arginine</option>
+                            <option value="Asparagine">Asparagine</option>
+                            <option value="Aspartic Acid">Aspartic Acid</option>
+                            <option value="Cysteine">Cysteine</option>
+                            <option value="Glutamic Acid">Glutamic Acid</option>
+                            <option value="Glutamine">Glutamine</option>
+                            <option value="Glycine">Glycine</option>
+                            <option value="Histidine">Histidine</option>
+                            <option value="Isoleucine">Isoleucine</option>
+                            <option value="Leucine">Leucine</option>
+                            <option value="Lysine">Lysine</option>
+                            <option value="Methionine">Methionine</option>
+                            <option value="Phenylalanine">Phenylalanine</option>
+                            <option value="Proline">Proline</option>
+                            <option value="Serine">Serine</option>
+                            <option value="Threonine">Threonine</option>
+                            <option value="Tryptophan">Tryptophan</option>
+                            <option value="Tyrosine">Tyrosine</option>
+                            <option value="Valine">Valine</option>
+                        </select>
+                    </div>
+                    <div class="w-full sm:w-1/2">
+                        <label for="peptideAa2Select" class="block text-gray-700 text-base font-medium mb-2">Second Amino Acid:</label>
+                        <select id="peptideAa2Select" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800">
+                            <option value="">-- Select --</option>
+                            <option value="Alanine">Alanine</option>
+                            <option value="Arginine">Arginine</option>
+                            <option value="Asparagine">Asparagine</option>
+                            <option value="Aspartic Acid">Aspartic Acid</option>
+                            <option value="Cysteine">Cysteine</option>
+                            <option value="Glutamic Acid">Glutamic Acid</option>
+                            <option value="Glutamine">Glutamine</option>
+                            <option value="Glycine">Glycine</option>
+                            <option value="Histidine">Histidine</option>
+                            <option value="Isoleucine">Isoleucine</option>
+                            <option value="Leucine">Leucine</option>
+                            <option value="Lysine">Lysine</option>
+                            <option value="Methionine">Methionine</option>
+                            <option value="Phenylalanine">Phenylalanine</option>
+                            <option value="Proline">Proline</option>
+                            <option value="Serine">Serine</option>
+                            <option value="Threonine">Threonine</option>
+                            <option value="Tryptophan">Tryptophan</option>
+                            <option value="Tyrosine">Tyrosine</option>
+                            <option value="Valine">Valine</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="dipeptideDetails" class="hidden bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">Fischer Projection of Dipeptide: <span id="dipeptideNameDisplay"></span></h3>
+                    <div id="dipeptideStructureContainer" class="svg-container mx-auto my-4">
+                        </div>
+
+                    <div class="mb-4">
+                        <label for="dipeptideIonizableGroups" class="block text-gray-700 text-lg font-medium mb-2">Number of Ionizable groups in the dipeptide:</label>
+                        <div class="flex items-center">
+                            <select id="dipeptideIonizableGroups" class="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 mr-4">
+                                <option value="">-- Select --</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                            </select>
+                            <span id="dipeptideIonizableFeedback" class="text-sm font-semibold"></span>
+                        </div>
+                    </div>
+
+                    <div id="dipeptidePkaValues" class="hidden mb-6 bg-blue-50 p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-blue-800 mb-2">pKa Values:</h4>
+                        <ul id="dipeptidePkaList" class="list-disc list-inside text-blue-700"></ul>
+                    </div>
+
+                    <div id="dipeptidePiCalculation" class="hidden mb-6">
+                        <label for="dipeptidePiInput" class="block text-gray-700 text-lg font-medium mb-2">pI value of the dipeptide:</label>
+                        <div class="flex items-center">
+                            <input type="number" step="0.01" id="dipeptidePiInput" class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-800 mr-4" placeholder="Enter pI value">
+                            <button id="dipeptidePiGoBtn" class="px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                                Go
+                            </button>
+                        </div>
+                        <span id="dipeptidePiFeedback" class="text-sm font-semibold mt-2 block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center mt-8">
+                <button id="resetBtn" class="px-8 py-4 rounded-lg text-xl font-bold transition-all duration-200 bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                    Reset
+                </button>
+            </div>
+            <p id="emailSignature" class="text-gray-500 text-sm text-center mt-8">betabiosciences@gmail.com</p>
+
+        </section>
+
+    </div>
+
+    <div id="pICalculationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closePiModal">&times;</span>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">How to Calculate pI</h3>
+            <p id="pICalculationExplanation" class="text-gray-700 leading-relaxed text-left"></p>
+        </div>
+    </div>
+
+    <script>
+        // Global flag for script validation
+        let isValidated = false;
+
+        // Function to disable all interactive elements and show a message
+        function disableAllInteractions() {
+            const interactiveElements = document.querySelectorAll('button, select, input');
+            interactiveElements.forEach(el => el.disabled = true);
+
+            // Hide relevant sections
+            const sectionsToHide = [
+                aminoAcidSection,
+                peptideSection,
+                titrationCurveSection,
+                document.getElementById('pICalculationModal') // Ensure modal is hidden
+            ];
+            sectionsToHide.forEach(section => {
+                if (section) section.classList.add('hidden');
+            });
+
+            // Add a message to the user
+            const mainContainer = document.querySelector('.bg-white');
+            if (mainContainer) {
+                let messageDiv = document.getElementById('securityMessage');
+                if (!messageDiv) {
+                    messageDiv = document.createElement('div');
+                    messageDiv.id = 'securityMessage';
+                    messageDiv.className = 'text-center text-red-600 font-bold text-lg mt-4';
+                    mainContainer.appendChild(messageDiv);
+                }
+                messageDiv.textContent = 'Application functionality is disabled due to a security check failure.';
+            }
+        }
+
+        // Function to validate the email signature
+        function validateEmailSignature() {
+            const emailElement = document.getElementById('emailSignature');
+            const expectedEmail = "betabiosciences@gmail.com";
+            if (emailElement && emailElement.textContent.trim() === expectedEmail) {
+                isValidated = true;
+                console.log("Email signature validated successfully.");
+            } else {
+                isValidated = false;
+                console.error("Email signature missing or modified. Script functionality disabled.");
+                disableAllInteractions(); // Disable UI if validation fails
+            }
+        }
+
+        // Run validation on script load
+        document.addEventListener('DOMContentLoaded', validateEmailSignature);
+
+        // DOM Elements
+        const aminoAcidBtn = document.getElementById('aminoAcidBtn');
+        const peptideBtn = document.getElementById('peptideBtn');
+        const aminoAcidSection = document.getElementById('aminoAcidSection');
+        const peptideSection = document.getElementById('peptideSection');
+        const aminoAcidSelect = document.getElementById('aminoAcidSelect');
+        const aminoAcidDetails = document.getElementById('aminoAcidDetails');
+        const aaNameDisplay = document.getElementById('aaNameDisplay');
+        const aaStructureContainer = document.getElementById('aaStructureContainer');
+        const aaTitratableGroups = document.getElementById('aaTitratableGroups');
+        const aaTitratableFeedback = document.getElementById('aaTitratableFeedback');
+        const aaPkaValues = document.getElementById('aaPkaValues');
+        const pKaList = document.getElementById('pKaList');
+        const aaPiCalculation = document.getElementById('aaPiCalculation');
+        const aaPiInput = document.getElementById('aaPiInput');
+        const aaPiGoBtn = document.getElementById('aaPiGoBtn');
+        const aaPiFeedback = document.getElementById('aaPiFeedback');
+        const titrationCurveSection = document.getElementById('titrationCurveSection');
+        const showTitrationCurveBtn = document.getElementById('showTitrationCurveBtn');
+        const titrationCurveCanvas = document.getElementById('titrationCurve');
+        let titrationChart;
+
+        const peptideAa1Select = document.getElementById('peptideAa1Select');
+        const peptideAa2Select = document.getElementById('peptideAa2Select');
+        const dipeptideDetails = document.getElementById('dipeptideDetails');
+        const dipeptideNameDisplay = document.getElementById('dipeptideNameDisplay');
+        const dipeptideStructureContainer = document.getElementById('dipeptideStructureContainer');
+        const dipeptideIonizableGroups = document.getElementById('dipeptideIonizableGroups');
+        const dipeptideIonizableFeedback = document.getElementById('dipeptideIonizableFeedback');
+        const dipeptidePkaValues = document.getElementById('dipeptidePkaValues');
+        const dipeptidePkaList = document.getElementById('dipeptidePkaList');
+        const dipeptidePiCalculation = document.getElementById('dipeptidePiCalculation');
+        const dipeptidePiInput = document.getElementById('dipeptidePiInput');
+        const dipeptidePiGoBtn = document.getElementById('dipeptidePiGoBtn');
+        const dipeptidePiFeedback = document.getElementById('dipeptidePiFeedback');
+
+        const resetBtn = document.getElementById('resetBtn');
+
+        const pICalculationModal = document.getElementById('pICalculationModal');
+        const closePiModal = document.getElementById('closePiModal');
+        const pICalculationExplanation = document.getElementById('pICalculationExplanation');
+
+        // SVG templates for Fischer Projections
+        const getGenericAminoAcidSVG = (name) => `
+            <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                <line x1="150" y1="30" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+                <line x1="70" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+
+                <text x="150" y="20" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="auto">COOH</text>
+                <text x="150" y="185" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="hanging">NH2</text>
+
+                <text x="60" y="100" class="svg-text" font-size="16" text-anchor="end" dominant-baseline="middle">H</text>
+                <text x="240" y="100" class="svg-text" font-size="16" text-anchor="start" dominant-baseline="middle">R</text>
+
+                <text x="150" y="100" class="svg-text" font-size="18" font-weight="bold" fill="#000">C</text>
+                <text x="150" y="125" class="svg-text" font-size="14" fill="#555">${name}</text>
+            </svg>
+        `;
+
+        const getGlycineSVG = () => `
+            <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                <line x1="150" y1="30" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+                <line x1="70" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+
+                <text x="150" y="20" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="auto">COOH</text>
+                <text x="150" y="185" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="hanging">NH2</text>
+
+                <text x="60" y="100" class="svg-text" font-size="16" text-anchor="end" dominant-baseline="middle">H</text>
+                <text x="240" y="100" class="svg-text" font-size="16" text-anchor="start" dominant-baseline="middle">H</text>
+
+                <text x="150" y="100" class="svg-text" font-size="18" font-weight="bold" fill="#000">C</text>
+                <text x="150" y="125" class="svg-text" font-size="14" fill="#555">Glycine</text>
+            </svg>
+        `;
+
+        const getLysineSVG = () => `
+            <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                <line x1="150" y1="30" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+                <line x1="70" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+
+                <text x="150" y="20" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="auto">COOH</text>
+                <text x="150" y="185" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="hanging">NH2</text>
+
+                <text x="60" y="100" class="svg-text" font-size="16" text-anchor="end" dominant-baseline="middle">H</text>
+                
+                <line x1="150" y1="110" x2="150" y2="140" stroke="#333" stroke-width="2"/>
+                <text x="150" y="155" class="svg-text" font-size="14" text-anchor="middle">NH2</text>
+
+                <text x="150" y="100" class="svg-text" font-size="18" font-weight="bold" fill="#000">C</text>
+                <text x="150" y="125" class="svg-text" font-size="14" fill="#555">Lysine</text>
+            </svg>
+        `;
+
+        const getArginineSVG = () => `
+            <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                <line x1="150" y1="30" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+                <line x1="70" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+
+                <text x="150" y="20" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="auto">COOH</text>
+                <text x="150" y="185" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="hanging">NH2</text>
+
+                <text x="60" y="100" class="svg-text" font-size="16" text-anchor="end" dominant-baseline="middle">H</text>
+                
+                <line x1="150" y1="110" x2="150" y2="130" stroke="#333" stroke-width="2"/>
+                <text x="150" y="145" class="svg-text" font-size="14" text-anchor="middle">NH</text>
+                <text x="150" y="160" class="svg-text" font-size="14" text-anchor="middle">C=NH</text>
+                <text x="150" y="175" class="svg-text" font-size="14" text-anchor="middle">NH2</text>
+
+                <text x="150" y="100" class="svg-text" font-size="18" font-weight="bold" fill="#000">C</text>
+                <text x="150" y="125" class="svg-text" font-size="14" fill="#555">Arginine</text>
+            </svg>
+        `;
+
+        const getAsparticAcidSVG = () => `
+            <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                <line x1="150" y1="30" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+                <line x1="70" y1="100" x2="230" y2="100" stroke="#333" stroke-width="2"/>
+
+                <text x="150" y="20" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="auto">COOH</text>
+                <text x="150" y="185" class="svg-text" font-size="16" text-anchor="middle" dominant-baseline="hanging">NH2</text>
+
+                <text x="60" y="100" class="svg-text" font-size="16" text-anchor="end" dominant-baseline="middle">H</text>
+                
+                <line x1="150" y1="110" x2="150" y2="140" stroke="#333" stroke-width="2"/>
+                <text x="150" y="155" class="svg-text" font-size="14" text-anchor="middle">COOH</text>
+
+                <text x="150" y="100" class="svg-text" font-size="18" font-weight="bold" fill="#000">C</text>
+                <text x="150" y="125" class="svg-text" font-size="14" fill="#555">Aspartic Acid</text>
+            </svg>
+        `;
+
+        // Function to get SVG part for a side chain based on amino acid name
+        // This function will draw the R-group for the dipeptide structure.
+        // x and y are the coordinates of the 'C' alpha carbon where the R group branches.
+        // isFirstAA: boolean, true if this is for the first amino acid in the dipeptide, false for the second.
+        function getSideChainSVGPartForDipeptide(aaName, xAlphaCarbon, yAlphaCarbon, isFirstAA) {
+            const data = aminoAcidsData[aaName];
+            if (!data || data.titratableGroups < 3) {
+                // For non-ionizable side chains or if no data, return generic R
+                // Adjust R position based on whether it's the first or second AA
+                if (isFirstAA) {
+                    return `<text x="${xAlphaCarbon}" y="${yAlphaCarbon + 70}" class="svg-text" font-size="14" text-anchor="middle">R</text>`;
+                } else {
+                    return `<text x="${xAlphaCarbon}" y="${yAlphaCarbon - 70}" class="svg-text" font-size="14" text-anchor="middle">R</text>`;
+                }
+            }
+
+            let sideChainSVG = '';
+            let lineLength = 30; // Length of the connecting line
+
+            // Adjust positioning based on whether it's the first or second AA
+            // First AA: R-group points downwards (y + offset)
+            // Second AA: R-group points upwards (y - offset)
+            if (isFirstAA) {
+                if (aaName === "Lysine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">NH2</text>
+                    `;
+                } else if (aaName === "Arginine") {
+                     sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength - 10}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength - 10 + 10}" class="svg-text" font-size="12" text-anchor="middle">NH</text>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength - 10 + 25}" class="svg-text" font-size="12" text-anchor="middle">C=NH</text>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength - 10 + 40}" class="svg-text" font-size="12" text-anchor="middle">NH2</text>
+                    `;
+                }
+                else if (aaName === "Histidine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">NH</text>
+                    `;
+                } else if (aaName === "Aspartic Acid" || aaName === "Glutamic Acid") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">COOH</text>
+                    `;
+                } else if (aaName === "Cysteine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">SH</text>
+                    `;
+                } else if (aaName === "Tyrosine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">OH</text>
+                    `;
+                } else if (aaName === "Tryptophan") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon + 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon + 10 + lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon + 10 + lineLength + 15}" class="svg-text" font-size="14" text-anchor="middle">NH</text>
+                    `;
+                } else {
+                    return `<text x="${xAlphaCarbon}" y="${yAlphaCarbon + 70}" class="svg-text" font-size="14" text-anchor="middle">R</text>`;
+                }
+            } else { // isSecondAA
+                if (aaName === "Lysine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">NH2</text>
+                    `;
+                } else if (aaName === "Arginine") {
+                     sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - (lineLength - 10)}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - (lineLength - 10) - 10}" class="svg-text" font-size="12" text-anchor="middle">NH</text>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - (lineLength - 10) - 25}" class="svg-text" font-size="12" text-anchor="middle">C=NH</text>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - (lineLength - 10) - 40}" class="svg-text" font-size="12" text-anchor="middle">NH2</text>
+                    `;
+                }
+                else if (aaName === "Histidine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">NH</text>
+                    `;
+                } else if (aaName === "Aspartic Acid" || aaName === "Glutamic Acid") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">COOH</text>
+                    `;
+                } else if (aaName === "Cysteine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">SH</text>
+                    `;
+                } else if (aaName === "Tyrosine") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">OH</text>
+                    `;
+                } else if (aaName === "Tryptophan") {
+                    sideChainSVG = `
+                        <line x1="${xAlphaCarbon}" y1="${yAlphaCarbon - 10}" x2="${xAlphaCarbon}" y2="${yAlphaCarbon - 10 - lineLength}" stroke="#333" stroke-width="2"/>
+                        <text x="${xAlphaCarbon}" y="${yAlphaCarbon - 10 - lineLength - 15}" class="svg-text" font-size="14" text-anchor="middle">NH</text>
+                    `;
+                } else {
+                    return `<text x="${xAlphaCarbon}" y="${yAlphaCarbon - 70}" class="svg-text" font-size="14" text-anchor="middle">R</text>`;
+                }
+            }
+            return sideChainSVG;
+        }
+
+        const getGenericDipeptideSVG = (aa1Name, aa2Name) => {
+            return `
+                <svg width="100%" height="100%" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="300" height="200" fill="#f0f0f0" rx="10"/>
+                    <line x1="75" y1="40" x2="75" y2="160" stroke="#333" stroke-width="2"/>
+                    <line x1="25" y1="100" x2="125" y2="100" stroke="#333" stroke-width="2"/>
+                    <text x="75" y="30" class="svg-text" font-size="14" text-anchor="middle">NH2</text>
+                    ${getSideChainSVGPartForDipeptide(aa1Name, 75, 100, true)}
+                    <text x="75" y="100" class="svg-text" font-size="16" font-weight="bold">C</text>
+                    <text x="75" y="125" class="svg-text" font-size="12" fill="#555">${aa1Name}</text>
+
+                    <line x1="125" y1="100" x2="175" y2="100" stroke="#333" stroke-width="2" stroke-dasharray="5,5"/>
+                    <text x="150" y="90" class="svg-text" font-size="12" text-anchor="middle">Peptide Bond</text>
+
+                    <line x1="225" y1="40" x2="225" y2="160" stroke="#333" stroke-width="2"/>
+                    <line x1="175" y1="100" x2="275" y2="100" stroke="#333" stroke-width="2"/>
+                    ${getSideChainSVGPartForDipeptide(aa2Name, 225, 100, false)}
+                    <text x="225" y="170" class="svg-text" font-size="14" text-anchor="middle">COOH</text>
+                    <text x="225" y="100" class="svg-text" font-size="16" font-weight="bold">C</text>
+                    <text x="225" y="125" class="svg-text" font-size="12" fill="#555">${aa2Name}</text>
+                </svg>
+            `;
+        };
+
+        // Data for Amino Acids (all 20 standard amino acids)
+        const aminoAcidsData = {
+            "Alanine": { titratableGroups: 2, pKa: [2.34, 9.69], pI: 6.00, structureSvg: getGenericAminoAcidSVG("Alanine") },
+            "Arginine": { titratableGroups: 3, pKa: [2.17, 9.04, 12.48], pI: 10.76, structureSvg: getArginineSVG() },
+            "Asparagine": { titratableGroups: 2, pKa: [2.02, 8.84], pI: 5.43, structureSvg: getGenericAminoAcidSVG("Asparagine") },
+            "Aspartic Acid": { titratableGroups: 3, pKa: [2.09, 3.86, 9.82], pI: 2.98, structureSvg: getAsparticAcidSVG() },
+            "Cysteine": { titratableGroups: 3, pKa: [1.96, 8.18, 10.28], pI: 5.07, structureSvg: getGenericAminoAcidSVG("Cysteine") },
+            "Glutamic Acid": { titratableGroups: 3, pKa: [2.19, 4.25, 9.67], pI: 3.22, structureSvg: getAsparticAcidSVG() },
+            "Glutamine": { titratableGroups: 2, pKa: [2.17, 9.13], pI: 5.65, structureSvg: getGenericAminoAcidSVG("Glutamine") },
+            "Glycine": { titratableGroups: 2, pKa: [2.34, 9.60], pI: 5.97, structureSvg: getGlycineSVG() },
+            "Histidine": { titratableGroups: 3, pKa: [1.82, 6.00, 9.17], pI: 7.59, structureSvg: getLysineSVG() },
+            "Isoleucine": { titratableGroups: 2, pKa: [2.36, 9.68], pI: 6.02, structureSvg: getGenericAminoAcidSVG("Isoleucine") },
+            "Leucine": { titratableGroups: 2, pKa: [2.36, 9.60], pI: 5.98, structureSvg: getGenericAminoAcidSVG("Leucine") },
+            "Lysine": { titratableGroups: 3, pKa: [2.18, 8.95, 10.53], pI: 9.74, structureSvg: getLysineSVG() },
+            "Methionine": { titratableGroups: 2, pKa: [2.28, 9.21], pI: 5.74, structureSvg: getGenericAminoAcidSVG("Methionine") },
+            "Phenylalanine": { titratableGroups: 2, pKa: [1.83, 9.13], pI: 5.48, structureSvg: getGenericAminoAcidSVG("Phenylalanine") },
+            "Proline": { titratableGroups: 2, pKa: [1.99, 10.60], pI: 6.30, structureSvg: getGenericAminoAcidSVG("Proline") },
+            "Serine": { titratableGroups: 2, pKa: [2.21, 9.15], pI: 5.68, structureSvg: getGenericAminoAcidSVG("Serine") },
+            "Threonine": { titratableGroups: 2, pKa: [2.63, 10.43], pI: 6.53, structureSvg: getGenericAminoAcidSVG("Threonine") },
+            "Tryptophan": { titratableGroups: 3, pKa: [2.38, 9.39, 10.85], pI: 5.89, structureSvg: getGenericAminoAcidSVG("Tryptophan") },
+            "Tyrosine": { titratableGroups: 3, pKa: [2.20, 9.11, 10.07], pI: 5.66, structureSvg: getGenericAminoAcidSVG("Tyrosine") },
+            "Valine": { titratableGroups: 2, pKa: [2.32, 9.62], pI: 5.97, structureSvg: getGenericAminoAcidSVG("Valine") }
+        };
+
+
+        // Helper function to get pKa values for a dipeptide (simplified)
+        function getDipeptidePka(aa1Name, aa2Name) {
+            const pKaValues = [];
+            const aa1 = aminoAcidsData[aa1Name];
+            const aa2 = aminoAcidsData[aa2Name];
+
+            // N-terminal pKa (from the alpha-amino group of the first amino acid)
+            // A typical N-terminal pKa in peptides is around 8.0-9.0
+            pKaValues.push(8.0); // Using a more general peptide N-terminal pKa
+
+            // C-terminal pKa (from the alpha-carboxyl group of the second amino acid)
+            // A typical C-terminal pKa in peptides is around 3.0-4.0
+            pKaValues.push(3.5); // Using a more general peptide C-terminal pKa
+
+            // Add side chain pKas if they are ionizable
+            // These values are generally less affected by peptide bond formation than terminal groups.
+            if (aa1.titratableGroups === 3) {
+                const sideChainPka1 = aa1.pKa.find(p => p !== aa1.pKa[0] && p !== aa1.pKa[aa1.pKa.length - 1]);
+                if (sideChainPka1) pKaValues.push(sideChainPka1);
+            }
+            if (aa2.titratableGroups === 3) {
+                const sideChainPka2 = aa2.pKa.find(p => p !== aa2.pKa[0] && p !== aa2.pKa[aa2.pKa.length - 1]);
+                if (sideChainPka2 && !pKaValues.includes(sideChainPka2)) pKaValues.push(sideChainPka2);
+            }
+            return pKaValues.sort((a, b) => a - b);
+        }
+
+        // Helper function to get ionizable groups for a dipeptide
+        function getDipeptideIonizableGroups(aa1Name, aa2Name) {
+            const aa1 = aminoAcidsData[aa1Name];
+            const aa2 = aminoAcidsData[aa2Name];
+            let count = 2; // N-terminal and C-terminal
+            if (aa1.titratableGroups === 3) count++;
+            if (aa2.titratableGroups === 3) count++;
+            return count;
+        }
+
+        // Helper function to calculate pI for a dipeptide
+        function calculateDipeptidePi(pKaValues) {
+            if (pKaValues.length === 2) {
+                return (pKaValues[0] + pKaValues[1]) / 2;
+            } else if (pKaValues.length === 3) {
+                let pI_candidate = 0;
+                let minDiff = Infinity;
+
+                for (let i = 0; i < pKaValues.length; i++) {
+                    for (let j = i + 1; j < pKaValues.length; j++) {
+                        const avg = (pKaValues[i] + pKaValues[j]) / 2;
+                        const currentDiff = Math.abs(pKaValues[i] - pKaValues[j]);
+                        if (currentDiff < minDiff) {
+                            minDiff = currentDiff;
+                            pI_candidate = avg;
+                        }
+                    }
+                }
+                return pI_candidate;
+            } else if (pKaValues.length === 4) {
+                // For 4 ionizable groups, find the acidic and basic pKa closest to 7
+                let acidicPKaClosestTo7 = -1;
+                let minDiffAcidic = Infinity;
+                let basicPKaClosestTo7 = -1;
+                let minDiffBasic = Infinity;
+
+                pKaValues.forEach(pKa => {
+                    if (pKa < 7) { // Acidic pKa
+                        const diff = Math.abs(pKa - 7);
+                        if (diff < minDiffAcidic) {
+                            minDiffAcidic = diff;
+                            acidicPKaClosestTo7 = pKa;
+                        }
+                    } else { // Basic pKa
+                        const diff = Math.abs(pKa - 7);
+                        if (diff < minDiffBasic) {
+                            minDiffBasic = diff;
+                            basicPKaClosestTo7 = pKa;
+                        }
+                    }
+                });
+
+                if (acidicPKaClosestTo7 !== -1 && basicPKaClosestTo7 !== -1) {
+                    return (acidicPKaClosestTo7 + basicPKaClosestTo7) / 2;
+                } else {
+                    // Fallback if not exactly one acidic and one basic pKa are found
+                    // This case should ideally not happen with typical dipeptides having 4 ionizable groups
+                    // (N-term, C-term, and two side chains)
+                    console.warn("Could not find one acidic and one basic pKa closest to 7 for 4 ionizable groups. Falling back to simple average.");
+                    return pKaValues.reduce((sum, val) => sum + val, 0) / pKaValues.length;
+                }
+            }
+            return 7.0; // Default fallback
+        }
+
+
+        // --- Event Listeners ---
+
+        aminoAcidBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            aminoAcidBtn.classList.add('btn-active');
+            peptideBtn.classList.remove('btn-active');
+            aminoAcidSection.classList.remove('hidden');
+            peptideSection.classList.add('hidden');
+            resetAminoAcidForm();
+            resetPeptideForm();
+        });
+
+        peptideBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            peptideBtn.classList.add('btn-active');
+            aminoAcidBtn.classList.remove('btn-active');
+            peptideSection.classList.remove('hidden');
+            aminoAcidSection.classList.add('hidden');
+            resetPeptideForm();
+            resetAminoAcidForm();
+        });
+
+        aminoAcidSelect.addEventListener('change', () => {
+            if (!isValidated) return;
+            const selectedAminoAcid = aminoAcidSelect.value;
+            if (selectedAminoAcid) {
+                aminoAcidDetails.classList.remove('hidden');
+                aaNameDisplay.textContent = selectedAminoAcid;
+                aaStructureContainer.innerHTML = aminoAcidsData[selectedAminoAcid].structureSvg;
+                aaTitratableGroups.value = "";
+                aaTitratableFeedback.textContent = "";
+                aaPkaValues.classList.add('hidden');
+                pKaList.innerHTML = "";
+                aaPiCalculation.classList.add('hidden');
+                aaPiInput.value = "";
+                aaPiFeedback.textContent = "";
+                titrationCurveSection.classList.add('hidden');
+                destroyChart();
+            } else {
+                aminoAcidDetails.classList.add('hidden');
+            }
+        });
+
+        aaTitratableGroups.addEventListener('change', () => {
+            if (!isValidated) return;
+            const selectedAminoAcid = aminoAcidSelect.value;
+            const correctGroups = aminoAcidsData[selectedAminoAcid].titratableGroups;
+            const selectedGroups = parseInt(aaTitratableGroups.value);
+
+            aaTitratableFeedback.classList.remove('correct-text', 'incorrect-text'); // Clear existing classes
+
+            if (selectedGroups === correctGroups) {
+                aaTitratableFeedback.textContent = "You are correct";
+                aaTitratableFeedback.classList.add('correct-text');
+                displayPkaValues(selectedAminoAcid, pKaList, aaPkaValues);
+                aaPiCalculation.classList.remove('hidden');
+            } else {
+                aaTitratableFeedback.textContent = "You are wrong";
+                aaTitratableFeedback.classList.add('incorrect-text');
+                aaPkaValues.classList.add('hidden');
+                aaPiCalculation.classList.add('hidden');
+                titrationCurveSection.classList.add('hidden');
+                destroyChart();
+            }
+            aaPiInput.value = "";
+            aaPiFeedback.textContent = "";
+        });
+
+        aaPiGoBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            const selectedAminoAcid = aminoAcidSelect.value;
+            const correctPi = aminoAcidsData[selectedAminoAcid].pI;
+            const enteredPi = parseFloat(aaPiInput.value);
+
+            if (isNaN(enteredPi)) {
+                aaPiFeedback.textContent = "Please enter a value.";
+                aaPiFeedback.classList.remove('correct-text');
+                aaPiFeedback.classList.add('incorrect-text');
+                titrationCurveSection.classList.add('hidden');
+                destroyChart();
+                return;
+            }
+
+            if (Math.abs(enteredPi - correctPi) < 0.02) {
+                aaPiFeedback.textContent = "You are correct";
+                aaPiFeedback.classList.remove('incorrect-text');
+                aaPiFeedback.classList.add('correct-text');
+                titrationCurveSection.classList.remove('hidden');
+            } else {
+                aaPiFeedback.textContent = "You are incorrect";
+                aaPiFeedback.classList.remove('correct-text');
+                aaPiFeedback.classList.add('incorrect-text');
+                titrationCurveSection.classList.add('hidden');
+                destroyChart();
+                showPiCalculationModal(selectedAminoAcid, 'aminoAcid');
+            }
+        });
+
+        showTitrationCurveBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            const selectedAminoAcid = aminoAcidSelect.value;
+            if (selectedAminoAcid) {
+                drawTitrationCurve(selectedAminoAcid);
+            }
+        });
+
+        peptideAa1Select.addEventListener('change', () => {
+            if (!isValidated) return;
+            updateDipeptideDetails();
+        });
+        peptideAa2Select.addEventListener('change', () => {
+            if (!isValidated) return;
+            updateDipeptideDetails();
+        });
+
+        dipeptideIonizableGroups.addEventListener('change', () => {
+            if (!isValidated) return;
+            const aa1 = peptideAa1Select.value;
+            const aa2 = peptideAa2Select.value;
+            const selectedGroups = parseInt(dipeptideIonizableGroups.value);
+            const correctGroups = getDipeptideIonizableGroups(aa1, aa2);
+
+            dipeptideIonizableFeedback.classList.remove('correct-text', 'incorrect-text'); // Clear existing classes
+
+            if (selectedGroups === correctGroups) {
+                dipeptideIonizableFeedback.textContent = "You are correct";
+                dipeptideIonizableFeedback.classList.add('correct-text');
+                displayPkaValues(null, dipeptidePkaList, dipeptidePkaValues, aa1, aa2);
+                dipeptidePiCalculation.classList.remove('hidden');
+            } else {
+                dipeptideIonizableFeedback.textContent = "You are incorrect";
+                dipeptideIonizableFeedback.classList.add('incorrect-text');
+                dipeptidePkaValues.classList.add('hidden');
+                dipeptidePiCalculation.classList.add('hidden');
+            }
+            dipeptidePiInput.value = "";
+            dipeptidePiFeedback.textContent = "";
+        });
+
+        dipeptidePiGoBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            const aa1 = peptideAa1Select.value;
+            const aa2 = peptideAa2Select.value;
+            const pKaValues = getDipeptidePka(aa1, aa2);
+            const correctPi = calculateDipeptidePi(pKaValues);
+            const enteredPi = parseFloat(dipeptidePiInput.value);
+
+            if (isNaN(enteredPi)) {
+                dipeptidePiFeedback.textContent = "Please enter a value.";
+                dipeptidePiFeedback.classList.remove('correct-text');
+                dipeptidePiFeedback.classList.add('incorrect-text');
+                return;
+            }
+
+            if (Math.abs(enteredPi - correctPi) < 0.02) {
+                dipeptidePiFeedback.textContent = "You are correct";
+                dipeptidePiFeedback.classList.remove('incorrect-text');
+                dipeptidePiFeedback.classList.add('correct-text');
+            } else {
+                dipeptidePiFeedback.textContent = "You are incorrect";
+                dipeptidePiFeedback.classList.remove('correct-text');
+                dipeptidePiFeedback.classList.add('incorrect-text');
+                showPiCalculationModal(`${aa1}-${aa2}`, 'peptide');
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (!isValidated) return;
+            aminoAcidBtn.classList.remove('btn-active');
+            peptideBtn.classList.remove('btn-active');
+            aminoAcidSection.classList.add('hidden');
+            peptideSection.classList.add('hidden');
+            resetAminoAcidForm();
+            resetPeptideForm();
+        });
+
+        closePiModal.addEventListener('click', () => {
+            if (!isValidated) return;
+            pICalculationModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (!isValidated) return;
+            if (event.target === pICalculationModal) {
+                pICalculationModal.style.display = 'none';
+            }
+        });
+
+        // --- Functions ---
+
+        function resetAminoAcidForm() {
+            if (!isValidated) return;
+            aminoAcidSelect.value = "";
+            aminoAcidDetails.classList.add('hidden');
+            aaNameDisplay.textContent = "";
+            aaStructureContainer.innerHTML = '';
+            aaTitratableGroups.value = "";
+            aaTitratableFeedback.textContent = "";
+            aaPkaValues.classList.add('hidden');
+            pKaList.innerHTML = "";
+            aaPiCalculation.classList.add('hidden');
+            aaPiInput.value = "";
+            aaPiFeedback.textContent = "";
+            titrationCurveSection.classList.add('hidden');
+            destroyChart();
+        }
+
+        function resetPeptideForm() {
+            if (!isValidated) return;
+            peptideAa1Select.value = "";
+            peptideAa2Select.value = "";
+            dipeptideDetails.classList.add('hidden');
+            dipeptideNameDisplay.textContent = "";
+            dipeptideStructureContainer.innerHTML = '';
+            dipeptideIonizableGroups.value = "";
+            dipeptideIonizableFeedback.textContent = "";
+            dipeptidePkaValues.classList.add('hidden');
+            dipeptidePkaList.innerHTML = "";
+            dipeptidePiCalculation.classList.add('hidden');
+            dipeptidePiInput.value = "";
+            dipeptidePiFeedback.textContent = "";
+        }
+
+        function displayPkaValues(entityName, pKaListElement, pKaValuesSection, aa1Name = null, aa2Name = null) {
+            if (!isValidated) return;
+            let pKa;
+            if (entityName) {
+                pKa = aminoAcidsData[entityName].pKa;
+            } else if (aa1Name && aa2Name) {
+                pKa = getDipeptidePka(aa1Name, aa2Name);
+            } else {
+                return;
+            }
+
+            pKaListElement.innerHTML = "";
+            pKa.forEach((val, index) => {
+                const li = document.createElement('li');
+                li.textContent = `pKa${index + 1}: ${val}`;
+                pKaListElement.appendChild(li);
+            });
+            pKaValuesSection.classList.remove('hidden');
+        }
+
+        function updateDipeptideDetails() {
+            if (!isValidated) return;
+            const aa1 = peptideAa1Select.value;
+            const aa2 = peptideAa2Select.value;
+            if (aa1 && aa2) {
+                dipeptideDetails.classList.remove('hidden');
+                dipeptideNameDisplay.textContent = `${aa1}-${aa2}`;
+                dipeptideStructureContainer.innerHTML = getGenericDipeptideSVG(aa1, aa2);
+                dipeptideIonizableGroups.value = "";
+                dipeptideIonizableFeedback.textContent = "";
+                dipeptidePkaValues.classList.add('hidden');
+                dipeptidePkaList.innerHTML = "";
+                dipeptidePiCalculation.classList.add('hidden');
+                dipeptidePiInput.value = "";
+                dipeptidePiFeedback.textContent = "";
+            } else {
+                dipeptideDetails.classList.add('hidden');
+            }
+        }
+
+        function showPiCalculationModal(entityName, type) {
+            if (!isValidated) return;
+            let explanation = "";
+            if (type === 'aminoAcid') {
+                const data = aminoAcidsData[entityName];
+                if (data.titratableGroups === 2) {
+                    explanation = `For a simple amino acid like ${entityName} with two ionizable groups (alpha-carboxyl and alpha-amino), the pI is calculated as the average of its two pKa values.`;
+                } else if (data.titratableGroups === 3) {
+                    if (entityName === "Lysine" || entityName === "Arginine" || entityName === "Histidine") {
+                        explanation = `For a basic amino acid like ${entityName} with three ionizable groups (alpha-carboxyl, alpha-amino, and a basic side chain), the pI is calculated as the average of the two highest pKa values (the alpha-amino group and the basic side chain). These are the predominant basic ionizable groups.`;
+                    } else if (entityName === "Aspartic Acid" || entityName === "Glutamic Acid") {
+                        explanation = `For an acidic amino acid like ${entityName} with three ionizable groups (alpha-carboxyl, alpha-amino, and an acidic side chain), the pI is calculated as the average of the two lowest pKa values (the alpha-carboxyl group and the acidic side chain). These are the predominant acidic ionizable groups.`;
+                    } else if (entityName === "Cysteine" || entityName === "Tyrosine" || entityName === "Tryptophan") {
+                         explanation = `For an amino acid like ${entityName} with three ionizable groups, the pI is typically the average of the two pKa values that bracket the neutral zwitterionic form. You need to identify the pKa values on either side of the point where the net charge is zero.`;
+                    } else {
+                        explanation = `For an amino acid with three ionizable groups, the pI is typically the average of the two pKa values that bracket the neutral zwitterionic form.`;
+                    }
+                }
+            } else if (type === 'peptide') {
+                const aa1 = peptideAa1Select.value;
+                const aa2 = peptideAa2Select.value;
+                const pKaValues = getDipeptidePka(aa1, aa2);
+
+                if (pKaValues.length === 2) {
+                    explanation = `For a dipeptide like ${entityName} with two ionizable groups (N-terminal amino and C-terminal carboxyl), the pI is calculated as the average of its two pKa values.`;
+                } else if (pKaValues.length === 3) {
+                    const data1 = aminoAcidsData[aa1];
+                    const data2 = aminoAcidsData[aa2];
+
+                    let isPredominantlyAcidic = false;
+                    let isPredominantlyBasic = false;
+
+                    if (data1.titratableGroups === 3 && (aa1 === "Aspartic Acid" || aa1 === "Glutamic Acid")) {
+                        isPredominantlyAcidic = true;
+                    }
+                    if (data2.titratableGroups === 3 && (aa2 === "Aspartic Acid" || aa2 === "Glutamic Acid")) {
+                        isPredominantlyAcidic = true;
+                    }
+
+                    if (data1.titratableGroups === 3 && (aa1 === "Lysine" || aa1 === "Arginine" || aa1 === "Histidine")) {
+                        isPredominantlyBasic = true;
+                    }
+                    if (data2.titratableGroups === 3 && (aa2 === "Lysine" || aa2 === "Arginine" || aa2 === "Histidine")) {
+                        isPredominantlyBasic = true;
+                    }
+
+                    if (isPredominantlyAcidic && !isPredominantlyBasic) {
+                        explanation = `For a dipeptide like ${entityName} with three ionizable groups and a predominant acidic character, the pI is calculated as the average of the two lowest pKa values. These are typically the C-terminal carboxyl and an acidic side chain.`;
+                    } else if (isPredominantlyBasic && !isPredominantlyAcidic) {
+                        explanation = `For a dipeptide like ${entityName} with three ionizable groups and a predominant basic character, the pI is calculated as the average of the two highest pKa values. These are typically the N-terminal amino group and a basic side chain.`;
+                    } else {
+                        explanation = `For a dipeptide like ${entityName} with three ionizable groups, the pI is typically the average of the two pKa values that bracket the neutral zwitterionic form. You need to identify the pKa values on either side of the point where the net charge is zero.`;
+                    }
+                } else if (pKaValues.length === 4) {
+                    explanation = `For a dipeptide like ${entityName} with four ionizable groups, the pI is calculated as the average of the acidic pKa and the basic pKa that are closest to 7.`;
+                }
+            }
+
+            pICalculationExplanation.textContent = explanation;
+            pICalculationModal.style.display = 'flex';
+        }
+
+        function destroyChart() {
+            if (titrationChart) {
+                titrationChart.destroy();
+                titrationChart = null;
+            }
+        }
+
+        function drawTitrationCurve(aminoAcidName) {
+            if (!isValidated) return;
+            destroyChart();
+
+            const data = aminoAcidsData[aminoAcidName];
+            const pKaValues = data.pKa.sort((a, b) => a - b);
+            const pI = data.pI;
+
+            const pH_points = [];
+            for (let ph = 0; ph <= 14; ph += 0.05) {
+                pH_points.push(parseFloat(ph.toFixed(2)));
+            }
+
+            const calculateEquivalentsOfBaseAdded = (pH, pKas) => {
+                let equivalents = 0;
+                pKas.forEach(pKa => {
+                    equivalents += (1 / (1 + Math.pow(10, (pKa - pH))));
+                });
+                return equivalents;
+            };
+
+            const equivalents_data = pH_points.map(pH => calculateEquivalentsOfBaseAdded(pH, pKaValues));
+
+            const ctx = titrationCurveCanvas.getContext('2d');
+            titrationChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: equivalents_data,
+                    datasets: [{
+                        label: 'Titration Curve',
+                        data: pH_points.map((ph, index) => ({ x: equivalents_data[index], y: ph })),
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Equivalents of Base Added',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            min: 0,
+                            max: pKaValues.length + 0.5,
+                            ticks: { stepSize: 1 }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'pH',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            min: 0,
+                            max: 14,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            mode: 'nearest',
+                            intersect: false,
+                            callbacks: {
+                                title: function(context) {
+                                    return `Equivalents: ${context[0].parsed.x.toFixed(2)}`;
+                                },
+                                label: function(context) {
+                                    return `pH: ${context.parsed.y.toFixed(2)}`;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                ...pKaValues.reduce((acc, pKa, index) => {
+                                    acc[`pKaLine${index}`] = {
+                                        type: 'line',
+                                        yMin: pKa,
+                                        yMax: pKa,
+                                        borderColor: 'rgb(255, 99, 132)',
+                                        borderWidth: 2,
+                                        label: {
+                                            content: `pKa${index + 1} = ${pKa}`,
+                                            enabled: true,
+                                            position: 'start',
+                                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                            font: { size: 12, weight: 'bold' }
+                                        }
+                                    };
+                                    return acc;
+                                }, {}),
+                                pILine: {
+                                    type: 'line',
+                                    yMin: pI,
+                                    yMax: pI,
+                                    borderColor: 'rgb(54, 162, 235)',
+                                    borderWidth: 3,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: `pI = ${pI}`,
+                                        enabled: true,
+                                        position: 'end',
+                                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                        font: { size: 14, weight: 'bold' }
+                                    }
+                                },
+                                // Buffering ranges (now horizontal boxes)
+                                ...pKaValues.reduce((acc, pKa, index) => {
+                                    acc[`bufferRange${index}`] = {
+                                        type: 'box',
+                                        yMin: Math.max(0, pKa - 1),
+                                        yMax: Math.min(14, pKa + 1),
+                                        xMin: 0,
+                                        xMax: pKaValues.length + 0.5,
+                                        backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                                        borderColor: 'rgba(255, 205, 86, 0.5)',
+                                        borderWidth: 1,
+                                        label: {
+                                            content: `Buffering Range (pKa${index + 1})`,
+                                            enabled: true,
+                                            position: 'center',
+                                            font: { size: 12, weight: 'bold' },
+                                            color: 'black'
+                                        }
+                                    };
+                                    return acc;
+                                }, {})
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
