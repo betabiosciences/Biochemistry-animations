@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Mutations: An Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #334155; /* Dark slate text */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .section-heading {
+            border-bottom: 2px solid #6366f1; /* Indigo border */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .diagram-container {
+            background-color: #e2e8f0; /* Lighter gray for diagrams */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            min-height: 150px; /* Ensure some height for diagrams */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            color: #475569;
+            flex-wrap: wrap; /* Allow items to wrap */
+        }
+        .dna-base {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            margin: 5px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .purine { background-color: #ef4444; /* Red */ }
+        .pyrimidine { background-color: #3b82f6; /* Blue */ }
+        .dna-base.mutated {
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        .codon {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 5px;
+            padding: 5px;
+            border-radius: 0.5rem;
+            background-color: #cbd5e1; /* Gray */
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+        .codon.active {
+            background-color: #a78bfa; /* Purple */
+            color: white;
+        }
+        .amino-acid {
+            margin-top: 5px;
+            font-size: 0.8em;
+            color: #475569;
+        }
+        .frameshift-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: monospace;
+            font-size: 1.1em;
+            width: 100%; /* Ensure it takes full width of parent */
+            overflow-x: auto; /* Allow horizontal scrolling if content is too long */
+            padding-bottom: 5px; /* Add some padding for scrollbar */
+        }
+        .dna-segment {
+            display: flex;
+            margin-bottom: 10px;
+            border: 1px dashed #64748b;
+            padding: 5px;
+            border-radius: 0.5rem;
+            white-space: nowrap; /* Keep DNA chars on one line, allow container to scroll */
+        }
+        .dna-char {
+            width: 20px; /* Adjusted size */
+            height: 20px; /* Adjusted size */
+            line-height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 1px; /* Adjusted margin */
+            background-color: #94a3b8; /* Default grey for unselected */
+            color: white;
+            border-radius: 3px;
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        /* No specific .rf-highlight-fill class, colors will be applied directly */
+        .reading-frame-indicator {
+            height: 2px;
+            background-color: #a78bfa;
+            margin-top: 2px;
+            transition: width 0.3s ease, margin-left 0.3s ease;
+        }
+        .mutation-effect {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fefce8; /* Light yellow */
+            border: 1px solid #fde047; /* Yellow border */
+            border-radius: 0.5rem;
+            color: #a16207; /* Dark yellow text */
+        }
+        .interactive-button {
+            background-color: #6366f1; /* Indigo */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .interactive-button:hover {
+            background-color: #4f46e5; /* Darker indigo */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Specific adjustments for very small screens for dna-char elements */
+        @media (max-width: 480px) {
+            .dna-char {
+                width: 16px; /* Slightly smaller */
+                height: 16px;
+                line-height: 16px;
+                font-size: 0.8em; /* Adjust font size */
+                margin: 0; /* No margin to pack them tighter */
+            }
+            .dna-segment {
+                padding: 3px; /* Reduce padding inside segment */
+            }
+            .frameshift-container {
+                font-size: 0.9em; /* Smaller font for surrounding text */
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto">
+        <div id="content-wrapper">
+            <header class="text-center mb-8">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-indigo-700 mb-4">DNA Mutations: An Interactive Guide</h1>
+                <p class="text-lg text-gray-600">Explore the fascinating world of genetic mutations with interactive diagrams and animations.</p>
+            </header>
+
+            <main class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <section class="card p-6">
+                    <h2 class="text-2xl font-bold section-heading text-indigo-600 mb-4">Base Substitution Mutations</h2>
+                    <p class="text-gray-700 mb-4">It is a point mutation, meaning the mutation can be mapped to a single position in the DNA. Here one base is replaced by another.</p>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Transition Mutations</h3>
+                        <p class="text-gray-600 mb-3">Substitution mutations where the properties of the substituted base are conserved (Purine replaced by another Purine, or Pyrimidine replaced by another Pyrimidine).</p>
+                        <div id="transition-diagram" class="diagram-container">
+                            <div class="flex items-center">
+                                <span class="dna-base purine" data-base="A">A</span>
+                                <span class="text-2xl mx-2">&harr;</span>
+                                <span class="dna-base pyrimidine" data-base="T">T</span>
+                            </div>
+                            <div class="flex items-center ml-4">
+                                <span class="dna-base pyrimidine" data-base="C">C</span>
+                                <span class="text-2xl mx-2">&harr;</span>
+                                <span class="dna-base purine" data-base="G">G</span>
+                            </div>
+                            <p class="w-full text-sm mt-2">Click on a base to see a transition!</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Transversion Mutations</h3>
+                        <p class="text-gray-600 mb-3">Substitution mutations where the properties of the substituted base are NOT conserved (Pyrimidine replaced by a Purine, or Purine replaced by a Pyrimidine).</p>
+                        <div id="transversion-diagram" class="diagram-container">
+                            <div class="flex items-center">
+                                <span class="dna-base purine" data-base="A">A</span>
+                                <span class="text-2xl mx-2">&harr;</span>
+                                <span class="dna-base pyrimidine" data-base="C">C</span>
+                            </div>
+                            <div class="flex items-center ml-4">
+                                <span class="dna-base pyrimidine" data-base="T">T</span>
+                                <span class="text-2xl mx-2">&harr;</span>
+                                <span class="dna-base purine" data-base="G">G</span>
+                            </div>
+                            <p class="w-full text-sm mt-2">Click on a base to see a transversion!</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Missense Mutations</h3>
+                        <p class="text-gray-600 mb-3">Base substitution mutations which change the meaning of the codon (Non-synonymous codons), resulting in replacement of the particular amino acid with another.</p>
+                        <div id="missense-diagram" class="diagram-container flex-col">
+                            <div class="flex mb-2">
+                                <div class="codon">
+                                    <span>CGC</span>
+                                    <span class="amino-acid">Arg</span>
+                                </div>
+                                <span class="text-2xl mx-2">&rarr;</span>
+                                <div class="codon">
+                                    <span class="text-red-500 font-bold">CAC</span>
+                                    <span class="amino-acid text-red-500 font-bold">His</span>
+                                </div>
+                            </div>
+                            <p class="text-sm">Original: CGC (Arginine) &rarr; Mutated: CAC (Histidine)</p>
+                            <button class="interactive-button" onclick="animateMissense()">Simulate Missense</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Nonsense Mutations</h3>
+                        <p class="text-gray-600 mb-3">Mutations that lead to the formation of Nonsense codons (STOP codons). Translation in such mRNAs will prematurely terminate.</p>
+                        <div id="nonsense-diagram" class="diagram-container flex-col">
+                            <div class="flex mb-2">
+                                <div class="codon">
+                                    <span>TAC</span>
+                                    <span class="amino-acid">Tyr</span>
+                                </div>
+                                <span class="text-2xl mx-2">&rarr;</span>
+                                <div class="codon">
+                                    <span class="text-red-500 font-bold">TAA</span>
+                                    <span class="amino-acid text-red-500 font-bold">STOP</span>
+                                </div>
+                            </div>
+                            <p class="text-sm">Original: TAC (Tyrosine) &rarr; Mutated: TAA (STOP)</p>
+                            <button class="interactive-button" onclick="animateNonsense()">Simulate Nonsense</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Silent Mutations</h3>
+                        <p class="text-gray-600 mb-3">Substitution mutations that lead to the formation of Synonymous codons (Codons with the same meaning). The coded amino acids are all the same.</p>
+                        <div id="silent-diagram" class="diagram-container flex-col">
+                            <div class="flex mb-2">
+                                <div class="codon">
+                                    <span>TCT</span>
+                                    <span class="amino-acid">Ser</span>
+                                </div>
+                                <span class="text-2xl mx-2">&rarr;</span>
+                                <div class="codon">
+                                    <span class="text-green-500 font-bold">TCC</span>
+                                    <span class="amino-acid text-green-500 font-bold">Ser</span>
+                                </div>
+                            </div>
+                            <p class="text-sm">Original: TCT (Serine) &rarr; Mutated: TCC (Serine)</p>
+                            <button class="interactive-button" onclick="animateSilent()">Simulate Silent</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card p-6">
+                    <h2 class="text-2xl font-bold section-heading text-indigo-600 mb-4">Indel Mutations</h2>
+                    <p class="text-gray-700 mb-4">Caused by insertion or deletion of nucleotides. It may or may not change the Reading frame in an mRNA depending on the number of nucleotides inserted or deleted.</p>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Reading Frame</h3>
+                        <p class="text-gray-600 mb-3">The pattern by which the codons on an mRNA are read during translations. A typical mRNA will have 3 Reading frames (RFs). One of the reading frames will contain a START codon, STOP codon and many SENSE codons in between. Such reading frames are called Open Reading Frames (ORFs).</p>
+                        <div id="reading-frame-diagram" class="diagram-container flex-col">
+                            <div class="frameshift-container">
+                                <div class="dna-segment" id="rf-segment">
+                                    <span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char">C</span><span class="dna-char">A</span>
+                                </div>
+                                <div class="reading-frame-indicator" id="rf-indicator" style="width: 60px; margin-left: 0px;"></div>
+                            </div>
+                            <p class="text-sm mt-2">Click to shift reading frame:</p>
+                            <div class="flex flex-wrap justify-center space-x-2 mt-2"> <button class="interactive-button" onclick="shiftReadingFrame(0)">Frame 1</button>
+                                <button class="interactive-button" onclick="shiftReadingFrame(1)">Frame 2</button>
+                                <button class="interactive-button" onclick="shiftReadingFrame(2)">Frame 3</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">In-Frame Mutations</h3>
+                        <p class="text-gray-600 mb-3">Mutations where the insertion or deletion of nucleotides are in multiples of three, so that the reading frame remains the same but the number of amino acids vary.</p>
+                        <div id="inframe-diagram" class="diagram-container flex-col">
+                            <div class="frameshift-container">
+                                <p>Original:</p>
+                                <div class="dna-segment">
+                                    <span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">A</span>
+                                </div>
+                                <p>Mutated (Insertion of GAT):</p>
+                                <div class="dna-segment" id="inframe-mutated">
+                                    <span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char text-green-500 font-bold">G</span><span class="dna-char text-green-500 font-bold">A</span><span class="dna-char text-green-500 font-bold">T</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">A</span>
+                                </div>
+                            </div>
+                            <div class="mutation-effect" id="inframe-effect">
+                                Effect: Reading frame unchanged, one extra amino acid inserted.
+                            </div>
+                            <button class="interactive-button" onclick="animateInFrame()">Animate In-Frame</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Frameshift Mutations</h3>
+                        <p class="text-gray-600 mb-3">Mutations where the insertion or deletion of nucleotides are NOT in multiples of three, so that the reading frame is changed. The complete set of amino acids beyond the mutation site will change.</p>
+                        <div id="frameshift-diagram" class="diagram-container flex-col">
+                            <div class="frameshift-container">
+                                <p>Original:</p>
+                                <div class="dna-segment">
+                                    <span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">A</span>
+                                </div>
+                                <p>Mutated (Insertion of G):</p>
+                                <div class="dna-segment" id="frameshift-mutated">
+                                    <span class="dna-char">A</span><span class="dna-char">T</span><span class="dna-char">G</span><span class="dna-char text-red-500 font-bold">G</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">C</span><span class="dna-char">G</span><span class="dna-char">T</span><span class="dna-char">A</span><span class="dna-char">A</span>
+                                </div>
+                            </div>
+                            <div class="mutation-effect" id="frameshift-effect">
+                                Effect: Reading frame shifted, all downstream amino acids changed.
+                            </div>
+                            <button class="interactive-button" onclick="animateFrameshift()">Animate Frameshift</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card p-6 md:col-span-2">
+                    <h2 class="text-2xl font-bold section-heading text-indigo-600 mb-4">Interactive DNA Editor & Mutation Analyzer</h2>
+                    <p class="text-gray-700 mb-4">Modify the DNA sequence below by inserting or deleting nucleotides and observe the resulting changes in the DNA and amino acid sequences, as well as the type of mutation.</p>
+
+                    <div class="mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Original DNA Sequence:</h3>
+                        <div id="original-dna-display" class="diagram-container text-lg font-mono p-4"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Modified DNA Sequence:</h3>
+                        <div id="modified-dna-display" class="diagram-container text-lg font-mono p-4"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Amino Acid Sequence:</h3>
+                        <div id="amino-acid-display" class="diagram-container text-lg font-mono p-4 flex-col items-start">
+                            <div class="mb-2 w-full">
+                                <span class="font-semibold text-gray-700">Original:</span> <span id="original-amino-acid-sequence" class="font-mono text-gray-600"></span>
+                            </div>
+                            <div class="w-full">
+                                <span class="font-semibold text-gray-700">Modified:</span> <span id="modified-amino-acid-sequence" class="font-mono text-gray-600"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 mb-6 items-center justify-center">
+                        <div class="flex flex-col items-center">
+                            <label for="nucleotides-input" class="block text-gray-700 text-sm font-bold mb-2">Nucleotides (A, T, C, G) / Count for Deletion:</label>
+                            <input type="text" id="nucleotides-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="e.g., GAT or 3">
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <label for="position-input" class="block text-gray-700 text-sm font-bold mb-2">Position (0-indexed):</label>
+                            <input type="number" id="position-input" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="0" min="0">
+                        </div>
+                        <div class="flex space-x-2 mt-4 sm:mt-0">
+                            <button class="interactive-button" onclick="handleInsertion()">Insert</button>
+                            <button class="interactive-button bg-red-500 hover:bg-red-700" onclick="handleDeletion()">Delete</button>
+                            <button class="interactive-button bg-gray-500 hover:bg-gray-700" onclick="resetDNAEditor()">Reset</button>
+                        </div>
+                    </div>
+
+                    <div id="mutation-dialog" class="mutation-effect hidden">
+                        <p id="mutation-message" class="font-semibold"></p>
+                        <p id="mutation-suggestion" class="text-sm"></p>
+                    </div>
+                </section>
+
+                <section class="card p-6 md:col-span-2">
+                    <h2 class="text-2xl font-bold section-heading text-indigo-600 mb-4">Other Mutation Types</h2>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Reverse Mutations</h3>
+                        <p class="text-gray-600 mb-3">Any mutation that results in the restoration of the wildtype phenotype (Revertants).</p>
+                        <div id="reverse-diagram" class="diagram-container flex-col">
+                            <p>Wild Type: <span class="font-bold text-green-600">ABCDEF</span></p>
+                            <p>Forward Mutation: <span class="font-bold text-red-600">ABXDEF</span></p>
+                            <p>Reverse Mutation: <span class="font-bold text-green-600">ABCDEF</span></p>
+                            <button class="interactive-button" onclick="animateReverse()">Animate Reverse Mutation</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Suppressor Mutations</h3>
+                        <p class="text-gray-600 mb-3">Any mutation that neutralizes the effect of an earlier mutation. It can be of two subtypes:</p>
+
+                        <div class="mb-4 ml-4">
+                            <h4 class="text-lg font-medium text-gray-700 mb-2">Intergenic Suppressor Mutations</h4>
+                            <p class="text-gray-600 mb-3">Where the suppressor mutation occurs in a separate locus from the site where the first mutation has occurred.</p>
+                            <div id="intergenic-diagram" class="diagram-container flex-col">
+                                <p>Gene 1 (Locus A): <span class="font-bold">Normal</span> &rarr; <span class="font-bold text-red-600">Mutated (Loss of function)</span></p>
+                                <p>Gene 2 (Locus B): <span class="font-bold">Normal</span> &rarr; <span class="font-bold text-green-600">Suppressor (Restores function)</span></p>
+                                <button class="interactive-button" onclick="animateIntergenic()">Animate Intergenic</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 ml-4">
+                            <h4 class="text-lg font-medium text-gray-700 mb-2">Intragenic Suppressor Mutations</h4>
+                            <p class="text-gray-600 mb-3">Where the suppressor mutation occurs in the same locus where the first mutation has occurred.</p>
+                            <div id="intragenic-diagram" class="diagram-container flex-col">
+                                <p>Gene X: <span class="font-bold">ABCDEF</span> &rarr; <span class="font-bold text-red-600">ABXDEF</span> (First Mutation)</p>
+                                <p>Gene X: <span class="font-bold text-red-600">ABXDEF</span> &rarr; <span class="font-bold text-green-600">ABYDEF</span> (Suppressor Mutation, restores function)</p>
+                                <button class="interactive-button" onclick="animateIntragenic()">Animate Intragenic</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Other Types</h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-2">
+                            <li><strong>Neutral mutations:</strong> Any mutation that does not change the function of the protein.</li>
+                            <li><strong>Forward mutation:</strong> Any mutation that changes the wild type phenotype of the organism.</li>
+                            <li><strong>Loss of function mutations:</strong> Any mutation that abolishes the function of the protein.</li>
+                            <li><strong>Gain of function mutations:</strong> Any mutation that leads to the formation of new functions.</li>
+                            <li><strong>Lethal mutations:</strong> Any mutation that leads to premature death of the organism.</li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+            <div id="integrity-email" class="text-center text-gray-400 text-sm mt-8">
+                betabiosciences@gmail.com
+                <br>
+                <a href="https://t.me/betascience_csir" target="_blank" class="text-blue-500 hover:underline">Join our Telegram Channel</a>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // Integrity Check for the email address
+        document.addEventListener('DOMContentLoaded', function() {
+            const expectedEmail = "betabiosciences@gmail.com";
+            const emailElement = document.getElementById('integrity-email');
+            const contentWrapper = document.getElementById('content-wrapper');
+
+            // Find the text node containing the email, ignoring the hyperlink
+            let emailTextNode = null;
+            if (emailElement) {
+                for (let i = 0; i < emailElement.childNodes.length; i++) {
+                    if (emailElement.childNodes[i].nodeType === Node.TEXT_NODE) {
+                        if (emailElement.childNodes[i].textContent.trim().includes(expectedEmail)) {
+                            emailTextNode = emailElement.childNodes[i];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!emailTextNode || emailTextNode.textContent.trim() !== expectedEmail) {
+                // If the email text node is missing or its content is modified, clear the main content
+                if (contentWrapper) {
+                    contentWrapper.innerHTML = '<p class="text-center text-red-500 text-lg mt-20">Content integrity check failed. Please do not modify the integrity email.</p>';
+                } else {
+                    document.body.innerHTML = '<p class="text-center text-red-500 text-lg mt-20">Content integrity check failed. Please do not modify the integrity email.</p>';
+                }
+            }
+        });
+
+        // Helper function to create a delay
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        // Full Codon to Amino Acid Mapping (Standard Genetic Code)
+        const codonMap = {
+            'UUU': 'Phe', 'UUC': 'Phe', 'UUA': 'Leu', 'UUG': 'Leu',
+            'UCU': 'Ser', 'UCC': 'Ser', 'UCA': 'Ser', 'UCG': 'Ser',
+            'UAU': 'Tyr', 'UAC': 'Tyr', 'UAA': 'STOP', 'UAG': 'STOP',
+            'UGU': 'Cys', 'UGC': 'Cys', 'UGA': 'STOP', 'UGG': 'Trp',
+            'CUU': 'Leu', 'CUC': 'Leu', 'CUA': 'Leu', 'CUG': 'Leu',
+            'CCU': 'Pro', 'CCC': 'Pro', 'CCA': 'Pro', 'CCG': 'Pro',
+            'CAU': 'His', 'CAC': 'His', 'CAA': 'Gln', 'CAG': 'Gln',
+            'CGU': 'Arg', 'CGC': 'Arg', 'CGA': 'Arg', 'CGG': 'Arg',
+            'AUU': 'Ile', 'AUC': 'Ile', 'AUA': 'Ile', 'AUG': 'Met', // AUG is also start
+            'ACU': 'Thr', 'ACC': 'Thr', 'ACA': 'Thr', 'ACG': 'Thr',
+            'AAU': 'Asn', 'AAC': 'Asn', 'AAA': 'Lys', 'AAG': 'Lys',
+            'AGU': 'Ser', 'AGC': 'Ser', 'AGA': 'Arg', 'AGG': 'Arg',
+            'GUU': 'Val', 'GUC': 'Val', 'GUA': 'Val', 'GUG': 'Val',
+            'GCU': 'Ala', 'GCC': 'Ala', 'GCA': 'Ala', 'GCG': 'Ala',
+            'GAU': 'Asp', 'GAC': 'Asp', 'GAA': 'Glu', 'GAG': 'Glu',
+            'GGU': 'Gly', 'GGC': 'Gly', 'GGA': 'Gly', 'GGG': 'Gly'
+        };
+
+
+        function transcribeDNAtoRNA(dnaSequence) {
+            return dnaSequence.split('').map(base => {
+                switch (base.toUpperCase()) { // Ensure uppercase for consistent mapping
+                    case 'A': return 'U';
+                    case 'T': return 'A';
+                    case 'C': return 'G';
+                    case 'G': return 'C';
+                    default: return ''; // Handle invalid DNA bases gracefully
+                }
+            }).join('');
+        }
+
+        function translateRNAtoProtein(rnaSequence) {
+            let protein = [];
+            for (let i = 0; i < rnaSequence.length; i += 3) {
+                const codon = rnaSequence.substring(i, i + 3).toUpperCase(); // Ensure uppercase for map lookup
+                if (codon.length === 3) {
+                    protein.push(codonMap[codon] || '[?]'); // Use '[?]' for unmapped codons
+                    if (codonMap[codon] === 'STOP') break; // Stop translation at STOP codon
+                } else {
+                    // Handle partial codons at the end of the sequence
+                    protein.push('[Partial]');
+                }
+            }
+            return protein;
+        }
+
+
+        // --- Transition Mutations Diagram ---
+        const transitionDiagram = document.getElementById('transition-diagram');
+        transitionDiagram.addEventListener('click', (event) => {
+            const clickedBase = event.target;
+            if (clickedBase.classList.contains('dna-base')) {
+                const currentBase = clickedBase.dataset.base;
+                let newBase = '';
+                let isPurine = ['A', 'G'].includes(currentBase);
+
+                if (isPurine) {
+                    newBase = currentBase === 'A' ? 'G' : 'A';
+                } else { // Pyrimidine
+                    newBase = currentBase === 'C' ? 'T' : 'C';
+                }
+
+                clickedBase.textContent = newBase;
+                clickedBase.dataset.base = newBase;
+                clickedBase.classList.add('mutated');
+                setTimeout(() => clickedBase.classList.remove('mutated'), 1000);
+            }
+        });
+
+        // --- Transversion Mutations Diagram ---
+        const transversionDiagram = document.getElementById('transversion-diagram');
+        transversionDiagram.addEventListener('click', (event) => {
+            const clickedBase = event.target;
+            if (clickedBase.classList.contains('dna-base')) {
+                const currentBase = clickedBase.dataset.base;
+                let newBase = '';
+                let isPurine = ['A', 'G'].includes(currentBase);
+
+                if (isPurine) { // Purine to Pyrimidine
+                    newBase = Math.random() < 0.5 ? 'C' : 'T';
+                    clickedBase.classList.remove('purine');
+                    clickedBase.classList.add('pyrimidine');
+                } else { // Pyrimidine to Purine
+                    newBase = Math.random() < 0.5 ? 'A' : 'G';
+                    clickedBase.classList.remove('pyrimidine');
+                    clickedBase.classList.add('purine');
+                }
+
+                clickedBase.textContent = newBase;
+                  clickedBase.dataset.base = newBase;
+                clickedBase.classList.add('mutated');
+                setTimeout(() => clickedBase.classList.remove('mutated'), 1000);
+            }
+        });
+
+        // --- Reading Frame Diagram ---
+        const rfSegment = document.getElementById('rf-segment');
+        const rfIndicator = document.getElementById('rf-indicator');
+
+        // Define a set of distinct colors for codons
+        const codonColors = ['#a78bfa', '#3b82f6', '#22c55e', '#facc15', '#f97316', '#ef4444']; // Purple, Blue, Green, Yellow, Orange, Red
+
+        function shiftReadingFrame(frame) {
+            currentFrame = frame;
+            // Recalculate charWidth dynamically to adapt to potential media query changes
+            const firstChar = rfSegment.children[0];
+            const charWidth = firstChar ? firstChar.offsetWidth + parseFloat(getComputedStyle(firstChar).marginRight) + parseFloat(getComputedStyle(firstChar).marginLeft) : 0;
+            
+            rfIndicator.style.marginLeft = `${currentFrame * charWidth}px`;
+            rfIndicator.style.width = `${3 * charWidth}px`; // Codon is 3 bases
+            highlightReadingFrame();
+        }
+
+        function highlightReadingFrame() {
+            const chars = Array.from(rfSegment.children);
+            chars.forEach(char => {
+                char.style.backgroundColor = '#94a3b8'; // Reset all to default grey
+                char.style.color = 'white'; // Ensure text color is white for default grey
+            });
+
+            let colorIndex = 0;
+            for (let i = currentFrame; i < chars.length; i += 3) {
+                // Ensure there are at least 3 characters for a codon
+                if (chars[i] && chars[i+1] && chars[i+2]) {
+                    const currentColor = codonColors[colorIndex % codonColors.length];
+                    chars[i].style.backgroundColor = currentColor;
+                    chars[i+1].style.backgroundColor = currentColor;
+                    chars[i+2].style.backgroundColor = currentColor;
+                    colorIndex++;
+                }
+            }
+        }
+
+        // Initial display for Frame 1
+        shiftReadingFrame(0);
+
+
+        // --- Missense Mutations Animation ---
+        async function animateMissense() {
+            const diagram = document.getElementById('missense-diagram');
+            const originalCodon = diagram.querySelector('.flex div:first-child');
+            const mutatedCodon = diagram.querySelector('.flex div:last-child');
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+            mutatedCodon.querySelector('span:first-child').classList.remove('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.remove('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('span:first-child').textContent = 'CAC'; // Ensure it's the mutated one
+            mutatedCodon.querySelector('.amino-acid').textContent = 'His'; // Ensure it's the mutated one
+
+            await delay(500);
+
+            // Show original
+            originalCodon.classList.add('active');
+            await delay(1000);
+
+            // Animate mutation
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.add('active');
+            mutatedCodon.querySelector('span:first-child').classList.add('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.add('text-red-500', 'font-bold');
+            await delay(1500);
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+        }
+
+        // --- Nonsense Mutations Animation ---
+        async function animateNonsense() {
+            const diagram = document.getElementById('nonsense-diagram');
+            const originalCodon = diagram.querySelector('.flex div:first-child');
+            const mutatedCodon = diagram.querySelector('.flex div:last-child');
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+            mutatedCodon.querySelector('span:first-child').classList.remove('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.remove('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('span:first-child').textContent = 'TAA'; // Ensure it's the mutated one
+            mutatedCodon.querySelector('.amino-acid').textContent = 'STOP'; // Ensure it's the mutated one
+
+            await delay(500);
+
+            // Show original
+            originalCodon.classList.add('active');
+            await delay(1000);
+
+            // Animate mutation
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.add('active');
+            mutatedCodon.querySelector('span:first-child').classList.add('text-red-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.add('text-red-500', 'font-bold');
+            await delay(1500);
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+        }
+
+        // --- Silent Mutations Animation ---
+        async function animateSilent() {
+            const diagram = document.getElementById('silent-diagram');
+            const originalCodon = diagram.querySelector('.flex div:first-child');
+            const mutatedCodon = diagram.querySelector('.flex div:last-child');
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+            mutatedCodon.querySelector('span:first-child').classList.remove('text-green-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.remove('text-green-500', 'font-bold');
+            mutatedCodon.querySelector('span:first-child').textContent = 'TCC'; // Ensure it's the mutated one
+            mutatedCodon.querySelector('.amino-acid').textContent = 'Ser'; // Ensure it's the mutated one
+
+            await delay(500);
+
+            // Show original
+            originalCodon.classList.add('active');
+            await delay(1000);
+
+            // Animate mutation
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.add('active');
+            mutatedCodon.querySelector('span:first-child').classList.add('text-green-500', 'font-bold');
+            mutatedCodon.querySelector('.amino-acid').classList.add('text-green-500', 'font-bold');
+            await delay(1500);
+
+            // Reset
+            originalCodon.classList.remove('active');
+            mutatedCodon.classList.remove('active');
+        }
+
+        // --- In-Frame Mutations Animation ---
+        async function animateInFrame() {
+            const originalSegment = document.querySelector('#inframe-diagram .frameshift-container > .dna-segment:first-of-type');
+            const mutatedSegment = document.getElementById('inframe-mutated');
+            const effectDiv = document.getElementById('inframe-effect');
+
+            // Reset
+            Array.from(originalSegment.children).forEach(c => c.style.backgroundColor = '#94a3b8');
+            Array.from(mutatedSegment.children).forEach(c => {
+                c.style.backgroundColor = '#94a3b8';
+                c.classList.remove('text-green-500', 'font-bold');
+            });
+            effectDiv.textContent = 'Effect: Reading frame unchanged, one extra amino acid inserted.';
+            effectDiv.style.backgroundColor = '#fefce8';
+            effectDiv.style.borderColor = '#fde047';
+
+            await delay(500);
+
+            // Highlight original reading
+            for (let i = 0; i < originalSegment.children.length - 2; i += 3) {
+                originalSegment.children[i].style.backgroundColor = '#a78bfa';
+                originalSegment.children[i+1].style.backgroundColor = '#a78bfa';
+                originalSegment.children[i+2].style.backgroundColor = '#a78bfa';
+                await delay(300);
+            }
+            await delay(1000);
+
+            // Show mutation
+            Array.from(originalSegment.children).forEach(c => c.style.backgroundColor = '#94a3b8'); // Reset original
+            const insertedChars = Array.from(mutatedSegment.children).slice(3, 6); // GAT
+            insertedChars.forEach(c => {
+                c.classList.add('text-green-500', 'font-bold');
+                c.style.backgroundColor = '#22c55e'; // Green for insertion
+            });
+            effectDiv.textContent = 'Mutation: Insertion of GAT (3 nucleotides).';
+            effectDiv.style.backgroundColor = '#dcfce7'; // Lighter green
+            effectDiv.style.borderColor = '#22c55e';
+            await delay(1000);
+
+            // Highlight mutated reading
+            for (let i = 0; i < mutatedSegment.children.length - 2; i += 3) {
+                mutatedSegment.children[i].style.backgroundColor = '#a78bfa';
+                if (mutatedSegment.children[i+1]) mutatedSegment.children[i+1].style.backgroundColor = '#a78bfa';
+                if (mutatedSegment.children[i+2]) mutatedSegment.children[i+2].style.backgroundColor = '#a78bfa';
+                await delay(300);
+            }
+            effectDiv.textContent = 'Result: Reading frame preserved, but a new amino acid is added.';
+            effectDiv.style.backgroundColor = '#e0f2fe'; // Light blue
+            effectDiv.style.borderColor = '#3b82f6';
+            await delay(1500);
+
+            // Reset
+            Array.from(mutatedSegment.children).forEach(c => {
+                c.style.backgroundColor = '#94a3b8';
+                c.classList.remove('text-green-500', 'font-bold');
+            });
+            effectDiv.textContent = 'Effect: Reading frame unchanged, one extra amino acid inserted.';
+            effectDiv.style.backgroundColor = '#fefce8';
+            effectDiv.style.borderColor = '#fde047';
+        }
+
+        // --- Frameshift Mutations Animation ---
+        async function animateFrameshift() {
+            const originalSegment = document.querySelector('#frameshift-diagram .frameshift-container > .dna-segment:first-of-type');
+            const mutatedSegment = document.getElementById('frameshift-mutated');
+            const effectDiv = document.getElementById('frameshift-effect');
+
+            // Reset
+            Array.from(originalSegment.children).forEach(c => c.style.backgroundColor = '#94a3b8');
+            Array.from(mutatedSegment.children).forEach(c => {
+                c.style.backgroundColor = '#94a3b8';
+                c.classList.remove('text-red-500', 'font-bold');
+            });
+            effectDiv.textContent = 'Effect: Reading frame shifted, all downstream amino acids changed.';
+            effectDiv.style.backgroundColor = '#fefce8';
+            effect.style.borderColor = '#fde047';
+
+            await delay(500);
+
+            // Highlight original reading
+            for (let i = 0; i < originalSegment.children.length - 2; i += 3) {
+                originalSegment.children[i].style.backgroundColor = '#a78bfa';
+                originalSegment.children[i+1].style.backgroundColor = '#a78bfa';
+                originalSegment.children[i+2].style.backgroundColor = '#a78bfa';
+                await delay(300);
+            }
+            await delay(1000);
+
+            // Show mutation
+            Array.from(originalSegment.children).forEach(c => c.style.backgroundColor = '#94a3b8'); // Reset original
+            const insertedChar = mutatedSegment.children[3]; // G
+            insertedChar.classList.add('text-red-500', 'font-bold');
+            insertedChar.style.backgroundColor = '#ef4444'; // Red for insertion
+            effectDiv.textContent = 'Mutation: Insertion of G (1 nucleotide).';
+            effectDiv.style.backgroundColor = '#fee2e2'; // Lighter red
+            effectDiv.style.borderColor = '#ef4444';
+            await delay(1000);
+
+            // Highlight mutated reading (shifted)
+            for (let i = 0; i < mutatedSegment.children.length - 2; i += 3) {
+                mutatedSegment.children[i].style.backgroundColor = '#a78bfa';
+                if (mutatedSegment.children[i+1]) mutatedSegment.children[i+1].style.backgroundColor = '#a78bfa';
+                if (mutatedSegment.children[i+2]) mutatedSegment.children[i+2].style.backgroundColor = '#a78bfa';
+                await delay(300);
+            }
+            effectDiv.textContent = 'Result: Reading frame drastically shifted, changing all subsequent amino acids.';
+            effectDiv.style.backgroundColor = '#fef2f2'; // Even lighter red
+            effectDiv.style.borderColor = '#f87171';
+            await delay(1500);
+
+            // Reset
+            Array.from(mutatedSegment.children).forEach(c => {
+                c.style.backgroundColor = '#94a3b8';
+                c.classList.remove('text-red-500', 'font-bold');
+            });
+            effectDiv.textContent = 'Effect: Reading frame shifted, all downstream amino acids changed.';
+            effectDiv.style.backgroundColor = '#fefce8';
+            effectDiv.style.borderColor = '#fde047';
+        }
+
+        // --- Reverse Mutations Animation ---
+        async function animateReverse() {
+            const diagram = document.getElementById('reverse-diagram');
+            const lines = diagram.querySelectorAll('p');
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span').classList.add('text-gray-800');
+            });
+            lines[0].querySelector('span').textContent = 'ABCDEF';
+            lines[1].querySelector('span').textContent = 'ABXDEF';
+            lines[2].querySelector('span').textContent = 'ABCDEF';
+
+            await delay(500);
+
+            // Wild Type
+            lines[0].style.opacity = 1;
+            lines[0].querySelector('span').classList.remove('text-gray-800');
+            lines[0].querySelector('span').classList.add('text-green-600');
+            await delay(1000);
+
+            // Forward Mutation
+            lines[1].style.opacity = 1;
+            lines[1].querySelector('span').classList.remove('text-gray-800');
+            lines[1].querySelector('span').classList.add('text-red-600');
+            await delay(1500);
+
+            // Reverse Mutation
+            lines[2].style.opacity = 1;
+            lines[2].querySelector('span').classList.remove('text-gray-800');
+            lines[2].querySelector('span').classList.add('text-green-600');
+            await delay(1500);
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span').classList.add('text-gray-800');
+            });
+        }
+
+        // --- Intergenic Suppressor Mutations Animation ---
+        async function animateIntergenic() {
+            const diagram = document.getElementById('intergenic-diagram');
+            const lines = diagram.querySelectorAll('p');
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span:nth-child(1)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(1)').classList.add('text-gray-800');
+                line.querySelector('span:nth-child(2)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(2)').classList.add('text-gray-800');
+            });
+            lines[0].querySelector('span:nth-child(1)').textContent = 'Normal';
+            lines[0].querySelector('span:nth-child(2)').textContent = 'Mutated (Loss of function)';
+            lines[1].querySelector('span:nth-child(1)').textContent = 'Normal';
+            lines[1].querySelector('span:nth-child(2)').textContent = 'Suppressor (Restores function)';
+
+            await delay(500);
+
+            // Gene 1 - Original
+            lines[0].style.opacity = 1;
+            lines[0].querySelector('span:nth-child(1)').classList.remove('text-gray-800');
+            lines[0].querySelector('span:nth-child(1)').classList.add('text-green-600');
+            await delay(1000);
+
+            // Gene 1 - Mutation
+            lines[0].querySelector('span:nth-child(1)').classList.remove('text-green-600');
+            lines[0].querySelector('span:nth-child(1)').classList.add('text-red-600');
+            lines[0].querySelector('span:nth-child(2)').style.opacity = 1;
+            lines[0].querySelector('span:nth-child(2)').classList.remove('text-gray-800');
+            lines[0].querySelector('span:nth-child(2)').classList.add('text-red-600');
+            await delay(1500);
+
+            // Gene 2 - Suppressor
+            lines[1].style.opacity = 1;
+            lines[1].querySelector('span:nth-child(1)').classList.remove('text-gray-800');
+            lines[1].querySelector('span:nth-child(1)').classList.add('text-green-600');
+            await delay(1000);
+            lines[1].querySelector('span:nth-child(1)').classList.remove('text-green-600');
+            lines[1].querySelector('span:nth-child(1)').classList.add('text-red-600'); // Simulate mutation in Gene 2 initially
+            lines[1].querySelector('span:nth-child(2)').style.opacity = 1;
+            lines[1].querySelector('span:nth-child(2)').classList.remove('text-gray-800');
+            lines[1].querySelector('span:nth-child(2)').classList.add('text-green-600'); // Then suppressor restores
+            await delay(1500);
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span:nth-child(1)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(1)').classList.add('text-gray-800');
+                line.querySelector('span:nth-child(2)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(2)').classList.add('text-gray-800');
+            });
+        }
+
+        // --- Intragenic Suppressor Mutations Animation ---
+        async function animateIntragenic() {
+            const diagram = document.getElementById('intragenic-diagram');
+            const lines = diagram.querySelectorAll('p');
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span:nth-child(1)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(1)').classList.add('text-gray-800');
+                line.querySelector('span:nth-child(2)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(2)').classList.add('text-gray-800');
+            });
+            lines[0].querySelector('span:nth-child(1)').textContent = 'ABCDEF';
+            lines[0].querySelector('span:nth-child(2)').textContent = 'ABXDEF';
+            lines[1].querySelector('span:nth-child(1)').textContent = 'ABXDEF';
+            lines[1].querySelector('span:nth-child(2)').textContent = 'ABYDEF';
+
+            await delay(500);
+
+            // First Mutation
+            lines[0].style.opacity = 1;
+            lines[0].querySelector('span:nth-child(1)').classList.remove('text-gray-800');
+            lines[0].querySelector('span:nth-child(1)').classList.add('text-green-600');
+            await delay(1000);
+
+            // Gene 1 - Mutation
+            lines[0].querySelector('span:nth-child(1)').classList.remove('text-green-600');
+            lines[0].querySelector('span:nth-child(1)').classList.add('text-red-600');
+            lines[0].querySelector('span:nth-child(2)').style.opacity = 1;
+            lines[0].querySelector('span:nth-child(2)').classList.remove('text-gray-800');
+            lines[0].querySelector('span:nth-child(2)').classList.add('text-red-600');
+            await delay(1500);
+
+            // Suppressor Mutation
+            lines[1].style.opacity = 1;
+            lines[1].querySelector('span:nth-child(1)').classList.remove('text-gray-800');
+            lines[1].querySelector('span:nth-child(1)').classList.add('text-red-600');
+            await delay(1000);
+            lines[1].querySelector('span:nth-child(1)').classList.remove('text-red-600'); // Simulate original state before suppressor
+            lines[1].querySelector('span:nth-child(1)').classList.add('text-green-600');
+            lines[1].querySelector('span:nth-child(2)').style.opacity = 1;
+            lines[1].querySelector('span:nth-child(2)').classList.remove('text-gray-800');
+            lines[1].querySelector('span:nth-child(2)').classList.add('text-green-600');
+            await delay(1500);
+
+            // Reset
+            lines.forEach(line => {
+                line.style.opacity = 0.5;
+                line.querySelector('span:nth-child(1)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(1)').classList.add('text-gray-800');
+                line.querySelector('span:nth-child(2)').classList.remove('text-red-600', 'text-green-600');
+                line.querySelector('span:nth-child(2)').classList.add('text-gray-800');
+            });
+        }
+
+        // New Interactive DNA Editor & Mutation Analyzer Logic
+        // Initial DNA sequence chosen to ensure all codons are valid in the full codon table
+        let originalDnaSequence = "ATGCGTACGTGCGATGCATGCGT"; // This sequence translates to: Met-Arg-Thr-Cys-Ala-Met-Arg-Thr-Ala (with full table)
+        let currentDnaSequence = originalDnaSequence;
+
+        const originalDnaDisplay = document.getElementById('original-dna-display');
+        const modifiedDnaDisplay = document.getElementById('modified-dna-display');
+        const originalAminoAcidSequenceDisplay = document.getElementById('original-amino-acid-sequence');
+        const modifiedAminoAcidSequenceDisplay = document.getElementById('modified-amino-acid-sequence');
+        const nucleotidesInput = document.getElementById('nucleotides-input');
+        const positionInput = document.getElementById('position-input');
+        const mutationDialog = document.getElementById('mutation-dialog');
+        const mutationMessage = document.getElementById('mutation-message');
+        const mutationSuggestion = document.getElementById('mutation-suggestion');
+
+        function validateNucleotides(input) {
+            return /^[ATCGatcg]*$/.test(input);
+        }
+
+        function updateSequencesAndDisplay() {
+            originalDnaDisplay.textContent = originalDnaSequence;
+            modifiedDnaDisplay.textContent = currentDnaSequence;
+
+            const originalRnaSequence = transcribeDNAtoRNA(originalDnaSequence);
+            const originalAminoAcids = translateRNAtoProtein(originalRnaSequence);
+            originalAminoAcidSequenceDisplay.textContent = originalAminoAcids.join('-');
+
+            const currentRnaSequence = transcribeDNAtoRNA(currentDnaSequence);
+            const currentAminoAcids = translateRNAtoProtein(currentRnaSequence);
+            modifiedAminoAcidSequenceDisplay.textContent = currentAminoAcids.join('-');
+
+
+            // Update position input max value
+            positionInput.max = currentDnaSequence.length;
+            if (parseInt(positionInput.value) > currentDnaSequence.length) {
+                positionInput.value = currentDnaSequence.length;
+            }
+        }
+
+        function showMutationDialog(message, suggestion) {
+            mutationMessage.textContent = message;
+            mutationSuggestion.textContent = suggestion;
+            mutationDialog.classList.remove('hidden');
+            // Removed setTimeout to keep dialog open until reset is clicked
+        }
+
+        function handleInsertion() {
+            const newNucleotides = nucleotidesInput.value.toUpperCase();
+            const position = parseInt(positionInput.value);
+
+            if (!validateNucleotides(newNucleotides) && newNucleotides !== '') {
+                showMutationDialog("Invalid Input", "Please enter only A, T, C, or G for nucleotides to insert.");
+                return;
+            }
+            if (position < 0 || position > currentDnaSequence.length) {
+                showMutationDialog("Invalid Position", `Position must be between 0 and ${currentDnaSequence.length} for insertion.`);
+                return;
+            }
+
+            const oldLength = currentDnaSequence.length;
+            currentDnaSequence = currentDnaSequence.slice(0, position) + newNucleotides + currentDnaSequence.slice(position);
+            const newLength = currentDnaSequence.length;
+            const lengthChange = newLength - oldLength; // Number of nucleotides inserted
+
+            updateSequencesAndDisplay();
+
+            if (lengthChange % 3 === 0 && lengthChange > 0) { // Check lengthChange > 0 for actual insertions
+                showMutationDialog(
+                    "In-Frame Insertion!",
+                    "The number of inserted nucleotides is a multiple of three. The reading frame is preserved, but the amino acid sequence has changed (amino acids added)."
+                );
+            } else if (lengthChange % 3 !== 0 && lengthChange > 0) {
+                showMutationDialog(
+                    "Frameshift Insertion!",
+                    "The number of inserted nucleotides is NOT a multiple of three. The reading frame has shifted, drastically changing all downstream amino acids."
+                );
+            } else if (lengthChange === 0) { // Case where user types empty string but hits insert
+                showMutationDialog("No Change", "No nucleotides were inserted.");
+            }
+            nucleotidesInput.value = ''; // Clear input
+        }
+
+        function handleDeletion() {
+            const numToDelete = parseInt(nucleotidesInput.value); // Reusing input for number of nucleotides to delete
+            const position = parseInt(positionInput.value);
+
+            if (isNaN(numToDelete) || numToDelete <= 0) {
+                showMutationDialog("Invalid Input", "Please enter a positive number for deletion count.");
+                return;
+            }
+            if (position < 0 || position >= currentDnaSequence.length) {
+                showMutationDialog("Invalid Position", `Position must be between 0 and ${currentDnaSequence.length - 1} for deletion.`);
+                return;
+            }
+            if (position + numToDelete > currentDnaSequence.length) {
+                showMutationDialog("Invalid Deletion", "Deletion extends beyond the end of the sequence. Cannot delete more than available.");
+                return;
+            }
+
+            const oldLength = currentDnaSequence.length;
+            currentDnaSequence = currentDnaSequence.slice(0, position) + currentDnaSequence.slice(position + numToDelete);
+            const newLength = currentDnaSequence.length;
+            const lengthChange = oldLength - newLength; // How many were deleted
+
+            updateSequencesAndDisplay();
+
+            if (lengthChange % 3 === 0) {
+                showMutationDialog(
+                    "In-Frame Deletion!",
+                    "The number of deleted nucleotides is a multiple of three. The reading frame is preserved, but the amino acid sequence has changed (amino acids removed)."
+                );
+            } else {
+                showMutationDialog(
+                    "Frameshift Deletion!",
+                    "The number of deleted nucleotides is NOT a multiple of three. The reading frame has shifted, drastically changing all downstream amino acids."
+                );
+            }
+            nucleotidesInput.value = ''; // Clear input
+        }
+
+        function resetDNAEditor() {
+            currentDnaSequence = originalDnaSequence;
+            updateSequencesAndDisplay();
+            nucleotidesInput.value = '';
+            positionInput.value = '0';
+            mutationDialog.classList.add('hidden'); // Hide any active mutation message
+        }
+
+        // Initial call to set up the display for the new tool
+        updateSequencesAndDisplay();
+
+    </script>
+</body>
+</html>
