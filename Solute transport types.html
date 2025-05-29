@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solute Transport Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure html and body take full height for consistent layout */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Custom styles for the Inter font and general body */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh; /* Ensure body takes at least full viewport height */
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow vertical scrolling if content overflows */
+        }
+
+        /* Container styling */
+        .container {
+            @apply bg-white p-6 md:p-8 rounded-xl shadow-lg w-full max-w-2xl flex flex-col items-center;
+            min-height: 80vh; /* Ensure enough space for all content */
+        }
+
+        /* Canvas styling */
+        .simulation-canvas {
+            background-color: #e2e8f0; /* Lighter blue-gray for canvas background */
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            display: block;
+            width: 100%; /* Make canvas fluid */
+            max-width: 600px; /* Max width for larger screens */
+            height: 300px; /* Fixed height for animation area */
+            margin: 1rem auto; /* Center the canvas */
+            position: relative; /* Keep relative for containing static dialogs if needed, though they are now outside */
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 14px 28px; /* Matched action-button padding */
+            border-radius: 10px; /* Matched action-button border-radius */
+            font-size: 1.2rem; /* Matched action-button font-size */
+            font-weight: 600; /* Matched action-button font-weight */
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease; /* Added transform for active state */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Matched action-button shadow */
+            color: #ffffff; /* White text color */
+        }
+        /* Updated btn-blue to match the uploaded button style (solid indigo) */
+        .btn-blue {
+            background-color: #4f46e5; /* Indigo */
+        }
+        .btn-blue:hover:not(:disabled) {
+            background-color: #4338ca; /* Darker indigo */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+        }
+        .btn-blue:active {
+            transform: scale(0.98); /* Slight press effect */
+        }
+
+        /* New btn-green style to match the new button logic */
+        .btn-green {
+            background-color: #10b981; /* Green */
+        }
+        .btn-green:hover:not(:disabled) {
+            background-color: #059669; /* Darker green */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+        }
+        .btn-green:active {
+            transform: scale(0.98); /* Slight press effect */
+        }
+
+        /* Updated btn-red to match the uploaded button style (solid red) */
+        .btn-red {
+            background-color: #ef4444; /* Red */
+        }
+        .btn-red:hover:not(:disabled) {
+            background-color: #dc2626; /* Darker red */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+        }
+        .btn-red:active {
+            transform: scale(0.98); /* Slight press effect */
+        }
+
+        /* Disabled button state - Made more specific to ensure override */
+        .btn.btn-blue:disabled,
+        .btn.btn-green:disabled,
+        .btn.btn-red:disabled {
+            background-color: #9ca3af !important; /* Gray for disabled, !important to ensure override */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none; /* No press effect when disabled */
+        }
+
+
+        /* Dialog box styling with animation */
+        .dialog-box {
+            @apply p-4 mt-4 rounded-lg shadow-md;
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start slightly below */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Smooth transition */
+            /* Removed absolute positioning to allow it to be in normal document flow */
+            width: 100%; /* Take full width of parent container */
+            max-width: 600px; /* Max width for consistency with canvas */
+            margin: 1rem auto; /* Center the dialog box */
+            text-align: center;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .dialog-box.show {
+            opacity: 1; /* Fade in */
+            transform: translateY(0); /* Slide up to final position */
+        }
+
+        /* Cloud shape for the callout (for secondary active transport) */
+        .cloud-callout {
+            background-color: #e0f2fe; /* Light blue for cloud */
+            color: #2563eb; /* Darker blue text */
+            border: 2px solid #93c5fd; /* Light blue border */
+            border-radius: 60% 40% 50% 30% / 40% 50% 30% 60%; /* Organic cloud shape */
+            padding: 1rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+            /* For the cloud callout, we might still want absolute positioning relative to its canvas */
+            position: absolute; /* Keep absolute for this specific dialog */
+            z-index: 10;
+            width: 250px; /* Fixed width for better control */
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .cloud-callout.show {
+            opacity: 1;
+            /* Transform is handled by JS for specific positioning */
+        }
+
+
+        /* New style for static dialog boxes (Symporter/Antiporter labels) */
+        .static-dialog-box {
+            background-color: #dbeafe; /* Light blue-200, matching a lighter blue theme */
+            color: #1e40af; /* Darker blue-700 for text */
+            border: 1px solid #93c5fd; /* Light blue-300 border */
+            padding: 0.75rem 1.5rem; /* Adjusted padding for oval shape */
+            border-radius: 0.75rem; /* Standard rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-size: 0.875rem; /* text-sm */
+            text-align: center;
+            width: fit-content; /* Adjust width to content */
+            min-width: 150px; /* Minimum width to ensure oval shape */
+            max-width: 250px; /* Max width for readability */
+            display: flex; /* Use flexbox for centering text vertically */
+            align-items: center;
+            justify-content: center;
+            /* Removed fixed height to allow content to wrap */
+            box-sizing: border-box; /* Include padding in width/height calculations */
+            line-height: 1.4; /* Improve readability for wrapped text */
+
+            /* Positioning for overlay */
+            position: absolute;
+            left: 50%; /* Center horizontally relative to parent */
+            transform: translateX(-50%); /* Adjust for own width to truly center */
+            z-index: 10; /* Ensure it's on top of SVG elements */
+        }
+
+        /* Specific positioning for Symporter and Antiporter dialogs */
+        .symporter-container .static-dialog-box {
+            top: 165px; /* Moved down from 150px */
+        }
+        .antiporter-container .static-dialog-box {
+            top: 185px; /* Moved down from 175px to 185px */
+            max-width: 500px; /* Even wider */
+            padding: 0.15rem 1.5rem; /* Even less vertical padding */
+            height: auto; /* Allow height to adjust based on content */
+            min-height: 20px; /* Minimum height to ensure it doesn't collapse too much */
+            font-size: 0.8rem; /* Slightly smaller font to help with wrapping */
+            line-height: 1.1; /* Tighter line height for 3 lines */
+        }
+
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem;
+            }
+            .container {
+                max-w: 900px; /* Wider container on desktop */
+            }
+            .simulation-canvas {
+                height: 400px; /* Taller canvas on desktop */
+            }
+        }
+
+        /* Graph canvas styling */
+        .graph-canvas {
+            background-color: #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: none; /* Initially hidden */
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 1rem auto;
+        }
+
+        /* New style for the caveats headline */
+        .caveats-headline {
+            color: #ef4444; /* Red */
+            font-weight: bold;
+            font-size: 1.5rem; /* Larger font */
+            margin-bottom: 0.5rem;
+        }
+
+        /* SVG specific styles for the diagram */
+        .membrane-line {
+            stroke: #60a5fa;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        .protein-block {
+            fill: #f97316;
+            stroke: #ea580c;
+            stroke-width: 2;
+            rx: 8; /* Rounded corners for protein blocks */
+            ry: 8;
+        }
+        .solute-circle {
+            fill: #3b82f6; /* Blue for Solute 1 (e.g., Na+) */
+            stroke: #2563eb;
+            stroke-width: 1;
+        }
+        .solute-square {
+            fill: #10b981; /* Green for Solute 2 (e.g., other solute) */
+            stroke: #059669;
+            stroke-width: 1;
+        }
+        .solute-text {
+            fill: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+        .arrow-line {
+            stroke: #4b5563;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+        .diagram-label {
+            fill: #334155;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 text-center">Solute Transport Explorer</h1>
+        <p class="text-gray-600 text-lg mb-6 text-center">
+            Explore fundamental concepts of solute transport across membranes.
+        </p>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Understanding Solute Transport</h2>
+            <div class="text-gray-700 space-y-4">
+                <p>
+                    Cell membranes are selectively permeable, meaning they control what enters and exits the cell. Solute transport refers to the movement of ions and molecules across these membranes. This process is vital for cell function, nutrient uptake, waste removal, and maintaining cellular homeostasis.
+                </p>
+                <p>
+                    There are several mechanisms for solute transport, including passive diffusion, facilitated diffusion, and active transport.
+                </p>
+            </div>
+        </div>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6 flex flex-col items-center">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Solute + Solvent = Solution</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 w-full">
+                <div class="flex flex-col items-center">
+                    <img src="https://placehold.co/100x100/4F46E5/ffffff?text=Solute" alt="Solute" class="rounded-lg shadow-md mb-2">
+                    <p class="font-semibold text-gray-700">Solute</p>
+                </div>
+                <span class="text-3xl font-bold text-gray-700">+</span>
+                <div class="flex flex-col items-center">
+                    <div class="relative w-24 h-32 bg-blue-200 rounded-b-xl overflow-hidden shadow-md">
+                        <div class="absolute bottom-0 left-0 w-full h-1/2 bg-blue-400"></div>
+                        <span class="absolute bottom-2 left-1/2 -translate-x-1/2 text-sm font-semibold text-gray-800">Water</span>
+                    </div>
+                    <p class="font-semibold text-gray-700 mt-2">Solvent</p>
+                </div>
+                <span class="text-3xl font-bold text-gray-700">→</span>
+                <div class="flex flex-col items-center">
+                    <div class="relative w-24 h-32 bg-blue-200 rounded-b-xl overflow-hidden shadow-md">
+                        <div class="absolute bottom-0 left-0 w-full h-3/4 bg-blue-400 opacity-75"></div>
+                        <div class="absolute bottom-0 left-0 w-full h-3/4 flex flex-wrap justify-around items-end p-2">
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity-70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                            <div class="w-2 h-2 bg-red-500 rounded-full opacity=70"></div>
+                        </div>
+                        <span class="absolute top-2 left-1/2 -translate-x-1/2 text-sm font-semibold text-gray-800">Solution</span>
+                    </div>
+                    <p class="font-semibold text-gray-700 mt-2">Solution</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Simple Diffusion</h2>
+            <p class="text-gray-600 mb-4 text-center">
+                Observe how solutes move across a semipermeable membrane down their concentration gradient.
+            </p>
+            <canvas id="simpleDiffusionCanvas" class="simulation-canvas"></canvas>
+            <div id="diffusionFeaturesDialog" class="dialog-box hidden">
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+                <button id="simulateDiffusionBtn" class="btn btn-blue">Simulate Transport</button>
+                <button id="resetDiffusionBtn" class="btn btn-red">Reset Simulation</button>
+                <button id="toggleDiffusionGraphBtn" class="btn btn-green">View Graph</button>
+            </div>
+
+            <canvas id="diffusionGraphCanvas" class="graph-canvas"></canvas>
+        </div>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Facilitated Diffusion (Carrier Protein Simulation)</h2>
+            <p class="text-gray-600 mb-4 text-center">
+                Observe how charged solutes move through a carrier protein, neutralizing the electrochemical gradient.
+            </p>
+            <h3 class="text-xl font-xl font-semibold text-gray-700">Facilitated Diffusion via Carrier Proteins:</h3>
+            <p class="text-gray-700">
+                Facilitated diffusion is a type of passive transport that does not require metabolic energy. Instead, it relies on specific membrane proteins, like carrier proteins, to help solutes cross the membrane down their concentration gradient.
+            </p>
+            <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700">
+                <li><strong>Binding:</strong> The solute binds to a specific site on the carrier protein.</li>
+                <li><strong>Conformational Change:</strong> The binding triggers a change in the protein's shape, reorienting the binding site to the other side of the membrane.</li>
+                <li><strong>Release:</strong> The solute is released on the opposite side, where its concentration is lower.</li>
+                <li><strong>Recovery:</strong> The carrier protein reverts to its original conformation, ready for another solute.</li>
+            </ul>
+            <p class="text-gray-700">
+                This process is faster and more specific than simple diffusion but still requires a concentration gradient.
+            </p>
+            <p class="text-blue-700 text-center mb-4 mt-4">
+                Observe how charged solutes move through a carrier protein, neutralizing the electrochemical gradient.
+            </p>
+            <canvas id="facilitatedDiffusionCanvas" class="simulation-canvas"></canvas>
+            <div id="facilitatedFeaturesDialog" class="dialog-box hidden">
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+                <button id="simulateFacilitatedBtn" class="btn btn-blue">Simulate Transport</button>
+                <button id="resetFacilitatedBtn" class="btn btn-red">Reset Simulation</button>
+                <button id="toggleFacilitatedGraphBtn" class="btn btn-green">View Graph</button>
+            </div>
+
+            <canvas id="facilitatedDiffusionGraphCanvas" class="graph-canvas"></canvas>
+        </div>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Primary Active Transport (Pump Simulation)</h2>
+            <p class="text-gray-600 mb-4 text-center">
+                Observe how solutes are transported against their concentration gradient using energy from ATP hydrolysis.
+            </p>
+            <canvas id="primaryActiveTransportCanvas" class="simulation-canvas"></canvas>
+            <div id="primaryActiveFeaturesDialog" class="dialog-box hidden">
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+                <button id="simulatePrimaryActiveBtn" class="btn btn-blue">Simulate Transport</button>
+                <button id="resetPrimaryActiveBtn" class="btn btn-red">Reset Simulation</button>
+                <button id="togglePrimaryActiveGraphBtn" class="btn btn-green">View Graph</button>
+            </div>
+
+            <canvas id="primaryActiveTransportGraphCanvas" class="graph-canvas"></canvas>
+        </div>
+
+        <div class="w-full bg-gray-50 p-4 md:p-6 rounded-lg shadow-inner mb-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Secondary Active Transport (Symporter)</h2>
+            <div class="text-gray-700 space-y-4">
+                <ul class="list-disc list-inside ml-4 space-y-2">
+                    <li>Secondary active transporters do not use ATP directly.</li>
+                    <li>They harness pre-existing electrochemical gradients (created by primary pumps) to drive the uphill movement of other solutes.</li>
+                    <li>In this process, one substrate (typically an ion like Na⁺ or H⁺) flows down its gradient (releasing free energy) and carries along a second substrate against its gradient.</li>
+                    <li>Most secondary transporters move substrates in fixed stoichiometric ratios (e.g. 2 Na⁺ per solute) and thus tightly couple the energetics of both transports.</li>
+                </ul>
+            </div>
+            <p class="text-blue-700 text-center mb-4 mt-4">
+                Observe how 2 sodium ions (Na+) flowing down their gradient drive the uphill transport of 1 solute molecule.
+            </p>
+            <canvas id="secondaryActiveTransportCanvas" class="simulation-canvas"></canvas>
+            <div id="secondaryActiveFeaturesDialog" class="dialog-box hidden">
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+                <button id="simulateSecondaryActiveBtn" class="btn btn-blue">Simulate Transport</button>
+                <button id="resetSecondaryActiveBtn" class="btn btn-red">Reset Simulation</button>
+            </div>
+
+            <div class="w-full mt-8 p-4 md:p-6 rounded-lg bg-gray-100 shadow-inner">
+                <h3 class="text-xl font-semibold text-gray-700 mb-4 text-center">Classification of Secondary Transporters</h3>
+                <p class="text-gray-700 text-center mb-6">
+                    Secondary transporters are classified by the direction of co-transport.
+                </p>
+                <div class="flex flex-col md:flex-row justify-around items-center space-y-8 md:space-y-0 md:space-x-8">
+                    <div class="flex flex-col items-center relative symporter-container">
+                        <h4 class="diagram-label mb-4">Symporter (Cotransporter)</h4>
+                        <svg width="200" height="220" viewBox="0 0 200 220">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563" />
+                                </marker>
+                            </defs>
+                            <line x1="0" y1="75" x2="60" y2="75" class="membrane-line" />
+                            <line x1="140" y1="75" x2="200" y2="75" class="membrane-line" />
+
+                            <rect x="70" y="40" width="60" height="70" class="protein-block" />
+
+                            <circle cx="90" cy="30" r="8" class="solute-circle" />
+                            <text x="90" y="30" class="solute-text">S1</text>
+                            <line x1="90" y1="40" x2="90" y2="75" class="arrow-line" />
+
+                            <rect x="105" y="22" width="16" height="16" class="solute-square" />
+                            <text x="113" y="30" class="solute-text">S2</text>
+                            <line x1="113" y1="40" x2="113" y2="75" class="arrow-line" />
+
+                        </svg>
+                        <div class="static-dialog-box">
+                            Both substrates move in the same direction.
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center relative antiporter-container">
+                        <h4 class="diagram-label mb-4">Antiporter (Exchanger)</h4>
+                        <svg width="200" height="220" viewBox="0 0 200 220">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563" />
+                                </marker>
+                            </defs>
+                            <line x1="0" y1="75" x2="60" y2="75" class="membrane-line" />
+                            <line x1="140" y1="75" x2="200" y2="75" class="membrane-line" />
+
+                            <rect x="70" y="40" width="60" height="70" class="protein-block" />
+
+                            <circle cx="90" cy="30" r="8" class="solute-circle" />
+                            <text x="90" y="30" class="solute-text">S1</text>
+                            <line x1="113" y1="40" x2="113" y2="75" class="arrow-line" />
+
+                            <rect x="105" y="120" width="16" height="16" class="solute-square" />
+                            <text x="113" y="128" class="solute-text">S2</text>
+                            <line x1="90" y1="120" x2="90" y2="85" class="arrow-line" />
+
+                        </svg>
+                        <div class="static-dialog-box">
+                            The two substrates move in opposite directions.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full text-center mt-8 p-4">
+            <p id="email-watermark" class="text-gray-500 text-sm mb-2">betabiosciences@gmail.com</p>
+            <p class="text-gray-500 text-sm">
+                <a href="https://t.me/betascience_csir" target="_blank" class="text-blue-600 hover:underline">Join our Telegram Channel</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Global flag for script validity
+        let isScriptValid = true;
+
+        // Function to validate the email watermark
+        function validateEmailWatermark() {
+            const emailElement = document.getElementById('email-watermark');
+            const expectedEmail = "betabiosciences@gmail.com";
+
+            if (!emailElement || emailElement.textContent !== expectedEmail) {
+                isScriptValid = false;
+                console.error("Security Alert: Email watermark removed or modified. Script functionality disabled.");
+                // Disable all simulation buttons
+                document.querySelectorAll('.btn').forEach(button => {
+                    button.disabled = true;
+                    button.textContent = "Script Disabled"; // Indicate failure
+                });
+                // Display a prominent security message overlay
+                let securityMessage = document.getElementById('security-fail-message');
+                if (!securityMessage) {
+                    securityMessage = document.createElement('div');
+                    securityMessage.id = 'security-fail-message';
+                    securityMessage.className = 'fixed inset-0 bg-red-500 bg-opacity-90 flex items-center justify-center z-50 text-white text-3xl font-bold text-center p-8';
+                    securityMessage.innerHTML = 'SECURITY ALERT: Script integrity compromised. Functionality disabled.';
+                    document.body.appendChild(securityMessage);
+                }
+            } else {
+                isScriptValid = true;
+                 // Re-enable buttons if validation passes (e.g., after a reset that fixes it)
+                document.querySelectorAll('.btn').forEach(button => {
+                    // Only re-enable if they were not disabled by simulation completion
+                    // This prevents re-enabling buttons that are legitimately disabled by simulation logic
+                    if (button.textContent !== "Script Disabled" &&
+                        !button.classList.contains('simulate-btn-disabled-by-logic')) { // Check for the new class
+                        button.disabled = false;
+                    }
+                });
+                const securityMessage = document.getElementById('security-fail-message');
+                if (securityMessage) {
+                    securityMessage.remove();
+                }
+            }
+        }
+
+        // --- Simple Diffusion Canvas Logic ---
+        const simpleDiffusionCanvas = document.getElementById('simpleDiffusionCanvas');
+        const sdc = simpleDiffusionCanvas.getContext('2d'); // Simple Diffusion Context
+        const simulateDiffusionBtn = document.getElementById('simulateDiffusionBtn');
+        const resetDiffusionBtn = document.getElementById('resetDiffusionBtn');
+        const toggleDiffusionGraphBtn = document.getElementById('toggleDiffusionGraphBtn'); // New button
+        const diffusionGraphCanvas = document.getElementById('diffusionGraphCanvas'); // New canvas for graph
+        const dgc = diffusionGraphCanvas.getContext('2d'); // Graph context
+        const diffusionFeaturesDialog = document.getElementById('diffusionFeaturesDialog');
+
+        let diffusionSolutes = [];
+        const numDiffusionSolutes = 50;
+        const soluteDiffusionRadius = 4;
+        const membraneThicknessSimple = 8; // Thicker membrane for simple diffusion
+
+        function initDiffusionSolutes() {
+            diffusionSolutes = [];
+            // Initialize solutes mostly on the left side
+            for (let i = 0; i < numDiffusionSolutes; i++) {
+                let x = Math.random() * (simpleDiffusionCanvas.width / 2 - soluteDiffusionRadius * 2) + soluteDiffusionRadius;
+                let y = Math.random() * (simpleDiffusionCanvas.height - soluteDiffusionRadius * 2) + soluteDiffusionRadius;
+                diffusionSolutes.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5, // Slightly faster random velocity
+                    vy: (Math.random() - 0.5) * 1.5,
+                    color: '#ef4444' // Red solute color
+                });
+            }
+        }
+
+        function drawSimpleDiffusionScene() {
+            sdc.clearRect(0, 0, simpleDiffusionCanvas.width, simpleDiffusionCanvas.height);
+
+            // Draw the semipermeable membrane (a thicker line in the middle)
+            sdc.fillStyle = '#60a5fa'; // Blue membrane color
+            const membraneXPos = simpleDiffusionCanvas.width / 2 - membraneThicknessSimple / 2;
+            sdc.fillRect(membraneXPos, 0, membraneThicknessSimple, simpleDiffusionCanvas.height); // Thicker vertical membrane
+
+            // Draw membrane label and arrow
+            sdc.save(); // Save current canvas state
+            // Translate origin to the center of the membrane, slightly to the right for the label
+            sdc.translate(membraneXPos + membraneThicknessSimple / 2 + 15, simpleDiffusionCanvas.height / 2);
+            sdc.rotate(Math.PI / 2); // Rotate 90 degrees (vertical)
+
+            sdc.fillStyle = '#4b5563'; // Darker gray for text
+            sdc.font = '14px Inter, sans-serif';
+            sdc.textAlign = 'center';
+            sdc.textBaseline = 'middle';
+            sdc.fillText('Semipermeable membrane', 0, 0); // Text at the new origin
+
+            // Draw arrow pointing back to the membrane
+            sdc.strokeStyle = '#4b5563';
+            sdc.lineWidth = 1.5;
+            sdc.beginPath();
+            sdc.moveTo(0, -10); // Start point of arrow (relative to rotated origin, slightly above text)
+            sdc.lineTo(0, -5); // End point of arrow shaft
+            sdc.moveTo(0, -5);
+            sdc.lineTo(-5, 0); // Arrowhead part 1 (pointing left in rotated space, which is down towards membrane in original)
+            sdc.moveTo(0, -5);
+            sdc.lineTo(5, 0); // Arrowhead part 2
+            sdc.stroke();
+
+            sdc.restore(); // Restore canvas state
+
+            // Draw solutes
+            diffusionSolutes.forEach(solute => {
+                sdc.beginPath();
+                sdc.arc(solute.x, solute.y, soluteDiffusionRadius, 0, Math.PI * 2);
+                sdc.fillStyle = solute.color;
+                sdc.fill();
+                sdc.strokeStyle = '#b91c1c';
+                sdc.lineWidth = 1;
+                sdc.stroke();
+            });
+        }
+
+        let diffusionAnimationId;
+        let diffusionInProgress = false;
+
+        function animateDiffusion() {
+            if (!diffusionInProgress) return;
+
+            diffusionSolutes.forEach(solute => {
+                // Update position
+                solute.x += solute.vx;
+                solute.y += solute.vy;
+
+                // Bounce off all canvas walls
+                if (solute.x + soluteDiffusionRadius > simpleDiffusionCanvas.width || solute.x - soluteDiffusionRadius < 0) {
+                    solute.vx *= -1;
+                }
+                if (solute.y + soluteDiffusionRadius > simpleDiffusionCanvas.height || solute.y - soluteDiffusionRadius < 0) {
+                    solute.vy *= -1;
+                }
+                // For simple diffusion, solutes pass through the membrane freely based on random motion.
+                // No specific membrane interaction logic needed here.
+            });
+
+            drawSimpleDiffusionScene();
+
+            // Check for equilibrium (roughly equal distribution)
+            let leftCount = diffusionSolutes.filter(s => s.x < simpleDiffusionCanvas.width / 2).length;
+            let rightCount = diffusionSolutes.filter(s => s.x > simpleDiffusionCanvas.width / 2).length;
+
+            // Stop simulation when concentrations are roughly equal (within 15% tolerance)
+            if (Math.abs(leftCount - rightCount) <= numDiffusionSolutes * 0.15) {
+                diffusionInProgress = false;
+                cancelAnimationFrame(diffusionAnimationId);
+                simulateDiffusionBtn.disabled = true;
+                resetDiffusionBtn.disabled = false;
+
+                // Update dialog content and show with animation
+                diffusionFeaturesDialog.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-2">Simulation Complete!</h3>
+                    <p>Concentration on either side of the membrane are now the same. The system has attained equilibrium.</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li>No energy required.</li>
+                        <li>Occurs down the concentration gradient (Chemical gradient).</li>
+                        <li>Does NOT require carrier proteins.</li>
+                        <li>Continues until equilibrium is reached.</li>
+                        <li>The solutes directly interface with the lipid membrane.</li>
+                        <li>All solutes involved must be lipid soluble.</li>
+                        <li>Simple diffusion will continue until the concentrations on either side of the membrane are equal.</li>
+                        <li>Rate of simple diffusion is governed by Fick's Law.</li>
+                        <li>Simple diffusion cannot be saturated.</li>
+                    </ul>
+                `;
+                diffusionFeaturesDialog.classList.remove('hidden');
+                setTimeout(() => {
+                    diffusionFeaturesDialog.classList.add('show');
+                }, 10); // Small delay to allow 'hidden' to be removed before 'show' is added for transition
+            } else {
+                diffusionAnimationId = requestAnimationFrame(animateDiffusion);
+            }
+        }
+
+        function startDiffusionSimulation() {
+            validateEmailWatermark(); // Security check
+            if (!isScriptValid) return;
+
+            if (!diffusionInProgress) {
+                diffusionInProgress = true;
+                simulateDiffusionBtn.disabled = true; // Disable the button
+                simulateDiffusionBtn.classList.add('simulate-btn-disabled-by-logic'); // Add class to prevent re-enabling by watermark check
+                resetDiffusionBtn.disabled = false;
+                diffusionFeaturesDialog.classList.remove('show'); // Hide dialog before new simulation
+                diffusionFeaturesDialog.classList.add('hidden'); // Ensure it's fully hidden
+                // Hide graph if it's visible
+                diffusionGraphCanvas.style.display = 'none';
+                toggleDiffusionGraphBtn.textContent = 'View Graph';
+                animateDiffusion();
+            }
+        }
+
+        function resetDiffusionSimulation() {
+            cancelAnimationFrame(diffusionAnimationId);
+            diffusionInProgress = false;
+            initDiffusionSolutes();
+            drawSimpleDiffusionScene();
+            simulateDiffusionBtn.disabled = false; // Re-enable the button
+            simulateDiffusionBtn.classList.remove('simulate-btn-disabled-by-logic'); // Remove class
+            resetDiffusionBtn.disabled = true;
+            diffusionFeaturesDialog.classList.remove('show'); // Remove show class
+            diffusionFeaturesDialog.classList.add('hidden'); // Hide it again
+            // Hide graph on reset
+            diffusionGraphCanvas.style.display = 'none';
+            toggleDiffusionGraphBtn.textContent = 'View Graph';
+            // Reset dialog content to initial features
+            diffusionFeaturesDialog.innerHTML = `
+                <h3 class="text-xl font-semibold mb-2">Key Features of Simple Diffusion:</h3>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>No energy required.</li>
+                    <li>Occurs down the concentration gradient (Chemical gradient).</li>
+                    <li>Does NOT require carrier proteins.</li>
+                    <li>Continues until equilibrium is reached.</li>
+                    <li>The solutes directly interface with the lipid membrane.</li>
+                    <li>All solutes involved must be lipid soluble.</li>
+                    <li>Simple diffusion will continue until the concentrations on either side of the membrane are equal.</li>
+                    <li>Rate of simple diffusion is governed by Fick's Law.</li>
+                    <li>Simple diffusion cannot be saturated.</li>
+                </ul>
+            `;
+            validateEmailWatermark(); // Re-validate after reset
+        }
+
+        // --- Graph Drawing for Simple Diffusion ---
+        function drawDiffusionGraph() {
+            dgc.clearRect(0, 0, diffusionGraphCanvas.width, diffusionGraphCanvas.height);
+
+            const padding = 40;
+            const graphWidth = diffusionGraphCanvas.width - 2 * padding;
+            const graphHeight = diffusionGraphCanvas.height - 2 * padding;
+
+            // Draw X-axis (Concentration Gradient)
+            dgc.beginPath();
+            dgc.moveTo(padding, diffusionGraphCanvas.height - padding);
+            dgc.lineTo(padding + graphWidth, diffusionGraphCanvas.height - padding);
+            dgc.strokeStyle = '#334155';
+            dgc.lineWidth = 2;
+            dgc.stroke();
+
+            // Draw Y-axis (Rate of Simple Diffusion)
+            dgc.beginPath();
+            dgc.moveTo(padding, diffusionGraphCanvas.height - padding);
+            dgc.lineTo(padding, padding);
+            dgc.strokeStyle = '#334155';
+            dgc.lineWidth = 2;
+            dgc.stroke();
+
+            // Draw labels
+            dgc.fillStyle = '#334155';
+            dgc.font = '14px Inter, sans-serif';
+            dgc.textAlign = 'center';
+            dgc.textBaseline = 'top';
+            dgc.fillText('Concentration Gradient', padding + graphWidth / 2, diffusionGraphCanvas.height - padding + 20);
+
+            dgc.save();
+            dgc.translate(padding - 20, padding + graphHeight / 2);
+            dgc.rotate(-Math.PI / 2);
+            dgc.textAlign = 'center';
+            dgc.textBaseline = 'bottom';
+            dgc.fillText('Rate of Simple Diffusion', 0, 0);
+            dgc.restore();
+
+            // Draw Fick's Law line (linear relationship)
+            dgc.beginPath();
+            dgc.moveTo(padding, diffusionGraphCanvas.height - padding); // Start at origin (0 gradient, 0 rate)
+            dgc.lineTo(padding + graphWidth, padding); // End at max gradient, max rate
+            dgc.strokeStyle = '#4f46e5'; // Indigo color for the line
+            dgc.lineWidth = 3;
+            dgc.stroke(); /* Changed from sdc.stroke() to dgc.stroke() */
+
+            // Add Fick's Law text
+            dgc.fillStyle = '#4f46e5';
+            dgc.font = 'italic 16px Inter, sans-serif';
+            dgc.textAlign = 'left';
+            dgc.textBaseline = 'bottom';
+            dgc.fillText("Fick's Law: Rate ∝ Gradient", padding + 10, padding - 5);
+        }
+
+        // --- Facilitated Diffusion Canvas Logic (REWRITTEN) ---
+        const facilitatedDiffusionCanvas = document.getElementById('facilitatedDiffusionCanvas');
+        const fdc = facilitatedDiffusionCanvas.getContext('2d'); // Facilitated Diffusion Context
+
+        const simulateFacilitatedBtn = document.getElementById('simulateFacilitatedBtn');
+        const resetFacilitatedBtn = document.getElementById('resetFacilitatedBtn');
+        const toggleFacilitatedGraphBtn = document.getElementById('toggleFacilitatedGraphBtn'); // New button for facilitated graph
+        const facilitatedDiffusionGraphCanvas = document.getElementById('facilitatedDiffusionGraphCanvas'); // New canvas for facilitated graph
+        const fdgc = facilitatedDiffusionGraphCanvas.getContext('2d'); // Facilitated Diffusion Graph Context
+        const facilitatedFeaturesDialog = document.getElementById('facilitatedFeaturesDialog');
+
+        let facilitatedSolutes = [];
+        const numFacilitatedSolutes = 20;
+        const soluteFacilitatedRadius = 8;
+        const soluteCharge = 1;
+        let electrochemicalGradient = 0;
+
+        // Protein dimensions - declared globally, values updated in resizeCanvases
+        const membraneThicknessFacilitated = 20;
+        const proteinWidth = 40;
+        const proteinHeight = 100;
+        let membraneCenterY;
+        let proteinY;
+        let proteinX;
+        let membraneTopY;
+        let membraneBottomY;
+
+        function initFacilitatedSolutes() {
+            facilitatedSolutes = [];
+            if (facilitatedDiffusionCanvas.width === 0 || facilitatedDiffusionCanvas.height === 0) {
+                console.error("Facilitated Diffusion Canvas dimensions are zero, cannot initialize solutes correctly.");
+                return;
+            }
+
+            updateFacilitatedGeometry(); // Ensure protein/membrane positions are up-to-date
+
+            // Initialize solutes randomly across the entire top compartment
+            for (let i = 0; i < numFacilitatedSolutes; i++) {
+                let x = Math.random() * (facilitatedDiffusionCanvas.width - soluteFacilitatedRadius * 2) + soluteFacilitatedRadius;
+                // Place solutes randomly in the top half, above the membrane, with some padding
+                let y = Math.random() * (membraneTopY - soluteFacilitatedRadius * 2 - 20) + soluteFacilitatedRadius + 10;
+
+                facilitatedSolutes.push({
+                    id: i,
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5, // Initial random horizontal velocity for dispersion
+                    vy: (Math.random() - 0.5) * 1.5, // Initial random vertical velocity for dispersion
+                    inProtein: false,
+                    hasCrossed: false,
+                    color: '#ef4444', // Initial red color
+                    speed: 1.5 // Base speed for movement
+                });
+            }
+            electrochemicalGradient = numFacilitatedSolutes * soluteCharge; // All solutes start on top
+        }
+
+        function drawFacilitatedScene() {
+            fdc.clearRect(0, 0, facilitatedDiffusionCanvas.width, facilitatedDiffusionCanvas.height);
+
+            // Draw membrane segments
+            fdc.fillStyle = '#60a5fa'; // Blue membrane color
+            fdc.fillRect(0, membraneTopY, proteinX, membraneThicknessFacilitated);
+            fdc.fillRect(proteinX + proteinWidth, membraneTopY, facilitatedDiffusionCanvas.width - (proteinX + proteinWidth), membraneThicknessFacilitated);
+
+            // Draw membrane label and arrow
+            fdc.save();
+            fdc.translate(facilitatedDiffusionCanvas.width - 10, facilitatedDiffusionCanvas.height / 2);
+            fdc.rotate(Math.PI / 2);
+            fdc.fillStyle = '#4b5563';
+            fdc.font = '14px Inter, sans-serif';
+            fdc.textAlign = 'center';
+            fdc.textBaseline = 'middle';
+            fdc.fillText('Semipermeable membrane', 0, 0);
+            fdc.strokeStyle = '#4b5563';
+            fdc.lineWidth = 1.5;
+            fdc.beginPath();
+            fdc.moveTo(0, -10);
+            fdc.lineTo(0, -5);
+            fdc.moveTo(0, -5);
+            fdc.lineTo(5, 0);
+            fdc.stroke();
+            fdc.restore();
+
+            // Draw carrier protein (inserted into membrane)
+            fdc.fillStyle = '#10b981'; // Green protein color
+            fdc.strokeStyle = '#059669'; // Darker green border
+            fdc.lineWidth = 2;
+            fdc.fillRect(proteinX, proteinY, proteinWidth, proteinHeight);
+            fdc.strokeRect(proteinX, proteinY, proteinWidth, proteinHeight);
+
+            // Draw protein channel (transparent part within the protein)
+            fdc.fillStyle = '#a7f3d0'; // Lighter green for channel
+            const channelPadding = proteinWidth * 0.2;
+            fdc.fillRect(proteinX + channelPadding, proteinY, proteinWidth - (channelPadding * 2), proteinHeight);
+            fdc.strokeStyle = '#059669';
+            fdc.strokeRect(proteinX + channelPadding, proteinY, proteinWidth - (channelPadding * 2), proteinHeight);
+
+            // Draw solutes
+            facilitatedSolutes.forEach(solute => {
+                fdc.beginPath();
+                fdc.arc(solute.x, solute.y, soluteFacilitatedRadius, 0, Math.PI * 2);
+                fdc.fillStyle = solute.color;
+                fdc.fill();
+                fdc.strokeStyle = '#b91c1c';
+                fdc.lineWidth = 1;
+                fdc.stroke();
+
+                // Draw charge (e.g., '+')
+                fdc.fillStyle = '#ffffff';
+                fdc.font = 'bold 10px Inter, sans-serif';
+                fdc.textAlign = 'center';
+                fdc.textBaseline = 'middle';
+                fdc.fillText('+', solute.x, solute.y);
+            });
+
+            // Draw Electrochemical Gradient Display
+            const gradientBarX = 10;
+            const gradientBarY = 120;
+            const gradientBarWidth = 20;
+            const gradientBarMaxHeight = 100;
+
+            const initialGradientValueForDisplay = (numFacilitatedSolutes * soluteCharge) > 0 ? (numFacilitatedSolutes * soluteCharge) : 1;
+            let currentBarHeight = (Math.abs(electrochemicalGradient) / initialGradientValueForDisplay) * gradientBarMaxHeight;
+            currentBarHeight = Math.max(0, currentBarHeight);
+
+            let colorProgress = 1 - (Math.abs(electrochemicalGradient) / initialGradientValueForDisplay);
+            colorProgress = Math.min(1, Math.max(0, colorProgress));
+
+            const r = Math.floor(255 * colorProgress);
+            const g = Math.floor(255 * (1 - colorProgress));
+            const gradientColor = `rgb(${r},${g},0)`;
+
+            fdc.fillStyle = '#cbd5e0';
+            fdc.fillRect(gradientBarX, gradientBarY, gradientBarWidth, gradientBarMaxHeight);
+
+            fdc.fillStyle = gradientColor;
+            fdc.fillRect(gradientBarX, gradientBarY + (gradientBarMaxHeight - currentBarHeight), gradientBarWidth, currentBarHeight);
+            fdc.strokeStyle = '#334155';
+            fdc.lineWidth = 1;
+            fdc.strokeRect(gradientBarX, gradientBarY, gradientBarWidth, gradientBarMaxHeight);
+
+            fdc.fillStyle = '#334155';
+            fdc.font = 'bold 16px Inter, sans-serif';
+            fdc.textAlign = 'left';
+            fdc.textBaseline = 'top';
+            const displayedGradientValue = Math.round(electrochemicalGradient);
+            fdc.fillText(`${displayedGradientValue}`, gradientBarX, gradientBarY - 20);
+            fdc.fillText(`Electrochemical Gradient:`, gradientBarX, gradientBarY + gradientBarMaxHeight + 10);
+        }
+
+        function updateElectrochemicalGradient() {
+            let topCharge = 0;
+            let bottomCharge = 0;
+            facilitatedSolutes.forEach(solute => {
+                const charge = soluteCharge; // All solutes have charge 1
+                // Solute is in the top compartment if its entire body is above the protein's top Y
+                if (solute.y + soluteFacilitatedRadius < proteinY) {
+                    topCharge += charge;
+                }
+                // Solute is in the bottom compartment if its entire body is below the protein's bottom Y
+                else if (solute.y - soluteFacilitatedRadius > (proteinY + proteinHeight)) {
+                    bottomCharge += charge;
+                }
+                // Solutes within the protein/membrane region are not counted towards top/bottom charge
+            });
+            electrochemicalGradient = topCharge - bottomCharge;
+        }
+
+        let facilitatedAnimationId;
+        let facilitatedInProgress = false;
+
+        function animateFacilitatedTransport() {
+            if (!facilitatedInProgress) return;
+
+            facilitatedSolutes.forEach(solute => {
+                const channelCenterX = proteinX + proteinWidth / 2;
+                const channelTopY = proteinY;
+                const channelBottomY = proteinY + proteinHeight;
+
+                if (!solute.hasCrossed) {
+                    if (!solute.inProtein) {
+                        // Phase 1: Approaching the Protein
+                        let targetX = solute.x + solute.vx; // Keep some random horizontal movement
+                        let targetY = solute.y + solute.vy; // Keep some random vertical movement
+
+                        // If solute is above or near the protein, give it a slight homing pull
+                        if (solute.y < proteinY + 50 && solute.x > proteinX - 50 && solute.x < proteinX + proteinWidth + 50) {
+                             const homingFactor = 0.05; // Slightly less aggressive pull
+                             const dxToProtein = channelCenterX - solute.x;
+                             const dyToProtein = channelTopY - solute.y;
+                             targetX += dxToProtein * homingFactor;
+                             targetY += dyToProtein * homingFactor;
+                        }
+
+                        solute.x = targetX;
+                        solute.y = targetY;
+
+
+                        // Bounce off canvas edges (top, left, right)
+                        if (solute.x + soluteFacilitatedRadius > facilitatedDiffusionCanvas.width || solute.x - soluteFacilitatedRadius < 0) {
+                            solute.vx *= -1;
+                            solute.x = Math.max(soluteFacilitatedRadius, Math.min(facilitatedDiffusionCanvas.width - soluteFacilitatedRadius, solute.x));
+                        }
+                        if (solute.y - soluteFacilitatedRadius < 0) {
+                            solute.y = soluteFacilitatedRadius;
+                            solute.vy *= -1;
+                        }
+
+                        // Bounce off membrane outside protein
+                        if (solute.y + soluteFacilitatedRadius > membraneTopY &&
+                            solute.y - soluteFacilitatedRadius < membraneBottomY &&
+                            !(solute.x > proteinX && solute.x < proteinX + proteinWidth)) {
+                            solute.vy *= -1;
+                            if (solute.y < membraneCenterY) { // If trying to go into membrane from top
+                                solute.y = membraneTopY - soluteFacilitatedRadius - 1;
+                            } else { // If trying to go into membrane from bottom (shouldn't happen for uncrossed)
+                                solute.y = membraneBottomY + soluteFacilitatedRadius + 1;
+                            }
+                        }
+
+                        // Check for entry into protein
+                        if (solute.x >= proteinX && solute.x <= proteinX + proteinWidth &&
+                            solute.y + soluteFacilitatedRadius >= channelTopY) {
+                            solute.inProtein = true;
+                            solute.vx = 0; // Stop horizontal movement
+                            solute.vy = 2; // Fixed downward speed in protein
+                            solute.x = channelCenterX; // Snap to center
+                            solute.y = channelTopY + soluteFacilitatedRadius; // Snap to top of channel
+                            solute.color = '#3b82f6'; // Change color to blue
+                        }
+
+                    } else {
+                        // Phase 2: Inside the Protein
+                        solute.y += solute.vy; // Move downwards at fixed speed
+                        solute.x = channelCenterX; // Keep centered
+
+                        // Check for exit from protein
+                        if (solute.y - soluteFacilitatedRadius >= channelBottomY) { // Solute has fully exited
+                            solute.inProtein = false;
+                            solute.hasCrossed = true;
+                            solute.vx = (Math.random() - 0.5) * solute.speed * 2; // New random dispersion velocity
+                            solute.vy = (Math.random() * 0.5 + 0.5) * solute.speed * 2; // Biased downwards
+                            solute.y = channelBottomY + soluteFacilitatedRadius + 1; // Ensure clear of protein
+                            solute.color = '#ef4444'; // Revert color to red
+                        }
+                    }
+                } else {
+                    // Phase 3: Dispersing in Bottom Compartment
+                    solute.x += solute.vx;
+                    solute.y += solute.vy;
+
+                    // Bounce off bottom walls and membrane bottom (to stay in bottom half)
+                    if (solute.x + soluteFacilitatedRadius > facilitatedDiffusionCanvas.width || solute.x - soluteFacilitatedRadius < 0) {
+                        solute.vx *= -1;
+                        solute.x = Math.max(soluteFacilitatedRadius, Math.min(facilitatedDiffusionCanvas.width - soluteFacilitatedRadius, solute.x));
+                    }
+                    if (solute.y + soluteFacilitatedRadius > facilitatedDiffusionCanvas.height || solute.y - soluteFacilitatedRadius < membraneBottomY) {
+                        solute.vy *= -1;
+                        solute.y = Math.max(membraneBottomY + soluteFacilitatedRadius, Math.min(facilitatedDiffusionCanvas.height - soluteFacilitatedRadius, solute.y));
+                    }
+                }
+            });
+
+            updateElectrochemicalGradient();
+            drawFacilitatedScene(); // Ensure drawing happens every frame
+
+            // Stop condition
+            if (Math.abs(electrochemicalGradient) < 2) {
+                facilitatedInProgress = false;
+                cancelAnimationFrame(facilitatedAnimationId);
+                simulateFacilitatedBtn.disabled = true;
+                resetFacilitatedBtn.disabled = false;
+
+                // Force electrochemicalGradient to 0 for display purposes when stopping
+                electrochemicalGradient = 0;
+                drawFacilitatedScene(); // Draw one last time to show 0 and final solute positions
+
+                facilitatedFeaturesDialog.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-2">Transport Stopped!</h3>
+                    <p>Transport has stopped because the electrochemical gradient across the membrane has been neutralized.
+                    Some solutes remain in the upper chamber, illustrating that net movement ceases at equilibrium.</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li>The solutes never directly contact the lipid membrane and hence need not be lipid soluble.</li>
+                        <li>Facilitated transport follows Michaelis-Menten kinetics.</li>
+                        <li>They can be saturated.</li>
+                        <li>Maximum velocity (Vmax) is achievable.</li>
+                        <li>The carrier protein is very specific to the solute being transported like an enzyme and its substrate.</li>
+                        <li>Rate of facilitated diffusion is higher than simple diffusion.</li>
+                    </ul>
+                `;
+                facilitatedFeaturesDialog.classList.remove('hidden');
+                setTimeout(() => { facilitatedFeaturesDialog.classList.add('show'); }, 10);
+            } else {
+                facilitatedAnimationId = requestAnimationFrame(animateFacilitatedTransport);
+            }
+        }
+
+        function startFacilitatedSimulation() {
+            validateEmailWatermark(); // Security check
+            if (!isScriptValid) return;
+
+            if (!facilitatedInProgress) {
+                facilitatedInProgress = true;
+                simulateFacilitatedBtn.disabled = true; // Disable the button
+                simulateFacilitatedBtn.classList.add('simulate-btn-disabled-by-logic'); // Add class
+                resetFacilitatedBtn.disabled = false;
+                facilitatedFeaturesDialog.classList.remove('show');
+                facilitatedFeaturesDialog.classList.add('hidden');
+                // Hide graph if visible
+                facilitatedDiffusionGraphCanvas.style.display = 'none';
+                toggleFacilitatedGraphBtn.textContent = 'View Graph';
+                animateFacilitatedTransport();
+            }
+        }
+
+        function resetFacilitatedSimulation() {
+            cancelAnimationFrame(facilitatedAnimationId);
+            facilitatedInProgress = false;
+            updateFacilitatedGeometry();
+            initFacilitatedSolutes();
+            drawFacilitatedScene(); // Initial draw after reset
+            simulateFacilitatedBtn.disabled = false; // Re-enable the button
+            simulateFacilitatedBtn.classList.remove('simulate-btn-disabled-by-logic'); // Remove class
+            resetFacilitatedBtn.disabled = true;
+            facilitatedFeaturesDialog.classList.remove('show');
+            facilitatedFeaturesDialog.classList.add('hidden');
+            // Hide graph on reset
+            facilitatedDiffusionGraphCanvas.style.display = 'none';
+            toggleFacilitatedGraphBtn.textContent = 'View Graph';
+            facilitatedFeaturesDialog.innerHTML = `
+                <h3 class="text-xl font-semibold mb-2">Facilitated Diffusion:</h3>
+                <p>Click "Simulate Transport" to see how carrier proteins help charged solutes move down their electrochemical gradient.</p>
+                <ul class="list-disc list-inside space-y-1 mt-2">
+                    <li>The solutes never directly contact the lipid membrane and hence need not be lipid soluble.</li>
+                    <li>Facilitated transport follows Michaelis-Menten kinetics.</li>
+                    <li>They can be saturated.</li>
+                    <li>Maximum velocity (Vmax) is achievable.</li>
+                    <li>The carrier protein is very specific to the solute being transported like an enzyme and its substrate.</li>
+                    <li>Rate of facilitated diffusion is higher than simple diffusion.</li>
+                </ul>
+            `;
+            validateEmailWatermark(); // Re-validate after reset
+        }
+
+        function updateFacilitatedGeometry() {
+            membraneCenterY = facilitatedDiffusionCanvas.height / 2;
+            proteinX = (facilitatedDiffusionCanvas.width / 2) - (proteinWidth / 2);
+            proteinY = membraneCenterY - (proteinHeight / 2);
+            membraneTopY = membraneCenterY - (membraneThicknessFacilitated / 2);
+            membraneBottomY = membraneCenterY + (membraneThicknessFacilitated / 2);
+        }
+
+        // --- Graph Drawing for Facilitated Diffusion ---
+        function drawFacilitatedGraph() {
+            fdgc.clearRect(0, 0, facilitatedDiffusionGraphCanvas.width, facilitatedDiffusionGraphCanvas.height);
+
+            const padding = 40;
+            const graphWidth = facilitatedDiffusionGraphCanvas.width - 2 * padding;
+            const graphHeight = facilitatedDiffusionGraphCanvas.height - 2 * padding;
+
+            // Draw X-axis (Concentration Gradient)
+            fdgc.beginPath();
+            fdgc.moveTo(padding, facilitatedDiffusionGraphCanvas.height - padding);
+            fdgc.lineTo(padding + graphWidth, facilitatedDiffusionGraphCanvas.height - padding);
+            fdgc.strokeStyle = '#334155';
+            fdgc.lineWidth = 2;
+            fdgc.stroke();
+
+            // Draw Y-axis (Rate of Facilitated Diffusion)
+            fdgc.beginPath();
+            fdgc.moveTo(padding, facilitatedDiffusionGraphCanvas.height - padding);
+            fdgc.lineTo(padding, padding);
+            fdgc.strokeStyle = '#334155';
+            fdgc.lineWidth = 2;
+            fdgc.stroke();
+
+            // Draw labels
+            fdgc.fillStyle = '#334155';
+            fdgc.font = '14px Inter, sans-serif';
+            fdgc.textAlign = 'center';
+            fdgc.textBaseline = 'top';
+            fdgc.fillText('Concentration Gradient', padding + graphWidth / 2, facilitatedDiffusionGraphCanvas.height - padding + 20);
+
+            fdgc.save();
+            fdgc.translate(padding - 20, padding + graphHeight / 2);
+            fdgc.rotate(-Math.PI / 2);
+            fdgc.textAlign = 'center';
+            fdgc.textBaseline = 'bottom';
+            fdgc.fillText('Rate of Facilitated Diffusion', 0, 0);
+            fdgc.restore();
+
+            // Draw Michaelis-Menten curve (saturable kinetics)
+            fdgc.beginPath();
+            fdgc.moveTo(padding, facilitatedDiffusionGraphCanvas.height - padding); // Start at origin
+
+            const Vmax = graphHeight * 0.8; // Max rate, 80% of graph height
+            const Km = graphWidth * 0.3;   // Concentration at half Vmax
+
+            for (let i = 0; i <= graphWidth; i++) {
+                const concentration = i; // X-axis value
+                // Michaelis-Menten equation: V = (Vmax * [S]) / (Km + [S])
+                const rate = (Vmax * concentration) / (Km + concentration);
+                fdgc.lineTo(padding + concentration, facilitatedDiffusionGraphCanvas.height - padding - rate);
+            }
+            fdgc.strokeStyle = '#4f46e5'; // Indigo color for the line
+            fdgc.lineWidth = 3;
+            fdgc.stroke(); /* Changed from fdc.stroke() to fdgc.stroke() */
+
+            // Draw Vmax line
+            fdgc.beginPath();
+            fdgc.setLineDash([5, 5]); // Dashed line
+            fdgc.moveTo(padding, facilitatedDiffusionGraphCanvas.height - padding - Vmax);
+            fdgc.lineTo(padding + graphWidth, facilitatedDiffusionGraphCanvas.height - padding - Vmax);
+            fdgc.strokeStyle = '#6b7280'; // Gray dashed line
+            fdgc.lineWidth = 1;
+            fdgc.stroke();
+            fdgc.setLineDash([]); // Reset line dash
+
+            // Add Vmax label
+            fdgc.fillStyle = '#6b7280';
+            fdgc.font = '12px Inter, sans-serif';
+            fdgc.textAlign = 'left';
+            fdgc.textBaseline = 'bottom';
+            fdgc.fillText('Vmax', padding + 5, facilitatedDiffusionGraphCanvas.height - padding - Vmax - 5);
+
+            // Add Michaelis-Menten text
+            fdgc.fillStyle = '#4f46e5';
+            fdgc.font = 'italic 16px Inter, sans-serif';
+            fdgc.textAlign = 'left';
+            fdgc.textBaseline = 'bottom';
+            fdgc.fillText("Michaelis-Menten Kinetics", padding + 10, padding - 5);
+        }
+
+        // --- Primary Active Transport Canvas Logic ---
+        const primaryActiveTransportCanvas = document.getElementById('primaryActiveTransportCanvas');
+        const patc = primaryActiveTransportCanvas.getContext('2d'); // Primary Active Transport Context
+
+        const simulatePrimaryActiveBtn = document.getElementById('simulatePrimaryActiveBtn');
+        const resetPrimaryActiveBtn = document.getElementById('resetPrimaryActiveBtn');
+        const togglePrimaryActiveGraphBtn = document.getElementById('togglePrimaryActiveGraphBtn');
+        const primaryActiveTransportGraphCanvas = document.getElementById('primaryActiveTransportGraphCanvas');
+        const patgc = primaryActiveTransportGraphCanvas.getContext('2d'); // Primary Active Transport Graph Context
+        const primaryActiveFeaturesDialog = document.getElementById('primaryActiveFeaturesDialog');
+
+
+        let primaryActiveSolutes = [];
+        const numPrimaryActiveSolutesTotal = 20; // Total solutes
+        const initialUpperSolutes = 5; // Solutes initially in upper chamber
+        const initialLowerSolutes = numPrimaryActiveSolutesTotal - initialUpperSolutes; // Solutes initially in lower chamber
+        const solutePrimaryActiveRadius = 8;
+        const primaryActiveSoluteCharge = 1; // Assuming positive charge for simplicity
+
+        // Protein dimensions for Primary Active Transport
+        const patMembraneThickness = 20;
+        const patProteinWidth = 60; // Wider protein to accommodate ATP and conformational changes
+        const patProteinHeight = 120;
+        let patMembraneCenterY;
+        let patProteinY;
+        let patProteinX;
+        let patMembraneTopY;
+        let patMembraneBottomY;
+
+        // ATP and Animation State
+        let atpCount = 2; // Number of ATP molecules available for transport (CHANGED FROM 5 TO 2)
+        let currentProteinState = 'waiting_for_solute'; // 'waiting_for_solute', 'solute_binding', 'atp_binding_phase', 'hydrolysis_and_phosphorylation', 'conforming_change_up', 'solute_release', 'conforming_change_down'
+        let proteinConformation = 'up'; // 'up' (open to bottom), 'down' (open to top)
+        let energyBurstAlpha = 0; // For energy release animation
+        let phosphorylated = false; // New: tracks if protein is phosphorylated
+
+        function initPrimaryActiveSolutes() {
+            primaryActiveSolutes = [];
+            if (primaryActiveTransportCanvas.width === 0 || primaryActiveTransportCanvas.height === 0) {
+                console.error("Primary Active Transport Canvas dimensions are zero, cannot initialize solutes correctly.");
+                return;
+            }
+
+            updatePrimaryActiveGeometry(); // Ensure protein/membrane positions are up-to-date
+
+            // Initialize solutes: less in upper, more in bottom
+            for (let i = 0; i < numPrimaryActiveSolutesTotal; i++) {
+                let x, y;
+                let hasCrossed = false; // For primary active, 'hasCrossed' means it's in the target (upper) chamber
+
+                if (i < initialUpperSolutes) {
+                    // Place in upper chamber (target for uphill transport)
+                    x = Math.random() * (primaryActiveTransportCanvas.width - solutePrimaryActiveRadius * 2) + solutePrimaryActiveRadius;
+                    y = Math.random() * (patMembraneTopY - solutePrimaryActiveRadius * 2 - 20) + solutePrimaryActiveRadius + 10;
+                    hasCrossed = true; // These are already in the "crossed" state (upper chamber)
+                } else {
+                    // Place in lower chamber (source for uphill transport)
+                    x = Math.random() * (primaryActiveTransportCanvas.width - solutePrimaryActiveRadius * 2) + solutePrimaryActiveRadius;
+                    y = Math.random() * (primaryActiveTransportCanvas.height - patMembraneBottomY - solutePrimaryActiveRadius * 2 - 20) + patMembraneBottomY + solutePrimaryActiveRadius + 10;
+                    hasCrossed = false; // These are in the "source" chamber
+                }
+
+                primaryActiveSolutes.push({
+                    id: i,
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    inProtein: false,
+                    hasCrossed: hasCrossed,
+                    color: '#ef4444', // Red solute
+                    speed: 1.5,
+                    targetSolute: false // Flag to mark the solute currently being transported
+                });
+            }
+            atpCount = 2; // Reset ATP to 2
+            currentProteinState = 'waiting_for_solute';
+            proteinConformation = 'up'; // Initial state: open to bottom for solute binding
+            energyBurstAlpha = 0;
+            phosphorylated = false;
+        }
+
+        function drawPrimaryActiveScene() {
+            patc.clearRect(0, 0, primaryActiveTransportCanvas.width, primaryActiveTransportCanvas.height);
+
+            // Draw membrane segments
+            patc.fillStyle = '#60a5fa'; // Blue membrane
+            patc.fillRect(0, patMembraneTopY, patProteinX, patMembraneThickness);
+            patc.fillRect(patProteinX + patProteinWidth, patMembraneTopY, primaryActiveTransportCanvas.width - (patProteinX + patProteinWidth), patMembraneThickness);
+
+            // Protein dimensions for drawing
+            const patProteinTopY = patProteinY;
+            const patProteinBottomY = patProteinY + patProteinHeight;
+            const patProteinLeftX = patProteinX;
+            const patProteinRightX = patProteinX + patProteinWidth;
+
+            // Alpha Subunit (main body)
+            patc.fillStyle = '#16a34a'; // Darker green for alpha subunit
+            patc.strokeStyle = '#15803d';
+            patc.lineWidth = 2;
+
+            // Draw main rectangular part of alpha subunit
+            patc.fillRect(patProteinLeftX, patProteinTopY, patProteinWidth, patProteinHeight);
+            patc.strokeRect(patProteinLeftX, patProteinTopY, patProteinWidth, patProteinHeight);
+
+            // Draw cytoplasmic domain (bottom rounded part)
+            patc.beginPath();
+            patc.arc(patProteinLeftX + patProteinWidth / 2, patProteinBottomY, patProteinWidth / 2, 0, Math.PI, false); // Bottom half circle
+            patc.fill();
+            patc.stroke();
+
+            // Beta Subunit (light blue, on the side, slightly above membrane)
+            const betaWidth = patProteinWidth * 0.4;
+            const betaHeight = patProteinHeight * 0.6;
+            const betaX = patProteinLeftX - betaWidth * 0.8; // Position to the left of alpha
+            const betaY = patMembraneCenterY - betaHeight / 2;
+            patc.fillStyle = '#67e8f9'; // Light blue for beta subunit
+            patc.strokeStyle = '#06b6d4';
+            patc.beginPath();
+            patc.roundRect(betaX, betaY, betaWidth, betaHeight, 10); // Rounded rectangle
+            patc.fill();
+            patc.stroke();
+
+            // Solute binding sites (red circles)
+            const bindingSiteRadius = 6;
+            const site1Y = patProteinY + patProteinHeight * 0.75; // Lower site
+            const site2Y = patProteinY + patProteinHeight * 0.25; // Upper site
+            const siteX = patProteinX + patProteinWidth / 2;
+
+            // Draw binding sites - their visibility/color might change based on state
+            patc.fillStyle = '#ef4444'; // Red for binding sites
+            patc.beginPath();
+            patc.arc(siteX, site1Y, bindingSiteRadius, 0, Math.PI * 2);
+            patc.fill();
+            patc.beginPath();
+            patc.arc(siteX, site2Y, bindingSiteRadius, 0, Math.PI * 2);
+            patc.fill();
+
+            // Draw the channel opening based on proteinConformation
+            patc.fillStyle = '#dcfce7'; // Very light green for channel
+            const channelInnerWidth = patProteinWidth * 0.6;
+            const channelInnerX = patProteinX + (patProteinWidth - channelInnerWidth) / 2;
+
+            if (proteinConformation === 'up') { // Open to bottom (cytosol)
+                // Draw top part of protein as closed
+                patc.beginPath();
+                patc.moveTo(channelInnerX, patProteinTopY + patProteinHeight * 0.3);
+                patc.lineTo(channelInnerX + channelInnerWidth, patProteinTopY + patProteinHeight * 0.3);
+                patc.strokeStyle = '#15803d';
+                patc.lineWidth = 2;
+                patc.stroke();
+                // Draw open channel at bottom
+                patc.fillRect(channelInnerX, patProteinTopY + patProteinHeight * 0.3, channelInnerWidth, patProteinHeight * 0.7);
+            } else { // 'down' - open to top (exterior)
+                // Draw bottom part of protein as closed
+                patc.beginPath();
+                patc.moveTo(channelInnerX, patProteinTopY + patProteinHeight * 0.7);
+                patc.lineTo(channelInnerX + channelInnerWidth, patProteinTopY + patProteinHeight * 0.7);
+                patc.strokeStyle = '#15803d';
+                patc.lineWidth = 2;
+                patc.stroke();
+                // Draw open channel at top
+                patc.fillRect(channelInnerX, patProteinTopY, channelInnerWidth, patProteinHeight * 0.7);
+            }
+
+            // Draw 'P' (phosphate) if phosphorylated
+            if (phosphorylated) {
+                patc.fillStyle = '#facc15'; // Yellow for phosphate
+                patc.beginPath();
+                patc.arc(patProteinX + patProteinWidth * 0.7, patProteinY + patProteinHeight * 0.6, 7, 0, Math.PI * 2);
+                patc.fill();
+                patc.font = 'bold 10px Inter, sans-serif';
+                patc.fillStyle = '#000000';
+                patc.fillText('P', patProteinX + patProteinWidth * 0.7, patProteinY + patProteinHeight * 0.6);
+            }
+
+            // Draw solutes
+            primaryActiveSolutes.forEach(solute => {
+                patc.beginPath();
+                patc.arc(solute.x, solute.y, solutePrimaryActiveRadius, 0, Math.PI * 2);
+                patc.fillStyle = solute.color;
+                patc.fill();
+                patc.strokeStyle = '#b91c1c';
+                patc.lineWidth = 1;
+                patc.stroke();
+
+                // Draw charge (e.g., '+')
+                patc.fillStyle = '#ffffff';
+                patc.font = 'bold 10px Inter, sans-serif';
+                patc.textAlign = 'center';
+                patc.textBaseline = 'middle';
+                patc.fillText('+', solute.x, solute.y);
+            });
+
+            // Draw ATP count
+            patc.fillStyle = '#334155';
+            patc.font = 'bold 16px Inter, sans-serif';
+            patc.textAlign = 'left';
+            patc.textBaseline = 'top';
+            patc.fillText(`ATP: ${atpCount}`, 10, 10);
+
+            // Draw ATP molecule near protein (if in ATP binding state)
+            if (currentProteinState === 'atp_binding_phase') {
+                patc.fillStyle = '#facc15'; // Yellow ATP
+                patc.beginPath();
+                patc.arc(patProteinX + patProteinWidth * 0.7, patProteinY + patProteinHeight * 0.9, 10, 0, Math.PI * 2); // Larger ATP
+                patc.fill();
+                patc.font = 'bold 16px Inter, sans-serif'; // Larger ATP label
+                patc.fillStyle = '#000000';
+                patc.fillText('ATP', patProteinX + patProteinWidth * 0.7 - 15, patProteinY + patProteinHeight * 0.9 + 5);
+            }
+
+            // Draw energy burst and reaction
+            if (currentProteinState === 'hydrolysis_and_phosphorylation' && energyBurstAlpha > 0) {
+                const centerX = patProteinX + patProteinWidth / 2;
+                const centerY = patProteinY + patProteinHeight * 0.8; // Near ATP binding site
+
+                // Explosion graphic (simplified star/jagged shape)
+                patc.beginPath();
+                const numSpikes = 8;
+                const outerRadius = 25 * energyBurstAlpha; // Shrinks as it fades
+                const innerRadius = 10 * energyBurstAlpha;
+                for (let i = 0; i < numSpikes * 2; i++) {
+                    const radius = (i % 2 === 0) ? outerRadius : innerRadius;
+                    const angle = (Math.PI / numSpikes) * i;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    if (i === 0) {
+                        patc.moveTo(x, y);
+                    } else {
+                        patc.lineTo(x, y);
+                    }
+                }
+                patc.closePath();
+                patc.fillStyle = `rgba(255, 165, 0, ${energyBurstAlpha})`; // Orange glow
+                patc.fill();
+
+                // "Energy" label
+                patc.fillStyle = `rgba(0, 0, 0, ${energyBurstAlpha})`; // Black text, fades with explosion
+                patc.font = 'bold 16px Inter, sans-serif';
+                patc.textAlign = 'center';
+                patc.textBaseline = 'middle';
+                patc.fillText('Energy', centerX, centerY);
+
+                // ATP -> ADP + Pi text
+                patc.fillStyle = `rgba(51, 65, 85, ${energyBurstAlpha})`; // Dark gray text, fades
+                patc.font = '14px Inter, sans-serif';
+                patc.textAlign = 'center';
+                patc.textBaseline = 'top';
+                patc.fillText('ATP → ADP + Pi', centerX, centerY + 30);
+            }
+
+            // Draw Electrochemical Gradient Display (for primary active)
+            const gradientBarX = 10;
+            const gradientBarY = 120;
+            const gradientBarWidth = 20;
+            const gradientBarMaxHeight = 100;
+
+            // Calculate gradient based on solute distribution
+            let topCount = primaryActiveSolutes.filter(s => s.y + solutePrimaryActiveRadius < patMembraneTopY).length;
+            let bottomCount = primaryActiveSolutes.filter(s => s.y - solutePrimaryActiveRadius > patMembraneBottomY).length;
+            electrochemicalGradientPrimaryActive = topCount - bottomCount; // Uphill transport increases this value
+
+            const initialGradientValueForDisplay = numPrimaryActiveSolutesTotal * primaryActiveSoluteCharge;
+            let currentBarHeight = (electrochemicalGradientPrimaryActive + (numPrimaryActiveSolutesTotal/2)) / initialGradientValueForDisplay * gradientBarMaxHeight; // Adjust for initial negative gradient
+            currentBarHeight = Math.max(0, Math.min(gradientBarMaxHeight, currentBarHeight)); // Clamp between 0 and max height
+
+            let colorProgress = currentBarHeight / gradientBarMaxHeight; // Green for high gradient, red for low
+            const r = Math.floor(255 * (1 - colorProgress));
+            const g = Math.floor(255 * colorProgress);
+            const gradientColor = `rgb(${r},${g},0)`;
+
+            patc.fillStyle = '#cbd5e0';
+            patc.fillRect(gradientBarX, gradientBarY, gradientBarWidth, gradientBarMaxHeight);
+
+            patc.fillStyle = gradientColor;
+            patc.fillRect(gradientBarX, gradientBarY + (gradientBarMaxHeight - currentBarHeight), gradientBarWidth, currentBarHeight);
+            patc.strokeStyle = '#334155';
+            patc.lineWidth = 1;
+            patc.strokeRect(gradientBarX, gradientBarY, gradientBarWidth, gradientBarMaxHeight);
+
+            patc.fillStyle = '#334155';
+            patc.font = 'bold 16px Inter, sans-serif';
+            patc.textAlign = 'left';
+            patc.textBaseline = 'top';
+            patc.fillText(`${electrochemicalGradientPrimaryActive}`, gradientBarX, gradientBarY - 20);
+            patc.fillText(`Uphill Gradient:`, gradientBarX, gradientBarY + gradientBarMaxHeight + 10);
+        }
+
+
+        let primaryActiveAnimationId;
+        let primaryActiveInProgress = false;
+        let transportCycleStep = 0; // Tracks steps within a single transport cycle
+        const cycleSteps = 100; // Total steps for one transport cycle
+        let currentTransportedSolute = null; // Reference to the solute being transported
+
+        function animatePrimaryActiveTransport() {
+            if (!primaryActiveInProgress) return;
+
+            // Update solutes' random movement when not in protein
+            primaryActiveSolutes.forEach(solute => {
+                if (!solute.inProtein && !solute.targetSolute) {
+                    solute.x += solute.vx;
+                    solute.y += solute.vy;
+
+                    // Bounce off canvas walls
+                    if (solute.x + solutePrimaryActiveRadius > primaryActiveTransportCanvas.width || solute.x - solutePrimaryActiveRadius < 0) {
+                        solute.vx *= -1;
+                        solute.x = Math.max(solutePrimaryActiveRadius, Math.min(primaryActiveTransportCanvas.width - solutePrimaryActiveRadius, solute.x));
+                    }
+                    if (solute.y + solutePrimaryActiveRadius > primaryActiveTransportCanvas.height || solute.y - solutePrimaryActiveRadius < 0) {
+                        solute.vy *= -1;
+                        solute.y = Math.max(solutePrimaryActiveRadius, Math.min(primaryActiveTransportCanvas.height - solutePrimaryActiveRadius, solute.y));
+                    }
+
+                    // Bounce off membrane segments (top and bottom)
+                    if (solute.y + solutePrimaryActiveRadius > patMembraneTopY &&
+                        solute.y - solutePrimaryActiveRadius < patMembraneBottomY &&
+                        !(solute.x > patProteinX && solute.x < patProteinX + patProteinWidth)) {
+                        solute.vy *= -1;
+                        if (solute.y < patMembraneCenterY) { // From top trying to enter membrane
+                            solute.y = patMembraneTopY - solutePrimaryActiveRadius - 1;
+                        } else { // From bottom trying to enter membrane
+                            solute.y = patMembraneBottomY + solutePrimaryActiveRadius + 1;
+                        }
+                    }
+                }
+            });
+
+            // Primary Active Transport Logic (State Machine)
+            switch (currentProteinState) {
+                case 'waiting_for_solute':
+                    proteinConformation = 'up'; // Ensure open to bottom
+                    const soluteToBind = primaryActiveSolutes.find(solute =>
+                        !solute.hasCrossed && !solute.inProtein &&
+                        solute.y - solutePrimaryActiveRadius > patMembraneBottomY && // Must be in bottom chamber
+                        solute.x > patProteinX && solute.x < patProteinX + patProteinWidth // Near protein horizontal
+                    );
+
+                    if (soluteToBind && atpCount > 0) {
+                        currentTransportedSolute = soluteToBind;
+                        currentTransportedSolute.targetSolute = true;
+                        currentProteinState = 'solute_binding';
+                        transportCycleStep = 0;
+                    } else if (atpCount === 0) {
+                        // All ATP used, stop simulation
+                        primaryActiveInProgress = false;
+                        cancelAnimationFrame(primaryActiveAnimationId);
+                        simulatePrimaryActiveBtn.disabled = true;
+                        resetPrimaryActiveBtn.disabled = false;
+                        primaryActiveFeaturesDialog.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-2">Transport Stopped!</h3>
+                            <p>All ATP has been consumed, and the primary active transport has ceased.
+                            Solutes remain in their current positions, demonstrating uphill transport requires continuous energy.</p>
+                            <ul class="list-disc list-inside space-y-1 mt-2">
+                                <li>Requires metabolic energy (ATP).</li>
+                                <li>Transports solutes against their concentration gradient (uphill).</li>
+                                <li>Involves specific carrier proteins.</li>
+                                <li>Can be saturated.</li>
+                                <li>Examples: Na+/K+ pump.</li>
+                                <li>Primary active transport systems can often follow Michaelis-Menten kinetics, but with some important caveats and context.</li>
+                            </ul>
+                            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mt-3 rounded-lg">
+                                <h4 class="caveats-headline">❗ Caveats</h4>
+                                <ul class="list-disc list-inside ml-4 space-y-1 text-red-600">
+                                    <li>Multiple Substrates: Many active transporters bind more than one substrate (e.g., ions + ATP), complicating simple Michaelis-Menten kinetics.</li>
+                                    <li>Allosteric Regulation: Some transporters show cooperative behavior or regulation by other ions or phosphorylation states.</li>
+                                    <li>Bidirectional Transport & Coupled Steps: If reverse transport is significant, or if the system includes coupled conformational changes, deviations from Michaelis-Menten kinetics can occur.</li>
+                                    <li>ATP Dependence: When ATP concentration is varied (instead of substrate), the transporter may show Michaelis-Menten kinetics with respect to ATP as well.</li>
+                                </ul>
+                            </div>
+                        `;
+                        primaryActiveFeaturesDialog.classList.remove('hidden');
+                        setTimeout(() => { primaryActiveFeaturesDialog.classList.add('show'); }, 10);
+                    }
+                    break;
+
+                case 'solute_binding':
+                    if (currentTransportedSolute) {
+                        const targetX = patProteinX + patProteinWidth / 2;
+                        const targetY = patProteinY + patProteinHeight * 0.8; // Binding site inside bottom channel
+                        const dx = targetX - currentTransportedSolute.x;
+                        const dy = targetY - currentTransportedSolute.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+
+                        if (distance > 1) {
+                            currentTransportedSolute.x += dx / distance * currentTransportedSolute.speed;
+                            currentTransportedSolute.y += dy / distance * currentTransportedSolute.speed;
+                        } else {
+                            currentTransportedSolute.x = targetX;
+                            currentTransportedSolute.y = targetY;
+                            currentTransportedSolute.inProtein = true;
+                            currentProteinState = 'atp_binding_phase';
+                            transportCycleStep = 0;
+                        }
+                    } else {
+                        currentProteinState = 'waiting_for_solute';
+                    }
+                    break;
+
+                case 'atp_binding_phase':
+                    // ATP graphic appears and moves towards protein
+                    transportCycleStep++;
+                    if (transportCycleStep >= cycleSteps / 2) { // ATP reaches protein
+                        currentProteinState = 'hydrolysis_and_phosphorylation';
+                        transportCycleStep = 0;
+                        atpCount--; // ATP is consumed
+                    }
+                    break;
+
+                case 'hydrolysis_and_phosphorylation':
+                    // ATP hydrolysis animation (explosion, text)
+                    const hydrolysisDuration = cycleSteps * 4; // Make it last four times as long
+                    energyBurstAlpha = 1 - (transportCycleStep / hydrolysisDuration); // Fade out over longer duration
+                    phosphorylated = true; // Protein gets phosphorylated
+                    transportCycleStep++;
+                    if (transportCycleStep >= hydrolysisDuration) { // Check against longer duration
+                        energyBurstAlpha = 0;
+                        currentProteinState = 'conformational_change_up';
+                        transportCycleStep = 0;
+                    }
+                    break;
+
+                case 'conformational_change_up':
+                    // Protein closes bottom, opens top, solute moves with it
+                    proteinConformation = 'down'; // Visually change protein
+                    if (currentTransportedSolute) {
+                        // Move solute with the protein's internal channel
+                        const startY = patProteinY + patProteinHeight * 0.8;
+                        const endY = patProteinY + patProteinHeight * 0.2;
+                        currentTransportedSolute.y = startY - ((startY - endY) * (transportCycleStep / (cycleSteps / 2)));
+                        currentTransportedSolute.x = patProteinX + patProteinWidth / 2;
+                    }
+                    transportCycleStep++;
+                    if (transportCycleStep >= cycleSteps / 2) {
+                        currentProteinState = 'solute_release';
+                        transportCycleStep = 0;
+                    }
+                    break;
+
+                case 'solute_release':
+                    if (currentTransportedSolute) {
+                        currentTransportedSolute.inProtein = false;
+                        currentTransportedSolute.hasCrossed = true; // Now in upper chamber
+                        currentTransportedSolute.targetSolute = false;
+                        currentTransportedSolute.vx = (Math.random() - 0.5) * currentTransportedSolute.speed * 2;
+                        currentTransportedSolute.vy = (Math.random() - 0.5) * currentTransportedSolute.speed * 2;
+                        currentTransportedSolute.y = patProteinY - solutePrimaryActiveRadius - 1; // Release just above protein
+                        currentTransportedSolute.color = '#ef4444';
+                        currentTransportedSolute = null; // Clear reference
+                    }
+                    phosphorylated = false; // Protein dephosphorylates
+                    currentProteinState = 'conformational_change_down';
+                    transportCycleStep = 0;
+                    break;
+
+                case 'conformational_change_down':
+                    // Protein closes top, opens bottom
+                    proteinConformation = 'up'; // Visually change protein
+                    transportCycleStep++;
+                    if (transportCycleStep >= cycleSteps / 2) {
+                        currentProteinState = 'waiting_for_solute';
+                        transportCycleStep = 0;
+                    }
+                    break;
+            }
+
+            drawPrimaryActiveScene(); // Draw every frame
+
+            primaryActiveAnimationId = requestAnimationFrame(animatePrimaryActiveTransport);
+        }
+
+        function startPrimaryActiveSimulation() {
+            validateEmailWatermark(); // Security check
+            if (!isScriptValid) return;
+
+            if (!primaryActiveInProgress) {
+                primaryActiveInProgress = true;
+                simulatePrimaryActiveBtn.disabled = true; // Disable the button
+                simulatePrimaryActiveBtn.classList.add('simulate-btn-disabled-by-logic'); // Add class
+                resetPrimaryActiveBtn.disabled = false;
+                primaryActiveFeaturesDialog.classList.remove('show');
+                primaryActiveFeaturesDialog.classList.add('hidden');
+                primaryActiveTransportGraphCanvas.style.display = 'none';
+                togglePrimaryActiveGraphBtn.textContent = 'View Graph';
+                animatePrimaryActiveTransport();
+            }
+        }
+
+        function resetPrimaryActiveSimulation() {
+            cancelAnimationFrame(primaryActiveAnimationId);
+            primaryActiveInProgress = false;
+            updatePrimaryActiveGeometry();
+            initPrimaryActiveSolutes();
+            drawPrimaryActiveScene();
+            simulatePrimaryActiveBtn.disabled = false; // Re-enable the button
+            simulatePrimaryActiveBtn.classList.remove('simulate-btn-disabled-by-logic'); // Remove class
+            resetPrimaryActiveBtn.disabled = true;
+            primaryActiveFeaturesDialog.classList.remove('show');
+            primaryActiveFeaturesDialog.classList.add('hidden');
+            primaryActiveTransportGraphCanvas.style.display = 'none';
+            togglePrimaryActiveGraphBtn.textContent = 'View Graph';
+            primaryActiveFeaturesDialog.innerHTML = `
+                <h3 class="text-xl font-semibold mb-2">Primary Active Transport:</h3>
+                <p>Click "Simulate Transport" to see how energy from ATP drives uphill transport against a concentration gradient.</p>
+                <ul class="list-disc list-inside space-y-1 mt-2">
+                    <li>Requires metabolic energy (ATP).</li>
+                    <li>Transports solutes against their concentration gradient (uphill).</li>
+                    <li>Involves specific carrier proteins.</li>
+                    <li>Can be saturated.</li>
+                    <li>Examples: Na+/K+ pump.</li>
+                    <li>Primary active transport systems can often follow Michaelis-Menten kinetics, but with some important caveats and context.</li>
+                </ul>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-3 mt-3 rounded-lg">
+                    <h4 class="caveats-headline">❗ Caveats</h4>
+                    <ul class="list-disc list-inside ml-4 space-y-1 text-red-600">
+                        <li>Multiple Substrates: Many active transporters bind more than one substrate (e.g., ions + ATP), complicating simple Michaelis-Menten kinetics.</li>
+                        <li>Allosteric Regulation: Some transporters show cooperative behavior or regulation by other ions or phosphorylation states.</li>
+                        <li>Bidirectional Transport & Coupled Steps: If reverse transport is significant, or if the system includes coupled conformational changes, deviations from Michaelis-Menten kinetics can occur.</li>
+                        <li>ATP Dependence: When ATP concentration is varied (instead of substrate), the transporter may show Michaelis-Menten kinetics with respect to ATP as well.</li>
+                    </ul>
+                </div>
+            `;
+            validateEmailWatermark(); // Re-validate after reset
+        }
+
+        function updatePrimaryActiveGeometry() {
+            patMembraneCenterY = primaryActiveTransportCanvas.height / 2;
+            patProteinX = (primaryActiveTransportCanvas.width / 2) - (patProteinWidth / 2);
+            patProteinY = patMembraneCenterY - (patProteinHeight / 2);
+            patMembraneTopY = patMembraneCenterY - (patMembraneThickness / 2);
+            patMembraneBottomY = patMembraneCenterY + (patMembraneThickness / 2);
+        }
+
+        // --- Graph Drawing for Primary Active Transport ---
+        function drawPrimaryActiveGraph() {
+            patgc.clearRect(0, 0, primaryActiveTransportGraphCanvas.width, primaryActiveTransportGraphCanvas.height);
+
+            const padding = 40;
+            const graphWidth = primaryActiveTransportGraphCanvas.width - 2 * padding;
+            const graphHeight = primaryActiveTransportGraphCanvas.height - 2 * padding;
+
+            // Draw X-axis (Concentration Gradient)
+            patgc.beginPath();
+            patgc.moveTo(padding, primaryActiveTransportGraphCanvas.height - padding);
+            patgc.lineTo(padding + graphWidth, primaryActiveTransportGraphCanvas.height - padding);
+            patgc.strokeStyle = '#334155';
+            patgc.lineWidth = 2;
+            patgc.stroke();
+
+            // Draw Y-axis (Rate of Primary Active Transport)
+            patgc.beginPath();
+            patgc.moveTo(padding, primaryActiveTransportGraphCanvas.height - padding);
+            patgc.lineTo(padding, padding);
+            patgc.strokeStyle = '#334155';
+            patgc.lineWidth = 2;
+            patgc.stroke();
+
+            // Draw labels
+            patgc.fillStyle = '#334155';
+            patgc.font = '14px Inter, sans-serif';
+            patgc.textAlign = 'center';
+            patgc.textBaseline = 'top';
+            patgc.fillText('Concentration Gradient', padding + graphWidth / 2, primaryActiveTransportGraphCanvas.height - padding + 20);
+
+            patgc.save();
+            patgc.translate(padding - 20, padding + graphHeight / 2);
+            patgc.rotate(-Math.PI / 2);
+            patgc.textAlign = 'center';
+            patgc.textBaseline = 'bottom';
+            patgc.fillText('Rate of Primary Active Transport', 0, 0);
+            patgc.restore();
+
+            // Draw Michaelis-Menten like curve for active transport (saturable, can go against gradient)
+            patgc.beginPath();
+            // Start slightly below origin on Y-axis to indicate transport against a gradient
+            const initialRateOffset = graphHeight * 0.1;
+            patgc.moveTo(padding, primaryActiveTransportGraphCanvas.height - padding + initialRateOffset);
+
+            const Vmax = graphHeight * 0.7; // Max rate
+            const Km = graphWidth * 0.3;   // Concentration at half Vmax
+
+            for (let i = 0; i <= graphWidth; i++) {
+                const concentration = i;
+                // Modified Michaelis-Menten to show transport even at negative gradients
+                // This is a simplified representation to show active transport's ability to work against gradient
+                const rate = (Vmax * concentration) / (Km + concentration) + initialRateOffset;
+                patgc.lineTo(padding + concentration, primaryActiveTransportGraphCanvas.height - padding - rate);
+            }
+            patgc.strokeStyle = '#8b5cf6'; // Purple color for the line
+            patgc.lineWidth = 3;
+            patgc.stroke();
+
+            // Draw Vmax line
+            patgc.beginPath();
+            patgc.setLineDash([5, 5]); // Dashed line
+            patgc.moveTo(padding, primaryActiveTransportGraphCanvas.height - padding - Vmax - initialRateOffset);
+            patgc.lineTo(padding + graphWidth, primaryActiveTransportGraphCanvas.height - padding - Vmax - initialRateOffset);
+            patgc.strokeStyle = '#6b7280'; // Gray dashed line
+            patgc.lineWidth = 1;
+            patgc.stroke();
+            patgc.setLineDash([]); // Reset line dash
+
+            // Add Vmax label
+            patgc.fillStyle = '#6b7280';
+            patgc.font = '12px Inter, sans-serif';
+            patgc.textAlign = 'left';
+            patgc.textBaseline = 'bottom';
+            patgc.fillText('Vmax', padding + 5, primaryActiveTransportGraphCanvas.height - padding - Vmax - initialRateOffset - 5);
+
+            // Add text for active transport
+            patgc.fillStyle = '#8b5cf6';
+            patgc.font = 'italic 16px Inter, sans-serif';
+            patgc.textAlign = 'left';
+            patgc.textBaseline = 'bottom';
+            patgc.fillText("Active Transport Kinetics", padding + 10, padding - 5);
+        }
+
+        // --- Secondary Active Transport Canvas Logic ---
+        const secondaryActiveTransportCanvas = document.getElementById('secondaryActiveTransportCanvas');
+        const satc = secondaryActiveTransportCanvas.getContext('2d'); // Secondary Active Transport Context
+
+        const simulateSecondaryActiveBtn = document.getElementById('simulateSecondaryActiveBtn');
+        const resetSecondaryActiveBtn = document.getElementById('resetSecondaryActiveBtn');
+        const secondaryActiveFeaturesDialog = document.getElementById('secondaryActiveFeaturesDialog');
+
+        let secondaryActiveNaSolutes = [];
+        let secondaryActiveOtherSolutes = []; // Renamed from secondaryActiveGlucoseSolutes
+        const numNaSolutes = 30; // Total Na+ solutes
+        const numOtherSolutes = 10; // Total Other Solutes
+        const soluteNaRadius = 5;
+        const soluteOtherSize = 10; // For square representation
+        const secondaryActiveMembraneThickness = 20;
+        const secondaryTransporterWidth = 50;
+        const secondaryTransporterHeight = 100;
+
+        let satMembraneCenterY;
+        let secondaryTransporterX, secondaryTransporterY;
+        let satMembraneTopY, satMembraneBottomY;
+
+        let satSecondaryTransporterState = 'waiting'; // 'waiting', 'binding_Na1', 'binding_Na2', 'binding_solute', 'transporting', 'releasing'
+        let currentTransportedNa1 = null;
+        let currentTransportedNa2 = null;
+        let currentTransportedOtherSolute = null; // Renamed from currentTransportedGlucose
+        let satAnimationId;
+        let satInProgress = false;
+        let satCycleStep = 0;
+        const satCycleSteps = 100; // Total steps for one transport cycle
+
+        function initSecondaryActiveSolutes() {
+            secondaryActiveNaSolutes = [];
+            secondaryActiveOtherSolutes = []; // Renamed
+
+            updateSecondaryActiveGeometry();
+
+            // Initialize Na+ solutes: high concentration outside (top), low inside (bottom)
+            for (let i = 0; i < numNaSolutes; i++) {
+                let x = Math.random() * secondaryActiveTransportCanvas.width;
+                let y;
+                if (i < numNaSolutes * 0.8) { // 80% outside
+                    y = Math.random() * (satMembraneTopY - soluteNaRadius * 2) + soluteNaRadius;
+                } else { // 20% inside
+                    y = Math.random() * (secondaryActiveTransportCanvas.height - satMembraneBottomY - soluteNaRadius * 2) + satMembraneBottomY + soluteNaRadius;
+                }
+                secondaryActiveNaSolutes.push({
+                    id: `Na_${i}`,
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    inTransporter: false,
+                    color: '#3b82f6' // Blue for Na+
+                });
+            }
+
+            // Initialize Other Solutes: high concentration inside (bottom), low outside (top)
+            for (let i = 0; i < numOtherSolutes; i++) {
+                let x = Math.random() * secondaryActiveTransportCanvas.width;
+                let y;
+                if (i < numOtherSolutes * 0.2) { // 20% outside (target for uphill transport)
+                    y = Math.random() * (satMembraneTopY - soluteOtherSize * 2) + soluteOtherSize;
+                } else { // 80% inside (source for uphill transport)
+                    y = Math.random() * (secondaryActiveTransportCanvas.height - satMembraneBottomY - soluteOtherSize * 2) + satMembraneBottomY + soluteOtherSize;
+                }
+                secondaryActiveOtherSolutes.push({ // Renamed
+                    id: `Solute_${i}`, // Changed ID prefix
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    inTransporter: false,
+                    color: '#10b981' // Green for Other Solute
+                });
+            }
+
+            satSecondaryTransporterState = 'waiting';
+            currentTransportedNa1 = null;
+            currentTransportedNa2 = null;
+            currentTransportedOtherSolute = null; // Renamed
+        }
+
+        function drawSecondaryActiveScene() {
+            satc.clearRect(0, 0, secondaryActiveTransportCanvas.width, secondaryActiveTransportCanvas.height);
+
+            // Draw membrane segments
+            satc.fillStyle = '#60a5fa'; // Blue membrane
+            satc.fillRect(0, satMembraneTopY, secondaryTransporterX, secondaryActiveMembraneThickness); // Left segment
+            satc.fillRect(secondaryTransporterX + secondaryTransporterWidth, satMembraneTopY, secondaryActiveTransportCanvas.width - (secondaryTransporterX + secondaryTransporterWidth), secondaryActiveMembraneThickness); // Right segment
+
+            // Draw Secondary Transporter
+            satc.fillStyle = '#f97316'; // Orange for secondary transporter
+            satc.strokeStyle = '#ea580c';
+            satc.lineWidth = 2;
+            satc.fillRect(secondaryTransporterX, secondaryTransporterY, secondaryTransporterWidth, secondaryTransporterHeight);
+            satc.strokeRect(secondaryTransporterX, secondaryTransporterY, secondaryTransporterWidth, secondaryTransporterHeight);
+            // Removed SGLT label:
+            // satc.fillStyle = '#ffffff';
+            // satc.font = 'bold 12px Inter, sans-serif';
+            // satc.textAlign = 'center';
+            // satc.textBaseline = 'middle';
+            // satc.fillText('SGLT', secondaryTransporterX + secondaryTransporterWidth / 2, secondaryTransporterY + secondaryTransporterHeight / 2);
+
+            // Draw Na+ solutes
+            secondaryActiveNaSolutes.forEach(solute => {
+                satc.beginPath();
+                satc.arc(solute.x, solute.y, soluteNaRadius, 0, Math.PI * 2);
+                satc.fillStyle = solute.color;
+                satc.fill();
+                satc.strokeStyle = '#2563eb';
+                satc.lineWidth = 1;
+                satc.stroke();
+                satc.fillStyle = '#ffffff';
+                satc.font = 'bold 8px Inter, sans-serif';
+                satc.textAlign = 'center';
+                satc.textBaseline = 'middle';
+                satc.fillText('Na+', solute.x, solute.y);
+            });
+
+            // Draw Other Solutes
+            secondaryActiveOtherSolutes.forEach(solute => { // Renamed
+                satc.fillStyle = solute.color;
+                satc.strokeStyle = '#059669';
+                satc.lineWidth = 1;
+                satc.fillRect(solute.x - soluteOtherSize / 2, solute.y - soluteOtherSize / 2, soluteOtherSize, soluteOtherSize);
+                satc.strokeRect(solute.x - soluteOtherSize / 2, solute.y - soluteOtherSize / 2, soluteOtherSize, soluteOtherSize);
+                satc.fillStyle = '#ffffff';
+                satc.font = 'bold 8px Inter, sans-serif';
+                satc.textAlign = 'center';
+                satc.textBaseline = 'middle';
+                satc.fillText('S', solute.x, solute.y); // Changed label to 'S' for Solute
+            });
+
+            // Display Na+ and Solute concentration status
+            satc.fillStyle = '#334155';
+            satc.font = 'bold 14px Inter, sans-serif';
+            satc.textAlign = 'left';
+            satc.textBaseline = 'top';
+            satc.fillText(`Na+ Gradient: High Outside`, 10, 10);
+            satc.fillText(`Solute Gradient: Low Outside`, 10, 30); // Changed label
+        }
+
+        let secondaryActiveAnimationId;
+        let secondaryActiveInProgress = false;
+
+        function animateSecondaryActiveTransport() {
+            if (!secondaryActiveInProgress) return;
+
+            // Animate random movement for all solutes not currently in a transporter
+            secondaryActiveNaSolutes.forEach(solute => {
+                if (!solute.inTransporter) {
+                    solute.x += solute.vx;
+                    solute.y += solute.vy;
+                    // Bounce off walls and membrane (outside transporters)
+                    if (solute.x + soluteNaRadius > secondaryActiveTransportCanvas.width || solute.x - soluteNaRadius < 0) solute.vx *= -1;
+                    if (solute.y + soluteNaRadius > secondaryActiveTransportCanvas.height || solute.y - soluteNaRadius < 0) solute.vy *= -1;
+
+                    // Bounce off membrane segments (outside transporters)
+                    if (solute.y + soluteNaRadius > satMembraneTopY && solute.y - soluteNaRadius < satMembraneBottomY &&
+                        !(solute.x > secondaryTransporterX && solute.x < secondaryTransporterX + secondaryTransporterWidth)) { // Only check secondary transporter
+                        solute.vy *= -1;
+                        if (solute.y < satMembraneCenterY) { solute.y = satMembraneTopY - soluteNaRadius - 1; }
+                        else { solute.y = satMembraneBottomY + soluteNaRadius + 1; }
+                    }
+                }
+            });
+
+            secondaryActiveOtherSolutes.forEach(solute => { // Renamed
+                if (!solute.inTransporter) {
+                    solute.x += solute.vx;
+                    solute.y += solute.vy;
+                    // Bounce off walls and membrane (outside transporters)
+                    if (solute.x + soluteOtherSize / 2 > secondaryActiveTransportCanvas.width || solute.x - soluteOtherSize / 2 < 0) solute.vx *= -1;
+                    if (solute.y + soluteOtherSize / 2 > secondaryActiveTransportCanvas.height || solute.y - soluteOtherSize / 2 < 0) solute.vy *= -1;
+
+                    // Bounce off membrane segments (outside transporters)
+                    if (solute.y + soluteOtherSize / 2 > satMembraneTopY && solute.y - soluteOtherSize / 2 < satMembraneBottomY &&
+                        !(solute.x > secondaryTransporterX && solute.x < secondaryTransporterX + secondaryTransporterWidth)) { // Only check secondary transporter
+                        solute.vy *= -1;
+                        if (solute.y < satMembraneCenterY) { solute.y = satMembraneTopY - soluteOtherSize / 2 - 1; }
+                        else { solute.y = satMembraneBottomY + soluteOtherSize / 2 + 1; }
+                    }
+                }
+            });
+
+            // Secondary Transporter Logic (Symporter)
+            // State machine for a single transport cycle
+            switch (satSecondaryTransporterState) {
+                case 'waiting':
+                    // Find two Na+ solutes outside and one Other Solute outside
+                    let availableNaOutside = secondaryActiveNaSolutes.filter(s =>
+                        s.y < satMembraneTopY && // Outside
+                        s.x > secondaryTransporterX && s.x < secondaryTransporterX + secondaryTransporterWidth &&
+                        !s.inTransporter
+                    );
+                    let availableOtherSoluteOutside = secondaryActiveOtherSolutes.find(s => // Renamed
+                        s.y < satMembraneTopY && // Outside
+                        s.x > secondaryTransporterX && s.x < secondaryTransporterX + secondaryTransporterWidth &&
+                        !s.inTransporter
+                    );
+
+                    // Check for sufficient Na+ gradient (more outside than inside)
+                    let naOutsideCount = secondaryActiveNaSolutes.filter(s => s.y < satMembraneTopY).length;
+                    let naInsideCount = secondaryActiveNaSolutes.filter(s => s.y > satMembraneBottomY).length;
+                    const naGradientSufficient = (naOutsideCount - naInsideCount) > 5; // Arbitrary threshold for gradient
+
+                    if (availableNaOutside.length >= 2 && availableOtherSoluteOutside && naGradientSufficient) { // Renamed
+                        currentTransportedNa1 = availableNaOutside[0];
+                        currentTransportedNa2 = availableNaOutside[1];
+                        currentTransportedOtherSolute = availableOtherSoluteOutside; // Renamed
+
+                        currentTransportedNa1.inTransporter = true;
+                        currentTransportedNa2.inTransporter = true;
+                        currentTransportedOtherSolute.inTransporter = true; // Renamed
+
+                        satSecondaryTransporterState = 'binding_Na1';
+                        satCycleStep = 0;
+                    } else if (!naGradientSufficient) {
+                        // Stop if Na+ gradient collapses (simulating exhaustion of driving force)
+                        secondaryActiveInProgress = false;
+                        cancelAnimationFrame(secondaryActiveAnimationId);
+                        simulateSecondaryActiveBtn.disabled = true;
+                        resetSecondaryActiveBtn.disabled = false;
+                        secondaryActiveFeaturesDialog.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-2">Transport Stopped!</h3>
+                            <p>Secondary active transport has ceased because the electrochemical gradient (Na+ gradient) has collapsed. This demonstrates the indirect energy dependence of secondary transport on a pre-existing gradient.</p>
+                            <ul class="list-disc list-inside space-y-1 mt-2">
+                                <li>Does NOT use ATP directly.</li>
+                                <li>Harnesses pre-existing electrochemical gradients.</li>
+                                <li>One substrate flows down its gradient, carrying another against its gradient.</li>
+                                <li>Often moves substrates in fixed stoichiometric ratios.</li>
+                            </ul>
+                        `;
+                        secondaryActiveFeaturesDialog.classList.remove('hidden');
+                        setTimeout(() => { secondaryActiveFeaturesDialog.classList.add('show'); }, 10);
+                    }
+                    break;
+
+                case 'binding_Na1':
+                    if (currentTransportedNa1) {
+                        const targetX = secondaryTransporterX + secondaryTransporterWidth * 0.25; // Left binding site for Na1
+                        const targetY = secondaryTransporterY + secondaryTransporterHeight * 0.25;
+                        const dx = targetX - currentTransportedNa1.x;
+                        const dy = targetY - currentTransportedNa1.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance > 1) {
+                            currentTransportedNa1.x += dx / distance * 2;
+                            currentTransportedNa1.y += dy / distance * 2;
+                        } else {
+                            currentTransportedNa1.x = targetX;
+                            currentTransportedNa1.y = targetY;
+                            satSecondaryTransporterState = 'binding_Na2';
+                            satCycleStep = 0;
+                        }
+                    } else { satSecondaryTransporterState = 'waiting'; }
+                    break;
+
+                case 'binding_Na2':
+                    if (currentTransportedNa2) {
+                        const targetX = secondaryTransporterX + secondaryTransporterWidth * 0.75; // Right binding site for Na2
+                        const targetY = secondaryTransporterY + secondaryTransporterHeight * 0.25;
+                        const dx = targetX - currentTransportedNa2.x;
+                        const dy = targetY - currentTransportedNa2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance > 1) {
+                            currentTransportedNa2.x += dx / distance * 2;
+                            currentTransportedNa2.y += dy / distance * 2;
+                        } else {
+                            currentTransportedNa2.x = targetX;
+                            currentTransportedNa2.y = targetY;
+                            satSecondaryTransporterState = 'binding_solute'; // Renamed
+                            satCycleStep = 0;
+                        }
+                    } else { satSecondaryTransporterState = 'waiting'; }
+                    break;
+
+                case 'binding_solute': // Renamed
+                    if (currentTransportedOtherSolute) { // Renamed
+                        const targetX = secondaryTransporterX + secondaryTransporterWidth / 2;
+                        const targetY = secondaryTransporterY + secondaryTransporterHeight * 0.75; // Central binding site for Solute
+                        const dx = targetX - currentTransportedOtherSolute.x; // Renamed
+                        const dy = targetY - currentTransportedOtherSolute.y; // Renamed
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance > 1) {
+                            currentTransportedOtherSolute.x += dx / distance * 2; // Renamed
+                            currentTransportedOtherSolute.y += dy / distance * 2; // Renamed
+                        } else {
+                            currentTransportedOtherSolute.x = targetX; // Renamed
+                            currentTransportedOtherSolute.y = targetY; // Renamed
+                            satSecondaryTransporterState = 'transporting';
+                            satCycleStep = 0;
+                        }
+                    } else { satSecondaryTransporterState = 'waiting'; }
+                    break;
+
+                case 'transporting':
+                    // Animate conformational change and movement through the transporter
+                    satCycleStep++;
+                    const progress = satCycleStep / satCycleSteps;
+
+                    if (currentTransportedNa1) {
+                        const startY = secondaryTransporterY + secondaryTransporterHeight * 0.25;
+                        const endY = secondaryTransporterY + secondaryTransporterHeight * 0.75;
+                        currentTransportedNa1.y = startY + (endY - startY) * progress;
+                    }
+                    if (currentTransportedNa2) {
+                        const startY = secondaryTransporterY + secondaryTransporterHeight * 0.25;
+                        const endY = secondaryTransporterY + secondaryTransporterHeight * 0.75;
+                        currentTransportedNa2.y = startY + (endY - startY) * progress;
+                    }
+                    if (currentTransportedOtherSolute) { // Renamed
+                        const startY = secondaryTransporterY + secondaryTransporterHeight * 0.75;
+                        const endY = secondaryTransporterY + secondaryTransporterHeight * 0.25; // Solute moves "up" relative to Na+
+                        currentTransportedOtherSolute.y = startY - (startY - endY) * progress; // Renamed
+                    }
+
+                    if (satCycleStep >= satCycleSteps) {
+                        satSecondaryTransporterState = 'releasing';
+                        satCycleStep = 0;
+                    }
+                    break;
+
+                case 'releasing':
+                    if (currentTransportedNa1 && currentTransportedNa2 && currentTransportedOtherSolute) { // Renamed
+                        // Move Na+ and Solute to the inside (bottom compartment)
+                        currentTransportedNa1.y = Math.random() * (secondaryActiveTransportCanvas.height - satMembraneBottomY - soluteNaRadius * 2) + satMembraneBottomY + soluteNaRadius;
+                        currentTransportedNa2.y = Math.random() * (secondaryActiveTransportCanvas.height - satMembraneBottomY - soluteNaRadius * 2) + satMembraneBottomY + soluteNaRadius;
+                        currentTransportedOtherSolute.y = Math.random() * (secondaryActiveTransportCanvas.height - satMembraneBottomY - soluteOtherSize * 2) + satMembraneBottomY + soluteOtherSize; // Renamed
+
+                        currentTransportedNa1.inTransporter = false;
+                        currentTransportedNa2.inTransporter = false;
+                        currentTransportedOtherSolute.inTransporter = false; // Renamed
+
+                        currentTransportedNa1 = null;
+                        currentTransportedNa2 = null;
+                        currentTransportedOtherSolute = null; // Renamed
+
+                        // Show the callout
+                        secondaryActiveFeaturesDialog.innerHTML = `
+                            <h3 class="text-xl font-semibold mb-2">Transport Event!</h3>
+                            <p>Two Na+ ions flowed down their electrochemical gradient, driving the uphill transport of one Solute molecule into the cell.</p>
+                            <p class="text-sm text-gray-600 mt-2">This demonstrates the principle of secondary active transport, where the energy from one gradient powers the movement of another solute against its own gradient.</p>
+                        `;
+                        secondaryActiveFeaturesDialog.classList.add('cloud-callout'); // Add cloud class
+                        secondaryActiveFeaturesDialog.classList.remove('hidden'); // Make it display: block
+
+                        // Temporarily make it visible for measurement (but not rendered to user yet)
+                        secondaryActiveFeaturesDialog.style.visibility = 'hidden';
+                        secondaryActiveFeaturesDialog.style.opacity = '1'; // Make it fully opaque for measurement
+
+                        // Force reflow to get correct dimensions
+                        secondaryActiveFeaturesDialog.offsetWidth;
+
+                        // Get dimensions
+                        const dialogWidth = secondaryActiveFeaturesDialog.offsetWidth;
+                        const dialogHeight = secondaryActiveFeaturesDialog.offsetHeight;
+
+                        // Calculate position relative to the canvas
+                        const transporterCenterX = secondaryTransporterX + secondaryTransporterWidth / 2;
+                        const transporterTopY = secondaryTransporterY;
+                        secondaryActiveFeaturesDialog.style.left = `${transporterCenterX - dialogWidth / 2}px`;
+                        secondaryActiveFeaturesDialog.style.top = `${transporterTopY - dialogHeight - 20}px`; // 20px above transporter
+
+                        // Make it visible and apply transition
+                        secondaryActiveFeaturesDialog.style.visibility = 'visible';
+                        secondaryActiveFeaturesDialog.classList.add('show'); // This will trigger the opacity and transform transition
+                    }
+                    satSecondaryTransporterState = 'waiting';
+                    break;
+            }
+
+            drawSecondaryActiveScene();
+            secondaryActiveAnimationId = requestAnimationFrame(animateSecondaryActiveTransport);
+        }
+
+        function startSecondaryActiveSimulation() {
+            validateEmailWatermark(); // Security check
+            if (!isScriptValid) return;
+
+            if (!secondaryActiveInProgress) {
+                secondaryActiveInProgress = true;
+                simulateSecondaryActiveBtn.disabled = true; // Disable the button
+                simulateSecondaryActiveBtn.classList.add('simulate-btn-disabled-by-logic'); // Add class
+                resetSecondaryActiveBtn.disabled = false;
+                secondaryActiveFeaturesDialog.classList.remove('show', 'cloud-callout'); // Ensure all classes are removed
+                secondaryActiveFeaturesDialog.classList.add('hidden'); // Explicitly hide it
+                secondaryActiveFeaturesDialog.style.left = '';
+                secondaryActiveFeaturesDialog.style.top = '';
+                secondaryActiveFeaturesDialog.style.opacity = ''; // Clear inline styles
+                secondaryActiveFeaturesDialog.style.visibility = ''; // Clear inline visibility
+                animateSecondaryActiveTransport();
+            }
+        }
+
+        function resetSecondaryActiveSimulation() {
+            cancelAnimationFrame(secondaryActiveAnimationId);
+            secondaryActiveInProgress = false;
+            updateSecondaryActiveGeometry();
+            initSecondaryActiveSolutes();
+            drawSecondaryActiveScene();
+            simulateSecondaryActiveBtn.disabled = false; // Re-enable the button
+            simulateSecondaryActiveBtn.classList.remove('simulate-btn-disabled-by-logic'); // Remove class
+            resetSecondaryActiveBtn.disabled = true;
+            secondaryActiveFeaturesDialog.classList.remove('show', 'cloud-callout'); // Remove show and cloud class
+            secondaryActiveFeaturesDialog.classList.add('hidden'); // Hide it again
+            secondaryActiveFeaturesDialog.style.left = ''; // Clear position
+            secondaryActiveFeaturesDialog.style.top = ''; // Clear position
+            secondaryActiveFeaturesDialog.style.opacity = ''; // Clear opacity
+            secondaryActiveFeaturesDialog.style.visibility = ''; // Clear visibility
+            secondaryActiveFeaturesDialog.innerHTML = `
+                <h3 class="text-xl font-semibold mb-2">Secondary Active Transport:</h3>
+                <p>Click "Simulate Transport" to see how a pre-existing electrochemical gradient (Na+ gradient) drives the uphill transport of another solute.</p>
+                <ul class="list-disc list-inside space-y-1 mt-2">
+                    <li>Does NOT use ATP directly.</li>
+                    <li>Harnesses pre-existing electrochemical gradients.</li>
+                    <li>One substrate flows down its gradient, carrying another against its gradient.</li>
+                    <li>Often moves substrates in fixed stoichiometric ratios.</li>
+                </ul>
+            `;
+            validateEmailWatermark(); // Re-validate after reset
+        }
+
+        function updateSecondaryActiveGeometry() {
+            satMembraneCenterY = secondaryActiveTransportCanvas.height / 2;
+            secondaryTransporterX = (secondaryActiveTransportCanvas.width / 2) - (secondaryTransporterWidth / 2); // Center the secondary transporter
+            secondaryTransporterY = satMembraneCenterY - (secondaryTransporterHeight / 2);
+            satMembraneTopY = satMembraneCenterY - (secondaryActiveMembraneThickness / 2);
+            satMembraneBottomY = satMembraneCenterY + (secondaryActiveMembraneThickness / 2);
+        }
+
+        // --- Global Canvas Resizing and Initialization ---
+        function resizeCanvases() {
+            const parentWidth = simpleDiffusionCanvas.parentElement.clientWidth;
+            const newWidth = parentWidth > 600 ? 600 : parentWidth - 32;
+
+            simpleDiffusionCanvas.width = newWidth;
+            simpleDiffusionCanvas.height = 300;
+            facilitatedDiffusionCanvas.width = newWidth;
+            facilitatedDiffusionCanvas.height = 300;
+            primaryActiveTransportCanvas.width = newWidth;
+            primaryActiveTransportCanvas.height = 300;
+            secondaryActiveTransportCanvas.width = newWidth; // New canvas
+            secondaryActiveTransportCanvas.height = 300; // New canvas
+
+            diffusionGraphCanvas.width = newWidth;
+            diffusionGraphCanvas.height = 300;
+            facilitatedDiffusionGraphCanvas.width = newWidth;
+            facilitatedDiffusionGraphCanvas.height = 300;
+            primaryActiveTransportGraphCanvas.width = newWidth;
+            primaryActiveTransportGraphCanvas.height = 300;
+
+
+            updateFacilitatedGeometry(); // Update geometry on resize
+            updatePrimaryActiveGeometry(); // Update geometry on resize
+            updateSecondaryActiveGeometry(); // Update geometry on resize
+
+            initDiffusionSolutes();
+            drawSimpleDiffusionScene();
+            resetFacilitatedSimulation(); // Reset facilitated simulation to redraw correctly
+            resetPrimaryActiveSimulation(); // Reset primary active simulation to redraw correctly
+            resetSecondaryActiveSimulation(); // Reset secondary active simulation to redraw correctly
+
+            // Redraw graphs if they are visible after resize
+            if (diffusionGraphCanvas.style.display !== 'none') {
+                drawDiffusionGraph();
+            }
+            if (facilitatedDiffusionGraphCanvas.style.display !== 'none') {
+                drawFacilitatedGraph();
+            }
+            if (primaryActiveTransportGraphCanvas.style.display !== 'none') {
+                drawPrimaryActiveGraph();
+            }
+        }
+
+        window.onload = function() {
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+            validateEmailWatermark(); // Initial security check on load
+            setInterval(validateEmailWatermark, 1000); // Continuous security check every second
+        };
+
+        // Event Listeners
+        simulateDiffusionBtn.addEventListener('click', startDiffusionSimulation);
+        resetDiffusionBtn.addEventListener('click', resetDiffusionSimulation);
+        simulateFacilitatedBtn.addEventListener('click', startFacilitatedSimulation);
+        resetFacilitatedBtn.addEventListener('click', resetFacilitatedSimulation);
+        simulatePrimaryActiveBtn.addEventListener('click', startPrimaryActiveSimulation);
+        resetPrimaryActiveBtn.addEventListener('click', resetPrimaryActiveSimulation);
+        simulateSecondaryActiveBtn.addEventListener('click', startSecondaryActiveSimulation); // New button
+        resetSecondaryActiveBtn.addEventListener('click', resetSecondaryActiveSimulation); // New button
+
+
+        // Toggle Simple Diffusion Graph Button Listener
+        toggleDiffusionGraphBtn.addEventListener('click', () => {
+            if (diffusionGraphCanvas.style.display === 'none' || diffusionGraphCanvas.style.display === '') {
+                diffusionGraphCanvas.style.display = 'block';
+                toggleDiffusionGraphBtn.textContent = 'Hide Graph';
+                drawDiffusionGraph(); // Draw the graph when shown
+            } else {
+                diffusionGraphCanvas.style.display = 'none';
+                toggleDiffusionGraphBtn.textContent = 'View Graph';
+            }
+        });
+
+        // Toggle Facilitated Diffusion Graph Button Listener
+        toggleFacilitatedGraphBtn.addEventListener('click', () => {
+            if (facilitatedDiffusionGraphCanvas.style.display === 'none' || facilitatedDiffusionGraphCanvas.style.display === '') {
+                facilitatedDiffusionGraphCanvas.style.display = 'block';
+                toggleFacilitatedGraphBtn.textContent = 'Hide Graph';
+                drawFacilitatedGraph(); // Draw the graph when shown
+            } else {
+                facilitatedDiffusionGraphCanvas.style.display = 'none';
+                toggleFacilitatedGraphBtn.textContent = 'View Graph';
+            }
+        });
+
+        // Toggle Primary Active Transport Graph Button Listener
+        togglePrimaryActiveGraphBtn.addEventListener('click', () => {
+            if (primaryActiveTransportGraphCanvas.style.display === 'none' || primaryActiveTransportGraphCanvas.style.display === '') {
+                primaryActiveTransportGraphCanvas.style.display = 'block';
+                togglePrimaryActiveGraphBtn.textContent = 'Hide Graph';
+                drawPrimaryActiveGraph(); // Draw the graph when shown
+            } else {
+                primaryActiveTransportGraphCanvas.style.display = 'none';
+                togglePrimaryActiveGraphBtn.textContent = 'View Graph';
+            }
+        });
+    </script>
+</body>
+</html>
