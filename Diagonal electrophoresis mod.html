@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagonal Electrophoresis Interactive Learning</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Universal box-sizing and font */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Body styling for full-height, gradient background, and centering content */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        /* Container for overall layout width width control */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Header styling with background, shadow, and blur effect */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Main question heading styling with gradient text and hover effects */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+        
+        h1:hover {
+            transform: scale(1.03);
+            text-shadow: 0 0 15px rgba(79, 172, 254, 0.7);
+        }
+        
+        /* Dialog box styling for information display */
+        .dialog {
+            background: rgba(25, 25, 50, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 5px solid #4facfe;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+            max-width: 800px;
+        }
+        
+        .dialog h3 {
+            color: #4facfe;
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+        
+        .dialog p {
+            line-height: 1.6;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+
+        /* Styling for bullet points within dialog boxes */
+        .dialog ul, .info-panel ul {
+            list-style-type: disc; /* Ensure disc style */
+            margin-left: 20px; /* Indent the list */
+            padding-left: 0; /* Remove default padding */
+        }
+
+        .dialog li, .info-panel li {
+            margin-bottom: 5px; /* Spacing between list items */
+        }
+        
+        /* Technique heading styling with gradient text and hover effects */
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 50px;
+            text-align: center;
+        }
+        
+        h2:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Container for protein cards */
+        .proteins-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        /* Individual protein card styling */
+        .protein-card {
+            background: rgba(40, 40, 80, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .protein-card:hover {
+            transform: translateY(-8px);
+            background: rgba(50, 50, 100, 0.9);
+        }
+        
+        .protein-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #43e97b;
+        }
+        
+        .protein-weight {
+            font-size: 1.1rem;
+            color: #00f2fe;
+            margin-bottom: 12px;
+        }
+        
+        .protein-shape {
+            height: 100px;
+            position: relative;
+            margin: 12px 0;
+        }
+        
+        /* Gel container and gel styling */
+        .gel-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 30px auto;
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        .gel {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(to bottom, #2c3e50, #1c2833);
+            border-radius: 8px;
+            overflow: hidden; /* Ensure bands stay within gel */
+            box-shadow: 
+                inset 0 0 25px rgba(0, 0, 0, 0.7),
+                0 0 25px rgba(0, 0, 0, 0.5);
+            border: 2px solid #34495e;
+        }
+        
+        /* Diagonal label for the gel */
+        .diagonal-label {
+            position: absolute;
+            bottom: 10%; /* Adjusted position */
+            right: 10%; /* Adjusted position */
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.7);
+            z-index: 5; /* Ensure label is above the line */
+        }
+        
+        /* Well where proteins are loaded */
+        .well {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            width: 45px; /* Increased width */
+            height: 12px; /* Increased height */
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #7f8c8d;
+            border-radius: 4px; /* Changed to uniform rounded corners */
+            z-index: 10;
+            overflow: hidden; /* Hide overflow for sample animation */
+        }
+
+        /* Protein sample inside the well */
+        .well-sample {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0; /* Starts hidden */
+            background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white */
+            transition: height 0.5s ease-out;
+        }
+        
+        /* Protein band styling and animation */
+        .protein-band {
+            position: absolute;
+            height: 4px; /* Reduced height */
+            border-radius: 4px;
+            opacity: 0.9;
+            transition: all 2s ease;
+            box-shadow: 0 0 7px rgba(255, 255, 255, 0.5);
+        }
+        
+        .band-label {
+            position: absolute;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 0 0 4px black;
+            white-space: nowrap;
+        }
+
+        /* Styling for disulfide bond labels */
+        .disulfide-label {
+            font-size: 8px; /* Smaller font size for clarity */
+            fill: #e74c3c; /* Match disulfide bond color */
+            font-weight: bold;
+            text-anchor: middle; /* Center text horizontally */
+            dominant-baseline: central; /* Center text vertically */
+        }
+        
+        /* Controls section and button styling */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db, #1a5276);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, #3ca0db, #1f618d);
+        }
+        
+        .btn:disabled {
+            background: linear-gradient(135deg, #7f8c8d, #34495e);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #a66bbe, #9b59b6);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #ec7063, #e74c3c);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #3fe080, #2ecc71);
+        }
+        
+        /* Micropipette styling and animation */
+        .micropipette {
+            position: absolute;
+            top: -150px; /* Start higher up, off-screen */
+            left: 53px; /* Centered over the well */
+            width: 18px;
+            height: 90px;
+            background: #95a5a6;
+            border-radius: 4px;
+            z-index: 20;
+            transform-origin: bottom center;
+            display: none;
+        }
+        
+        .pipette-tip {
+            position: absolute;
+            bottom: -18px;
+            left: 0;
+            width: 18px;
+            height: 18px;
+            background: #95a5a6;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+        
+        /* SVG styling for protein structures */
+        .disulfide-bond {
+            stroke: #e74c3c;
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+        
+        .chain {
+            fill: none;
+            stroke: #3498db;
+            stroke-width: 3;
+            stroke-linecap: round;
+            /* Removed stroke-dasharray to make lines continuous */
+        }
+        
+        /* Info panel and result message styling */
+        .info-panel {
+            background: rgba(25, 25, 50, 0.9);
+            border-radius: 15px;
+            padding: 18px;
+            margin-top: 25px;
+            border-top: 3px solid #9b59b6;
+        }
+        
+        .highlight {
+            color: #f1c40f;
+            font-weight: bold;
+        }
+        
+        .result-message {
+            background: rgba(25, 25, 50, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 5px solid #e74c3c;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            display: none;
+        }
+
+        /* Styling for bullet points within result message */
+        .result-message ul {
+            list-style-type: disc; /* Ensure disc style */
+            margin-left: 20px; /* Adjust indentation */
+            padding-left: 0;
+        }
+
+        .result-message li {
+            margin-bottom: 5px;
+        }
+        
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .protein-card {
+                width: 100%;
+                max-width: 260px;
+            }
+            
+            .gel {
+                height: 380px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 12px 20px;
+            }
+        }
+        
+        /* Keyframe animations for floating and pulsing effects */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        /* Footer styling */
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        footer a {
+            color: #00f2fe; /* A contrasting color for the link */
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #4facfe; /* Change color on hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="mainQuestion">What is Diagonal Electrophoresis?</h1>
+        </header>
+        
+        <div id="definitionDialog" class="dialog">
+            <h3>Diagonal Electrophoresis</h3>
+            <p>Diagonal electrophoresis is a specialized two-dimensional gel electrophoresis technique used to identify proteins with disulfide bonds by comparing their migration under non-reducing and reducing conditions.</p>
+            <p>Key features:</p>
+            <ul>
+                <li>First dimension: Proteins are separated by SDS-PAGE under <span class="highlight">non-reducing conditions</span></li>
+                <li>The gel is then treated with a reducing agent (like β-mercaptoethanol)</li>
+                <li>Second dimension can be done in <span class="highlight">Reducing</span> and <span class="highlight">Non-Reducing</span> conditions</li>
+            </ul>
+        </div>
+
+        <div class="info-panel">
+            <h3>How Diagonal Electrophoresis Works</h3>
+            <p>Diagonal electrophoresis helps identify proteins with disulfide bonds by comparing their migration patterns:</p>
+            <ul>
+                <li>In the <span class="highlight">first dimension</span>, proteins are separated based on molecular weight under non-reducing conditions</li>
+                <li>In the <span class="highlight">second dimension</span>, proteins are separated again under reducing conditions</li>
+                <li>Proteins <span class="highlight">without disulfide bonds</span> migrate the same distance in both dimensions, appearing on the diagonal</li>
+                <li>Proteins <span class="highlight">with disulfide bonds</span> break into smaller chains under reducing conditions, migrating further and appearing <span class="highlight">above</span> the diagonal</li>
+            </ul>
+        </div>
+        
+        <h2 id="techniqueHeading">Let's try out the technique!</h2>
+        
+        <div id="proteinsSection" class="proteins-container">
+            </div>
+        
+        <div class="gel-container">
+            <div class="gel">
+                <svg class="diagonal-svg" width="100%" height="100%" style="position: absolute; top: 0; left: 0; pointer-events: none;">
+                    <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="rgba(255, 255, 255, 0.6)" stroke-width="2" stroke-dasharray="5,5" />
+                </svg>
+                <div class="diagonal-label">Diagonal Line</div>
+                <div class="well">
+                    <div class="well-sample"></div> </div>
+                <div class="micropipette">
+                    <div class="pipette-tip"></div>
+                </div>
+                </div>
+        </div>
+        
+        <div class="controls">
+            <button id="loadBtn" class="btn">
+                <i class="fas fa-vial"></i> Load Proteins
+            </button>
+            <button id="firstDimensionBtn" class="btn" disabled>
+                <i class="fas fa-arrow-down"></i> Run First Dimension
+            </button>
+            <button id="nonReducingBtn" class="btn btn-secondary" disabled>
+                <i class="fas fa-arrow-right"></i> Non-Reducing Condition
+            </button>
+            <button id="reducingBtn" class="btn btn-danger" disabled>
+                <i class="fas fa-arrow-right"></i> Reducing Condition
+            </button>
+            <button id="resetBtn" class="btn btn-success">
+                <i class="fas fa-redo"></i> Reset Experiment
+            </button>
+        </div>
+        
+        <div id="resultMessage" class="result-message">
+            <h3>Results</h3>
+            <p id="resultText"></p>
+        </div>
+        
+
+    </div>
+
+    <footer>
+        <p id="footerEmail">betabiosciences@gmail.com</p>
+        <p><a id="telegramLink" href="https://t.me/betascience_csir" target="_blank">Join our Telegram channel</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Proteins data
+            const proteins = [
+                { id: 'w', name: 'Protein W', weight: 40, color: '#3498db' },
+                { id: 'x', name: 'Protein X', weight: 60, color: '#9b59b6', disulfide: true },
+                { id: 'y', name: 'Protein Y', weight: 30, color: '#2ecc71' },
+                { id: 'z', name: 'Protein Z', weight: 70, color: '#f1c40f' }
+            ];
+            
+            // DOM Elements
+            const mainQuestion = document.getElementById('mainQuestion');
+            const techniqueHeading = document.getElementById('techniqueHeading');
+            const proteinsSection = document.getElementById('proteinsSection');
+            const gel = document.querySelector('.gel');
+            const micropipette = document.querySelector('.micropipette');
+            const loadBtn = document.getElementById('loadBtn');
+            const firstDimensionBtn = document.getElementById('firstDimensionBtn');
+            const nonReducingBtn = document.getElementById('nonReducingBtn');
+            const reducingBtn = document.getElementById('reducingBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultMessage = document.getElementById('resultMessage');
+            const resultText = document.getElementById('resultText');
+            const gelContainer = document.querySelector('.gel-container');
+            const wellSample = document.querySelector('.well-sample'); // Get the new well sample element
+            const footerEmail = document.getElementById('footerEmail'); // Get the footer email element
+            const telegramLink = document.getElementById('telegramLink'); // Get the Telegram link element
+
+
+            // Expected email for integrity check
+            const expectedEmail = "betabiosciences@gmail.com";
+            const allowedHostnames = ["github.com", "github.io"]; // Allowed GitHub domains
+            let integrityOK = false;
+
+            // Function to verify content and hostname integrity
+            function verifyIntegrity() {
+                let emailCheck = (footerEmail && footerEmail.textContent.trim() === expectedEmail);
+                // Allow localhost (Canvas environment), empty hostname (local file system), or GitHub domains
+                let hostnameCheck = window.location.hostname === 'localhost' || 
+                                    window.location.hostname === '' || // Added this line to allow local file system access
+                                    allowedHostnames.some(domain => window.location.hostname.endsWith(domain));
+
+                if (emailCheck && hostnameCheck) {
+                    integrityOK = true;
+                    console.log("Integrity check passed.");
+                    return true;
+                } else {
+                    integrityOK = false;
+                    let errorMessage = "";
+                    if (!emailCheck) {
+                        errorMessage += "Email address modified or missing. ";
+                    }
+                    if (!hostnameCheck) {
+                        errorMessage += "Script is not loaded from an allowed GitHub or local domain. ";
+                    }
+                    console.error("Integrity check failed: " + errorMessage);
+                    
+                    // Disable all interactive elements
+                    loadBtn.disabled = true;
+                    firstDimensionBtn.disabled = true;
+                    nonReducingBtn.disabled = true;
+                    reducingBtn.disabled = true;
+                    resetBtn.disabled = true;
+                    // Also disable the Telegram link if integrity fails
+                    if (telegramLink) {
+                        telegramLink.style.pointerEvents = 'none';
+                        telegramLink.style.opacity = '0.5';
+                    }
+
+                    resultText.innerHTML = `<h3 style='color:#e74c3c;'>System Error: ${errorMessage}Functionality disabled.</h3>`;
+                    resultMessage.style.display = 'block';
+                    return false;
+                }
+            }
+
+            // Get gel dimensions dynamically
+            let gelHeight = gel.offsetHeight;
+            let gelWidth = gel.offsetWidth;
+
+            // Define min/max Y positions for migration, leaving more margin
+            const minY = 50; // Top position for largest protein (less migration)
+            const maxY = gelHeight - 50; // Bottom position for smallest protein (more migration)
+            const mwRange = 70 - 30; // Max MW - Min MW (70 - 30)
+
+            // Define min/max X positions for migration (relative to gel width)
+            // These are now more flexible to allow diagonal alignment across the full visual range
+            const minX = 0; // Start from the left edge of the gel
+            const maxX = gelWidth; // Go to the right edge of the gel
+            
+            // State management
+            let proteinsLoaded = false;
+            let firstDimensionRun = false;
+            let secondDimensionRun = false;
+            
+            // Create protein cards
+            function createProteinCards() {
+                proteinsSection.innerHTML = '';
+                proteins.forEach(protein => {
+                    const card = document.createElement('div');
+                    card.className = 'protein-card floating';
+                    
+                    // SVG for protein structure
+                    let proteinShapeSVG = '';
+                    if (protein.disulfide) {
+                        // Protein X with two chains connected by disulfide bonds and labels
+                        proteinShapeSVG = `
+                            <path class="chain" d="M20,45 C40,30 80,30 100,45" />
+                            <path class="chain" d="M20,75 C40,90 80,90 100,75" />
+                            <line class="disulfide-bond" x1="40" y1="45" x2="40" y2="75" />
+                            <line class="disulfide-bond" x1="80" y1="45" x2="80" y2="75" />
+                            <text class="disulfide-label" x="20" y="60">S-S</text> 
+                            <text class="disulfide-label" x="100" y="60">S-S</text> 
+                        `;
+                    } else {
+                        // Other proteins with single continuous chains appearing like loops
+                        proteinShapeSVG = `
+                            <path class="chain" d="M20,60 C30,30 50,90 60,60 C70,30 90,90 100,60" />
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="protein-name">${protein.name}</div>
+                        <div class="protein-weight">${protein.weight} kDa</div>
+                        <div class="protein-shape">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                ${proteinShapeSVG}
+                            </svg>
+                        </div>
+                    `;
+                    
+                    proteinsSection.appendChild(card);
+                });
+            }
+            
+            // Load proteins animation
+            function loadProteins() {
+                if (!integrityOK || proteinsLoaded) return; // Check integrity here
+                
+                // Show micropipette and set its initial position
+                micropipette.style.display = 'block';
+                micropipette.style.left = '53px'; // Centered over the well
+                micropipette.style.top = '-150px'; // Start high above the gel
+
+                // Animate micropipette to descend
+                setTimeout(() => {
+                    micropipette.style.transition = 'top 1s ease, transform 1s ease'; // Smooth transition for top and transform
+                    // Calculate target 'top' for pipette so its tip (90px body + 18px tip = 108px total length from CSS top)
+                    // enters the well (well top is 20px). Let's aim for the tip to be at 25px (5px into the well).
+                    micropipette.style.top = '-83px'; // 25px (tip target) - 108px (pipette total length) = -83px
+                    micropipette.style.transform = 'rotate(-10deg)'; // Slight tilt
+                    
+                    // Show and expand the sample in the well
+                    setTimeout(() => {
+                        wellSample.style.height = '100%'; // Fill the well
+                        
+                        // Create protein bands in the well (these will be hidden later during 1D run)
+                        proteins.forEach((protein, index) => {
+                            const band = document.createElement('div');
+                            band.className = 'protein-band';
+                            band.id = `band-${protein.id}`;
+                            band.style.backgroundColor = protein.color;
+                            band.style.width = '4px'; /* Smaller width */
+                            band.style.height = '6px'; /* Slightly larger height to be visible in well */
+                            band.style.left = '48px';
+                            band.style.top = '23px';
+                            gel.appendChild(band);
+                        });
+                        
+                        // Retract micropipette
+                        setTimeout(() => {
+                            micropipette.style.transform = 'rotate(0deg)'; // Straighten up
+                            micropipette.style.top = '-150px'; // Move back up off-screen
+                            
+                            // Enable next button
+                            setTimeout(() => {
+                                micropipette.style.display = 'none';
+                                firstDimensionBtn.disabled = false;
+                                proteinsLoaded = true;
+                                
+                                // Show success message
+                                resultText.innerHTML = "Proteins loaded successfully! Click 'Run First Dimension' to begin electrophoresis.";
+                                resultMessage.style.display = 'block';
+                            }, 800);
+                        }, 500);
+                    }, 500);
+                }, 300);
+            }
+            
+            // Run first dimension
+            function runFirstDimension() {
+                if (!integrityOK || !proteinsLoaded || firstDimensionRun) return; // Check integrity here
+                
+                // Hide the well sample
+                wellSample.style.height = '0';
+
+                // Clear previous results
+                resultMessage.style.display = 'none';
+                
+                // Animate protein migration
+                proteins.forEach((protein, index) => {
+                    const band = document.getElementById(`band-${protein.id}`);
+                    band.style.transition = `all 1.8s ease ${index * 0.3}s`;
+                    band.style.width = '40px'; /* Reduced width for bands */
+                    band.style.height = '7px'; /* Maintain height for visibility */
+                    band.style.left = '55px'; // Keep fixed left for 1D
+
+                    // Calculate position based on molecular weight with proper scaling
+                    // Smaller MW -> higher position (further down)
+                    let migrationFactor = (70 - protein.weight) / mwRange; // 1 for 30kDa, 0 for 70kDa
+                    let position = minY + (migrationFactor * (maxY - minY)); 
+                    
+                    band.style.top = `${position}px`;
+                    
+                    // Add label after animation
+                    setTimeout(() => {
+                        const label = document.createElement('div');
+                        label.className = 'band-label';
+                        label.id = `label-${protein.id}`; // Add ID to label for easier removal
+                        label.textContent = protein.name;
+                        
+                        // Position label relative to the band's final position
+                        let labelLeft = parseInt(band.style.left) + band.offsetWidth + 10; // 10px margin from band
+                        let labelTop = position - 8; // Adjust for label height
+
+                        // Ensure label is within gel's right boundary
+                        if (labelLeft + label.offsetWidth > gelWidth - 10) { 
+                            labelLeft = gelWidth - label.offsetWidth - 10;
+                        }
+                        
+                        label.style.left = `${labelLeft}px`;
+                        label.style.top = `${labelTop}px`;
+                        label.style.color = protein.color;
+                        gel.appendChild(label);
+                    }, 1800 + index * 300);
+                });
+                
+                // Show dialog
+                setTimeout(() => {
+                    resultText.innerHTML = `
+                        <h3>First Dimension: SDS-PAGE</h3>
+                        <p>The first dimension is a vertical SDS-PAGE run under non-reducing conditions. 
+                        Proteins separate based on their molecular weight with the lowest weight having 
+                        highest electrophoretic mobility and migrating farthest toward the bottom of the gel.</p>
+                        <p>Notice how Protein Y (30 kDa) migrated farthest, followed by Protein W (40 kDa), 
+                        Protein X (60 kDa), and Protein Z (70 kDa).</p>
+                    `;
+                    resultMessage.style.display = 'block';
+                    
+                    // Enable next buttons
+                    nonReducingBtn.disabled = false;
+                    reducingBtn.disabled = false;
+                    firstDimensionRun = true;
+                }, 3000);
+            }
+            
+            // Run second dimension (non-reducing)
+            function runNonReducing() {
+                if (!integrityOK || !firstDimensionRun || secondDimensionRun) return; // Check integrity here
+                secondDimensionRun = true;
+                
+                // Clear previous results
+                resultMessage.style.display = 'none';
+                
+                // Animate protein migration
+                proteins.forEach((protein, index) => {
+                    const band = document.getElementById(`band-${protein.id}`);
+                    const label = document.getElementById(`label-${protein.id}`); // Get the label element
+                    band.style.transition = `all 1.8s ease ${index * 0.3}s`;
+                    
+                    // The Y position (top) is already set from the first dimension
+                    const currentTop = parseInt(band.style.top); 
+                    
+                    // For non-reducing conditions, bands should be exactly on the diagonal.
+                    // Calculate left position to align with the SVG's 0%,0% to 100%,100% diagonal.
+                    // This ensures perfect diagonal alignment regardless of gel dimensions.
+                    let newLeft = currentTop * (gelWidth / gelHeight); 
+
+                    // Ensure the band stays within the gel's horizontal boundaries,
+                    // but prioritize diagonal alignment over strict minX/maxX if they conflict.
+                    // The diagonal line itself spans the whole gel.
+                    newLeft = Math.max(0, Math.min(gelWidth - band.offsetWidth, newLeft));
+
+                    band.style.left = `${newLeft}px`;
+                    
+                    // Update label position
+                    setTimeout(() => {
+                        if (label) {
+                            let labelLeft = newLeft + band.offsetWidth + 10; // Position label right of the band
+                            let labelTop = currentTop - 8; // Position label slightly above the band's center
+                            
+                            // Ensure label is within gel's right boundary
+                            if (labelLeft + label.offsetWidth > gelWidth - 10) {
+                                labelLeft = gelWidth - label.offsetWidth - 10;
+                            }
+                            
+                            label.style.left = `${labelLeft}px`;
+                            label.style.top = `${labelTop}px`;
+                        }
+                    }, 1800 + index * 300);
+                });
+                
+                // Final dialog (combined content)
+                setTimeout(() => {
+                    resultText.innerHTML = `
+                        <h3>Non-Reducing Results</h3>
+                        <ul>
+                            <li>β-mercaptoethanol is not added, so all disulfide bonds in the proteins remain intact.</li>
+                            <li>Proteins migrate sideways according to their molecular weights.</li>
+                            <li>Their electrophoretic mobility is consistent in both dimensions.</li>
+                            <li>Since their molecular weights haven't changed, they remain on the diagonal line.</li>
+                        </ul>
+                    `;
+                    resultMessage.style.display = 'block';
+                }, 3000);
+            }
+            
+            // Run second dimension (reducing)
+            function runReducing() {
+                if (!integrityOK || !firstDimensionRun || secondDimensionRun) return; // Check integrity here
+                secondDimensionRun = true;
+                
+                // Clear previous results
+                resultMessage.style.display = 'none';
+                
+                // Show dialog
+                resultText.innerHTML = `
+                    <h3>Reducing Conditions</h3>
+                    <p>β-mercaptoethanol is added, breaking all disulfide bonds in the proteins. 
+                    Proteins without disulfide bonds will migrate the same distance as in the first dimension, 
+                    while proteins with disulfide bonds will break into smaller chains and migrate further.</p>
+                `;
+                resultText.style.display = 'block'; // Make sure the result message is visible
+                
+                // Animate protein migration
+                proteins.forEach((protein, index) => {
+                    const band = document.getElementById(`band-${protein.id}`);
+                    const originalLabel = document.getElementById(`label-${protein.id}`);
+
+                    band.style.transition = `all 1.8s ease ${index * 0.3}s`;
+                    
+                    if (protein.disulfide) {
+                        // Remove original Protein X label
+                        if (originalLabel) {
+                            originalLabel.remove();
+                        }
+
+                        // Protein X breaks into two chains
+                        setTimeout(() => {
+                            band.style.display = 'none';
+                            
+                            // Create two new bands (chains)
+                            // Chain 1 (30 kDa)
+                            const chain1 = document.createElement('div');
+                            chain1.className = 'protein-band';
+                            chain1.id = 'chain1';
+                            chain1.style.backgroundColor = protein.color;
+                            chain1.style.width = '40px'; /* Reduced width for chains */
+                            chain1.style.height = '7px'; /* Maintain height for visibility */
+                            chain1.style.left = '55px';
+                            chain1.style.top = band.style.top; // Keep original Y position from 1D
+                            gel.appendChild(chain1);
+                            
+                            // Chain 2 (30 kDa)
+                            const chain2 = document.createElement('div');
+                            chain2.className = 'protein-band';
+                            chain2.id = 'chain2';
+                            chain2.style.backgroundColor = protein.color;
+                            chain2.style.width = '40px'; /* Reduced width for chains */
+                            chain2.style.height = '7px'; /* Maintain height for visibility */
+                            chain2.style.left = '55px';
+                            chain2.style.top = band.style.top; // Keep original Y position from 1D
+                            gel.appendChild(chain2);
+                            
+                            // Animate chains
+                            setTimeout(() => {
+                                chain1.style.transition = 'all 1.8s ease';
+                                chain2.style.transition = 'all 1.8s ease';
+                                
+                                // Calculate positions based on new molecular weights (30 kDa each)
+                                // They are both 30kDa, so they should migrate to the far right (maxX)
+                                let chainLeft = maxX - 150; // Keep Protein X chains clearly off the diagonal
+
+                                let chain1Top = parseInt(band.style.top) - 15; // Slightly above original Y
+                                let chain2Top = parseInt(band.style.top) + 15; // Slightly below original Y
+
+                                // Clamp chain tops to stay within gel's top/bottom boundaries
+                                chain1Top = Math.max(minY, Math.min(maxY, chain1Top));
+                                chain2Top = Math.max(minY, Math.min(maxY, chain2Top));
+                                
+                                chain1.style.left = `${chainLeft}px`;
+                                chain1.style.top = `${chain1Top}px`;
+                                chain1.style.width = '40px';
+                                chain1.style.height = '7px';
+                                
+                                chain2.style.left = `${chainLeft}px`;
+                                chain2.style.top = `${chain2Top}px`;
+                                chain2.style.width = '40px';
+                                chain2.style.height = '7px';
+                                
+                                // Add labels
+                                setTimeout(() => {
+                                    // Add Protein X label above the two chains
+                                    const proteinXGroupLabel = document.createElement('div');
+                                    proteinXGroupLabel.className = 'band-label';
+                                    proteinXGroupLabel.textContent = 'Protein X';
+                                    // Position above the center of the two chains
+                                    let groupLabelLeft = chainLeft + (chain1.offsetWidth / 2) - (proteinXGroupLabel.offsetWidth / 2);
+                                    let groupLabelTop = Math.min(chain1Top, chain2Top) - 25; // Above both chains
+                                    
+                                    proteinXGroupLabel.style.left = `${groupLabelLeft}px`;
+                                    proteinXGroupLabel.style.top = `${groupLabelTop}px`;
+                                    proteinXGroupLabel.style.color = protein.color;
+                                    gel.appendChild(proteinXGroupLabel);
+
+
+                                    const label1 = document.createElement('div');
+                                    label1.className = 'band-label';
+                                    label1.textContent = 'Chain A (30 kDa)';
+                                    let label1Left = parseInt(chain1.style.left) + 50;
+                                    // Ensure label is within gel's right boundary
+                                    if (label1Left + label1.offsetWidth > gelWidth - 10) {
+                                        label1Left = gelWidth - label1.offsetWidth - 10;
+                                    }
+                                    label1.style.left = `${label1Left}px`;
+                                    label1.style.top = `${parseInt(chain1.style.top) - 8}px`;
+                                    label1.style.color = protein.color;
+                                    gel.appendChild(label1);
+                                    
+                                    const label2 = document.createElement('div');
+                                    label2.className = 'band-label';
+                                    label2.textContent = 'Chain B (30 kDa)';
+                                    let label2Left = parseInt(chain2.style.left) + 50;
+                                    // Ensure label is within gel's right boundary
+                                    if (label2Left + label2.offsetWidth > gelWidth - 10) {
+                                        label2Left = gelWidth - label2.offsetWidth - 10;
+                                    }
+                                    label2.style.left = `${label2Left}px`;
+                                    label2.style.top = `${parseInt(chain2.style.top) - 8}px`;
+                                    label2.style.color = protein.color;
+                                    gel.appendChild(label2);
+                                }, 1800);
+                            }, 100);
+                        }, 100);
+                    } else {
+                        // For proteins without disulfide bonds (W, Y, and Z), they should stay on the diagonal
+                        const currentTop = parseInt(band.style.top);
+                        
+                        // Calculate left position to align with the SVG's 0%,0% to 100%,100% diagonal.
+                        // This ensures perfect diagonal alignment regardless of gel dimensions.
+                        let newLeft = currentTop * (gelWidth / gelHeight);
+
+                        // Ensure the band stays within the gel's horizontal boundaries,
+                        // but prioritize diagonal alignment over strict minX/maxX if they conflict.
+                        newLeft = Math.max(0, Math.min(gelWidth - band.offsetWidth, newLeft));
+
+                        band.style.left = `${newLeft}px`;
+                        
+                        // Update label position
+                        setTimeout(() => {
+                            if (originalLabel) {
+                                let labelLeft = newLeft + band.offsetWidth + 10; // Position label right of the band
+                                let labelTop = currentTop - 8; // Position label slightly above the band's center
+
+                                // Ensure label is within gel's right boundary
+                                if (labelLeft + originalLabel.offsetWidth > gelWidth - 10) {
+                                    labelLeft = gelWidth - originalLabel.offsetWidth - 10;
+                                }
+                                originalLabel.style.left = `${labelLeft}px`;
+                                originalLabel.style.top = `${labelTop}px`; // Ensure label top is also updated if needed
+                            }
+                        }, 1800);
+                    }
+                });
+                
+                // Final dialog
+                setTimeout(() => {
+                    resultText.innerHTML = `
+                        <h3>Reducing Results</h3>
+                        <p>In reducing conditions, disulfide bonds are cleaved. Protein X (60 kDa) breaks into 
+                        two smaller chains (30 kDa each), which now have higher electrophoretic mobility.</p>
+                        <p>As a result:</p>
+                        <ul>
+                            <li>Proteins W, Y, and Z without disulfide bonds have their molecular weights unchanged and thus remain on the diagonal</li>
+                            <li>Protein X chains appear <span class="highlight">above</span> the diagonal because their molecular weights decreased, 
+                            causing them to migrate further in the second dimension</li>
+                        </ul>
+                        <p>This technique effectively identifies proteins with disulfide bonds by their position 
+                        relative to the diagonal line.</p>
+                    `;
+                    resultMessage.style.display = 'block';
+                    
+                    // Highlight Protein X chains
+                    document.getElementById('chain1').classList.add('pulse');
+                    document.getElementById('chain2').classList.add('pulse');
+                }, 4000);
+            }
+            
+            // Reset the experiment
+            function resetExperiment() {
+                // Remove all bands and labels
+                document.querySelectorAll('.protein-band, .band-label').forEach(el => el.remove());
+                
+                // Reset well sample
+                wellSample.style.height = '0';
+
+                // Reset buttons
+                firstDimensionBtn.disabled = true;
+                nonReducingBtn.disabled = true;
+                reducingBtn.disabled = true;
+                
+                // Reset state
+                proteinsLoaded = false;
+                firstDimensionRun = false;
+                secondDimensionRun = false;
+                
+                // Hide result message
+                resultMessage.style.display = 'none';
+                
+                // Recreate protein cards
+                createProteinCards();
+            }
+            
+            // Event listeners
+            mainQuestion.addEventListener('click', () => {
+                const dialog = document.getElementById('definitionDialog');
+                dialog.style.display = dialog.style.display === 'none' ? 'block' : 'block';
+            });
+            
+            techniqueHeading.addEventListener('click', createProteinCards); // This one doesn't need integrity check as it just recreates cards
+
+            loadBtn.addEventListener('click', () => {
+                if (!verifyIntegrity()) return;
+                loadProteins();
+            });
+            firstDimensionBtn.addEventListener('click', () => {
+                if (!verifyIntegrity()) return;
+                runFirstDimension();
+            });
+            nonReducingBtn.addEventListener('click', () => {
+                if (!verifyIntegrity()) return;
+                runNonReducing();
+            });
+            reducingBtn.addEventListener('click', () => {
+                if (!verifyIntegrity()) return;
+                runReducing();
+            });
+            resetBtn.addEventListener('click', () => {
+                // Allow reset to clear the gel even if integrity is compromised,
+                // but re-run integrity check to keep buttons disabled if needed.
+                resetExperiment();
+                verifyIntegrity(); 
+            });
+            
+            // Initial call to verify integrity and create protein cards if integrity is okay
+            if (verifyIntegrity()) {
+                createProteinCards();
+            }
+        });
+    </script>
+</body>
+</html>
