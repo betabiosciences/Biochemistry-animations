@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrophobic Interactions & Protein Folding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <style>
+        /* Universal box-sizing for all elements */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styling for background, font, and layout */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Container for main content to center and limit width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header styling for title and subtitle */
+        header {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Main title styling with glow animation */
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px rgba(0, 200, 255, 0.7);
+            animation: glow 2s infinite alternate;
+        }
+
+        /* Subtitle styling */
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #e0f7fa;
+        }
+
+        /* Scenario box styling with glassmorphism effect */
+        .scenario {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 1000px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Scenario title styling */
+        .scenario-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #80deea;
+            text-align: center;
+        }
+
+        /* Simulation container for beaker and controls */
+        .simulation-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        /* Beaker container for 3D perspective */
+        .beaker-container {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+        }
+
+        /* Beaker styling with gradient and shadow */
+        .beaker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 100, 255, 0.1), rgba(0, 100, 255, 0.3));
+            border: 3px solid #64b5f6;
+            border-radius: 0 0 40px 40px;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 30px rgba(100, 181, 246, 0.5),
+                0 10px 20px rgba(0, 0, 0, 0.3);
+            transform-style: preserve-3d;
+            transform: rotateX(5deg);
+        }
+
+        /* Water styling inside the beaker */
+        .water {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 85%;
+            background: rgba(64, 164, 223, 0.4);
+            border-radius: 0 0 35px 35px;
+            box-shadow: inset 0 0 20px rgba(0, 150, 255, 0.7);
+        }
+
+        /* Water surface line */
+        .water-surface {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Controls section styling */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+            min-width: 300px;
+        }
+
+        /* Base button styling */
+        .control-btn {
+            background: linear-gradient(to right, #4A00E0, #8E2DE2);
+            color: white;
+            border: none;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Button hover effects */
+        .control-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #5a1ae9, #9e3df2);
+        }
+
+        /* Button active state */
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Disabled button styling (turns grey and no hover/active effects) */
+        .control-btn:disabled {
+            background: #a0a0a0 !important; /* Grey background for disabled buttons, important to override gradients */
+            color: #ccc; /* Lighter text for disabled state */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Icon styling within buttons */
+        .control-btn i {
+            font-size: 1.5rem;
+        }
+
+        /* Specific button color themes */
+        .control-btn.polar {
+            background: linear-gradient(to right, #8E44AD, #9B59B6);
+        }
+
+        .control-btn.nonpolar {
+            background: linear-gradient(to right, #E74C3C, #C0392B);
+        }
+
+        .control-btn.two-nonpolar {
+            background: linear-gradient(to right, #D35400, #E67E22);
+        }
+
+        .control-btn.reset {
+            background: linear-gradient(to right, #2ECC71, #27AE60); /* Green for reset */
+        }
+
+        /* Dialog box styling */
+        .dialog-box {
+            background: rgba(25, 32, 71, 0.9);
+            border-left: 5px solid #4A00E0;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: none; /* Hidden by default */
+        }
+
+        /* Active dialog box animation */
+        .dialog-box.active {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* Highlighted text within dialogs */
+        .highlight {
+            color: #ffcc00;
+            font-weight: 700;
+            background: rgba(255, 204, 0, 0.15);
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+
+        /* Definition section styling */
+        .definition {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 800px;
+            border-top: 2px solid #4A00E0;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active definition section animation */
+        .definition.active {
+            display: block;
+            animation: slideIn 1s ease;
+        }
+
+        /* Definition heading */
+        .definition h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #80deea;
+            text-align: center;
+        }
+
+        /* Definition paragraph styling */
+        .definition p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        /* Base molecule styling */
+        .molecule {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 100;
+            transition: all 1.5s ease; /* Default transition for movement */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Polar molecule specific styling */
+        .polar-mol {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #9b59b6, #8e44ad);
+            box-shadow: 0 0 20px rgba(155, 89, 182, 0.9);
+        }
+
+        /* Non-polar molecule specific styling */
+        .nonpolar-mol {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #e74c3c, #c0392b);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.9);
+        }
+
+        /* Hydrogen bond styling */
+        .bond {
+            position: absolute;
+            height: 2px;
+            background: rgba(255, 255, 255, 0); /* Transparent background */
+            transform-origin: 0 0;
+            z-index: 5;
+            border-top: 2px dashed yellow; /* Dashed yellow line for bond */
+        }
+
+        /* Water molecule styling */
+        .water-molecule {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: rgba(64, 164, 223, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(100, 181, 246, 0.7);
+            z-index: 2;
+        }
+
+        /* Legend styling */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Legend item styling */
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Legend color swatch styling */
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        /* Specific legend color backgrounds */
+        .legend-polar {
+            background: radial-gradient(circle at 30% 30%, #9b59b6, #8e44ad);
+        }
+
+        .legend-nonpolar {
+            background: radial-gradient(circle at 30% 30%, #e74c3c, #c0392b);
+        }
+
+        .legend-water {
+            background: rgba(64, 164, 223, 0.8);
+        }
+
+        /* Legend bond representation */
+        .legend-bond::before {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            border-top: 2px dashed yellow;
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(0, 200, 255, 0.7); }
+            to { text-shadow: 0 0 25px rgba(0, 200, 255, 1), 0 0 35px rgba(0, 150, 255, 0.7); }
+        }
+
+        /* Drop animation for molecules */
+        @keyframes drop {
+            0% { transform: translateY(-100px) scale(0.8); opacity: 0; }
+            80% { transform: translateY(0) scale(1.1); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        /* Propagate animation for bonds */
+        @keyframes propagate {
+            0% { width: 0; opacity: 0; }
+            50% { opacity: 1; }
+            100% { width: var(--bond-length); opacity: 1; }
+        }
+        
+        /* Pulse animation for molecules */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9rem;
+            color: #90a4ae;
+            margin-top: 20px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .simulation-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* New styles for Factors section */
+        .factors-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 40px auto;
+            max-width: 1000px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .factors-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #80deea;
+            text-align: center;
+        }
+
+        .factors-section p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .factor-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .factor-btn-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .factor-btn {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .factor-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #0056b3, #004085);
+        }
+
+        .factor-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .factor-btn:disabled {
+            background: #a0a0a0 !important;
+            color: #ccc; /* Lighter text for disabled state */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .graph-container {
+            display: none; /* Hidden by default */
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .graph-container canvas {
+            background: #fff;
+            border-radius: 8px;
+            /* Ensure canvas is responsive */
+            max-width: 100%;
+            height: auto;
+            /* Set intrinsic size to provide more drawing area */
+            width: 700px; /* Increased width */
+            height: 500px; /* Increased height */
+        }
+
+        /* Style for the single "Click to view effects" text */
+        .click-to-view-text {
+            font-size: 0.95rem;
+            color: #e0f7fa;
+            text-align: center;
+            margin-top: -10px; /* Adjust as needed for positioning */
+            margin-bottom: 20px;
+        }
+
+        /* New style for yellow text */
+        .yellow-text {
+            color: #ffcc00;
+        }
+
+        /* Styles for the new Protein Folding Mechanism section */
+        .protein-folding-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 40px auto;
+            max-width: 1000px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .protein-folding-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #80deea;
+            text-align: center;
+        }
+
+        .protein-folding-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffcc00; /* Yellow for theory name */
+            text-align: center;
+        }
+
+        .protein-folding-section ul {
+            list-style: none; /* Remove default bullet points */
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+
+        .protein-folding-section ul li {
+            position: relative;
+            padding-left: 30px; /* Space for custom bullet */
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .protein-folding-section ul li::before {
+            content: '•'; /* Custom bullet point */
+            color: #80deea; /* Color for bullet */
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .protein-folding-section ul ul { /* Sub-list styling */
+            list-style: none;
+            padding-left: 40px; /* Indent sub-points */
+            margin-top: 10px;
+        }
+
+        .protein-folding-section ul ul li {
+            padding-left: 20px;
+            font-size: 1rem;
+            color: #e0f7fa;
+        }
+
+        .protein-folding-section ul ul li::before {
+            content: '-'; /* Custom bullet for sub-points */
+            color: #e0f7fa;
+            font-size: 1.2em;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        /* Styles from fold8.html */
+        #protein-folding-container {
+            display: flex; /* Changed to flex container */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+            justify-content: flex-start; /* Align children to the start (top) */
+            width: 100%;
+            min-height: 700px; /* A reasonable minimum height for desktop */
+            height: auto; /* Allow height to adjust to content */
+            margin: 40px auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        #canvas-container {
+            flex-grow: 1; /* Allow it to grow and take available space */
+            width: 100%; /* Take full width within the flex item */
+            position: relative; /* Keep relative for inner absolute elements if any */
+            min-height: 400px; /* Ensure canvas has a minimum height to be visible */
+        }
+        #ui-container {
+            position: relative; /* Keep it relative within the flex flow */
+            width: 100%; /* Take full width within the flex item */
+            max-width: 380px; /* Keep max-width for desktop */
+            background: rgba(0, 0, 30, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px; /* Add margin below UI */
+        }
+        #ui-container h1 {
+            margin-top: 0;
+            color: #4fc3f7;
+            font-size: 24px;
+            border-bottom: 2px solid #4fc3f7;
+            padding-bottom: 10px;
+            text-shadow: none; /* Remove glow from this specific h1 */
+            animation: none; /* Remove animation from this specific h1 */
+        }
+        .control-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .protein-control-btn { /* Renamed to avoid conflict with .control-btn */
+            flex: 1;
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .protein-control-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .protein-control-btn:active {
+            transform: translateY(0);
+        }
+        .protein-control-btn.reset-protein { /* Renamed */
+            background: #f44336;
+        }
+        .protein-control-btn.reset-protein:hover {
+            background: #d32f2f;
+        }
+        .protein-control-btn.pause-protein { /* Renamed */
+            background: #ff9800;
+        }
+        .protein-control-btn.pause-protein:hover {
+            background: #f57c00;
+        }
+        .info-panel {
+            background: rgba(0, 0, 30, 0.8); /* Adjusted for consistency */
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            word-wrap: break-word; /* Ensure text wraps */
+            overflow-wrap: break-word; /* Ensure text wraps */
+            max-height: none; /* Removed max-height */
+            overflow-y: visible; /* Removed scroll for overflow content */
+        }
+        .info-panel h3 {
+            margin-top: 0;
+            color: #81d4fa;
+        }
+        .protein-legend { /* Renamed to avoid conflict with .legend */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .protein-legend-item { /* Renamed */
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        .color-box {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+        .progress-container {
+            position: absolute; /* Position absolutely within #protein-folding-container */
+            bottom: 60px; /* Adjust as needed to be above structure-info and have padding */
+            left: 20px; /* Left-align the progress bar */
+            width: 50%; /* Make progress bar half its original width */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00c853, #64dd17);
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+        .structure-info {
+            position: absolute; /* Position absolutely within #protein-folding-container */
+            bottom: 20px; /* Position at the very bottom with some padding */
+            left: 20px; /* Align with the progress bar */
+            width: 50%; /* Match the width of the progress bar */
+            display: flex;
+            justify-content: space-between; /* Distribute items to ends */
+            font-size: 14px;
+            z-index: 10;
+        }
+        .fps-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 30, 0.7);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            z-index: 10;
+        }
+
+        /* Dialog box styles from fold8.html */
+        #dialog-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.0); /* Fully transparent overlay */
+            display: flex; /* Still use flex for content positioning within the overlay */
+            pointer-events: none; /* Allow interaction with canvas underneath */
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.5s ease; /* Smooth fade-in */
+            z-index: 20; /* Ensure dialog is above other UI elements */
+            justify-content: flex-end; /* Align dialog to the right */
+            align-items: flex-end; /* Align dialog to the bottom */
+        }
+
+        #dialog-overlay.show {
+            opacity: 1;
+            pointer-events: auto; /* Enable interaction when shown */
+        }
+
+        #folding-complete-dialog {
+            position: absolute; /* Position relative to the overlay */
+            bottom: 20px; /* Distance from the bottom */
+            right: 20px; /* Distance from the right */
+            left: auto; /* Remove left positioning */
+            background: rgba(26, 42, 108, 0.8); /* Transparent background for dialog content */
+            border-radius: 15px;
+            padding: 25px; /* Reverted to original padding */
+            max-width: 350px; /* Reverted to original max-width */
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9); /* Slightly smaller initially */
+            animation: fadeInScale 0.3s ease-out forwards;
+            box-sizing: border-box; /* Include padding in width */
+            margin: 0; /* Removed margin */
+        }
+
+        #folding-complete-dialog h2 {
+            color: #4fc3f7;
+            margin-top: 0;
+            font-size: 24px; /* Reverted to original font size */
+        }
+
+        #folding-complete-dialog p {
+            font-size: 14px; /* Reverted to original font size */
+            line-height: 1.5;
+            margin-bottom: 15px; /* Slightly reduced margin */
+        }
+
+        #folding-complete-dialog button {
+            background: #00c853; /* Green for "Got It!" */
+            padding: 10px 20px; /* Slightly reduced padding */
+            font-size: 16px; /* Slightly reduced font size */
+            border: none; /* Ensure no border */
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        #folding-complete-dialog button:hover {
+            background: #009624;
+            transform: translateY(-2px);
+        }
+        #folding-complete-dialog button:active {
+            transform: translateY(0);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Media query for mobile screens from fold8.html */
+        @media (max-width: 768px) {
+            #protein-folding-container {
+                min-height: 500px; /* Smaller minimum height for mobile */
+                margin: 20px auto; /* Adjust margin for mobile */
+            }
+            #ui-container {
+                top: auto; /* Remove top positioning */
+                left: auto; /* Remove left positioning */
+                position: relative; /* Keep it relative within the flex flow */
+                width: calc(100% - 20px); /* Adjust width for mobile */
+                max-width: none; /* Remove max-width restriction */
+                border-radius: 15px; /* Keep all corners rounded as it's not at the bottom edge anymore */
+                padding: 15px; /* Slightly less padding for mobile UI */
+                margin-bottom: 15px; /* Adjust margin for mobile */
+            }
+            .control-group {
+                margin-bottom: 10px; /* Reduce margin for mobile controls */
+            }
+            .btn-group {
+                gap: 5px; /* Reduce gap for mobile buttons */
+            }
+            .protein-control-btn {
+                padding: 8px; /* Smaller padding for mobile buttons */
+                font-size: 14px; /* Smaller font for mobile buttons */
+            }
+            .info-panel {
+                padding: 8px; /* Smaller padding for mobile info panel */
+            }
+            .fps-counter {
+                top: 10px; /* Move FPS counter slightly up */
+                right: 10px; /* Move FPS counter slightly left */
+                padding: 6px 10px; /* Smaller padding */
+                font-size: 12px; /* Smaller font for FPS */
+            }
+
+            .structure-info {
+                font-size: 12px; /* Smaller font for structure info */
+                width: calc(100% - 40px); /* Adjust width for mobile */
+                left: 20px;
+                bottom: 70px; /* Move up to avoid overlap with bottom UI */
+            }
+            .progress-container {
+                width: calc(100% - 40px); /* Adjust width for mobile */
+                left: 20px;
+                bottom: 100px; /* Move up to avoid overlap with bottom UI */
+            }
+            #dialog-overlay {
+                /* For mobile, ensure dialog doesn't overlap the new button position */
+                justify-content: center; /* Center horizontally */
+                align-items: center; /* Center vertically */
+            }
+            #folding-complete-dialog {
+                position: relative; /* Make it relative to the flex container */
+                margin: 20px; /* Add margin for spacing */
+                right: auto; /* Remove fixed right positioning */
+                bottom: auto; /* Remove fixed bottom positioning */
+                max-width: calc(100% - 40px); /* Adjust max-width for mobile */
+                padding: 15px; /* Smaller padding for mobile dialog */
+            }
+            #folding-complete-dialog h2 {
+                font-size: 20px; /* Smaller font for mobile dialog heading */
+            }
+            #folding-complete-dialog p {
+                font-size: 12px; /* Smaller font for mobile dialog text */
+            }
+            #folding-complete-dialog button {
+                padding: 8px 15px; /* Smaller padding for mobile dialog button */
+                font-size: 14px; /* Smaller font for mobile dialog button */
+            }
+        }
+
+        /* New CSS for interaction text */
+        .interaction-text {
+            color: #ffcc00; /* Yellow color */
+            font-size: 0.9em; /* Reduced font size */
+        }
+
+        /* Style for the Telegram link */
+        .telegram-link {
+            color: #00bcd4; /* A nice blue for links */
+            text-decoration: none; /* No underline by default */
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .telegram-link:hover {
+            color: #80deea; /* Lighter blue on hover */
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hydrophobic Interactions</h1>
+            <p class="subtitle">An interactive exploration of how water interacts with polar and non-polar molecules</p>
+        </header>
+
+        <div class="scenario">
+            <h2 class="scenario-title">Consider a beaker of water:</h2>
+            <div class="simulation-container">
+                <div class="beaker-container">
+                    <div class="beaker" id="beaker1">
+                        <div class="water">
+                            <div class="water-surface"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="control-btn polar" id="btn-polar">
+                        <i>+</i> Add Polar Molecule
+                    </button>
+                    <button class="control-btn nonpolar" id="btn-nonpolar">
+                        <i>+</i> Add Non-polar Molecule
+                    </button>
+                    <button class="control-btn two-nonpolar" id="btn-two-nonpolar">
+                        <i>+</i> Add 2 Non-polar Molecules
+                    </button>
+                    <button class="control-btn reset" id="btn-reset">
+                        <i>&#8635;</i> RESET
+                    </button>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-polar"></div>
+                    <span>Polar Molecule</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-nonpolar"></div>
+                    <span>Non-polar Molecule</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-water"></div>
+                    <span>Water Molecule</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-bond"></div>
+                    <span>Hydrogen Bond</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog-box" id="dialog-polar">
+            <p>Since the added molecule is a <span class="highlight">polar solute</span>, it can form extensive hydrogen bonds with the surrounding water molecules. This decreases the free energy of the system, allowing the solvent to include the added molecule. Thus, polar molecules <span class="highlight">dissolve easily</span> in water.</p>
+        </div>
+
+        <div class="dialog-box" id="dialog-nonpolar">
+            <p>The non-polar solute <span class="highlight">cannot form hydrogen bonds</span> or other favorable interactions with the surrounding water molecules. This increases the free energy of the system, decreasing its overall stability. As a result, the solvent <span class="highlight">expels the non-polar molecule</span> in a process called <span class="highlight">hydrophobic exclusion</span>.</p>
+        </div>
+
+        <div class="dialog-box" id="dialog-two-nonpolar">
+            <p><span class="highlight">Hydrophobic exclusion</span> occurs on both non-polar molecules. To minimize disruption to the water's hydrogen bonding network, the non-polar molecules <span class="highlight">aggregate together</span>. This aggregation is called <span class="highlight">hydrophobic interaction</span>. It's important to note that this is not a direct attraction between non-polar molecules, but rather a consequence of the water molecules' preference to interact with each other.</p>
+        </div>
+
+        <div class="definition" id="definition">
+            <h2>Understanding Hydrophobic Interactions</h2>
+            <p><span class="highlight">Hydrophobic interactions</span> are the aggregation of non-polar molecules in the presence of a polar solvent like water.</p>
+            <p>It's crucial to understand that hydrophobic interaction is <span class="highlight">not an attractive force</span> between non-polar molecules themselves. Instead, it is a consequence of the interactions between a polar solvent and non-polar solutes.</p>
+            <p>Water molecules form an extensive hydrogen-bonded network. When non-polar molecules are introduced, they cannot participate in hydrogen bonding. To minimize the disruption to this network, water molecules rearrange to maximize their hydrogen bonding, which results in the non-polar molecules being excluded and aggregating together.</p>
+        </div>
+
+        <div class="factors-section">
+            <h2>Factors Affecting Hydrophobic Interactions</h2>
+            <p>The strength of hydrophobic interactions is influenced by several key factors:</p>
+            <p>1. <span class="highlight">Temperature:</span> Hydrophobic interactions generally increase with temperature up to a certain point, as higher temperatures increase the entropy of water molecules by disrupting ordered water cages around non-polar solutes. However, at very high temperatures, the water structure itself can be significantly disrupted, leading to a decrease in interaction strength.</p>
+            <p id="dielectric-explanation">2. <span class="highlight">Dielectric Constant of the Solvent:</span> The dielectric constant reflects a solvent's ability to reduce the force between two charged particles. Water has a high dielectric constant. Hydrophobic interactions are stronger in solvents with higher dielectric constants (more polar solvents), as the preference for water to interact with itself becomes more pronounced and thus the strength of exclusion is stronger.</p>
+            <p>3. <span class="highlight">Hydrophobicity of the Molecule:</span> This refers to the extent of the non-polar surface area of the molecule. Larger non-polar molecules or molecules with more extensive non-polar regions tend to exhibit stronger hydrophobic interactions, as they cause greater disruption to the water's hydrogen bonding network.</p>
+
+            <p class="click-to-view-text yellow-text">Click a factor button to view its effect on hydrophobic interaction strength:</p>
+
+            <div class="factor-buttons">
+                <div class="factor-btn-wrapper">
+                    <button class="factor-btn" id="btn-temp">Temperature</button>
+                </div>
+                <div class="factor-btn-wrapper">
+                    <button class="factor-btn" id="btn-dielectric">Dielectric Constant</button>
+                </div>
+                <div class="factor-btn-wrapper">
+                    <button class="factor-btn" id="btn-hydrophobicity">Hydrophobicity of Molecule</button>
+                </div>
+            </div>
+
+            <div class="graph-container" id="graph-container">
+                <canvas id="factorGraph" width="700" height="500"></canvas>
+            </div>
+        </div>
+
+        <div class="protein-folding-section">
+            <h2>Protein Folding Mechanism</h2>
+            <h3>Hydrophobic Collapse Theory</h3>
+            <ul>
+                <li>The first event in protein folding is the <span class="highlight yellow-text">Hydrophobic collapse</span>.</li>
+                <li>Hydrophobic collapse is the selective exclusion of non-polar regions in a polypeptide by the surrounding water molecules resulting in the aggregation of non-polar regions to the centre of the folded protein hidden from the solvent.</li>
+                <li>These core regions are surrounded by the polar regions which are exposed to the solvent and form extensive polar interactions with water which tend to stabilize the folded structure.</li>
+                <li>The structure formed immediately after a hydrophobic collapse is called a <span class="highlight yellow-text">Molten Globule</span>.
+                    <ul>
+                        <li>It has a compact, native-like structure.</li>
+                        <li>It lacks the specific tertiary packing of the native state.</li>
+                        <li>It is highly dynamic and flexible.</li>
+                        <li>It has a significant amount of exposed hydrophobic surface area compared to the native state.</li>
+                        <li>They have a strong hydrophobic core but other interactions are in the process of formation.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Protein Folding Simulation Section -->
+        <div class="factors-section"> <!-- Reusing factors-section for consistent styling -->
+            <h2>Protein Folding Simulation</h2>
+            <p class="subtitle">An interactive 3D simulation of protein folding.</p>
+            <div id="protein-folding-container">
+                <div id="ui-container">
+                    <h1>Protein Folding Simulation</h1>
+                    
+                    <div class="info-panel">
+                        <h3>Protein Structure</h3>
+                        <p>This simulation demonstrates polypeptide chain folding into tertiary structure. The process includes:</p>
+                        <ul>
+                            <li>Primary structure (amino acid sequence)</li>
+                            <li>Secondary structure (alpha helices, beta sheets)</li>
+                            <li>Tertiary structure (3D conformation)</li>
+                        </ul>
+                        <p class="interaction-text">
+                            You can interact with the polypeptide in the 3D view:
+                            <br>• <b>Rotate:</b> Click and drag (or one-finger drag on touch).
+                            <br>• <b>Zoom:</b> Scroll wheel (or two-finger pinch on touch).
+                            <br>• <b>Pan:</b> Right-click and drag (or two-finger drag on touch).
+                        </p>
+                        
+                        <div class="protein-legend">
+                            <div class="protein-legend-item">
+                                <div class="color-box" style="background-color: #FF5252;"></div>
+                                <span>Alpha Helix</span>
+                            </div>
+                            <div class="protein-legend-item">
+                                <div class="color-box" style="background-color: #536DFE;"></div>
+                                <span>Beta Sheet</span>
+                            </div>
+                            <div class="protein-legend-item">
+                                <div class="color-box" style="background-color: #69F0AE;"></div>
+                                <span>Random Coil</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="foldingSpeed">Folding Speed</label>
+                        <input type="range" id="foldingSpeed" min="0.1" max="5" step="0.1" value="1">
+                        
+                        <label for="detailLevel">Detail Level</label>
+                        <input type="range" id="detailLevel" min="1" max="10" step="1" value="5">
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="protein-control-btn" id="startBtn">Start</button>
+                        <button class="protein-control-btn pause-protein" id="pauseBtn">Pause</button>
+                        <button class="protein-control-btn reset-protein" id="resetBtn">Reset</button>
+                    </div>
+                </div>
+                
+                <div id="canvas-container"></div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="structure-info">
+                    <span id="currentStructure">Unfolded Polypeptide</span>
+                    <span id="foldingStage">Stage 1/4</span>
+                </div>
+
+                <div class="fps-counter">FPS: <span id="fps">0</span></div>
+
+                <!-- Folding Complete Dialog -->
+                <div id="dialog-overlay">
+                    <div id="folding-complete-dialog">
+                        <h2>Simulation Complete!</h2>
+                        <p>Notice that when the polypeptide is completely folded the <b>hydrophobic regions (red)</b> are buried inside whereas the <b>hydrophilic regions (blue)</b> are exposed.</p>
+                        <button id="closeDialogBtn">Got It!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p id="security-email">betabiosciences@gmail.com</p>
+        <p><a href="https://t.me/betascience_csir" class="telegram-link" target="_blank">Join Our Telegram Channel</a></p>
+    </footer>
+
+    <script>
+        // --- Security Measure: Function Integrity Check ---
+        // This array holds critical substrings that must be present in the applySecurityMeasures function's source code.
+        // If any of these are missing, it indicates tampering.
+        const expectedSecurityStrings = [
+            'securityEmailElement.textContent === expectedEmail',
+            'currentOrigin === \'https://betabiosciences.github.io\'',
+            'currentHostname === \'localhost\'',
+            'currentHostname === \'127.0.0.1\'',
+            'currentProtocol === \'file:\'',
+            'btn.disabled = true;',
+            'range.disabled = true;',
+            'telegramLink.style.pointerEvents = \'none\''
+        ];
+
+        // Function to validate the integrity of the applySecurityMeasures function itself
+        function validateFunctionIntegrity() {
+            const applySecurityMeasuresSource = applySecurityMeasures.toString();
+            for (const expectedString of expectedSecurityStrings) {
+                if (!applySecurityMeasuresSource.includes(expectedString)) {
+                    // If any critical string is missing, integrity is compromised
+                    return false;
+                }
+            }
+            return true; // All critical strings found
+        }
+
+        // --- Main Security Function ---
+        function applySecurityMeasures() {
+            // First, check the integrity of this function itself
+            if (!validateFunctionIntegrity()) {
+                // If the integrity check fails, immediately disable all interactive elements
+                const allButtons = document.querySelectorAll('button');
+                allButtons.forEach(btn => { btn.disabled = true; });
+                const allRanges = document.querySelectorAll('input[type="range"]');
+                allRanges.forEach(range => { range.disabled = true; });
+                const telegramLink = document.querySelector('.telegram-link');
+                if (telegramLink) {
+                    telegramLink.style.pointerEvents = 'none';
+                    telegramLink.style.opacity = '0.5';
+                }
+                return false; // Indicate that the security check failed
+            }
+
+            // Proceed with existing security checks if function integrity is good
+            const securityEmailElement = document.getElementById('security-email');
+            const expectedEmail = 'betabiosciences@gmail.com';
+
+            const currentOrigin = window.location.origin;
+            const currentHostname = window.location.hostname;
+            const currentProtocol = window.location.protocol;
+
+            const isAllowedDomain = currentOrigin === 'https://betabiosciences.github.io';
+            const isLocalMachine = currentHostname === 'localhost' || currentHostname === '127.0.0.1' || currentProtocol === 'file:';
+
+            const isEmailValid = securityEmailElement && securityEmailElement.textContent === expectedEmail;
+
+            // If either the domain/local access is not allowed OR the email is not valid, disable everything
+            if (!(isAllowedDomain || isLocalMachine) || !isEmailValid) {
+                const allButtons = document.querySelectorAll('button');
+                allButtons.forEach(btn => { btn.disabled = true; });
+
+                const allRanges = document.querySelectorAll('input[type="range"]');
+                allRanges.forEach(range => {
+                    range.disabled = true;
+                });
+                
+                const telegramLink = document.querySelector('.telegram-link');
+                if (telegramLink) {
+                    telegramLink.style.pointerEvents = 'none';
+                    telegramLink.style.opacity = '0.5';
+                }
+                return false; // Indicate that the security check failed
+            }
+            return true; // Indicate that all security checks passed
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Call the security check after all other DOM content is loaded and initialized
+            // This ensures all elements are present before attempting to disable them.
+            applySecurityMeasures();
+
+            // All other event listeners and initializations should only proceed if security passes
+            // We'll add checks within the event listeners for robust security.
+
+            const beaker1 = document.getElementById('beaker1');
+            const dialogPolar = document.getElementById('dialog-polar');
+            const dialogNonPolar = document.getElementById('dialog-nonpolar');
+            const dialogTwoNonPolar = document.getElementById('dialog-two-nonpolar');
+            const definition = document.getElementById('definition');
+            const actionButtons = document.querySelectorAll('.control-btn:not(#btn-reset)'); 
+            const btnReset = document.getElementById('btn-reset'); 
+
+            // New elements for factors section
+            const factorButtons = document.querySelectorAll('.factor-btn');
+            const graphContainer = document.getElementById('graph-container');
+            const factorGraphCanvas = document.getElementById('factorGraph');
+            const ctx = factorGraphCanvas.getContext('2d');
+
+            let initialWaterContent = '';
+
+            // Function to create water molecules
+            function createWaterMolecules(container, count) {
+                const water = container.querySelector('.water');
+                water.innerHTML = '<div class="water-surface"></div>'; 
+                for (let i = 0; i < count; i++) {
+                    const molecule = document.createElement('div');
+                    molecule.classList.add('water-molecule');
+                    
+                    const left = 30 + Math.random() * 240;
+                    const top = 60 + Math.random() * 250;
+                    
+                    molecule.style.left = `${left}px`;
+                    molecule.style.top = `${top}px`;
+                    
+                    water.appendChild(molecule);
+                }
+            }
+            
+            // Initialize water molecules on load and save initial state
+            createWaterMolecules(beaker1, 70);
+            initialWaterContent = beaker1.querySelector('.water').innerHTML;
+
+            // Function to enable all action buttons (simulation buttons)
+            function enableActionButtons() {
+                actionButtons.forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+            
+            // Function to reset simulation to its initial state
+            function resetSimulation() {
+                if (!applySecurityMeasures()) return; // Security check
+                dialogPolar.classList.remove('active');
+                dialogNonPolar.classList.remove('active');
+                dialogTwoNonPolar.classList.remove('active');
+                definition.classList.remove('active');
+                
+                const existingMoleculesAndBonds = document.querySelectorAll('.molecule, .bond');
+                existingMoleculesAndBonds.forEach(el => el.remove());
+                
+                beaker1.querySelector('.water').innerHTML = initialWaterContent;
+
+                enableActionButtons();
+                hideGraph(); // Hide graph on reset
+                resetFactorButtons(); // Reset factor buttons on reset
+            }
+            
+            // Add event listener for the RESET button
+            btnReset.addEventListener('click', resetSimulation);
+
+            // Add polar molecule functionality
+            document.getElementById('btn-polar').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetSimulation(); 
+                this.disabled = true; 
+
+                const polarMol = document.createElement('div');
+                polarMol.classList.add('molecule', 'polar-mol');
+                polarMol.style.left = '125px';
+                polarMol.style.top = '-50px';
+                beaker1.appendChild(polarMol);
+                
+                setTimeout(() => {
+                    const targetX = 125;
+                    const targetY = 180; 
+
+                    polarMol.style.transition = 'all 2s ease-out';
+                    polarMol.style.left = `${targetX}px`;
+                    polarMol.style.top = `${targetY}px`;
+                    
+                    setTimeout(() => {
+                        createHydrogenBonds(targetX + 25, targetY + 25); 
+                        polarMol.style.animation = 'pulse 1s 3';
+                        
+                        setTimeout(() => {
+                            dialogPolar.classList.add('active');
+                        }, 1500); 
+                    }, 2000); 
+                }, 100);
+            });
+            
+            // Add non-polar molecule functionality
+            document.getElementById('btn-nonpolar').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetSimulation(); 
+                this.disabled = true; 
+                
+                const nonpolarMol = document.createElement('div');
+                nonpolarMol.classList.add('molecule', 'nonpolar-mol');
+                nonpolarMol.style.left = '125px';
+                nonpolarMol.style.top = '-50px';
+                beaker1.appendChild(nonpolarMol);
+                
+                setTimeout(() => {
+                    nonpolarMol.style.animation = 'drop 1.5s forwards';
+                    
+                    setTimeout(() => {
+                        nonpolarMol.style.transition = 'all 2s ease';
+                        nonpolarMol.style.top = '60px';
+                        
+                        setTimeout(() => {
+                            dialogNonPolar.classList.add('active');
+                        }, 2200);
+                    }, 1600);
+                }, 100);
+            });
+            
+            // Add two non-polar molecules functionality
+            document.getElementById('btn-two-nonpolar').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetSimulation(); 
+                this.disabled = true; 
+                
+                const mol1 = document.createElement('div'); 
+                mol1.classList.add('molecule', 'nonpolar-mol');
+                mol1.style.left = '80px';
+                mol1.style.top = '-50px';
+                beaker1.appendChild(mol1);
+                
+                const mol2 = document.createElement('div');
+                mol2.classList.add('molecule', 'nonpolar-mol');
+                mol2.style.left = '180px';
+                mol2.style.top = '-50px';
+                beaker1.appendChild(mol2);
+                
+                setTimeout(() => {
+                    mol1.style.animation = 'drop 1.5s forwards';
+                    mol2.style.animation = 'drop 1.5s forwards';
+                    
+                    setTimeout(() => {
+                        mol1.style.transition = 'all 2s ease';
+                        mol2.style.transition = 'all 2s ease';
+                        mol1.style.left = '120px';
+                        mol1.style.top = '150px';
+                        mol2.style.left = '140px';
+                        mol2.style.top = '150px';
+                        
+                        setTimeout(() => {
+                            dialogTwoNonPolar.classList.add('active');
+                            definition.classList.add('active');
+                        }, 2200);
+                    }, 1600);
+                }, 100);
+            });
+            
+            // Function to create hydrogen bonds around a given point (x, y)
+            function createHydrogenBonds(x, y) {
+                const waterMolecules = beaker1.querySelectorAll('.water-molecule');
+                const bondCount = Math.min(8, waterMolecules.length); 
+
+                for (let i = 0; i < bondCount; i++) {
+                    setTimeout(() => {
+                        const randomWaterMol = waterMolecules[Math.floor(Math.random() * waterMolecules.length)];
+                        if (!randomWaterMol) {
+                            return;
+                        }
+
+                        const waterMolRect = randomWaterMol.getBoundingClientRect();
+                        const beakerRect = beaker1.getBoundingClientRect();
+                        const waterMolX = waterMolRect.left - beakerRect.left + (waterMolRect.width / 2);
+                        const waterMolY = waterMolRect.top - beakerRect.top + (waterMolRect.height / 2);
+                        
+                        const bond = document.createElement('div');
+                        bond.classList.add('bond');
+                        
+                        const deltaX = waterMolX - x;
+                        const deltaY = waterMolY - y;
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        const rotation = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+                        
+                        bond.style.setProperty('--bond-length', `${distance}px`);
+                        bond.style.width = '0px';
+                        bond.style.left = `${x}px`;
+                        bond.style.top = `${y}px`;
+                        bond.style.transform = `rotate(${rotation}deg)`;
+                        bond.style.opacity = '0';
+                        
+                        beaker1.appendChild(bond);
+                        
+                        setTimeout(() => {
+                            bond.style.animation = `propagate 0.8s forwards`;
+                        }, 50);
+                    }, i * 200);
+                }
+            }
+            
+            // Initial state setup: ensure all action buttons are enabled on load
+            enableActionButtons();
+
+            // --- Graphing Functionality ---
+
+            // Function to draw a graph on the canvas
+            function drawGraph(data, xAxisLabel, yAxisLabel) {
+                if (!applySecurityMeasures()) return; // Security check
+                ctx.clearRect(0, 0, factorGraphCanvas.width, factorGraphCanvas.height); // Clear previous drawing
+
+                const padding = 100; 
+                const chartWidth = factorGraphCanvas.width - 2 * padding;
+                const chartHeight = factorGraphCanvas.height - 2 * padding;
+
+                // Find min/max for scaling
+                const xValues = data.map(p => p.x);
+                const yValues = data.map(p => p.y);
+                const minX = Math.min(...xValues);
+                const maxX = Math.max(...xValues);
+                const minY = Math.min(...yValues);
+                const maxY = Math.max(...yValues);
+
+                // Draw axes
+                ctx.beginPath();
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.moveTo(padding, padding); // Y-axis top
+                ctx.lineTo(padding, factorGraphCanvas.height - padding); // Y-axis bottom
+                ctx.lineTo(factorGraphCanvas.width - padding, factorGraphCanvas.height - padding); // X-axis right
+                ctx.stroke();
+
+                // Draw X-axis label
+                ctx.font = '16px Open Sans';
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.fillText(xAxisLabel, factorGraphCanvas.width / 2, factorGraphCanvas.height - padding + 40);
+
+                // Draw Y-axis label
+                ctx.save(); // Save context state
+                
+                // Set font size and color for the Y-axis label
+                ctx.font = '20px Open Sans'; // Increased font size
+                ctx.fillStyle = '#333'; // Reverted to original color
+
+                // Translate to the desired position for the text BEFORE rotation
+                // X: A bit to the left of the Y-axis (padding - some_offset)
+                // Y: Vertically centered on the chart
+                ctx.translate(padding / 2 - 20, factorGraphCanvas.height / 2); // Adjusted translation for more space
+
+                // Rotate the canvas context
+                ctx.rotate(-Math.PI / 2); // Rotate 90 degrees counter-clockwise
+                
+                // Draw the text at the new origin (0,0) with center alignment
+                ctx.textAlign = 'center'; // Center align the rotated text
+                ctx.textBaseline = 'middle'; // Vertically center the text
+                ctx.fillText(yAxisLabel, 0, 0); // Draw at the new origin
+                ctx.restore(); // Restore context state
+
+                // Draw X-axis ticks and labels
+                const numXTicks = 5;
+                ctx.textAlign = 'center'; 
+                ctx.fillStyle = '#333'; 
+                for (let i = 0; i <= numXTicks; i++) {
+                    const x = padding + (i / numXTicks) * chartWidth;
+                    const value = minX + (i / numXTicks) * (maxX - minX);
+                    ctx.fillText(value.toFixed(1), x, factorGraphCanvas.height - padding + 20);
+                }
+
+                // Draw Y-axis ticks and labels
+                const numYTicks = 5;
+                ctx.textAlign = 'right'; 
+                ctx.textBaseline = 'middle'; 
+                ctx.fillStyle = '#333'; 
+                for (let i = 0; i <= numYTicks; i++) {
+                    const y = factorGraphCanvas.height - padding - (i / numYTicks) * chartHeight;
+                    const value = minY + (i / numYTicks) * (maxY - minY);
+                    ctx.fillText(value.toFixed(1), padding - 25, y); 
+                }
+                ctx.textBaseline = 'alphabetic'; 
+
+                // Draw data points and line (as a curve)
+                ctx.beginPath();
+                ctx.strokeStyle = '#8E2DE2'; 
+                ctx.lineWidth = 3;
+                ctx.lineJoin = 'round'; 
+
+                data.forEach((point, index) => {
+                    const scaledX = padding + ((point.x - minX) / (maxX - minX)) * chartWidth;
+                    const scaledY = factorGraphCanvas.height - padding - ((point.y - minY) / (maxY - minY)) * chartHeight;
+
+                    if (index === 0) {
+                        ctx.moveTo(scaledX, scaledY);
+                    } else {
+                        ctx.lineTo(scaledX, scaledY);
+                    }
+                });
+                ctx.stroke(); 
+            }
+
+            // Sample data for graphs
+            const tempData = [
+                { x: 0, y: 0.2 }, { x: 10, y: 0.5 }, { x: 20, y: 0.8 }, { x: 30, y: 1.0 },
+                { x: 40, y: 1.1 }, { x: 50, y: 1.05 }, { x: 60, y: 0.9 }
+            ];
+
+            // Updated Dielectric Constant data: stronger interaction with higher dielectric constant
+            const dielectricData = [
+                { x: 20, y: 0.2 }, { x: 30, y: 0.4 }, { x: 40, y: 0.6 }, { x: 50, y: 0.8 },
+                { x: 60, y: 1.0 }, { x: 70, y: 1.2 }, { x: 80, y: 1.4 }
+            ];
+
+            const hydrophobicityData = [
+                { x: 0, y: 0.1 }, { x: 0.2, y: 0.3 }, { x: 0.4, y: 0.6 }, { x: 0.6, y: 0.9 },
+                { x: 0.8, y: 1.2 }, { x: 1.0, y: 1.5 }
+            ];
+
+            // Function to show the graph container
+            function showGraph() {
+                if (!applySecurityMeasures()) return; // Security check
+                graphContainer.style.display = 'block';
+            }
+
+            // Function to hide the graph container
+            function hideGraph() {
+                if (!applySecurityMeasures()) return; // Security check
+                graphContainer.style.display = 'none';
+            }
+
+            // Function to reset factor buttons (enable all)
+            function resetFactorButtons() {
+                if (!applySecurityMeasures()) return; // Security check
+                factorButtons.forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+
+            // Add event listeners for factor buttons
+            document.getElementById('btn-temp').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetFactorButtons(); 
+                this.disabled = true; 
+                hideGraph(); 
+                drawGraph(tempData, 'Temperature (°C)', 'Strength of Hydrophobic Interaction');
+                showGraph(); 
+            });
+
+            document.getElementById('btn-dielectric').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetFactorButtons();
+                this.disabled = true;
+                hideGraph();
+                drawGraph(dielectricData, 'Dielectric Constant', 'Strength of Hydrophobic Interaction');
+                showGraph();
+            });
+
+            document.getElementById('btn-hydrophobicity').addEventListener('click', function() {
+                if (!applySecurityMeasures()) return; // Security check
+                resetFactorButtons();
+                this.disabled = true;
+                hideGraph();
+                drawGraph(hydrophobicityData, 'Hydrophobicity (Arbitrary Units)', 'Strength of Hydrophobic Interaction');
+                showGraph();
+            });
+
+            // Ensure canvas is responsive on resize
+            window.addEventListener('resize', () => {
+                if (!applySecurityMeasures()) return; // Security check
+                const activeFactorButton = document.querySelector('.factor-btn:disabled');
+                if (activeFactorButton) {
+                    factorGraphCanvas.width = factorGraphCanvas.offsetWidth;
+                    factorGraphCanvas.height = factorGraphCanvas.offsetHeight;
+
+                    if (activeFactorButton.id === 'btn-temp') {
+                        drawGraph(tempData, 'Temperature (°C)', 'Strength of Hydrophobic Interaction');
+                    } else if (activeFactorButton.id === 'btn-dielectric') {
+                        drawGraph(dielectricData, 'Dielectric Constant', 'Strength of Hydrophobic Interaction');
+                    } else if (activeFactorButton.id === 'btn-hydrophobicity') {
+                        drawGraph(hydrophobicityData, 'Hydrophobicity (Arbitrary Units)', 'Strength of Hydrophobic Interaction');
+                    }
+                }
+            });
+        });
+
+        // --- Protein Folding Simulation Script (from fold8.html) ---
+
+        // Main variables
+        let scene, camera, renderer, controls;
+        let proteinGroup = new THREE.Group();
+        let spheres = [];
+        let isAnimating = false;
+        let animationSpeed = 1;
+        let detailLevel = 5;
+        let clock = new THREE.Clock();
+        let lastFpsUpdate = 0;
+        let frameCount = 0;
+        let foldingStage = 1;
+        let dialogShown = false; // Flag to ensure dialog appears only once
+
+        // Initialize the scene
+        function initProteinFolding() {
+            if (!applySecurityMeasures()) return; // Security check
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a192f);
+            // Adjusted fog parameters for better visibility
+            scene.fog = new THREE.Fog(0x0a192f, 1, 300); 
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(60, document.getElementById('canvas-container').offsetWidth / document.getElementById('canvas-container').offsetHeight, 0.1, 1000);
+            // Adjusted camera position to accommodate a larger model and ensure visibility
+            camera.position.set(0, 0, 80); 
+            // Adjusted clipping planes to ensure objects at various distances are rendered
+            camera.near = 0.1;
+            camera.far = 1000;
+            camera.updateProjectionMatrix();
+
+
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(document.getElementById('canvas-container').offsetWidth, document.getElementById('canvas-container').offsetHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Add orbit controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 1.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            backLight.position.set(-5, -5, -5);
+            scene.add(backLight);
+
+            // Add protein group to scene
+            scene.add(proteinGroup);
+
+            // Create protein model
+            createProteinModel();
+
+            // Event listeners
+            setupProteinEventListeners();
+
+            // Start animation loop
+            animateProteinFolding();
+        }
+
+        // Create the protein model
+        function createProteinModel() {
+            if (!applySecurityMeasures()) return; // Security check
+            proteinGroup.clear(); // Clear existing spheres and lines
+            spheres = [];
+            
+            // Create backbone (polypeptide chain)
+            const backboneGeometry = new THREE.BufferGeometry();
+            const backboneMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            const positions = [];
+            const colors = [];
+            
+            // Increased amino acid count for a longer polypeptide
+            const aminoAcidCount = Math.max(50, Math.floor(detailLevel * 10)); 
+            const sphereRadius = 0.8; // Increased from 0.5 for larger appearance
+            const bondSpacing = 0.8; // Increased from 0.4 for more spacing
+
+            // Calculate offset to center the polypeptide around the origin (0,0,0)
+            const zOffset = (aminoAcidCount * bondSpacing) / 2;
+
+            for (let i = 0; i < aminoAcidCount; i++) {
+                // Position amino acids in a loose spiral for unfolded state, centered around Z=0
+                const t = i / aminoAcidCount * Math.PI * 8; 
+                const radius = 1.0 + i * 0.05; 
+                const x = Math.sin(t) * radius;
+                const y = Math.cos(t) * radius;
+                const z = (i * bondSpacing) - zOffset; // Centered Z position
+                
+                positions.push(x, y, z);
+                
+                // Create sphere for each residue
+                const sphereGeometry = new THREE.SphereGeometry(sphereRadius, 16, 16);
+                const color = getAminoAcidColor(i, aminoAcidCount);
+                const sphereMaterial = new THREE.MeshPhongMaterial({ 
+                    color: color,
+                    emissive: color.clone().multiplyScalar(0.1),
+                    shininess: 80
+                });
+                
+                const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                sphere.position.set(x, y, z);
+                sphere.userData.originalPosition = sphere.position.clone();
+                sphere.userData.targetPosition = sphere.position.clone();
+                sphere.userData.index = i;
+                proteinGroup.add(sphere);
+                spheres.push(sphere);
+                
+                // Create bonds between residues
+                if (i > 0) {
+                    positions.push(x, y, z);
+                    colors.push(1, 1, 1);
+                }
+            }
+            
+            backboneGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            backboneGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            
+            const backbone = new THREE.Line(backboneGeometry, backboneMaterial);
+            backbone.userData.originalGeometry = backboneGeometry.clone();
+            proteinGroup.add(backbone);
+
+            // Ensure proteinGroup is at the origin, as individual spheres are now centered
+            proteinGroup.position.set(0, 0, 0);
+        }
+
+        // Determine color for amino acid based on position and folding stage
+        function getAminoAcidColor(index, total) {
+            if (!applySecurityMeasures()) return new THREE.Color(0x000000); // Security check: return black if failed
+            // Different coloring for different folding stages
+            if (foldingStage >= 3) {
+                // Tertiary structure coloring: hydrophobic (red) and hydrophilic (blue)
+                // This is a simplified representation. In reality, it's based on amino acid properties.
+                // Reverted to original color logic for tertiary structure
+                const t = index / total;
+                const r = 0.8 * t;
+                const g = 0.5 * (1 - t);
+                const b = 0.8 * (1 - t);
+                return new THREE.Color(r, g, b);
+            } else if (foldingStage === 2) {
+                // Secondary structure coloring
+                if (index > total * 0.3 && index < total * 0.5) {
+                    return new THREE.Color(0xFF5252); // Alpha helix - red
+                } else if (index > total * 0.6 && index < total * 0.8) {
+                    return new THREE.Color(0x536DFE); // Beta sheet - blue
+                }
+                return new THREE.Color(0x69F0AE); // Random coil - green
+            }
+            // Primary structure coloring
+            const hue = (index / total) * 0.8;
+            return new THREE.Color().setHSL(hue, 0.8, 0.6);
+        }
+
+        // Update protein folding animation
+        function updateFolding() {
+            if (!applySecurityMeasures()) return; // Security check
+            const time = clock.getElapsedTime() * animationSpeed * 0.3;
+            
+            // Update folding stage based on time
+            const progress = Math.min(1, time / 12);
+            
+            if (progress < 0.3) {
+                foldingStage = 1; // Primary structure
+            } else if (progress < 0.6) {
+                foldingStage = 2; // Secondary structure
+            } else {
+                foldingStage = 3; // Tertiary structure
+            }
+            
+            // Update UI
+            document.getElementById('progressBar').style.width = `${progress * 100}%`;
+            document.getElementById('foldingStage').textContent = `Stage ${foldingStage}/3`;
+            
+            switch (foldingStage) {
+                case 1:
+                    document.getElementById('currentStructure').textContent = "Unfolded Polypeptide";
+                    break;
+                case 2:
+                    document.getElementById('currentStructure').textContent = "Secondary Structure Formation";
+                    break;
+                case 3:
+                    document.getElementById('currentStructure').textContent = "Tertiary Structure";
+                    // Show dialog when folding is complete and dialog hasn't been shown yet
+                    if (progress >= 0.99 && !dialogShown) {
+                        document.getElementById('dialog-overlay').classList.add('show');
+                        dialogShown = true;
+                        // Do NOT set isAnimating = false; to keep simulation running
+                    }
+                    break;
+            }
+            
+            // Calculate offset to center the polypeptide around the origin (0,0,0)
+            const aminoAcidCount = spheres.length;
+            const bondSpacing = 0.8; // Use the same bondSpacing as in createProteinModel
+            const zOffset = (aminoAcidCount * bondSpacing) / 2;
+
+            // Update sphere positions
+            spheres.forEach((sphere, i) => {
+                const originalPos = sphere.userData.originalPosition;
+                let targetPos;
+                
+                // Different target positions based on folding stage
+                if (foldingStage === 1) {
+                    // Primary structure - mostly linear, centered around Z=0
+                    const t = i / spheres.length * Math.PI * 8; 
+                    const radius = 1.0 + i * 0.05; 
+                    targetPos = new THREE.Vector3(
+                        Math.sin(t) * radius,
+                        Math.cos(t) * radius,
+                        (i * bondSpacing) - zOffset // Centered Z position
+                    );
+                } else if (foldingStage === 2) {
+                    // Secondary structure - form helices and sheets
+                    if (i > spheres.length * 0.3 && i < spheres.length * 0.5) {
+                        // Alpha helix
+                        const helixRadius = 2.5; 
+                        const helixT = (i - spheres.length * 0.3) / (spheres.length * 0.2) * Math.PI * 8; 
+                        targetPos = new THREE.Vector3(
+                            Math.sin(helixT) * helixRadius,
+                            (i - spheres.length * 0.3) * 0.2, 
+                            Math.cos(helixT) * helixRadius - zOffset // Centered Z position
+                        );
+                    } else if (i > spheres.length * 0.6 && i < spheres.length * 0.8) {
+                        // Beta sheet
+                        const sheetX = (i - spheres.length * 0.6) * 0.5; 
+                        const sheetY = Math.sin(i * 0.5) * 1.0; 
+                        targetPos = new THREE.Vector3(
+                            sheetX,
+                            sheetY,
+                            -4 - zOffset // Adjusted and centered Z position
+                        );
+                    } else {
+                        // Random coil
+                        const t = i / spheres.length * Math.PI * 6; 
+                        const radius = 2.0; 
+                        targetPos = new THREE.Vector3(
+                            Math.sin(t) * radius,
+                            Math.cos(t) * radius,
+                            (i * 0.2) - zOffset // Adjusted and centered Z position
+                        );
+                    }
+                } else {
+                    // Tertiary structure - compact 3D shape
+                    const t = i / spheres.length * Math.PI * 12; 
+                    const radius = 5.0 * (1 - i / spheres.length); 
+                    targetPos = new THREE.Vector3(
+                        Math.sin(t) * radius * Math.sin(i * 0.5),
+                        Math.cos(t) * radius * Math.cos(i * 0.4),
+                        Math.sin(i * 0.6) * radius - zOffset // Adjusted and centered Z position
+                    );
+                }
+                
+                // Interpolate position
+                const interpFactor = Math.min(1, progress * 3 - (foldingStage - 1));
+                sphere.position.lerpVectors(originalPos, targetPos, interpFactor);
+                
+                // Update color based on current folding stage
+                sphere.material.color = getAminoAcidColor(i, spheres.length);
+            });
+            
+            // Update bonds
+            updateBackboneBonds();
+        }
+
+        // Update backbone bonds between amino acids
+        function updateBackboneBonds() {
+            if (!applySecurityMeasures()) return; // Security check
+            const positions = [];
+            spheres.forEach(sphere => {
+                positions.push(sphere.position.x, sphere.position.y, sphere.position.z);
+            });
+            
+            const backbone = proteinGroup.children.find(child => child.isLine);
+            backbone.geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            backbone.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // Setup event listeners for protein folding
+        function setupProteinEventListeners() {
+            // Folding speed control
+            document.getElementById('foldingSpeed').addEventListener('input', (e) => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                animationSpeed = parseFloat(e.target.value);
+            });
+            
+            // Detail level control
+            document.getElementById('detailLevel').addEventListener('input', (e) => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                detailLevel = parseInt(e.target.value);
+                createProteinModel();
+            });
+            
+            // Start button
+            document.getElementById('startBtn').addEventListener('click', () => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                isAnimating = true;
+                clock.start();
+                dialogShown = false; // Reset dialog flag on start
+                document.getElementById('dialog-overlay').classList.remove('show'); // Hide dialog
+            });
+            
+            // Pause button
+            document.getElementById('pauseBtn').addEventListener('click', () => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                isAnimating = false;
+            });
+            
+            // Reset button
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                isAnimating = false;
+                clock.stop();
+                clock = new THREE.Clock();
+                foldingStage = 1;
+                createProteinModel();
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('currentStructure').textContent = "Unfolded Polypeptide";
+                document.getElementById('foldingStage').textContent = "Stage 1/3";
+                dialogShown = false; // Reset dialog flag on reset
+                document.getElementById('dialog-overlay').classList.remove('show'); // Hide dialog
+            });
+
+            // Close dialog button
+            document.getElementById('closeDialogBtn').addEventListener('click', () => {
+                // Only allow interaction if security check passes
+                if (!applySecurityMeasures()) return;
+                document.getElementById('dialog-overlay').classList.remove('show');
+                // No need to resume animation here, as it was never paused by the dialog
+            });
+            
+            // Window resize handler for protein folding
+            window.addEventListener('resize', () => {
+                if (!applySecurityMeasures()) return; // Security check
+                const container = document.getElementById('canvas-container'); // Changed to canvas-container
+                camera.aspect = container.offsetWidth / container.offsetHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.offsetWidth, container.offsetHeight);
+            });
+        }
+
+        // Animation loop for protein folding
+        function animateProteinFolding() {
+            // This loop runs continuously, so it needs to check security on each frame
+            if (!applySecurityMeasures()) {
+                // If security fails, stop animation and rendering
+                isAnimating = false;
+                if (renderer) renderer.clear(); // Clear the canvas if renderer exists
+                return;
+            }
+
+            requestAnimationFrame(animateProteinFolding);
+            
+            // Update FPS counter
+            frameCount++;
+            const now = performance.now();
+            if (now >= lastFpsUpdate + 1000) {
+                document.getElementById('fps').textContent = frameCount;
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+            
+            // Update controls
+            controls.update();
+            
+            // Update folding animation
+            if (isAnimating) {
+                updateFolding();
+            }
+            
+            // Rotate protein slowly
+            proteinGroup.rotation.y += 0.002 * animationSpeed;
+            proteinGroup.rotation.x += 0.001 * animationSpeed;
+            
+            // Render scene
+            renderer.render(scene, camera);
+        }
+
+        // Start protein folding simulation when the window loads
+        window.onload = function() {
+            // Initial security check before starting anything
+            if (applySecurityMeasures()) {
+                initProteinFolding();
+            }
+        };
+
+    </script>
+</body>
+</html>
