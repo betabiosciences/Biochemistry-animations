@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Intricate Dance of Light: A Photosynthesis Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%; /* Ensure html and body take full viewport height */
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+            color: #374151; /* text-gray-800 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .z-scheme-path {
+            position: relative;
+            border: 2px dashed #06B6D4; /* Cyan-500 */
+        }
+        .z-scheme-path::after {
+            content: '➤';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #06B6D4;
+            font-size: 1.5rem;
+        }
+        .z-scheme-photon {
+            animation: pulse-photon 2s infinite;
+        }
+        @keyframes pulse-photon {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+        .proton {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Q-Cycle Specific Styles */
+        .q-cycle-container {
+            width: 100%;
+            padding-bottom: 75%; /* Aspect ratio 4:3 */
+            position: relative;
+            overflow: hidden;
+            background-color: #f0f9ff; /* blue-50 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem; /* Space between the two Q-cycle figures */
+        }
+        .q-cycle-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through if needed */
+        }
+        .membrane {
+            fill: #bae6fd; /* light blue */
+            stroke: #38bdf8; /* blue-400 */
+            stroke-width: 2;
+        }
+        .protein-complex {
+            fill: #93c5fd; /* blue-300 */
+            stroke: #60a5fa; /* blue-400 */
+            stroke-width: 2;
+        }
+        .lumen-text, .stroma-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px; /* Slightly increased for mobile readability */
+            font-weight: bold;
+            fill: #334155; /* slate-700 */
+        }
+        .electron {
+            fill: #fcd34d; /* amber-300 */
+        }
+        .electron-path {
+            stroke: #fcd34d; /* amber-300 */
+            stroke-width: 3;
+            fill: none;
+        }
+        .proton-icon {
+            fill: #3b82f6; /* blue-500 */
+            font-size: 17px; /* Slightly increased for mobile readability */
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+        }
+        .pq-molecule {
+            fill: #99f6e4; /* teal-200 */
+            stroke: #2dd4bf; /* teal-500 */
+            stroke-width: 1;
+        }
+        .pqh2-molecule {
+            fill: #5eead4; /* teal-300 */
+            stroke: #2dd4bf; /* teal-500 */
+            stroke-width: 1;
+        }
+        .pq-semiquinone {
+            fill: #fdbb74; /* orange-300 */
+            stroke: #fb923c; /* orange-400 */
+            stroke-width: 1;
+        }
+        .q-site {
+            fill: #cbd5e1; /* slate-300 */
+            stroke: #94a3b8; /* slate-400 */
+            stroke-width: 1;
+        }
+        .label-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; /* Increased for mobile readability */
+            fill: #4b5563; /* gray-600 */
+        }
+        .plastocyanin {
+            fill: #a78bfa; /* violet-400 */
+            stroke: #8b5cf6; /* violet-500 */
+            stroke-width: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* PSII Specific Styles */
+        .psii-container {
+            width: 100%;
+            padding-bottom: 62.5%; /* Aspect ratio 4:3 -> 4:2.5 */
+            position: relative;
+            overflow: hidden;
+            background-color: #ecfeff; /* cyan-50 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .psii-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .psii-complex {
+            fill: #a5f3fc; /* cyan-200 */
+            stroke: #22d3ee; /* cyan-400 */
+            stroke-width: 2;
+        }
+        .oec-complex {
+            fill: #67e8f9; /* cyan-300 */
+            stroke: #06b6d4; /* cyan-500 */
+            stroke-width: 2;
+        }
+        .p680 {
+            fill: #dc2626; /* red-600 */
+            stroke: #b91c1c; /* red-700 */
+            stroke-width: 1;
+        }
+        .pheo {
+            fill: #d8b4fe; /* light purple */
+            stroke: #a78bfa; /* violet-400 */
+            stroke-width: 1;
+        }
+        .pq-electron-acceptor {
+            fill: #2dd4bf; /* teal-500 */
+            stroke: #14b8a6; /* teal-600 */
+            stroke-width: 1;
+        }
+        .arrow {
+            stroke: #fcd34d; /* amber-300 */
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .water-splitting-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px; /* Slightly increased for mobile readability */
+            font-weight: bold;
+            fill: #16a34a; /* green-600 */
+        }
+        .electron-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; /* Increased for mobile readability */
+            fill: #fcd34d; /* amber-300 */
+            font-weight: bold;
+        }
+        .proton-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; /* Increased for mobile readability */
+            fill: #3b82f6; /* blue-500 */
+            font-weight: bold;
+        }
+        .oxygen-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; /* Increased for mobile readability */
+            fill: #06b6d4; /* cyan-500 */
+            font-weight: bold;
+        }
+        .photon-arrow {
+            stroke: #F59E0B; /* amber-500 */
+            stroke-width: 3; /* Default width, will be overridden inline for specific arrow */
+            fill: none;
+            marker-end: url(#amber-arrowhead);
+        }
+
+        /* Custom classes to remove stubborn gaps */
+        .no-gap-paragraph {
+            margin-bottom: 0 !important; /* Keep text close to image */
+            padding-bottom: 0 !important;
+        }
+
+        .no-gap-image-container {
+            margin-top: 0 !important; /* Keep image close to text */
+            padding-top: 0 !important; 
+        }
+
+        /* PSI Specific Styles */
+        .psi-container {
+            width: 100%;
+            padding-bottom: 70%; /* Increased height */
+            position: relative;
+            overflow: hidden;
+            background-color: #fffbeb; /* amber-50 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .psi-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .psi-complex {
+            fill: #dbeafe; /* Changed to light blue: blue-100 */
+            stroke: #fbbf24; /* amber-400 */
+            stroke-width: 2;
+        }
+        .p700 {
+            fill: #1d4ed8; /* blue-700 */
+            stroke: #1e40af; /* blue-800 */
+            stroke-width: 1;
+        }
+        .ferredoxin {
+            fill: #10b981; /* green-500 */
+            stroke: #059669; /* green-600 */
+            stroke-width: 1;
+        }
+        .fnr {
+            fill: #a78bfa; /* violet-400 */
+            stroke: #8b5cf6; /* violet-500 */
+            stroke-width: 1;
+        }
+        .nadp {
+            fill: #6366f1; /* indigo-500 */
+            stroke: #4f46e5; /* indigo-600 */
+            stroke-width: 1;
+        }
+
+        /* ATP Synthase Specific Styles */
+        .atp-synthase-container {
+            width: 100%;
+            padding-bottom: 70%; /* Adjust height as needed */
+            position: relative;
+            overflow: hidden;
+            background-color: #fefce8; /* yellow-50 */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .atp-synthase-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .f0-complex {
+            fill: #d1d5db; /* gray-300 */
+            stroke: #6b7280; /* gray-500 */
+            stroke-width: 2;
+        }
+        .f1-complex {
+            fill: #facc15; /* yellow-400 */
+            stroke: #d97706; /* yellow-600 */
+            stroke-width: 2;
+            transform-origin: 50% 50%; /* Set origin for rotation */
+        }
+        .f1-shaft {
+            fill: #9ca3af; /* gray-400 */
+        }
+        .atp-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            fill: #8b5cf6; /* violet-500 */
+        }
+        .adp-pi-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            fill: #4b5563; /* gray-600 */
+        }
+        .atp-product {
+            fill: #a78bfa; /* violet-400 */
+            stroke: #8b5cf6; /* violet-500 */
+            stroke-width: 1;
+        }
+        .proton-flow-arrow {
+            stroke: #3b82f6; /* blue-500 */
+            stroke-width: 3;
+            fill: none;
+            marker-end: url(#proton-arrowhead);
+            animation: proton-move 2s linear infinite;
+        }
+        /* New animation for Q-cycle protons (moving upwards) */
+        .q-cycle-proton-arrow {
+            stroke: #3b82f6; /* blue-500 */
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#proton-arrowhead);
+            animation: proton-move-up 2s linear infinite;
+        }
+
+        @keyframes proton-move {
+            0% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(20px); opacity: 0.5; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        /* Keyframe for Q-cycle protons to move upwards */
+        @keyframes proton-move-up {
+            0% { transform: translateY(0px); opacity: 1; }
+            50% { transform: translateY(-10px); opacity: 0.5; } /* Move up */
+            100% { transform: translateY(0px); opacity: 1; }
+        }
+
+        /* Quiz specific styles */
+        .question-item {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #1f2937; /* gray-900 */
+        }
+        .option-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s ease;
+        }
+        .option-label:hover {
+            background-color: #f9fafb; /* gray-50 */
+        }
+        .option-label input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .correct-answer {
+            background-color: #d1fae5; /* green-100 */
+            color: #065f46; /* green-800 */
+            border: 1px solid #34d399; /* green-400 */
+        }
+        .incorrect-answer {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+            border: 1px solid #f87171; /* red-400 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Security layer: This script must be at the very top of the body -->
+    <script>
+        // Check if the current hostname matches the allowed domain
+        // If it doesn't match, clear the entire document to prevent loading content
+        if (window.location.hostname !== "betabiosciences.github.io") {
+            document.documentElement.innerHTML = '';
+        }
+    </script>
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-gray-900 mb-2">The Intricate Dance of Light</h1>
+            <p class="text-lg md::text-xl text-cyan-600 font-semibold">Unraveling the Mechanism of Photosynthetic Light Reactions</p>
+        </header>
+
+        <section id="introduction" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">The Engine of Life</h2>
+                <p class="text-base md::text-lg mb-4">The light-dependent reactions of photosynthesis represent the planet's primary solar panel. Occurring within the thylakoid membranes of chloroplasts, this process masterfully converts light energy into the chemical currency of life: ATP and NADPH. This infographic visualizes the journey of energy from a single photon to the creation of these vital molecules, highlighting the key machinery and processes that fuel the biosphere.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-cyan-50 p-6 rounded-lg">
+                        <p class="text-5xl font-extrabold text-cyan-600">ATP</p>
+                        <p class="font-semibold mt-2">The Energy Currency</p>
+                    </div>
+                    <div class="bg-teal-50 p-6 rounded-lg">
+                        <p class="text-5xl font-extrabold text-teal-600">NADPH</p>
+                        <p class="font-semibold mt-2">The Reducing Power</p>
+                    </div>
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <p class="text-5xl font-extrabold text-blue-600">O₂</p>
+                        <p class="font-semibold mt-2">The Breath of Life</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="machinery" class="mb-12">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">The Photosynthetic Machinery</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                
+                <div class="flex flex-col gap-8"> 
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-2xl font-bold mb-4">Photosystem II (PSII) & The OEC</h3>
+                        <p class="no-gap-paragraph leading-relaxed">
+                            The following flowchart illustrates the sequential events of electron flow initiated by Photosystem II (PSII):
+                        </p>
+                        <div class="flex flex-col items-center space-y-2 mb-4">
+                            <div class="bg-blue-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-blue-800">P680 absorbs Light</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-purple-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-purple-800">P680* (Excited Electron)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-green-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-green-800">e⁻ to Pheophytin</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-yellow-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-yellow-800">e⁻ to Plastoquinone (PQ)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500 mt-4">↓ (Requires 2 electrons from 2 photons)</span>
+                            <div class="bg-teal-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-teal-800">Formation of PQH₂</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-pink-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-pink-800">PQH₂ transfers e⁻ to Cyt b₆f</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-red-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-red-800">e⁻ flows through Cyt b₆f by diffusion</p>
+                            </div>
+                        </div>
+                        <div class="psii-container no-gap-image-container">
+                            <svg viewBox="0 0 400 250" class="psii-svg">
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="8" markerHeight="5.5" 
+                                    orient="auto" refX="4" refY="2.75">
+                                        <polygon points="0 0, 8 2.75, 0 5.5" fill="#fcd34d" />
+                                    ></marker>
+                                    <marker id="blue-arrowhead" markerWidth="14" markerHeight="9" 
+                                    orient="auto" refX="0" refY="4.5">
+                                        <polygon points="0 0, 14 4.5, 0 9" fill="#06b6d4" /> </marker>
+                                    <marker id="amber-arrowhead" markerWidth="6" markerHeight="4" 
+                                    orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#F59E0B" />
+                                    </marker>
+                                    <marker id="proton-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#3b82f6" />
+                                    </marker>
+                                    <marker id="atp-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#8b5cf6" />
+                                    </marker>
+                                </defs>
+
+                                <rect x="0" y="83.3" width="400" height="83.3" class="membrane"></rect>
+                                <text x="390" y="41.6" text-anchor="end" class="lumen-text">Thylakoid Lumen (Low pH)</text>
+                                <text x="390" y="208.3" text-anchor="end" class="stroma-text">Chloroplast Stroma (High pH)</text>
+
+                                <rect x="100" y="75" width="100" height="100" rx="10" ry="10" class="psii-complex"></rect>
+                                <text x="105" y="125" text-anchor="start" class="label-text" fill="#334155" style="font-weight: bold;">PSII</text>
+
+                                <circle cx="150" cy="66.6" r="15" class="oec-complex"></circle>
+                                <text x="150" y="70.8" text-anchor="middle" class="label-text" fill="#334155">OEC</text>
+
+                                <circle cx="150" cy="108.3" r="15" class="p680"></circle>
+                                <text x="150" y="112.5" text-anchor="middle" class="label-text" fill="white">P680</text>
+
+                                <circle cx="150" cy="154.1" r="10" class="pheo" style="fill: #d8b4fe; stroke: #a78bfa;"></circle>
+                                <text x="150" y="166.6" text-anchor="middle" class="label-text">Pheo</text>
+
+                                <rect x="220" y="108.3" width="30" height="30" rx="5" ry="5" class="pq-electron-acceptor"></rect>
+                                <text x="235" y="100" text-anchor="middle" class="label-text">PQ</text>
+
+                                <path d="M100 108.3 C105 105.8, 115 110.8, 120 108.3" class="photon-arrow" stroke-width="0.5"></path>
+                                <text x="70" y="104.1" class="label-text" fill="#F59E0B">Photon</text>
+                                
+                                <path d="M150 120.8 L150 143.3" class="arrow" marker-end="url(#arrowhead)"></path>
+                                <text x="160" y="133.3" class="electron-label">e⁻</text>
+
+                                <path d="M160 154.1 C180 154.1, 200 129.1, 220 120.8" class="arrow" marker-end="url(#arrowhead)"></path>
+                                <text x="190" y="141.6" class="electron-label">e⁻</text>
+
+                                <text x="150" y="25" text-anchor="middle" class="water-splitting-text">2H₂O → 4H⁺ + 4e⁻ + O₂</text>
+
+                                <path d="M150 79.1 L150 95.8" stroke="#fcd34d" stroke-width="0.75" marker-end="url(#arrowhead)"></path>
+                                <text x="160" y="87.5" class="electron-label">e⁻ to P680</text>
+
+                                <path d="M130 66.6 L70 50" stroke="#06b6d4" stroke-width="0.75" marker-end="url(#blue-arrowhead)"></path>
+                                <text x="70" y="41.6" class="oxygen-label">O₂ Released</text>
+
+                            </svg>
+                        </div>
+                        <p class="mt-4 leading-relaxed">
+                            To replenish the lost electron, the Oxygen-Evolving Complex (OEC) splits water, a process called photolysis. This reaction is the source of nearly all oxygen on Earth.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-2xl font-bold mb-4">Photosystem I (PSI)</h3>
+                        <p class="mb-4 flex-grow leading-relaxed">
+                            The following flowchart illustrates the sequential events of electron flow initiated by Photosystem I (PSI):
+                        </p>
+                        <div class="flex flex-col items-center space-y-2 mb-4">
+                            <div class="bg-blue-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-blue-800">P700 absorbs Light</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-purple-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-purple-800">P700* (Excited Electron)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-green-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-green-800">e⁻ to Primary Acceptor (A₀)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-yellow-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-yellow-800">e⁻ to A₁ (Phylloquinone)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-red-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-red-800">e⁻ through Fe-S Centers (Fx, Fa, Fb)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-indigo-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-indigo-800">e⁻ to Ferredoxin (Fd)</p>
+                            </div>
+                            <span class="text-2xl text-blue-500 mt-4">↓ (Requires 2 electrons from 2 photons)</span>
+                            <div class="bg-teal-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-teal-800">Fd + FNR + NADP⁺ + H⁺</p>
+                            </div>
+                            <span class="text-2xl text-blue-500">↓</span>
+                            <div class="bg-pink-100 p-2 rounded-md text-center shadow-sm w-full max-w-xs">
+                                <p class="font-semibold text-pink-800">NADPH Formation</p>
+                            </div>
+                        </div>
+                        <div class="psi-container no-gap-image-container">
+                            <svg viewBox="0 0 400 280" class="psi-svg">
+                                <defs>
+                                    <marker id="arrowhead" markerWidth="8" markerHeight="5.5" 
+                                    orient="auto" refX="4" refY="2.75">
+                                        <polygon points="0 0, 8 2.75, 0 5.5" fill="#fcd34d" />
+                                    ></marker>
+                                    <marker id="amber-arrowhead" markerWidth="6" markerHeight="4" 
+                                    orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#F59E0B" />
+                                    </marker>
+                                    <marker id="proton-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#3b82f6" />
+                                    </marker>
+                                    <marker id="nadph-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#6366f1" />
+                                    </marker>
+                                </defs>
+
+                                <rect x="0" y="93.3" width="400" height="93.3" class="membrane"></rect>
+                                <text x="10" y="46.592" text-anchor="start" class="lumen-text">Thylakoid Lumen (Low pH)</text>
+                                <text x="10" y="233.296" text-anchor="start" class="stroma-text">Chloroplast Stroma (High pH)</text>
+
+                                <rect x="100" y="84" width="100" height="112" rx="10" ry="10" class="psi-complex"></rect>
+                                <text x="105" y="140" text-anchor="start" class="label-text" fill="#334155" style="font-weight: bold;">PSI</text>
+
+                                <circle cx="150" cy="110" r="15" class="p700"></circle>
+                                <text x="150" y="115" text-anchor="middle" class="label-text" fill="white">P700</text>
+                                
+                                <circle cx="60" cy="128.8" r="12" class="plastocyanin"></circle>
+                                <text x="60" y="112" text-anchor="middle" class="label-text">Pc</text>
+                                <path d="M75 128.8 H135" class="electron-path" marker-end="url(#arrowhead)"></path>
+                                <text x="105" y="117.6" class="electron-label">e⁻</text>
+
+
+                                <circle cx="150" cy="155" r="10" fill="#ccfbf1" stroke="#2dd4bf"></circle>
+                                <text x="150" y="170" text-anchor="middle" class="label-text">A₀/A₁</text>
+
+                                <rect x="220" y="120" width="30" height="33.6" rx="5" ry="5" class="ferredoxin"></rect>
+                                <text x="235" y="108" text-anchor="middle" class="label-text">Fd</text>
+
+                                <rect x="280" y="190.4" width="80" height="33.6" rx="5" ry="5" class="fnr"></rect>
+                                <text x="320" y="207.2" text-anchor="middle" class="label-text" fill="white">FNR</text>
+
+                                <circle cx="300" cy="240" r="12" class="nadp"></circle>
+                                <text x="300" y="218" text-anchor="middle" class="label-text" fill="white">NADP⁺</text>
+
+                                <circle cx="360" cy="240" r="12" class="nadp" style="fill: #818cf8;"></circle>
+                                <text x="360" y="218" text-anchor="middle" class="label-text" fill="white">NADPH</text>
+
+                                <path d="M150 70 V92" class="photon-arrow" stroke-width="2"></path>
+                                <text x="150" y="60" text-anchor="middle" class="label-text" fill="#F59E0B">Photon</text>
+                                
+                                <path d="M150 125 L150 150" class="arrow" marker-end="url(#arrowhead)"></path>
+                                <text x="160" y="137.5" class="electron-label">e⁻</text>
+
+                                <path d="M160 155 C180 155, 200 137, 220 137" class="arrow" marker-end="url(#arrowhead)"></path>
+                                <text x="190" y="146" class="electron-label">e⁻</text>
+
+                                <path d="M250 137 L280 190.4" class="arrow" marker-end="url(#arrowhead)"></path>
+                                <text x="260" y="163.7" class="electron-label">e⁻</text>
+
+                                <path d="M320 224 V240" stroke="#6366f1" stroke-width="2" marker-end="url(#nadph-arrowhead)"></path>
+                                <text x="330" y="235" class="electron-label" fill="#6366f1">e⁻</text>
+                                
+                                <text x="300" y="265" text-anchor="middle" class="proton-icon">H⁺</text>
+                                <path d="M300 260 V252" stroke="#3b82f6" stroke-width="2" marker-end="url(#proton-arrowhead)" fill="none"></path>
+                            </svg>
+                        </div>
+                        <p class="mt-4 leading-relaxed">
+                            It's important to note that there are no proton pumping systems directly associated with Photosystem I.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-2xl font-bold mb-4">Cytochrome b₆f Complex (Q-Cycle)</h3>
+                        <p class="mb-4 leading-relaxed">This pivotal complex acts as a bridge between PSII and PSI. It actively pumps protons (H⁺) from the stroma into the thylakoid lumen, playing a central role in building the proton gradient via the Q-Cycle. Here's a two-step illustration of the Q-Cycle:</p>
+                        
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Figure 1: First PQH₂ Oxidation</h4>
+                        <p class="text-sm mb-4 leading-relaxed">A reduced plastoquinol (PQH₂) binds to the Q₀ site. One electron is transferred to Plastocyanin (Pc) and the other to the Qᵢ site, where a Plastoquinone (PQ) molecule becomes a semiquinone radical.</p>
+                        <div class="q-cycle-container">
+                            <svg viewBox="0 0 400 300" class="q-cycle-svg">
+                                <rect x="0" y="100" width="400" height="100" class="membrane"></rect>
+                                <text x="200" y="50" text-anchor="middle" class="lumen-text">Thylakoid Lumen (Low pH)</text>
+                                <text x="200" y="250" text-anchor="middle" class="stroma-text">Chloroplast Stroma (High pH)</text>
+
+                                <rect x="150" y="90" width="100" height="120" rx="10" ry="10" class="protein-complex"></rect>
+                                <text x="200" y="150" text-anchor="middle" class="label-text" fill="white">Cyt b₆f</text>
+
+                                <circle cx="165" cy="115" r="8" class="q-site"></circle>
+                                <text x="165" y="135" text-anchor="middle" class="label-text">Q₀</text>
+
+                                <circle cx="235" cy="185" r="8" class="q-site"></circle>
+                                <text x="235" y="170" text-anchor="middle" class="label-text">Qᵢ</text>
+
+                                <circle cx="300" cy="115" r="12" class="plastocyanin"></circle>
+                                <text x="300" y="130" text-anchor="middle" class="label-text">Pc</text>
+
+                                <circle cx="100" cy="115" r="12" class="pqh2-molecule"></circle>
+                                <text x="100" y="100" text-anchor="middle" class="label-text">PQH₂</text>
+
+                                <circle cx="300" cy="185" r="12" class="pq-semiquinone"></circle>
+                                <text x="300" y="170" text-anchor="middle" class="label-text">PQ•⁻</text>
+
+                                <path d="M165 115 L285 115" class="electron-path" marker-end="url(#arrowhead)"></path>
+                                <text x="220" y="105" class="electron-label">e⁻</text>
+
+                                <path d="M165 115 C170 150, 200 185, 285 185" class="electron-path" marker-end="url(#arrowhead)"></path>
+                                <text x="200" y="160" class="electron-label">e⁻</text>
+
+                                <!-- Proton animations for Q-Cycle Figure 1 -->
+                                <g class="proton-flow-animation" style="animation-delay: 0s;">
+                                    <text x="120" y="70" class="proton-icon">H⁺</text>
+                                    <path d="M125 90 V 80" class="q-cycle-proton-arrow" fill="none"></path>
+                                ></g>
+                                <g class="proton-flow-animation" style="animation-delay: 0.5s;">
+                                    <text x="140" y="70" class="proton-icon">H⁺</text>
+                                    <path d="M145 90 V 80" class="q-cycle-proton-arrow" fill="none"></path>
+                                ></g>
+                            </svg>
+                        </div>
+
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Figure 2: Second PQH₂ Oxidation & PQH₂ Regeneration</h4>
+                        <p class="text-sm mb-4 leading-relaxed">A second PQH₂ binds to Q₀. One electron moves to Pc. The second electron moves to the Qᵢ site, reducing the semiquinone to form a new PQH₂ (now fully reduced), which then diffuses into the thylakoid membrane.</p>
+                        <div class="q-cycle-container">
+                            <svg viewBox="0 0 400 300" class="q-cycle-svg">
+                                <rect x="0" y="100" width="400" height="100" class="membrane"></rect>
+                                <text x="200" y="50" text-anchor="middle" class="lumen-text">Thylakoid Lumen (Low pH)</text>
+                                <text x="200" y="250" text-anchor="middle" class="stroma-text">Chloroplast Stroma (High pH)</text>
+
+                                <rect x="150" y="90" width="100" height="120" rx="10" ry="10" class="protein-complex"></rect>
+                                <text x="200" y="150" text-anchor="middle" class="label-text" fill="white">Cyt b₆f</text>
+
+                                <circle cx="165" cy="115" r="8" class="q-site"></circle>
+                                <text x="165" y="135" text-anchor="middle" class="label-text">Q₀</text>
+
+                                <circle cx="235" cy="185" r="8" class="q-site"></circle>
+                                <text x="235" y="170" text-anchor="middle" class="label-text">Qᵢ</text>
+
+                                <circle cx="300" cy="115" r="12" class="plastocyanin"></circle>
+                                <text x="300" y="130" text-anchor="middle" class="label-text">Pc</text>
+
+                                <circle cx="100" cy="115" r="12" class="pqh2-molecule"></circle>
+                                <text x="100" y="100" text-anchor="middle" class="label-text">PQH₂</text>
+
+                                <circle cx="300" cy="185" r="12" class="pqh2-molecule"></circle>
+                                <text x="300" y="170" text-anchor="middle" class="label-text">PQH₂</text>
+                                <path d="M315 185 H 380" stroke="#2dd4bf" stroke-width="2" marker-end="url(#diffuse-arrowhead)" fill="none"></path>
+                                
+                                <defs>
+                                    <marker id="diffuse-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#2dd4bf" />
+                                    ></marker>
+                                </defs>
+
+
+                                <path d="M165 115 L285 115" class="electron-path" marker-end="url(#arrowhead)"></path>
+                                <text x="220" y="105" class="electron-label">e⁻</text>
+
+                                <path d="M165 115 C170 150, 200 185, 285 185" class="electron-path" marker-end="url(#arrowhead)"></path>
+                                <text x="200" y="160" class="electron-label">e⁻</text>
+
+                                <!-- Proton animations for Q-Cycle Figure 2 -->
+                                <g class="proton-flow-animation" style="animation-delay: 0s;">
+                                    <text x="120" y="70" class="proton-icon">H⁺</text>
+                                    <path d="M125 90 V 80" class="q-cycle-proton-arrow" fill="none"></path>
+                                ></g>
+                                <g class="proton-flow-animation" style="animation-delay: 0.5s;">
+                                    <text x="140" y="70" class="proton-icon">H⁺</text>
+                                    <path d="M145 90 V 80" class="q-cycle-proton-arrow" fill="none"></path>
+                                ></g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-md p-6 flex flex-col">
+                        <h3 class="text-2xl font-bold mb-4">ATP Synthase</h3>
+                        <p class="mb-4 flex-grow leading-relaxed">This molecular motor is a masterpiece of bioengineering. It harnesses the flow of protons moving down their electrochemical gradient from the lumen to the stroma to drive the synthesis of ATP from ADP and inorganic phosphate (Pi).</p>
+                        <!-- New content for ATP Synthase subunits -->
+                        <h4 class="text-xl font-bold text-gray-800 mb-2">Subunit Composition & Functional Roles</h4>
+                        <ul class="list-disc list-inside space-y-1 mb-4 text-sm leading-relaxed">
+                            <li><strong>F₀ (CF₀) Subunit:</strong> Embedded in the thylakoid membrane, it forms the transmembrane proton channel. Its rotation is driven by the proton flow.</li>
+                            <li><strong>F₁ (CF₁) Subunit:</strong> This catalytic headpiece extends into the stroma and contains the active sites for ATP synthesis.</li>
+                            <li><strong>Gamma (γ) Subunit:</strong> Acts as a rotating shaft connecting F₀ and F₁, transmitting conformational changes to F₁. Approximately 3 protons must diffuse through the CF₀ complex to induce one full rotation of the gamma subunit, driving the conformational changes that lead to ATP synthesis.</li>
+                            <li><strong>Alpha (α) and Beta (β) Subunits (in F₁):</strong> There are 3 alpha and 3 beta subunits arranged alternately. The primary catalytic sites for ATP synthesis are located on the beta subunits, while alpha subunits provide structural support. The torsional strain created by the rotation of the gamma subunit induces conformational changes in the three beta subunits, forcing them through distinct states for substrate binding (ADP and Pi), product formation (ATP synthesis), and product release (ATP release) in a sequential manner (binding change mechanism).</li>
+                            <li><strong>Delta (δ) and Epsilon (ε) Subunits (in F₁):</strong> Involved in connecting F₁ to F₀ and playing a role in the regulation of the complex.</li>
+                        </ul>
+                        <!-- End new content -->
+                        <div class="atp-synthase-container">
+                            <svg viewBox="0 0 400 280" class="atp-synthase-svg">
+                                <defs>
+                                    <marker id="proton-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#3b82f6" />
+                                    </marker>
+                                    <marker id="atp-arrowhead" markerWidth="6" markerHeight="4" orient="auto" refX="0" refY="2">
+                                        <polygon points="0 0, 6 2, 0 4" fill="#8b5cf6" />
+                                    </marker>
+                                ></defs>
+
+                                <rect x="0" y="93.3" width="400" height="93.3" class="membrane"></rect>
+                                <text x="10" y="46.592" text-anchor="start" class="lumen-text">Thylakoid Lumen (Low pH)</text>
+                                <text x="10" y="265" text-anchor="start" class="stroma-text">Chloroplast Stroma (High pH)</text>
+
+                                <rect x="150" y="80" width="100" height="40" rx="5" ry="5" class="f0-complex"></rect>
+                                <text x="200" y="105" text-anchor="middle" class="label-text" fill="white" style="font-weight: bold;">CF₀</text>
+
+                                <rect x="130" y="120" width="140" height="80" rx="10" ry="10" class="f1-complex"></rect>
+                                <text x="200" y="160" text-anchor="middle" class="label-text" fill="white" style="font-weight: bold;">CF₁</text>
+
+                                <rect x="195" y="110" width="10" height="20" class="f1-shaft"></rect>
+
+                                <g class="proton-flow-animation">
+                                    <path d="M170 70 V100" class="proton-flow-arrow"></path>
+                                    <text x="170" y="60" class="proton-icon">H⁺</text>
+                                ></g>
+                                <g class="proton-flow-animation" style="animation-delay: 0.25s;">
+                                    <path d="M190 70 V100" class="proton-flow-arrow"></path>
+                                    <text x="190" y="60" class="proton-icon">H⁺</text>
+                                ></g>
+                                <g class="proton-flow-animation" style="animation-delay: 0.5s;">
+                                    <path d="M210 70 V100" class="proton-flow-arrow"></path>
+                                    <text x="210" y="60" class="proton-icon">H⁺</text>
+                                ></g>
+                                <g class="proton-flow-animation" style="animation-delay: 0.75s;">
+                                    <path d="M230 70 V100" class="proton-flow-arrow"></path>
+                                    <text x="230" y="60" class="proton-icon">H⁺</text>
+                                ></g>
+
+                                <text x="200" y="245" text-anchor="middle" class="atp-label">ADP + Pi → ATP</text>
+                            </svg>
+                        </div>
+                        <p class="mt-4 leading-relaxed">
+                            Approximately **4 protons** must be diffused from the thylakoid lumen to the stroma through the CF₁ particle in the ATP synthase complex to generate **1 ATP** molecule.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="z-scheme" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">The Z-Scheme: Electron Energy Journey</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">The Z-scheme visualizes the energy level (redox potential) of an electron as it moves through the transport chain. Light absorption at PSII and PSI provides two "uphill" boosts, creating the characteristic "Z" shape and providing the energy needed to split water and reduce NADP⁺.</p>
+                <div class="chart-container" style="height: 450px; max-height: 500px;">
+                    <canvas id="zSchemeChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <section id="proton-gradient" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Building the Proton Motive Force</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">The accumulation of protons inside the thylakoid lumen creates a powerful electrochemical gradient, or Proton Motive Force (PMF). This force, comprised of both a chemical (pH) and electrical gradient, is the potential energy source for ATP synthesis.</p>
+                <div class="relative bg-teal-50 rounded-lg p-6 flex flex-col md:flex-row items-center justify-around border-2 border-teal-200">
+                    <div class="w-full md:w-1/3 text-center mb-6 md:mb-0">
+                        <h3 class="text-2xl font-bold text-teal-700">Thylakoid Lumen</h3>
+                        <p class="text-4xl font-black text-teal-800 my-2">pH ~4.5</p>
+                        <p class="text-lg font-semibold">High [H⁺]</p>
+                        <div class="flex justify-center space-x-2 mt-4">
+                            <span class="text-3xl proton" style="animation-delay: 0s;">💧</span>
+                            <span class="text-3xl proton" style="animation-delay: 0.5s;">💧</span>
+                            <span class="text-3xl proton" style="animation-delay: 1s;">💧</span>
+                            <span class="text-3xl proton" style="animation-delay: 1.5s;">💧</span>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 text-center mb-6 md:mb-0">
+                         <div class="text-6xl text-cyan-600 font-black flex items-center justify-center">
+                            <span>PMF</span>
+                            <span class="text-4xl ml-2">→</span>
+                        </div>
+                         <p class="text-sm font-semibold">Drives ATP Synthesis</p>
+                    </div>
+                     <div class="w-full md:w-1/3 text-center">
+                        <h3 class="text-2xl font-bold text-blue-700">Chloroplast Stroma</h3>
+                        <p class="text-4xl font-black text-blue-800 my-2">pH ~8.0</p>
+                        <p class="text-lg font-semibold">Low [H⁺]</p>
+                        <div class="text-3xl text-gray-400 mt-4">💧</div>
+                    </div>
+                </div>
+                 <div class="mt-6">
+                    <h3 class="text-xl font-bold text-center mb-4">Proton Accumulation per O₂ Molecule</h3>
+                    <p class="text-center max-w-2xl mx-auto mb-6">For every molecule of O₂ evolved (which involves the transfer of 4 electrons), a total of 12 protons are mobilized into the lumen.</p>
+                    <div class="chart-container h-80">
+                        <canvas id="protonSourceChart"></canvas>
+                    </div>
+                    <ul class="list-disc list-inside space-y-2 mt-4 ml-4">
+                        <li>The number of **ATP** molecules synthesized per O₂ evolution will be **3** (12 H⁺ / 4 H⁺ per ATP).</li>
+                        <li>The number of **NADPH** molecules produced will be **2** per O₂ evolution (O₂ evolution transfers 4 electrons; each NADP⁺ can accept 2 electrons).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="phosphorylation" class="mb-12">
+             <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Cyclic vs. Non-Cyclic Photophosphorylation</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">Plants can utilize two electron flow pathways to fine-tune energy production. The primary non-cyclic path produces both ATP and NADPH. The cyclic path, involving only PSI, recycles electrons to produce extra ATP when NADPH levels are high, balancing the energy budget for the Calvin Cycle.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="border-2 border-cyan-300 bg-cyan-50 rounded-lg p-6">
+                        <h3 class="text-2xl font-bold text-cyan-800 mb-4">Non-Cyclic Flow</h3>
+                        <p class="mb-4">The linear pathway from water to NADP⁺.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                           <li><strong>Involves:</strong> PSI & PSII</li>
+                           <li><strong>Electron Source:</strong> H₂O</li>
+                           <li><strong>Produces:</strong> ATP, NADPH, O₂</li>
+                           <li><strong>Primary Role:</strong> Fuel Calvin Cycle</li>
+                        </ul>
+                    </div>
+                    <div class="border-2 border-purple-300 bg-purple-50 rounded-lg p-6">
+                        <h3 class="text-2xl font-bold text-purple-800 mb-4">Cyclic Flow</h3>
+                        <p class="mb-4">Electrons from PSI are recycled back.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                           <li><strong>Involves:</strong> PSI Only</li>
+                           <li><strong>Electron Source:</strong> P700 (recycled)</li>
+                           <li><strong>Produces:</strong> ATP only</li>
+                           <li><strong>Primary Role:</strong> Balance ATP/NADPH ratio</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stoichiometry" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-6">Final Energy Yield</h2>
+                <p class="text-center max-w-3xl mx-auto mb-8">The stoichiometry of the light reactions is finely tuned to meet the demands of the Calvin Cycle. While numbers can vary slightly, a general model provides a clear picture of the efficiency of this natural energy factory.</p>
+                <div class="chart-container" style="height: 400px; max-height: 450px;">
+                    <canvas id="yieldChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="review-quiz" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Review Quiz: Test Your Knowledge!</h2>
+                <form id="quizForm">
+                    <!-- Quiz questions will be injected here by JavaScript -->
+                </form>
+                <div class="flex justify-center space-x-4 mt-8">
+                    <button id="submitQuiz" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        Submit Answers
+                    </button>
+                    <button id="resetQuiz" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        Reset Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-6 border-t border-gray-300">
+            <p class="text-gray-600">betabiosciences@gmail.com</p>
+        </footer>
+    </div>
+
+<script>
+    // Original security layer (can be removed if the new one above is sufficient and preferred)
+    // if (!document.documentElement.outerHTML.includes('betabiosciences@gmail.com')) {
+    //     document.documentElement.innerHTML = ''; // Clear all HTML content
+    // }
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    const wrapLabel = (label) => {
+        const maxLength = 16;
+        if (typeof label !== 'string' || label.length <= maxLength) return label;
+        const words = label.split(' ');
+        const lines = [];
+        let currentLine = '';
+        words.forEach(word => {
+            if ((currentLine + ' ' + word).trim().length > maxLength) {
+                lines.push(currentLine.trim());
+                currentLine = word;
+            } else {
+                currentLine = (currentLine + ' ' + word).trim();
+            }
+        });
+        if (currentLine) lines.push(currentLine.trim());
+        return lines;
+    };
+
+    const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        if (Array.isArray(label)) {
+            return label.join(' ');
+        }
+        return label;
+    };
+
+    const commonChartOptions = (textColor) => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: textColor,
+                    font: {
+                        size: 14,
+                        family: "'Inter', sans-serif"
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: tooltipTitleCallback
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: textColor,
+                    font: {
+                        size: 12,
+                        family: "'Inter', sans-serif"
+                    }
+                },
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)'
+                }
+            },
+            x: {
+                 ticks: {
+                    color: textColor,
+                    font: {
+                        size: 12,
+                        family: "'Inter', sans-serif"
+                    }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    const palette = {
+        cyan: 'rgba(6, 182, 212, 0.8)', // cyan-500
+        cyan_light: 'rgba(6, 182, 212, 0.5)',
+        teal: 'rgba(13, 148, 136, 0.8)', // teal-600
+        teal_light: 'rgba(13, 148, 136, 0.5)',
+        blue: 'rgba(59, 130, 246, 0.8)', // blue-500
+        blue_light: 'rgba(59, 130, 246, 0.5)',
+        amber: 'rgba(245, 158, 11, 0.8)', // amber-500
+        purple: 'rgba(139, 92, 246, 0.8)', // purple-500
+        gray: '#4B5563' // gray-600
+    };
+
+    new Chart(document.getElementById('zSchemeChart'), {
+        type: 'line',
+        data: {
+            labels: ['H₂O', 'P680', 'P680*', 'Pheo/PQ', 'Cyt b₆f/Pc', 'P700', 'P700*', 'Fd', 'NADP⁺'],
+            datasets: [{
+                label: 'Electron Energy Level (Redox Potential)',
+                data: [0.82, 0.82, -0.7, 0.1, 0.4, 0.4, -1.2, -0.45, -0.32],
+                borderColor: palette.teal,
+                backgroundColor: palette.teal_light,
+                tension: 0.1,
+                fill: false,
+                borderWidth: 3
+            }]
+        },
+        options: {
+            ...commonChartOptions(palette.gray),
+            scales: {
+                y: {
+                    title: { display: true, text: 'Redox Potential (V)', color: palette.gray },
+                    ticks: { color: palette.gray },
+                    grid: { color: 'rgba(200, 200, 200, 0.2)'},
+                    min: -1.4,
+                    max: 1.4
+                },
+                x: {
+                    ticks: { color: palette.gray },
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                 ...commonChartOptions(palette.gray).plugins,
+                title: { display: false }
+            },
+            elements: {
+                point: { radius: 5, hoverRadius: 8, backgroundColor: palette.teal }
+            },
+            annotations: {
+                photon1: {
+                    type: 'point',
+                    xValue: 'P680',
+                    yValue: 0.82,
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                    radius: 15,
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('protonSourceChart'), {
+        type: 'pie',
+        data: {
+            labels: ['From Water Splitting (PSII)', 'From Cytochrome b₆f Pumping'],
+            datasets: [{
+                label: 'Proton Source',
+                data: [4, 8],
+                backgroundColor: [palette.cyan, palette.blue],
+                borderColor: '#FFFFFF',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: palette.gray, font: { size: 14 } }
+                },
+                tooltip: { callbacks: { title: tooltipTitleCallback } },
+                title: { display: true, text: 'Source of 12 Protons per O₂', color: palette.gray, font: {size: 16, weight: 'bold'} }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('yieldChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Photons Absorbed', wrapLabel('Protons Mobilized (to Lumen)'), 'ATP Produced', 'NADPH Produced'],
+            datasets: [{
+                label: 'Yield per O₂ Molecule Evolved',
+                data: [8, 12, 3, 2],
+                backgroundColor: [
+                    palette.amber,
+                    palette.blue,
+                    palette.purple,
+                    palette.teal
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+             ...commonChartOptions(palette.gray),
+             indexAxis: 'y',
+             plugins: {
+                 ...commonChartOptions(palette.gray).plugins,
+                 legend: { display: false },
+                 title: { display: true, text: 'Approximate Stoichiometry of Linear Electron Flow', color: palette.gray, font: {size: 16, weight: 'bold'}}
+             },
+             scales: {
+                 x: { ...commonChartOptions(palette.gray).scales.x, grid: { display: true, color: 'rgba(200, 200, 200, 0.2)' } },
+                 y: { ...commonChartOptions(palette.gray).scales.y, grid: { display: false } }
+             }
+        }
+    });
+
+    // Quiz Data
+    const quizQuestions = [
+        {
+            question: "Where do the light-dependent reactions of photosynthesis primarily occur?",
+            options: ["A) Stroma of chloroplast", "B) Inner mitochondrial membrane", "C) Thylakoid membrane of chloroplast", "D) Cytoplasm"],
+            answer: "C"
+        },
+        {
+            question: "What is the role of water (H₂O) in the light-dependent reactions?",
+            options: ["A) It donates electrons to NADP+ reductase", "B) It provides electrons to replace those lost by P680 in PSII", "C) It directly reduces cytochrome b₆f", "D) It acts as the final electron acceptor in the ETC"],
+            answer: "B"
+        },
+        {
+            question: "Which protein complex facilitates the movement of protons (H⁺) across the thylakoid membrane, contributing to the proton gradient?",
+            options: ["A) ATP synthase", "B) Cytochrome b₆f complex", "C) Photosystem I (PSI)", "D) Ferredoxin-NADP⁺ reductase"],
+            answer: "B"
+        },
+        {
+            question: "Which of the following is the final electron acceptor in the light-dependent reactions?",
+            options: ["A) Ferredoxin (Fd)", "B) Plastocyanin (PC)", "C) NADP⁺", "D) Oxygen (O₂)"],
+            answer: "C"
+        },
+        {
+            question: "Cyclic electron flow around PSI primarily results in:",
+            options: ["A) Production of NADPH", "B) Enhanced oxygen evolution", "C) Generation of ATP without NADPH formation", "D) Reduction of carbon dioxide"],
+            answer: "C"
+        },
+        {
+            question: "What is the role of plastocyanin (PC) in the light reactions?",
+            options: ["A) It transfers electrons from PSII to cytochrome b₆f", "B) It carries electrons from cytochrome b₆f to PSI", "C) It directly reduces NADP⁺", "D) It splits water molecules"],
+            answer: "B"
+        },
+        {
+            question: "Which of the following inhibitors specifically blocks electron flow from PSII to plastoquinone (PQ)?",
+            options: ["A) DCMU (Diuron)", "B) Rotenone", "C) Cyanide", "D) Oligomycin"],
+            answer: "A"
+        },
+        {
+            question: "What is the correct sequence of electron carriers in the Z-scheme of photosynthesis?",
+            options: ["A. P680 → Plastoquinone → Cyt b6f → Plastocyanin → P700", "B. P680 → QA → QB → Cyt b6f → Plastocyanin → P700", "C. P700 → Ferredoxin → Cyt b6f → P680", "D. P680 → P700 → Ferredoxin → NADPH"],
+            answer: "B"
+        },
+        {
+            question: "Which of the following statements about cyclic photophosphorylation is FALSE?",
+            options: ["A. It generates ATP without producing NADPH", "B. It involves PSI but not PSII", "C. It does not result in O₂ evolution", "D. It requires the oxygen-evolving complex"],
+            answer: "D"
+        },
+        {
+            question: "The plastoquinone pool in the thylakoid membrane serves primarily to:",
+            options: ["A. Oxidize water in PSII", "B. Shuttle electrons and protons from PSII to the cytochrome b6f complex", "C. Reduce NADP⁺ to NADPH", "D. Transfer protons to the stroma"],
+            answer: "B"
+        }
+    ];
+
+    const quizForm = document.getElementById('quizForm');
+    const submitButton = document.getElementById('submitQuiz');
+    const resetButton = document.getElementById('resetQuiz');
+
+    // Function to render quiz questions
+    function renderQuiz() {
+        quizForm.innerHTML = ''; // Clear previous questions
+        quizQuestions.forEach((q, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.classList.add('question-item');
+            questionElement.setAttribute('data-question-index', index);
+
+            const questionText = document.createElement('p');
+            questionText.classList.add('question-text');
+            questionText.textContent = `${index + 1}. ${q.question}`;
+            questionElement.appendChild(questionText);
+
+            q.options.forEach((option, optionIndex) => {
+                const optionLabel = document.createElement('label');
+                optionLabel.classList.add('option-label');
+
+                const optionInput = document.createElement('input');
+                optionInput.type = 'radio';
+                optionInput.name = `question${index}`;
+                optionInput.value = option.charAt(0); // Store 'A', 'B', 'C', 'D'
+                optionInput.id = `q${index}o${optionIndex}`; // Unique ID for label 'for' attribute
+
+                optionLabel.appendChild(optionInput);
+                optionLabel.appendChild(document.createTextNode(option));
+                questionElement.appendChild(optionLabel);
+            });
+            quizForm.appendChild(questionElement);
+        });
+    }
+
+    // Function to submit answers and show results
+    function submitAnswers() {
+        quizQuestions.forEach((q, index) => {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+            const questionElement = document.querySelector(`.question-item[data-question-index="${index}"]`);
+            
+            // Get all options for this question
+            const allOptions = questionElement.querySelectorAll('.option-label');
+
+            // Disable all radio buttons for this question
+            questionElement.querySelectorAll(`input[name="question${index}"]`).forEach(input => {
+                input.disabled = true;
+            });
+
+            allOptions.forEach(label => {
+                // Remove previous styling
+                label.classList.remove('correct-answer', 'incorrect-answer');
+            });
+
+            if (selectedOption) {
+                const selectedValue = selectedOption.value;
+                if (selectedValue === q.answer) {
+                    selectedOption.parentElement.classList.add('correct-answer');
+                } else {
+                    selectedOption.parentElement.classList.add('incorrect-answer');
+                    // Highlight the correct answer in green, even if not selected
+                    allOptions.forEach(label => {
+                        const input = label.querySelector('input');
+                        if (input && input.value === q.answer) {
+                            label.classList.add('correct-answer');
+                        }
+                    });
+                }
+            } else {
+                // If no option is selected, just show the correct answer
+                allOptions.forEach(label => {
+                    const input = label.querySelector('input');
+                    if (input && input.value === q.answer) {
+                        label.classList.add('correct-answer');
+                    }
+                });
+            }
+        });
+    }
+
+    // Function to reset the quiz
+    function resetQuiz() {
+        quizQuestions.forEach((q, index) => {
+            const questionElement = document.querySelector(`.question-item[data-question-index="${index}"]`);
+            const allOptions = questionElement.querySelectorAll('.option-label');
+
+            allOptions.forEach(label => {
+                label.classList.remove('correct-answer', 'incorrect-answer');
+                const input = label.querySelector('input');
+                if (input) {
+                    input.checked = false;
+                    input.disabled = false; // Re-enable radio buttons
+                }
+            });
+        });
+    }
+
+    // Event Listeners
+    submitButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent form submission
+        submitAnswers();
+    });
+
+    resetButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent form submission
+        resetQuiz();
+    });
+
+    // Initial render of the quiz
+    renderQuiz();
+});
+</script>
+</body>
+</html>
