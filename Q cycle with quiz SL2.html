@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Q Cycle in Cytochrome b6f Complex</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Base styles for all screen sizes */
+        /* Base styles for larger screens (desktop first) */
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 10px; /* Reduced padding for mobile */
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            min-height: 100vh; /* Ensure full height background */
             color: #333;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to top for scrolling content */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            align-items: center; /* Center content vertically and horizontally */
         }
 
         .container {
@@ -25,9 +23,9 @@
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 20px; /* Adjusted padding */
+            padding: 30px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            width: 100%;
+            width: 100%; /* Ensure container is responsive */
             box-sizing: border-box; /* Include padding in width */
         }
 
@@ -35,22 +33,22 @@
             text-align: center;
             color: #2c3e50;
             margin-bottom: 10px;
-            font-size: 2.2em; /* Adjusted for smaller screens */
+            font-size: 2.5em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         .subtitle {
             text-align: center;
             color: #7f8c8d;
-            margin-bottom: 20px; /* Adjusted for smaller screens */
-            font-size: 1em; /* Adjusted for smaller screens */
+            margin-bottom: 30px;
+            font-size: 1.2em;
         }
 
         .intro-text {
-            margin-bottom: 25px; /* Adjusted for smaller screens */
-            padding: 15px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
             background: #f0f4f8;
-            border-left: 5px solid #667eea; /* Adjusted border width */
+            border-left: 4px solid #667eea; /* Reduced border width for aesthetics */
             border-radius: 8px;
             line-height: 1.6;
             color: #333;
@@ -60,56 +58,55 @@
         .intro-text h2 {
             color: #2c3e50;
             margin-top: 0;
-            font-size: 1.3em; /* Adjusted for smaller screens */
+            font-size: 1.5em;
             border-bottom: 1px solid #ddd;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .intro-text ul {
             list-style: disc;
-            margin-left: 15px; /* Adjusted for smaller screens */
+            margin-left: 20px;
             padding: 0;
-            font-size: 0.95em; /* Adjusted for smaller screens */
         }
 
         .intro-text ul li {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .diagram-container {
             position: relative;
             width: 100%;
-            max-width: 900px;
-            height: 450px; /* Adjusted base height for responsiveness */
+            max-width: 900px; /* Limit max width for better appearance */
+            height: 600px; /* Base height for desktop */
             background: linear-gradient(180deg, #e8f5e8 0%, #f0f8ff 50%, #fff8e1 100%);
             border: 3px solid #34495e;
             border-radius: 15px;
-            margin: 15px auto; /* Center the diagram */
+            margin: 20px auto; /* Center the diagram */
             overflow: hidden;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); /* Corrected rgba syntax */
         }
 
         .membrane {
             position: absolute;
             width: 100%;
-            height: 70px; /* Adjusted height */
+            height: 80px; /* Double the previous 40px height */
             background: linear-gradient(90deg, #8b4513, #cd853f, #8b4513);
             left: 0;
             top: 50%;
             transform: translateY(-50%);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            z-index: 2;
+            z-index: 2; /* Ensure membrane is above certain elements */
         }
         
         .membrane-label {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); /* Centered vertically within the membrane */
             color: white;
             font-weight: bold;
-            font-size: 13px; /* Adjusted for smaller screens */
+            font-size: 14px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             z-index: 3;
             white-space: nowrap;
@@ -117,8 +114,8 @@
 
         .complex {
             position: absolute;
-            width: 180px; /* Adjusted width */
-            height: 220px; /* Adjusted height */
+            width: 200px;
+            height: 250px; /* Adjusted height for better spacing of sites */
             background: linear-gradient(45deg, #2c3e50, #34495e);
             left: 50%;
             top: 50%;
@@ -131,17 +128,17 @@
 
         .complex-label {
             position: absolute;
-            top: -25px; /* Adjusted position */
+            top: -30px;
             left: 50%;
             transform: translateX(-50%);
             background: #e74c3c;
             color: white;
-            padding: 4px 12px; /* Adjusted padding */
+            padding: 5px 15px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 13px; /* Adjusted for smaller screens */
+            font-size: 14px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            white-space: nowrap;
+            white-space: nowrap; /* Prevent label from wrapping */
         }
         
         /* Sub-complexes/Sites within b6f complex */
@@ -150,21 +147,22 @@
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             color: white;
-            font-size: 9px; /* Adjusted for smaller screens */
-            padding: 2px 4px; /* Adjusted padding */
+            font-size: 10px;
+            padding: 2px 5px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             text-align: center;
         }
 
-        .rieske { top: 20px; left: 15px; width: 55px; height: 18px; }
-        .cyt-bL { top: 45px; left: 105px; width: 55px; height: 18px; }
-        .cyt-bH { top: 110px; left: 105px; width: 55px; height: 18px; }
-        .cyt-f { top: 80px; left: 15px; width: 55px; height: 18px; }
+        .rieske { top: 20px; left: 20px; width: 60px; height: 20px; }
+        .cyt-bL { top: 50px; left: 120px; width: 60px; height: 20px; }
+        .cyt-bH { top: 120px; left: 120px; width: 60px; height: 20px; }
+        .cyt-f { top: 90px; left: 20px; width: 60px; height: 20px; }
+
 
         .binding-site {
             position: absolute;
-            width: 28px; /* Adjusted size */
-            height: 28px; /* Adjusted size */
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: 3px solid #fff;
             box-shadow: 0 3px 10px rgba(0,0,0,0.3);
@@ -172,7 +170,7 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 9px; /* Adjusted for smaller screens */
+            font-size: 10px;
             color: white;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -184,33 +182,34 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
 
+        /* Swapped Qo and Qi positions */
         .qo-site {
-            background: #e67e22;
-            bottom: 40px; /* Adjusted position */
+            background: #e67e22; /* Lumenal side color */
+            bottom: 50px; /* Now on the bottom (lumen side) */
             left: 50%;
             transform: translateX(-50%);
         }
 
         .qi-site {
-            background: #27ae60;
-            top: 40px; /* Adjusted position */
+            background: #27ae60; /* Stromal side color */
+            top: 50px; /* Now on the top (stromal side) */
             left: 50%;
             transform: translateX(-50%);
         }
 
         .plastoquinone {
             position: absolute;
-            width: 38px; /* Adjusted size */
-            height: 38px; /* Adjusted size */
+            width: 40px; /* Larger for better visibility */
+            height: 40px;
             background: #f39c12;
             border-radius: 50%;
             border: 2px solid #d68910;
             box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-            transition: all 2s ease-in-out;
+            transition: all 2s ease-in-out; /* Slower animation */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px; /* Adjusted for smaller screens */
+            font-size: 12px;
             font-weight: bold;
             color: white;
             z-index: 5;
@@ -218,8 +217,8 @@
 
         .plastocyanin {
             position: absolute;
-            width: 40px; /* Adjusted size */
-            height: 40px; /* Adjusted size */
+            width: 45px; /* Larger for better visibility */
+            height: 45px;
             background: #3498db;
             border-radius: 50%;
             border: 3px solid #2980b9;
@@ -227,51 +226,51 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px; /* Adjusted for smaller screens */
+            font-size: 14px;
             font-weight: bold;
             color: white;
-            transition: all 2s ease-in-out;
-            z-index: 15;
+            transition: all 2s ease-in-out; /* Slower animation */
+            z-index: 15; /* Increased z-index for visibility */
         }
 
         .electron {
             position: absolute;
-            width: 16px; /* Adjusted size */
-            height: 16px; /* Adjusted size */
+            width: 18px; /* Slightly larger for text */
+            height: 18px; /* Slightly larger for text */
             background: #e74c3c;
             border-radius: 50%;
             box-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c;
-            transition: all 3s ease-in-out;
+            transition: all 3s ease-in-out; /* Even Slower animation */
             z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px; /* Adjusted for smaller screens */
+            font-size: 10px; /* Font size for 'e⁻' */
             font-weight: bold;
             color: white;
         }
 
         .proton {
             position: absolute;
-            width: 16px; /* Adjusted size */
-            height: 16px; /* Adjusted size */
+            width: 18px; /* Larger for better visibility */
+            height: 18px;
             background: #9b59b6;
             border-radius: 50%;
             box-shadow: 0 0 8px #9b59b6, 0 0 15px #9b59b6;
-            transition: all 2s ease-in-out;
+            transition: all 2s ease-in-out; /* Slower animation */
             z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px; /* Adjusted for smaller screens */
+            font-size: 10px;
             color: white;
             font-weight: bold;
         }
 
-        .photosystem {
+        .photosystem { /* Unified styling for Photosystem I and II */
             position: absolute;
-            width: 90px; /* Adjusted width */
-            height: 70px; /* Adjusted height */
+            width: 100px;
+            height: 80px; /* Same height as membrane for embedding */
             background: linear-gradient(45deg, #1abc9c, #16a085);
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -280,36 +279,34 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 13px; /* Adjusted for smaller screens */
+            font-size: 14px;
             text-align: center;
             transition: all 0.8s ease-in-out;
-            z-index: 3;
+            z-index: 3; /* Increased z-index to be visible above membrane */
         }
-        .psii_complex { left: 5%; top: calc(50% - 35px); } /* Adjusted top for new height */
-        .psi { left: 75%; top: calc(50% - 35px); } /* Adjusted top for new height */
 
 
         .controls {
             text-align: center;
-            margin: 20px 0; /* Adjusted margin */
+            margin: 30px 0;
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
             justify-content: center;
-            gap: 10px; /* Adjusted gap */
+            gap: 15px; /* Spacing between buttons */
         }
 
         .btn {
             background: linear-gradient(45deg, #667eea, #764ba2);
             border: none;
             color: white;
-            padding: 12px 25px; /* Adjusted padding */
-            font-size: 15px; /* Adjusted font size */
+            padding: 15px 30px;
+            font-size: 16px;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             font-weight: bold;
-            min-width: 100px; /* Adjusted min width */
+            min-width: 120px; /* Ensure buttons have a minimum width */
         }
 
         .btn:hover {
@@ -321,43 +318,44 @@
             transform: translateY(0);
         }
 
+        /* Styles for the new flow chart */
         .step-info-container {
-            margin: 15px auto; /* Adjusted margin */
-            max-width: 900px;
-            padding: 15px; /* Adjusted padding */
+            margin: 20px auto; /* Center it */
+            max-width: 900px; /* Match diagram container width */
+            padding: 20px;
             background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             border-radius: 15px;
             border-left: 5px solid #667eea;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; /* Make it a flex container for the flow chart */
+            flex-direction: column; /* Stack flow chart elements vertically */
+            align-items: center; /* Center items horizontally */
         }
 
         .step-flow-chart {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px; /* Adjusted gap */
-            padding: 8px; /* Adjusted padding */
-            width: 100%;
+            flex-direction: column; /* Stack steps vertically */
+            align-items: center; /* Center individual steps */
+            gap: 15px; /* Space between steps */
+            padding: 10px;
+            width: 100%; /* Take full width of container */
         }
 
         .flow-step {
-            width: 95%; /* Increased width for better use of space */
+            width: 90%; /* Steps take up most of the width */
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 10px;
-            padding: 12px; /* Adjusted padding */
+            padding: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             text-align: left;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            opacity: 0.6;
-            transform: scale(0.98); /* Slightly less scaling */
+            opacity: 0.6; /* Dim inactive steps */
+            transform: scale(0.95); /* Slightly scale down inactive steps */
             position: relative;
         }
 
@@ -366,24 +364,24 @@
             transform: scale(1);
             border-color: #667eea;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            background: #e6f0ff;
+            background: #e6f0ff; /* Light blue background for active */
         }
 
         .flow-step.completed-flow-step {
             opacity: 0.8;
-            background: #e2f5e2;
+            background: #e2f5e2; /* Light green for completed */
             border-color: #27ae60;
         }
 
         .flow-step-title {
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 4px; /* Adjusted margin */
-            font-size: 1em; /* Adjusted font size */
+            margin-bottom: 5px;
+            font-size: 1.1em;
         }
 
         .flow-step-description {
-            font-size: 0.85em; /* Adjusted font size */
+            font-size: 0.9em;
             color: #555;
         }
 
@@ -391,87 +389,92 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8em; /* Adjusted font size */
+            font-size: 2em;
             color: #667eea;
             font-weight: bold;
-            margin: 4px 0; /* Adjusted margin */
+            margin: 5px 0; /* Vertical margin for vertical arrows */
             user-select: none;
         }
 
+
         .phase-indicator {
             position: absolute;
-            top: 8px; /* Adjusted position */
-            right: 15px; /* Adjusted position */
+            top: 10px;
+            right: 20px;
             background: #34495e;
             color: white;
-            padding: 8px 15px; /* Adjusted padding */
+            padding: 10px 20px;
             border-radius: 20px;
             font-weight: bold;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
             z-index: 10;
-            font-size: 0.9em; /* Adjusted font size */
         }
 
         /* Styles for the labels (Stroma and Lumen) */
         .labels {
             position: absolute;
-            padding: 7px 12px; /* Adjusted padding */
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
+            padding: 8px 15px; /* Slightly more padding */
+            background: rgba(255, 255, 255, 0.9); /* More opaque background */
+            border-radius: 10px; /* More rounded */
             font-weight: bold;
             z-index: 10;
             white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            font-size: 1em; /* Adjusted font size */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* Stronger shadow */
+            font-size: 1.1em; /* Increased font size */
+            width: fit-content; /* Make width fit content */
         }
 
         .stroma-label {
-            top: 15px; /* Adjusted position */
-            left: 15px; /* Adjusted position */
-            color: #34495e;
+            top: 20px;
+            left: 20px;
+            color: #34495e; /* Darker, more prominent color */
         }
 
         .lumen-label {
-            bottom: 15px; /* Adjusted position */
-            right: 15px; /* Adjusted position */
-            color: #34495e;
+            bottom: 20px;
+            right: 20px;
+            color: #34495e; /* Darker, more prominent color */
         }
 
         .membrane-bottom-label {
             position: absolute;
-            bottom: calc(50% - 35px - 15px); /* Adjusted based on membrane height (70px) and desired offset */
-            right: 15px; /* Adjusted position */
-            padding: 7px 12px;
+            /* Adjust based on membrane height (80px) and desired offset */
+            bottom: calc(50% - 40px - 20px); 
+            right: 20px; /* Position to the right */
+            padding: 8px 15px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             font-weight: bold;
             z-index: 10;
             white-space: nowrap;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            font-size: 1em;
+            font-size: 1.1em;
             color: #34495e;
-            transform: translateY(100%);
+            /* Position exactly below the membrane's bottom edge, adjusted in JS for dynamic height */
+            /* transform: translateY(100%); */ 
+            width: fit-content; /* Make width fit content */
         }
 
         /* Summary points styling */
         .summary-container {
-            display: none;
-            margin: 25px auto; /* Adjusted margin */
+            display: none; /* Hidden by default, shown after animation completes */
+            margin: 30px auto;
             max-width: 900px;
             background: #ffffff;
             border-radius: 15px;
-            padding: 25px; /* Adjusted padding */
+            padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 1px solid #e0e0e0;
+            box-sizing: border-box;
         }
 
         .summary-container h2 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 18px; /* Adjusted margin */
-            font-size: 1.8em; /* Adjusted font size */
+            margin-bottom: 20px;
+            font-size: 2em;
             border-bottom: 2px solid #667eea;
-            padding-bottom: 8px; /* Adjusted padding */
+            padding-bottom: 10px;
             position: relative;
         }
         .summary-container h2::after {
@@ -480,34 +483,34 @@
             bottom: -2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px; /* Adjusted width */
-            height: 3px; /* Adjusted height */
+            width: 50px;
+            height: 4px;
             background: #764ba2;
             border-radius: 5px;
         }
 
         .summary-section {
-            margin-bottom: 20px; /* Adjusted margin */
+            margin-bottom: 25px;
         }
 
         .summary-section h3 {
             color: #34495e;
-            font-size: 1.3em; /* Adjusted font size */
-            margin-bottom: 12px; /* Adjusted margin */
+            font-size: 1.5em;
+            margin-bottom: 15px;
             border-left: 5px solid #3498db;
-            padding-left: 8px; /* Adjusted padding */
+            padding-left: 10px;
         }
 
         .summary-section ul {
-            list-style: none;
+            list-style: none; /* Remove default bullet points */
             padding: 0;
             margin: 0;
         }
 
         .summary-section ul li {
             background: #f8f9fa;
-            padding: 10px 12px; /* Adjusted padding */
-            margin-bottom: 6px; /* Adjusted margin */
+            padding: 12px 15px;
+            margin-bottom: 8px;
             border-radius: 8px;
             border: 1px solid #e9ecef;
             display: flex;
@@ -515,11 +518,10 @@
             line-height: 1.5;
             color: #444;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            font-size: 0.9em; /* Adjusted font size */
         }
 
         .summary-section ul li::before {
-            content: '•';
+            content: '•'; /* Custom bullet point */
             color: #667eea;
             font-weight: bold;
             display: inline-block;
@@ -535,23 +537,24 @@
 
         /* Quiz specific styles */
         .quiz-container {
-            display: none;
-            margin: 25px auto; /* Adjusted margin */
+            display: none; /* Hidden by default, shown after summary notes */
+            margin: 30px auto;
             max-width: 900px;
             background: #ffffff;
             border-radius: 15px;
-            padding: 25px; /* Adjusted padding */
+            padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border: 1px solid #e0e0e0;
+            box-sizing: border-box;
         }
 
         .quiz-container h2 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 18px; /* Adjusted margin */
-            font-size: 1.8em; /* Adjusted font size */
+            margin-bottom: 20px;
+            font-size: 2em;
             border-bottom: 2px solid #667eea;
-            padding-bottom: 8px; /* Adjusted padding */
+            padding-bottom: 10px;
             position: relative;
         }
         .quiz-container h2::after {
@@ -560,15 +563,15 @@
             bottom: -2px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
+            width: 50px;
+            height: 4px;
             background: #764ba2;
             border-radius: 5px;
         }
 
         .question-item {
-            margin-bottom: 20px; /* Adjusted margin */
-            padding: 12px; /* Adjusted padding */
+            margin-bottom: 25px;
+            padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
             border: 1px solid #e9ecef;
@@ -578,19 +581,18 @@
         .question-item p.question-text {
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 12px; /* Adjusted margin */
-            font-size: 1em; /* Adjusted font size */
+            margin-bottom: 15px;
+            font-size: 1.1em;
             line-height: 1.4;
         }
 
         .options label {
             display: block;
-            margin-bottom: 6px; /* Adjusted margin */
+            margin-bottom: 8px;
             cursor: pointer;
-            padding: 7px 9px; /* Adjusted padding */
+            padding: 8px 10px;
             border-radius: 5px;
             transition: background-color 0.2s ease;
-            font-size: 0.95em; /* Adjusted font size */
         }
 
         .options label:hover {
@@ -598,15 +600,14 @@
         }
 
         .options input[type="radio"] {
-            margin-right: 8px; /* Adjusted margin */
-            transform: scale(1.05); /* Slightly smaller scale */
+            margin-right: 10px;
+            transform: scale(1.1);
         }
 
         .answer-feedback {
-            margin-top: 8px; /* Adjusted margin */
+            margin-top: 10px;
             font-weight: bold;
-            display: none;
-            font-size: 0.9em; /* Adjusted font size */
+            display: none; /* Hidden by default */
         }
 
         .answer-feedback.correct {
@@ -619,117 +620,315 @@
 
         .quiz-controls {
             text-align: center;
-            margin-top: 25px; /* Adjusted margin */
+            margin-top: 30px;
             display: flex;
             justify-content: center;
-            gap: 10px; /* Adjusted gap */
+            gap: 15px;
         }
 
-        /* Mobile-specific adjustments */
+        /* Responsive adjustments for screens up to 768px (tablets and larger phones) */
         @media (max-width: 768px) {
             body {
-                padding: 5px; /* Even less padding on very small screens */
+                padding: 10px;
+                align-items: flex-start; /* Align to top for better scrolling on mobile */
             }
 
             .container {
                 padding: 15px;
                 border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             }
 
             h1 {
-                font-size: 1.8em;
+                font-size: 1.6em;
+                margin-bottom: 5px;
             }
 
             .subtitle {
                 font-size: 0.9em;
+                margin-bottom: 15px;
             }
 
             .intro-text {
-                padding: 10px;
-                border-left-width: 4px;
+                margin-bottom: 20px;
+                padding: 10px 15px;
             }
             .intro-text h2 {
-                font-size: 1.1em;
+                font-size: 1.2em;
+                margin-bottom: 10px;
             }
             .intro-text ul {
+                margin-left: 15px;
                 font-size: 0.9em;
             }
 
+
             .diagram-container {
-                height: 380px; /* Further reduced height for mobile */
-                margin: 10px auto;
+                height: 400px; /* Adjusted height for tablets/larger phones */
+                max-height: 60vh; /* Max height relative to viewport height */
                 border-radius: 10px;
+                margin: 15px auto;
             }
 
             .membrane {
-                height: 60px; /* Smaller membrane height */
-            }
-            .membrane-label {
-                font-size: 11px;
+                height: 60px; /* Adjusted membrane height */
             }
 
+            .membrane-label {
+                font-size: 12px;
+            }
+            
             .complex {
-                width: 150px; /* Smaller complex */
-                height: 190px;
+                width: 140px; /* Scaled down complex size */
+                height: 180px;
+                border-radius: 10px;
             }
             .complex-label {
-                font-size: 11px;
+                font-size: 12px;
+                padding: 3px 10px;
                 top: -20px;
-                padding: 3px 8px;
             }
             .rieske, .cyt-bL, .cyt-bH, .cyt-f {
                 font-size: 8px;
                 width: 45px;
                 height: 16px;
+                padding: 1px 3px;
             }
-            .rieske { top: 15px; left: 10px; }
-            .cyt-bL { top: 40px; left: 85px; }
-            .cyt-bH { top: 100px; left: 85px; }
-            .cyt-f { top: 70px; left: 10px; }
-
+            /* Adjust positions relative to the new complex size */
+            .rieske { top: 15px; left: 15px; }
+            .cyt-bL { top: 40px; left: 90px; }
+            .cyt-bH { top: 100px; left: 90px; }
+            .cyt-f { top: 75px; left: 15px; }
 
             .binding-site {
-                width: 24px;
-                height: 24px;
+                width: 25px;
+                height: 25px;
                 font-size: 8px;
             }
-            .qo-site { bottom: 35px; }
-            .qi-site { top: 35px; }
+            /* Adjust positions relative to the new complex size */
+            .qo-site {
+                bottom: 30px;
+            }
+            .qi-site {
+                top: 30px;
+            }
 
             .plastoquinone, .plastocyanin {
-                width: 32px;
-                height: 32px;
+                width: 35px;
+                height: 35px;
                 font-size: 10px;
             }
 
             .electron, .proton {
-                width: 14px;
-                height: 14px;
+                width: 15px;
+                height: 15px;
                 font-size: 8px;
             }
 
             .photosystem {
-                width: 80px;
-                height: 60px;
-                font-size: 11px;
-                top: calc(50% - 30px);
+                width: 90px;
+                height: 70px;
+                font-size: 12px;
+                top: calc(50% - 35px); /* Center vertically relative to membrane */
             }
             .psii_complex { left: 3%; }
             .psi { left: 78%; }
 
+            .controls {
+                margin: 20px 0 10px;
+                gap: 10px;
+            }
+
             .btn {
+                padding: 12px 25px;
+                font-size: 14px;
+                border-radius: 20px;
+                min-width: 100px;
+            }
+
+            .step-info-container {
+                padding: 15px;
+                border-radius: 10px;
+                margin: 15px auto; /* Keep centering */
+                width: auto; /* Allow it to adjust */
+            }
+            .step-flow-chart {
+                width: 100%;
+                gap: 10px;
+            }
+            .flow-step {
+                width: 100%; /* Each step takes full width on smaller screens */
+                max-width: none; /* Remove max-width constraint */
+                margin-bottom: 5px;
+                padding: 10px;
+            }
+            .flow-connector {
+                font-size: 1.5em;
+                margin: 5px 0;
+            }
+            .flow-step-title {
+                font-size: 1em;
+            }
+            .flow-step-description {
+                font-size: 0.85em;
+            }
+
+            .phase-indicator {
+                top: 5px;
+                right: 10px;
+                padding: 8px 15px;
+                font-size: 12px;
+                border-radius: 15px;
+                max-width: 60%;
+                text-align: right;
+            }
+            .labels { /* Adjust for smaller screens */
+                font-size: 0.9em; /* Smaller font for labels */
+                padding: 6px 12px;
+                /* Removed top: 10px; bottom: 10px; from here */
+            }
+            .stroma-label {
+                top: 10px; /* Adjusted to 10px from 20px for mobile */
+                left: 10px; /* Adjusted to 10px from 20px for mobile */
+            }
+            .lumen-label {
+                bottom: 10px; /* Adjusted to 10px from 20px for mobile */
+                right: 10px; /* Adjusted to 10px from 20px for mobile */
+            }
+            .membrane-bottom-label {
+                right: 10px; /* Adjust right position for mobile */
+                font-size: 0.9em;
+                padding: 6px 12px;
+            }
+
+            /* Summary points responsive adjustments */
+            .summary-container {
+                padding: 15px;
+            }
+            .summary-container h2 {
+                font-size: 1.5em;
+            }
+            .summary-section h3 {
+                font-size: 1.2em;
+            }
+            .summary-section ul li {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            /* Quiz responsive adjustments */
+            .quiz-container {
+                padding: 15px;
+            }
+            .quiz-container h2 {
+                font-size: 1.5em;
+            }
+            .question-item p.question-text {
+                font-size: 1em;
+            }
+            .options label {
+                font-size: 0.9em;
+                padding: 6px 8px;
+            }
+            .quiz-controls .btn {
                 padding: 10px 20px;
                 font-size: 13px;
+                min-width: 90px;
+            }
+        }
+
+        /* Further adjustments for very small screens (e.g., iPhone SE, older smartphones) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.4em;
+            }
+
+            .subtitle {
+                font-size: 0.85em;
+            }
+
+            .diagram-container {
+                height: 350px; /* Even smaller height for very small screens */
+                max-height: 55vh;
+            }
+
+            .membrane {
+                height: 50px; /* Smaller membrane height */
+            }
+
+            .membrane-label {
+                font-size: 10px;
+            }
+            
+            .complex {
+                width: 110px; /* Further scaled down complex */
+                height: 140px;
+            }
+            .complex-label {
+                font-size: 9px;
+                top: -12px;
+                padding: 2px 8px;
+            }
+            .rieske, .cyt-bL, .cyt-bH, .cyt-f {
+                font-size: 7px;
+                width: 35px;
+                height: 12px;
+                padding: 1px 2px;
+            }
+            /* Adjust positions relative to the new complex size */
+            .rieske { top: 8px; left: 8px; }
+            .cyt-bL { top: 30px; left: 70px; }
+            .cyt-bH { top: 80px; left: 70px; }
+            .cyt-f { top: 55px; left: 8px; }
+
+            .binding-site {
+                width: 20px;
+                height: 20px;
+                font-size: 7px;
+                border-width: 2px; /* Smaller border */
+            }
+            .qo-site { bottom: 20px; }
+            .qi-site { top: 20px; }
+
+            .plastoquinone, .plastocyanin {
+                width: 28px;
+                height: 28px;
+                font-size: 8px;
+                border-width: 1px;
+            }
+
+            .electron, .proton {
+                width: 12px;
+                height: 12px;
+                font-size: 6px;
+            }
+
+            .photosystem {
+                width: 60px;
+                height: 50px;
+                font-size: 9px;
+                top: calc(50% - 25px);
+            }
+            .psii_complex { left: 2%; }
+            .psi { left: 78%; } /* Keep relative positions */
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 12px;
                 min-width: 80px;
             }
 
             .step-info-container {
                 padding: 10px;
-                margin: 10px auto;
             }
+
             .flow-step {
-                padding: 10px;
-                font-size: 0.85em;
+                font-size: 0.8em;
+                padding: 8px;
             }
             .flow-step-title {
                 font-size: 0.9em;
@@ -737,49 +936,51 @@
             .flow-step-description {
                 font-size: 0.8em;
             }
-            .flow-connector {
-                font-size: 1.5em;
-            }
 
-            .phase-indicator {
-                font-size: 10px;
-                padding: 6px 12px;
-                top: 5px;
-                right: 10px;
-            }
             .labels {
-                font-size: 0.85em;
-                padding: 5px 10px;
-                top: 10px;
-                bottom: 10px;
+                font-size: 8px;
+                padding: 4px 8px;
+                /* Removed top: 10px; bottom: 10px; from here */
+            }
+            .stroma-label {
+                top: 5px; /* Further adjusted for smaller screens */
+                left: 5px; /* Further adjusted for smaller screens */
+            }
+            .lumen-label {
+                bottom: 5px; /* Further adjusted for smaller screens */
+                right: 5px; /* Further adjusted for smaller screens */
             }
             .membrane-bottom-label {
-                font-size: 0.8em;
-                padding: 5px 10px;
+                font-size: 0.7em;
+                padding: 4px 8px;
             }
 
-            .summary-container, .quiz-container {
-                padding: 15px;
-            }
-            .summary-container h2, .quiz-container h2 {
-                font-size: 1.5em;
+            /* Summary points responsive adjustments */
+            .summary-container h2 {
+                font-size: 1.2em;
             }
             .summary-section h3 {
-                font-size: 1.1em;
+                font-size: 1em;
             }
             .summary-section ul li {
-                font-size: 0.85em;
-                padding: 8px 10px;
+                padding: 6px;
+                font-size: 0.8em;
+            }
+
+            /* Quiz responsive adjustments */
+            .quiz-container h2 {
+                font-size: 1.2em;
             }
             .question-item p.question-text {
-                font-size: 0.9em;
-            }
-            .options label {
                 font-size: 0.85em;
             }
+            .options label {
+                font-size: 0.8em;
+                padding: 5px 6px;
+            }
             .quiz-controls .btn {
-                padding: 8px 15px;
-                font-size: 12px;
+                padding: 6px 12px;
+                font-size: 11px;
             }
         }
     </style>
@@ -826,9 +1027,9 @@
             <div class="plastoquinone" id="semiquinone" style="display: none; left: 100px; top: calc(50% - 20px);">PQ•⁻</div>
 
             <div class="plastocyanin" id="pc">PC</div>
-            <div class="plastocyanin" id="pc2">PC</div>
-            <div class="photosystem" id="psii_complex">Photosystem II</div>
-            <div class="photosystem" id="psi">Photosystem I</div>
+            <div class="plastocyanin" id="pc2">PC</div> 
+            <div class="photosystem" id="psii_complex" style="left: 5%; top: calc(50% - 40px);">Photosystem II</div>
+            <div class="photosystem" id="psi" style="left: 75%; top: calc(50% - 40px);">Photosystem I</div>
             
             <div class="electron" id="e1" style="display: none;">e⁻</div>
             <div class="electron" id="e2" style="display: none;">e⁻</div>
@@ -884,8 +1085,8 @@
             <div class="summary-section">
                 <h3>Key Features</h3>
                 <ul>
-                    <li><strong>Quinone Bifurcation:</strong> PQH₂ oxidation splits electrons into high- and low-energy paths.</li>
-                    <li><strong>Asymmetric Sites:</strong> Qo (lumen) and Qi (stroma) enable cross-membrane proton movement.</li>
+                    <li><strong>Quinone Bifurcation:</b> PQH₂ oxidation splits electrons into high- and low-energy paths.</li>
+                    <li><strong>Asymmetric Sites:</b> Qo (lumen) and Qi (stroma) enable cross-membrane proton movement.</li>
                     <li><strong>Dimeric Structure:</strong> Two identical monomers share substrates, enhancing efficiency.</li>
                     <li><strong>Proton Gradient Amplification:</strong> Critical for ATP synthesis in photosynthesis.</li>
                 </ul>
@@ -903,37 +1104,45 @@
         <div class="quiz-container" id="quizContainer">
             <h2>Review Quiz</h2>
             <form id="quizForm">
-            </form>
+                </form>
             <div class="quiz-controls">
                 <button type="button" class="btn" onclick="submitQuiz()">Submit Answers</button>
                 <button type="button" class="btn" onclick="resetQuiz()">Reset Quiz</button>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 40px; color: #555; font-size: 0.9em;">
+        <div style="text-align: center; margin-top: 50px; color: #555;">
             <div id="security-email-display">
                 betabiosciences@gmail.com
             </div>
-            <div style="margin-top: 8px;">
+            <div style="margin-top: 10px;">
                 <a href="https://t.me/betascience_csir" target="_blank" style="color: #007bff; text-decoration: none;">Join our Telegram Channel</a>
             </div>
         </div>
-        <!-- This hidden div contains a security string to verify the script's origin -->
         <div id="security-check-value" style="display: none;">betabiosciences@gmail.com</div>
     </div>
 
     <script>
         // Security check - START: This must be at the very top of the script
-        const allowedDomain = "betabiosciences.github.io"; // The allowed hostname
-        const currentHostname = window.location.hostname;
-
-        if (currentHostname !== allowedDomain) {
-            // If the current hostname does not match the allowed domain,
-            // prevent the script from executing.
-            // This is done by overriding window.onload and throwing an error,
-            // which stops further script parsing/execution without showing an error to the user.
+        const allowedDomain = 'https://betabiosciences.github.io';
+        if (window.location.origin !== allowedDomain) {
+            // If the domain is not allowed, prevent script execution.
+            // All other functions will effectively do nothing as their setup steps are skipped.
             window.onload = function() {}; // Override onload to do nothing
-            throw new Error("Unauthorized domain. Script execution halted."); // This will stop script execution here
+            console.warn("Security check failed: Script loaded from unauthorized domain."); // Log for debugging, but not visible to user
+            throw new Error("Unauthorized domain access."); // This will stop script execution here
+        }
+
+        const securityCheckValueElement = document.getElementById('security-check-value');
+        if (!securityCheckValueElement || securityCheckValueElement.textContent !== 'betabiosciences@gmail.com') {
+            // If the security string is missing or modified, prevent script execution.
+            // All other functions will effectively do nothing as their setup steps are skipped.
+            // No error messages are displayed.
+            window.onload = function() {}; // Override onload to do nothing
+            // For any other direct calls, ensure they are also blocked or gracefully fail.
+            // E.g., wrap all other script in an if(securityPassed) { ... }
+            console.warn("Security check failed: Script will not fully initialize."); // Log for debugging, but not visible to user
+            throw new Error("Security check failed."); // This will stop script execution here
         }
         // Security check - END
 
@@ -969,6 +1178,7 @@
         const summaryPointsContainer = document.getElementById('summaryPointsContainer');
         const quizContainer = document.getElementById('quizContainer');
         const quizForm = document.getElementById('quizForm');
+        const membraneBottomLabel = document.getElementById('membraneBottomLabel');
 
 
         let pqh2_2 = document.getElementById('pqh2-2');
@@ -1078,48 +1288,60 @@
         ];
 
 
+        let complexRect, diagramRect, membraneRect, complexLeft, complexTop, complexWidth, complexHeight;
+        let qiX, qiY, qoX, qoY, rieskeX, rieskeY, cytfX, cytfY, cytbLX, cytbLY, cytbHX, cytbHY;
+        let membraneThickness, membraneHalfThickness, membraneCenterY, stromaY, lumenY;
+        let plastoquinoneHeight, photosystemHeight;
+
+
         function updatePositions() {
-            // Get bounding rectangles dynamically
             complexRect = cytb6f.getBoundingClientRect(); 
             diagramRect = document.getElementById('diagram').getBoundingClientRect();
             membraneRect = document.querySelector('.membrane').getBoundingClientRect();
 
-            // Calculate positions relative to the diagram container
+            // Calculate positions relative to the diagram container for consistent placement
             complexLeft = complexRect.left - diagramRect.left; 
             complexTop = complexRect.top - diagramRect.top;   
             complexWidth = complexRect.width;
             complexHeight = complexRect.height;
 
-            // Calculate Qo and Qi site positions relative to the complex
-            qiX = complexLeft + (complexWidth / 2) - (qiSite.offsetWidth / 2);
+            // Calculate Qo and Qi site absolute positions within the diagram container
+            // The `offsetTop` for binding sites is relative to their parent (complex)
+            // So, add complexTop to get diagram-relative position
+            qiX = complexLeft + complexWidth / 2 - qiSite.offsetWidth / 2;
             qiY = complexTop + qiSite.offsetTop; 
 
-            qoX = complexLeft + (complexWidth / 2) - (qoSite.offsetWidth / 2);
+            qoX = complexLeft + complexWidth / 2 - qoSite.offsetWidth / 2;
             qoY = complexTop + qoSite.offsetTop; 
 
-            // Calculate positions of sub-complexes relative to the complex
-            rieskeX = complexLeft + document.querySelector('.rieske').offsetLeft + (document.querySelector('.rieske').offsetWidth / 2); 
-            rieskeY = complexTop + document.querySelector('.rieske').offsetTop + (document.querySelector('.rieske').offsetHeight / 2);
-            cytfX = complexLeft + document.querySelector('.cyt-f').offsetLeft + (document.querySelector('.cyt-f').offsetWidth / 2);
-            cytfY = complexTop + document.querySelector('.cyt-f').offsetTop + (document.querySelector('.cyt-f').offsetHeight / 2);
-            cytbLX = complexLeft + document.querySelector('.cyt-bL').offsetLeft + (document.querySelector('.cyt-bL').offsetWidth / 2);
-            cytbLY = complexTop + document.querySelector('.cyt-bL').offsetTop + (document.querySelector('.cyt-bL').offsetHeight / 2);
-            cytbHX = complexLeft + document.querySelector('.cyt-bH').offsetLeft + (document.querySelector('.cyt-bH').offsetWidth / 2);
-            cytbHY = complexTop + document.querySelector('.cyt-bH').offsetTop + (document.querySelector('.cyt-bH').offsetHeight / 2);
+            // Calculate sub-complex/site absolute positions within the diagram container
+            rieskeX = complexLeft + document.querySelector('.rieske').offsetLeft + document.querySelector('.rieske').offsetWidth / 2;
+            rieskeY = complexTop + document.querySelector('.rieske').offsetTop + document.querySelector('.rieske').offsetHeight / 2;
+            cytfX = complexLeft + document.querySelector('.cyt-f').offsetLeft + document.querySelector('.cyt-f').offsetWidth / 2;
+            cytfY = complexTop + document.querySelector('.cyt-f').offsetTop + document.querySelector('.cyt-f').offsetHeight / 2;
+            cytbLX = complexLeft + document.querySelector('.cyt-bL').offsetLeft + document.querySelector('.cyt-bL').offsetWidth / 2;
+            cytbLY = complexTop + document.querySelector('.cyt-bL').offsetTop + document.querySelector('.cyt-bL').offsetHeight / 2;
+            cytbHX = complexLeft + document.querySelector('.cyt-bH').offsetLeft + document.querySelector('.cyt-bH').offsetWidth / 2;
+            cytbHY = complexTop + document.querySelector('.cyt-bH').offsetTop + document.querySelector('.cyt-bH').offsetHeight / 2;
 
-            membraneThickness = membraneRect.height;
+            membraneThickness = membraneRect.height; /* Dynamically get from CSS */
             membraneHalfThickness = membraneThickness / 2;
             membraneCenterY = membraneRect.top - diagramRect.top + membraneHalfThickness;
 
-            // Calculate stroma and lumen positions based on diagram height
-            stromaY = membraneCenterY - membraneHalfThickness - 70; // Position above membrane
-            // Adjusted lumenY calculation to be relative to diagram height
+            stromaY = membraneCenterY - membraneHalfThickness - 70; // Position above membrane, adjusted for element height.
+            // The value 44 is calculated to place the center of the 18px proton approx 35px from the bottom edge of the 600px tall diagram-container.
+            // 600 (diagram height) - 35 (desired offset from bottom for proton center) - 9 (half proton height) = 516. 
+            // So, `lumenY` of 516px means the top of the proton is at 516px.
             lumenY = diagramRect.height - 44; 
             
             // Adjust lumenY for mobile if diagram height changes significantly
-            if (window.innerWidth <= 768) {
-                lumenY = diagramRect.height - 30;
+            if (window.innerWidth <= 768) { /* Or use a more precise breakpoint */
+                lumenY = diagramRect.height - 30; /* Adjust to be closer to bottom edge but not off-screen */
             }
+
+            // Position the membrane bottom label dynamically based on membrane's actual bottom edge
+            membraneBottomLabel.style.top = `${membraneCenterY + membraneHalfThickness + 5}px`; // 5px below membrane
+            membraneBottomLabel.style.transform = 'none'; // Remove translateY from CSS for precise JS control
 
             plastoquinoneHeight = pqh2_1.offsetHeight; // Get actual height
             photosystemHeight = psii_complex.offsetHeight;
@@ -1137,8 +1359,9 @@
                     pqh2_1.style.top = `${membraneCenterY - plastoquinoneHeight / 2}px`; 
 
                     setTimeout(() => {
-                        pqh2_1.style.left = `${qoX}px`;
-                        pqh2_1.style.top = `${qoY - (pqh2_1.offsetHeight / 2) + (qoSite.offsetHeight / 2) + 5}px`; // Move to Qo site
+                        // Adjust target Y for Qo site to be centered on the binding site circle
+                        pqh2_1.style.left = `${qoX + qoSite.offsetWidth / 2 - pqh2_1.offsetWidth / 2}px`;
+                        pqh2_1.style.top = `${qoY + qoSite.offsetHeight / 2 - pqh2_1.offsetHeight / 2}px`; 
                         pqh2_1.classList.add('active');
                     }, 100);
                     updatePhaseIndicator('Phase 1: PQH₂ → Qo (Lumenal)');
@@ -1157,10 +1380,10 @@
 
                     // Position them initially at the bottom edge of Qo site, slightly apart
                     // This is their *starting* point for diffusion
-                    proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`; // To the left of Qo center
+                    proton1.style.left = `${qoX + qoSite.offsetWidth / 2 - proton1.offsetWidth - 10}px`; // To the left of Qo center
                     proton1.style.top = `${qoY + qoSite.offsetHeight}px`; // At the bottom edge of Qo
 
-                    proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`; // To the right of Qo center
+                    proton2.style.left = `${qoX + qoSite.offsetWidth / 2 + 10}px`; // To the right of Qo center
                     proton2.style.top = `${qoY + qoSite.offsetHeight}px`; // At the bottom edge of Qo
 
                     // Animate them diffusing into the lumen
@@ -1178,9 +1401,9 @@
                         proton2.style.display = 'none';
                         // Reset positions to ensure they reappear correctly next time
                         // Need to reset the positions that are set dynamically so they don't jump on next appearance
-                        proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                        proton1.style.left = `${qoX + qoSite.offsetWidth / 2 - proton1.offsetWidth - 10}px`;
                         proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
-                        proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                        proton2.style.left = `${qoX + qoSite.offsetWidth / 2 + 10}px`;
                         proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
                     }, animationSpeed + 500); // 500ms after animation is visually done
 
@@ -1200,12 +1423,14 @@
                 description: "One electron from the oxidized PQH₂ is transferred to the Rieske Iron-Sulfur (FeS) center within the cytochrome b6f complex.",
                 action: () => {
                     electron1.style.display = 'flex';
-                    electron1.style.left = `${qoX + 15}px`; 
-                    electron1.style.top = `${qoY + 15}px`; 
+                    // Start electron from Qo center
+                    electron1.style.left = `${qoX + qoSite.offsetWidth / 2 - electron1.offsetWidth / 2}px`; 
+                    electron1.style.top = `${qoY + qoSite.offsetHeight / 2 - electron1.offsetHeight / 2}px`; 
                     
                     setTimeout(() => {
-                        electron1.style.left = `${rieskeX - (electron1.offsetWidth / 2)}px`; /* Adjusted to center in Rieske */
-                        electron1.style.top = `${rieskeY - (electron1.offsetHeight / 2)}px`; /* Adjusted to center in Rieske */
+                        // Move electron to Rieske center
+                        electron1.style.left = `${rieskeX - electron1.offsetWidth / 2}px`;
+                        electron1.style.top = `${rieskeY - electron1.offsetHeight / 2}px`;
                     }, animationSpeed / 5);
                     updatePhaseIndicator('Phase 3: 1e⁻ → Rieske');
                 }
@@ -1215,12 +1440,14 @@
                 description: "The second electron from PQH₂ is transferred to cytochrome bL (Cyt bL) within the complex.",
                 action: () => {
                     electron2.style.display = 'flex';
-                    electron2.style.left = `${qoX + 10}px`; 
-                    electron2.style.top = `${qoY + 20}px`;
+                    // Start electron from Qo center
+                    electron2.style.left = `${qoX + qoSite.offsetWidth / 2 - electron2.offsetWidth / 2}px`; 
+                    electron2.style.top = `${qoY + qoSite.offsetHeight / 2 - electron2.offsetHeight / 2}px`;
 
                     setTimeout(() => {
-                        electron2.style.left = `${cytbLX - (electron2.offsetWidth / 2)}px`; /* Adjusted to center in Cyt bL */
-                        electron2.style.top = `${cytbLY - (electron2.offsetHeight / 2)}px`; /* Adjusted to center in Cyt bL */
+                        // Move electron to Cyt bL center
+                        electron2.style.left = `${cytbLX - electron2.offsetWidth / 2}px`;
+                        electron2.style.top = `${cytbLY - electron2.offsetHeight / 2}px`;
                     }, animationSpeed / 5);
                     updatePhaseIndicator('Phase 4: second e⁻ → Cyt bL');
                 }
@@ -1229,8 +1456,9 @@
                 title: "Step 5: Electron from Rieske to Cytochrome f",
                 description: "The electron from the Rieske center moves to Cytochrome f (Cyt f).",
                 action: () => {
-                    electron1.style.left = `${cytfX - (electron1.offsetWidth / 2)}px`; /* Adjusted to center in Cyt f */
-                    electron1.style.top = `${cytfY - (electron1.offsetHeight / 2)}px`; /* Adjusted to center in Cyt f */
+                    // Move electron from Rieske center to Cyt f center
+                    electron1.style.left = `${cytfX - electron1.offsetWidth / 2}px`;
+                    electron1.style.top = `${cytfY - electron1.offsetHeight / 2}px`;
                     updatePhaseIndicator('Phase 5: e⁻ (Rieske) → Cyt f');
                 }
             },
@@ -1259,7 +1487,7 @@
 
                     // Get target coordinates for PSI for both PC and electron
                     const targetLeft = psi.offsetLeft + psi.offsetWidth / 2 - pc.offsetWidth / 2;
-                    const targetTop = psi.offsetTop + psi.offsetHeight / 2 - pc.offsetHeight / 2 + 50; // Move to PSI area
+                    const targetTop = psi.offsetTop + photosystemHeight / 2 - pc.offsetHeight / 2; // Vertically center with PSI
 
                     // PC moves towards PSI
                     pc.style.left = `${targetLeft}px`; 
@@ -1282,8 +1510,9 @@
                 title: "Step 8: Electron from Cytochrome bL to Cytochrome bH",
                 description: "The electron from Cytochrome bL is transferred to Cytochrome bH (Cyt bH).",
                 action: () => {
-                    electron2.style.left = `${cytbHX - (electron2.offsetWidth / 2)}px`; /* Adjusted to center in Cyt bH */
-                    electron2.style.top = `${cytbHY - (electron2.offsetHeight / 2)}px`; /* Adjusted to center in Cyt bH */
+                    // Move electron from Cyt bL center to Cyt bH center
+                    electron2.style.left = `${cytbHX - electron2.offsetWidth / 2}px`;
+                    electron2.style.top = `${cytbHY - electron2.offsetHeight / 2}px`;
                     updatePhaseIndicator('Phase 8: e⁻ (Cyt bL) → Cyt bH');
                 }
             },
@@ -1291,8 +1520,9 @@
                 title: "Step 9: Electron from Cytochrome bH to Qi Site",
                 description: "The electron from Cytochrome bH moves to the Qi site (Quinone-inside) of the complex.",
                 action: () => {
-                    electron2.style.left = `${qiX + (qiSite.offsetWidth / 2) - (electron2.offsetWidth / 2)}px`; /* Adjusted to center in Qi */
-                    electron2.style.top = `${qiY + (qiSite.offsetHeight / 2) - (electron2.offsetHeight / 2)}px`; /* Adjusted to center in Qi */
+                    // Move electron from Cyt bH center to Qi site center
+                    electron2.style.left = `${qiX + qiSite.offsetWidth / 2 - electron2.offsetWidth / 2}px`;
+                    electron2.style.top = `${qiY + qiSite.offsetHeight / 2 - electron2.offsetHeight / 2}px`;
                     updatePhaseIndicator('Phase 9: e⁻ (Cyt bH) → Qi (Stromal)');
                 }
             },
@@ -1303,8 +1533,9 @@
                     electron2.style.display = 'none'; // Electron absorbed by PQ
                     pq_pool.style.display = 'none'; // PQ from pool is now at Qi
                     semiquinone.style.display = 'flex';
-                    semiquinone.style.left = `${qiX}px`;
-                    semiquinone.style.top = `${qiY}px`;
+                    // Position semiquinone at Qi site center
+                    semiquinone.style.left = `${qiX + qiSite.offsetWidth / 2 - semiquinone.offsetWidth / 2}px`;
+                    semiquinone.style.top = `${qiY + qiSite.offsetHeight / 2 - semiquinone.offsetHeight / 2}px`;
                     semiquinone.classList.add('active');
                     semiquinone.innerHTML = 'PQ•⁻';
                     semiquinone.style.background = '#e67e22'; // Orange for semiquinone
@@ -1312,11 +1543,11 @@
                     // Proton from stroma - start from stroma, then move
                     proton3.style.display = 'flex';
                     // Start proton from a bit above Qi. Start position is now `stromaY`
-                    proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - (proton3.offsetWidth / 2) - 5}px`; 
+                    proton3.style.left = `${qiX + qiSite.offsetWidth / 2 - proton3.offsetWidth / 2 - 5}px`; 
                     proton3.style.top = `${stromaY}px`; 
                     setTimeout(() => { // Animate moving towards Qi site
-                         proton3.style.left = `${qiX - 20}px`;
-                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; // Move closer to Qi Y
+                         proton3.style.left = `${qiX + qiSite.offsetWidth / 2 - proton3.offsetWidth / 2}px`;
+                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; // Move to Qi center
                     }, animationSpeed / 5);
 
                     setTimeout(() => { proton3.style.display = 'none'; }, animationSpeed); // Proton absorbed
@@ -1339,8 +1570,9 @@
                     pqh2_2.style.top = `${membraneCenterY - plastoquinoneHeight / 2}px`; 
                     
                     setTimeout(() => {
-                        pqh2_2.style.left = `${qoX}px`;
-                        pqh2_2.style.top = `${qoY - (pqh2_2.offsetHeight / 2) + (qoSite.offsetHeight / 2) + 5}px`; // Move to Qo
+                        // Adjust target Y for Qo site to be centered on the binding site circle
+                        pqh2_2.style.left = `${qoX + qoSite.offsetWidth / 2 - pqh2_2.offsetWidth / 2}px`;
+                        pqh2_2.style.top = `${qoY + qoSite.offsetHeight / 2 - pqh2_2.offsetHeight / 2}px`; // Move to Qo
                         pqh2_2.classList.add('active');
                     }, animationSpeed / 2);
 
@@ -1367,10 +1599,10 @@
 
                     // Position them initially at the bottom edge of Qo site, slightly apart
                     // This is their *starting* point for diffusion
-                    proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                    proton1.style.left = `${qoX + qoSite.offsetWidth / 2 - proton1.offsetWidth - 10}px`;
                     proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
 
-                    proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                    proton2.style.left = `${qoX + qoSite.offsetWidth / 2 + 10}px`;
                     proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
 
                     // Animate them diffusing into the lumen
@@ -1387,24 +1619,24 @@
                         proton1.style.display = 'none';
                         proton2.style.display = 'none';
                         // Reset positions
-                        proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                        proton1.style.left = `${qoX + qoSite.offsetWidth / 2 - proton1.offsetWidth - 10}px`;
                         proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
-                        proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                        proton2.style.left = `${qoX + qoSite.offsetWidth / 2 + 10}px`;
                         proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
                     }, animationSpeed + 500);
 
                     // Electron 1 movement: Qo -> Rieske (pause) -> Cyt f (pause) -> PC2 (pause/reduction) -> PSI
                     electron3.style.display = 'flex';
-                    electron3.style.left = `${qoX + 15}px`;
-                    electron3.style.top = `${qoY + 15}px`;
+                    electron3.style.left = `${qoX + qoSite.offsetWidth / 2 - electron3.offsetWidth / 2}px`;
+                    electron3.style.top = `${qoY + qoSite.offsetHeight / 2 - electron3.offsetHeight / 2}px`;
 
                     setTimeout(() => { // Move to Rieske
-                        electron3.style.left = `${rieskeX - (electron3.offsetWidth / 2)}px`;
-                        electron3.style.top = `${rieskeY - (electron3.offsetHeight / 2)}px`;
+                        electron3.style.left = `${rieskeX - electron3.offsetWidth / 2}px`;
+                        electron3.style.top = `${rieskeY - electron3.offsetHeight / 2}px`;
                         setTimeout(() => { // Pause at Rieske
                             setTimeout(() => { // Move to Cyt f
-                                electron3.style.left = `${cytfX - (electron3.offsetWidth / 2)}px`;
-                                electron3.style.top = `${cytfY - (electron3.offsetHeight / 2)}px`;
+                                electron3.style.left = `${cytfX - electron3.offsetWidth / 2}px`;
+                                electron3.style.top = `${cytfY - electron3.offsetHeight / 2}px`;
                                 setTimeout(() => { // Pause at Cyt f
                                     // Ensure pc2 is visible and in its initial position
                                     pc2.style.display = 'flex';
@@ -1420,7 +1652,7 @@
                                         setTimeout(() => { // Pause at PC2 after reduction
                                             setTimeout(() => { // PC2 moves to PSI
                                                 const targetLeft = psi.offsetLeft + psi.offsetWidth / 2 - pc2.offsetWidth / 2;
-                                                const targetTop = psi.offsetTop + psi.offsetHeight / 2 - pc2.offsetHeight / 2 + 50; 
+                                                const targetTop = psi.offsetTop + photosystemHeight / 2 - pc2.offsetHeight / 2; 
 
                                                 pc2.style.left = `${targetLeft}px`; 
                                                 pc2.style.top = `${targetTop}px`; 
@@ -1446,20 +1678,20 @@
                 description: "The second electron from the newly bound PQH₂ moves to Cytochrome bL, then to Cytochrome bH, and finally to the Qi site (stromal side).",
                 action: () => {
                     electron4.style.display = 'flex';
-                    electron4.style.left = `${qoX + 10}px`;
-                    electron4.style.top = `${qoY + 20}px`;
+                    electron4.style.left = `${qoX + qoSite.offsetWidth / 2 - electron4.offsetWidth / 2}px`;
+                    electron4.style.top = `${qoY + qoSite.offsetHeight / 2 - electron4.offsetHeight / 2}px`;
 
                     setTimeout(() => { // Move to Cyt bL
-                        electron4.style.left = `${cytbLX - (electron4.offsetWidth / 2)}px`;
-                        electron4.style.top = `${cytbLY - (electron4.offsetHeight / 2)}px`;
+                        electron4.style.left = `${cytbLX - electron4.offsetWidth / 2}px`;
+                        electron4.style.top = `${cytbLY - electron4.offsetHeight / 2}px`;
                         setTimeout(() => { // Pause at Cyt bL
                             setTimeout(() => { // Move to Cyt bH
-                                electron4.style.left = `${cytbHX - (electron4.offsetWidth / 2)}px`;
-                                electron4.style.top = `${cytbHY - (electron4.offsetHeight / 2)}px`;
+                                electron4.style.left = `${cytbHX - electron4.offsetWidth / 2}px`;
+                                electron4.style.top = `${cytbHY - electron4.offsetHeight / 2}px`;
                                 setTimeout(() => { // Pause at Cyt bH
                                     setTimeout(() => { // Move to Qi site
-                                        electron4.style.left = `${qiX + (qiSite.offsetWidth / 2) - (electron4.offsetWidth / 2)}px`;
-                                        electron4.style.top = `${qiY + (qiSite.offsetHeight / 2) - (electron4.offsetHeight / 2)}px`;
+                                        electron4.style.left = `${qiX + qiSite.offsetWidth / 2 - electron4.offsetWidth / 2}px`;
+                                        electron4.style.top = `${qiY + qiSite.offsetHeight / 2 - electron4.offsetHeight / 2}px`;
                                     }, subAnimationSpeed); // Move to Qi
                                 }, subAnimationSpeed); // Pause at Cyt bH
                             }, subAnimationSpeed); // Move to Cyt bH
@@ -1483,17 +1715,17 @@
                     proton4.style.display = 'flex';
                     
                     // Initial position for protons from the stroma (above Qi site, slightly spread out)
-                    proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - proton3.offsetWidth - 10}px`;
+                    proton3.style.left = `${qiX + qiSite.offsetWidth / 2 - proton3.offsetWidth - 10}px`;
                     proton3.style.top = `${stromaY}px`; 
-                    proton4.style.left = `${qiX + (qiSite.offsetWidth / 2) + 10}px`;
+                    proton4.style.left = `${qiX + qiSite.offsetWidth / 2 + 10}px`;
                     proton4.style.top = `${stromaY}px`; 
 
                     // Animate them moving towards the Qi site
                     setTimeout(() => {
-                         proton3.style.left = `${qiX - 20}px`;
-                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; // Move to Qi Y-center
-                         proton4.style.left = `${qiX + 20}px`;
-                         proton4.style.top = `${qiY + qiSite.offsetHeight / 2 - proton4.offsetHeight / 2}px`; // Move to Qi Y-center
+                         proton3.style.left = `${qiX + qiSite.offsetWidth / 2 - proton3.offsetWidth / 2}px`;
+                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; // Move to Qi center
+                         proton4.style.left = `${qiX + qiSite.offsetWidth / 2 - proton4.offsetWidth / 2}px`;
+                         proton4.style.top = `${qiY + qiSite.offsetHeight / 2 - proton4.offsetHeight / 2}px`; // Move to Qi center
                     }, 50);
 
                     // Protons disappear after reaching Qi site
@@ -1501,9 +1733,9 @@
                         proton3.style.display = 'none'; 
                         proton4.style.display = 'none'; 
                         // Reset positions for next cycle
-                        proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - proton3.offsetWidth - 10}px`;
+                        proton3.style.left = `${qiX + qiSite.offsetWidth / 2 - proton3.offsetWidth - 10}px`;
                         proton3.style.top = `${stromaY}px`; 
-                        proton4.style.left = `${qiX + (qiSite.offsetWidth / 2) + 10}px`;
+                        proton4.style.left = `${qiX + qiSite.offsetWidth / 2 + 10}px`;
                         proton4.style.top = `${stromaY}px`;
                     }, animationSpeed + 500); // 500ms after animation is visually done
 
@@ -1519,8 +1751,8 @@
                     semiquinone.style.background = '#f39c12';
 
                     // Start from Qi site
-                    semiquinone.style.left = `${qiX}px`; 
-                    semiquinone.style.top = `${qiY}px`; 
+                    semiquinone.style.left = `${qiX + qiSite.offsetWidth / 2 - semiquinone.offsetWidth / 2}px`; 
+                    semiquinone.style.top = `${qiY + qiSite.offsetHeight / 2 - semiquinone.offsetHeight / 2}px`; 
 
                     // Animate it diffusing sideways into the membrane, e.g., to the left
                     setTimeout(() => {
@@ -1534,8 +1766,8 @@
                         semiquinone.style.display = 'none'; // Hide the specific semiquinone element
                         pq_pool.style.display = 'flex'; // Make sure the general PQ pool is visible
                         // Reset semiquinone position for next cycle
-                        semiquinone.style.left = `${qiX}px`;
-                        semiquinone.style.top = `${qiY}px`;
+                        semiquinone.style.left = `${qiX + qiSite.offsetWidth / 2 - semiquinone.offsetWidth / 2}px`;
+                        semiquinone.style.top = `${qiY + qiSite.offsetHeight / 2 - semiquinone.offsetHeight / 2}px`;
                     }, animationSpeed + 500); // Time for the diffusion transition + buffer
                     
                     // Ensure pqh2_1 and pqh2_2 are hidden as they've returned to PSII and are conceptually gone
@@ -1646,6 +1878,8 @@
                     currentFlowStep.classList.add('active-flow-step');
                     currentFlowStep.style.opacity = '1'; /* Ensure current active step is fully visible */
                     currentFlowStep.style.transform = 'scale(1)'; /* Ensure current active step is full size */
+                    // Removed scrollIntoView as per user request
+                    // currentFlowStep.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 }
             }
         }
@@ -1687,8 +1921,9 @@
             pqh2_2.style.opacity = '1';
 
             semiquinone.style.display = 'none';
-            semiquinone.style.left = `${qiX}px`; // Reset to Qi (stromal) position
-            semiquinone.style.top = `${qiY}px`;
+            // Reset to Qi site's center
+            semiquinone.style.left = `${qiX + qiSite.offsetWidth / 2 - semiquinone.offsetWidth / 2}px`; 
+            semiquinone.style.top = `${qiY + qiSite.offsetHeight / 2 - semiquinone.offsetHeight / 2}px`;
             semiquinone.innerHTML = 'PQ•⁻';
             semiquinone.style.background = '#e67e22';
             semiquinone.classList.remove('active');
@@ -1725,12 +1960,12 @@
                 p.style.display = 'none';
                 // Reset positions for next cycle - for protons 1 & 2 they start at Qo bottom edge,
                 // for protons 3 & 4 they start at stromaY
-                p.style.left = `${qoX + (qoSite.offsetWidth / 2) - p.offsetWidth - 10}px`; // Default to Qo side
+                p.style.left = `${qoX + qoSite.offsetWidth / 2 - p.offsetWidth - 10}px`; // Default to Qo side
                 p.style.top = `${qoY + qoSite.offsetHeight}px`; // Default to Qo side bottom
 
                 // Special reset for protons 3 and 4 to start from stroma
                 if (p.id === 'h3' || p.id === 'h4') {
-                     p.style.left = `${qiX + (qiSite.offsetWidth / 2) - p.offsetWidth - 10}px`;
+                     p.style.left = `${qiX + qiSite.offsetWidth / 2 - p.offsetWidth - 10}px`;
                      p.style.top = `${stromaY}px`;
                 }
             });
