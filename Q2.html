@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q Cycle in Cytochrome b6f Complex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles for all screen sizes */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 10px; /* Reduced padding for mobile */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for scrolling content */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px; /* Adjusted padding */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2em; /* Adjusted for smaller screens */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px; /* Adjusted for smaller screens */
+            font-size: 1em; /* Adjusted for smaller screens */
+        }
+
+        .intro-text {
+            margin-bottom: 25px; /* Adjusted for smaller screens */
+            padding: 15px;
+            background: #f0f4f8;
+            border-left: 5px solid #667eea; /* Adjusted border width */
+            border-radius: 8px;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .intro-text h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.3em; /* Adjusted for smaller screens */
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .intro-text ul {
+            list-style: disc;
+            margin-left: 15px; /* Adjusted for smaller screens */
+            padding: 0;
+            font-size: 0.95em; /* Adjusted for smaller screens */
+        }
+
+        .intro-text ul li {
+            margin-bottom: 6px;
+        }
+
+        .diagram-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 450px; /* Adjusted base height for responsiveness */
+            background: linear-gradient(180deg, #e8f5e8 0%, #f0f8ff 50%, #fff8e1 100%);
+            border: 3px solid #34495e;
+            border-radius: 15px;
+            margin: 15px auto; /* Center the diagram */
+            overflow: hidden;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .membrane {
+            position: absolute;
+            width: 100%;
+            height: 70px; /* Adjusted height */
+            background: linear-gradient(90deg, #8b4513, #cd853f, #8b4513);
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        
+        .membrane-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 13px; /* Adjusted for smaller screens */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            z-index: 3;
+            white-space: nowrap;
+        }
+
+        .complex {
+            position: absolute;
+            width: 180px; /* Adjusted width */
+            height: 220px; /* Adjusted height */
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid #1a252f;
+            z-index: 3;
+        }
+
+        .complex-label {
+            position: absolute;
+            top: -25px; /* Adjusted position */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e74c3c;
+            color: white;
+            padding: 4px 12px; /* Adjusted padding */
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px; /* Adjusted for smaller screens */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+        
+        /* Sub-complexes/Sites within b6f complex */
+        .rieske, .cyt-bL, .cyt-bH, .cyt-f {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 9px; /* Adjusted for smaller screens */
+            padding: 2px 4px; /* Adjusted padding */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+
+        .rieske { top: 20px; left: 15px; width: 55px; height: 18px; }
+        .cyt-bL { top: 45px; left: 105px; width: 55px; height: 18px; }
+        .cyt-bH { top: 110px; left: 105px; width: 55px; height: 18px; }
+        .cyt-f { top: 80px; left: 15px; width: 55px; height: 18px; }
+
+        .binding-site {
+            position: absolute;
+            width: 28px; /* Adjusted size */
+            height: 28px; /* Adjusted size */
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 9px; /* Adjusted for smaller screens */
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 4;
+        }
+
+        .binding-site:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        .qo-site {
+            background: #e67e22;
+            bottom: 40px; /* Adjusted position */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .qi-site {
+            background: #27ae60;
+            top: 40px; /* Adjusted position */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .plastoquinone {
+            position: absolute;
+            width: 38px; /* Adjusted size */
+            height: 38px; /* Adjusted size */
+            background: #f39c12;
+            border-radius: 50%;
+            border: 2px solid #d68910;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            transition: all 2s ease-in-out;
+            display: flex; /* Ensure flex for centering content */
+            align-items: center;
+            justify-content: center;
+            font-size: 11px; /* Adjusted for smaller screens */
+            font-weight: bold;
+            color: white;
+            z-index: 5;
+        }
+
+        .plastocyanin {
+            position: absolute;
+            width: 40px; /* Adjusted size */
+            height: 40px; /* Adjusted size */
+            background: #3498db;
+            border-radius: 50%;
+            border: 3px solid #2980b9;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex; /* Ensure flex for centering content */
+            align-items: center;
+            justify-content: center;
+            font-size: 13px; /* Adjusted for smaller screens */
+            font-weight: bold;
+            color: white;
+            transition: all 2s ease-in-out;
+            z-index: 15;
+        }
+
+        .electron {
+            position: absolute;
+            width: 16px; /* Adjusted size */
+            height: 16px; /* Adjusted size */
+            background: #e74c3c;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c;
+            transition: all 3s ease-in-out;
+            z-index: 10;
+            display: flex; /* Ensure flex for centering content */
+            align-items: center;
+            justify-content: center;
+            font-size: 9px; /* Adjusted for smaller screens */
+            font-weight: bold;
+            color: white;
+        }
+
+        .proton {
+            position: absolute;
+            width: 16px; /* Adjusted size */
+            height: 16px; /* Adjusted size */
+            background: #9b59b6;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #9b59b6, 0 0 15px #9b59b6;
+            transition: all 2s ease-in-out;
+            z-index: 10;
+            display: flex; /* Ensure flex for centering content */
+            align-items: center;
+            justify-content: center;
+            font-size: 9px; /* Adjusted for smaller screens */
+            color: white;
+            font-weight: bold;
+        }
+
+        .photosystem {
+            position: absolute;
+            width: 90px; /* Adjusted width */
+            height: 70px; /* Adjusted height */
+            background: linear-gradient(45deg, #1abc9c, #16a085);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 13px; /* Adjusted for smaller screens */
+            text-align: center;
+            transition: all 0.8s ease-in-out;
+            z-index: 3;
+        }
+        /* Positions for photosystem complexes will be managed by JS or their initial CSS */
+        .psii_complex { left: 5%; top: calc(50% - 35px); }
+        .psi { left: 75%; top: calc(50% - 35px); }
+
+
+        .controls {
+            text-align: center;
+            margin: 20px 0; /* Adjusted margin */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px; /* Adjusted gap */
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 25px; /* Adjusted padding */
+            font-size: 15px; /* Adjusted font size */
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+            min-width: 100px; /* Adjusted min width */
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .step-info-container {
+            margin: 15px auto; /* Adjusted margin */
+            max-width: 900px;
+            padding: 15px; /* Adjusted padding */
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step-flow-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Adjusted gap */
+            padding: 8px; /* Adjusted padding */
+            width: 100%;
+        }
+
+        .flow-step {
+            width: 95%; /* Increased width for better use of space */
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 12px; /* Adjusted padding */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0.6;
+            transform: scale(0.98); /* Slightly less scaling */
+            position: relative;
+        }
+
+        .flow-step.active-flow-step {
+            opacity: 1;
+            transform: scale(1);
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: #e6f0ff;
+        }
+
+        .flow-step.completed-flow-step {
+            opacity: 0.8;
+            background: #e2f5e2;
+            border-color: #27ae60;
+        }
+
+        .flow-step-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 4px; /* Adjusted margin */
+            font-size: 1em; /* Adjusted font size */
+        }
+
+        .flow-step-description {
+            font-size: 0.85em; /* Adjusted font size */
+            color: #555;
+        }
+
+        .flow-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em; /* Adjusted font size */
+            color: #667eea;
+            font-weight: bold;
+            margin: 4px 0; /* Adjusted margin */
+            user-select: none;
+        }
+
+        .phase-indicator {
+            position: absolute;
+            top: 8px; /* Adjusted position */
+            right: 15px; /* Adjusted position */
+            background: #34495e;
+            color: white;
+            padding: 8px 15px; /* Adjusted padding */
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            font-size: 0.9em; /* Adjusted font size */
+        }
+
+        /* Styles for the labels (Stroma and Lumen) */
+        .labels {
+            position: absolute;
+            padding: 7px 12px; /* Adjusted padding */
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 10;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 1em; /* Adjusted font size */
+        }
+
+        .stroma-label {
+            top: 15px; /* Adjusted position */
+            left: 15px; /* Adjusted position */
+            color: #34495e;
+        }
+
+        .lumen-label {
+            bottom: 15px; /* Adjusted position */
+            right: 15px; /* Adjusted position */
+            color: #34495e;
+        }
+
+        .membrane-bottom-label {
+            position: absolute;
+            right: 15px; /* Adjusted position */
+            padding: 7px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 10;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 1em;
+            color: #34495e;
+            /* Removed bottom and transform from CSS, will be set by JS */
+        }
+
+        /* Summary points styling */
+        .summary-container {
+            display: none;
+            margin: 25px auto; /* Adjusted margin */
+            max-width: 900px;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px; /* Adjusted padding */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .summary-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 18px; /* Adjusted margin */
+            font-size: 1.8em; /* Adjusted font size */
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px; /* Adjusted padding */
+            position: relative;
+        }
+        .summary-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px; /* Adjusted width */
+            height: 3px; /* Adjusted height */
+            background: #764ba2;
+            border-radius: 5px;
+        }
+
+        .summary-section {
+            margin-bottom: 20px; /* Adjusted margin */
+        }
+
+        .summary-section h3 {
+            color: #34495e;
+            font-size: 1.3em; /* Adjusted font size */
+            margin-bottom: 12px; /* Adjusted margin */
+            border-left: 5px solid #3498db;
+            padding-left: 8px; /* Adjusted padding */
+        }
+
+        .summary-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .summary-section ul li {
+            background: #f8f9fa;
+            padding: 10px 12px; /* Adjusted padding */
+            margin-bottom: 6px; /* Adjusted margin */
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.5;
+            color: #444;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 0.9em; /* Adjusted font size */
+        }
+
+        .summary-section ul li::before {
+            content: '•';
+            color: #667eea;
+            font-weight: bold;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.2em;
+            margin-right: 0.5em;
+            flex-shrink: 0;
+        }
+
+        .summary-section ul li strong {
+            color: #2c3e50;
+        }
+
+        /* Quiz specific styles */
+        .quiz-container {
+            display: none;
+            margin: 25px auto; /* Adjusted margin */
+            max-width: 900px;
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px; /* Adjusted padding */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .quiz-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 18px; /* Adjusted margin */
+            font-size: 1.8em; /* Adjusted font size */
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px; /* Adjusted padding */
+            position: relative;
+        }
+        .quiz-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: #764ba2;
+            border-radius: 5px;
+        }
+
+        .question-item {
+            margin-bottom: 20px; /* Adjusted margin */
+            padding: 12px; /* Adjusted padding */
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-item p.question-text {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 12px; /* Adjusted margin */
+            font-size: 1em; /* Adjusted font size */
+            line-height: 1.4;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 6px; /* Adjusted margin */
+            cursor: pointer;
+            padding: 7px 9px; /* Adjusted padding */
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+            font-size: 0.95em; /* Adjusted font size */
+        }
+
+        .options label:hover {
+            background-color: #eef2f6;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 8px; /* Adjusted margin */
+            transform: scale(1.05); /* Slightly smaller scale */
+        }
+
+        .answer-feedback {
+            margin-top: 8px; /* Adjusted margin */
+            font-weight: bold;
+            display: none;
+            font-size: 0.9em; /* Adjusted font size */
+        }
+
+        .answer-feedback.correct {
+            color: green;
+        }
+
+        .answer-feedback.incorrect {
+            color: red;
+        }
+
+        .quiz-controls {
+            text-align: center;
+            margin-top: 25px; /* Adjusted margin */
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Adjusted gap */
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px; /* Even less padding on very small screens */
+            }
+
+            .container {
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .intro-text {
+                padding: 10px;
+                border-left-width: 4px;
+            }
+            .intro-text h2 {
+                font-size: 1.1em;
+            }
+            .intro-text ul {
+                font-size: 0.9em;
+            }
+
+            .diagram-container {
+                height: 380px; /* Further reduced height for mobile */
+                margin: 10px auto;
+                border-radius: 10px;
+            }
+
+            .membrane {
+                height: 60px; /* Smaller membrane height */
+            }
+            .membrane-label {
+                font-size: 11px;
+            }
+
+            .complex {
+                width: 150px; /* Smaller complex */
+                height: 190px;
+            }
+            .complex-label {
+                font-size: 11px;
+                top: -20px;
+                padding: 3px 8px;
+            }
+            .rieske, .cyt-bL, .cyt-bH, .cyt-f {
+                font-size: 8px;
+                width: 45px;
+                height: 16px;
+            }
+            .rieske { top: 15px; left: 10px; }
+            .cyt-bL { top: 40px; left: 85px; }
+            .cyt-bH { top: 100px; left: 85px; }
+            .cyt-f { top: 70px; left: 10px; }
+
+
+            .binding-site {
+                width: 24px;
+                height: 24px;
+                font-size: 8px;
+            }
+            .qo-site { bottom: 35px; }
+            .qi-site { top: 35px; }
+
+            .plastoquinone, .plastocyanin {
+                width: 32px;
+                height: 32px;
+                font-size: 10px;
+            }
+
+            .electron, .proton {
+                width: 14px;
+                height: 14px;
+                font-size: 8px;
+            }
+
+            .photosystem {
+                width: 80px;
+                height: 60px;
+                font-size: 11px;
+                top: calc(50% - 30px);
+            }
+            .psii_complex { left: 3%; }
+            .psi { left: 78%; }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 13px;
+                min-width: 80px;
+            }
+
+            .step-info-container {
+                padding: 10px;
+                margin: 10px auto;
+            }
+            .flow-step {
+                padding: 10px;
+                font-size: 0.85em;
+            }
+            .flow-step-title {
+                font-size: 0.9em;
+            }
+            .flow-step-description {
+                font-size: 0.8em;
+            }
+            .flow-connector {
+                font-size: 1.5em;
+            }
+
+            .phase-indicator {
+                font-size: 10px;
+                padding: 6px 12px;
+                top: 5px;
+                right: 10px;
+            }
+            .labels {
+                font-size: 0.85em;
+                padding: 5px 10px;
+                top: 10px;
+                bottom: 10px;
+            }
+            .membrane-bottom-label {
+                font-size: 0.8em;
+                padding: 5px 10px;
+            }
+
+            .summary-container, .quiz-container {
+                padding: 15px;
+            }
+            .summary-container h2, .quiz-container h2 {
+                font-size: 1.5em;
+            }
+            .summary-section h3 {
+                font-size: 1.1em;
+            }
+            .summary-section ul li {
+                font-size: 0.85em;
+                padding: 8px 10px;
+            }
+            .question-item p.question-text {
+                font-size: 0.9em;
+            }
+            .options label {
+                font-size: 0.85em;
+            }
+            .quiz-controls .btn {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>The Q Cycle in Cytochrome b6f Complex</h1>
+        <p class="subtitle">Interactive Animation of Electron Transport and Proton Pumping</p>
+        
+        <div class="intro-text">
+            <p>The Q cycle in the cytochrome b₆f complex is a sophisticated proton-motive mechanism that enhances the efficiency of photosynthetic electron transport in plants. Here's a detailed description of its mechanism and significance:</p>
+            <h2>Role of the Cytochrome b₆f Complex</h2>
+            <ul>
+                <li><strong>Location</strong>: Embedded in the thylakoid membrane of chloroplasts.</li>
+                <li><strong>Function</strong>: Transfers electrons from Photosystem II (PSII) to Photosystem I (PSI) via plastoquinol (PQH₂) and plastocyanin (PC).</li>
+                <li><strong>Key Outcome</strong>: Pumps protons (H⁺) into the thylakoid lumen, contributing to the electrochemical gradient driving ATP synthesis.</li>
+            </ul>
+        </div>
+
+        <div class="diagram-container" id="diagram">
+            <div class="labels stroma-label">Stroma (High pH)</div>
+            <div class="labels lumen-label">Thylakoid Lumen (Low pH)</div>
+            <div class="phase-indicator" id="phaseIndicator">Initialization</div>
+            
+            <div class="membrane">
+                <div class="membrane-label">Thylakoid Membrane</div>
+            </div>
+            <div class="membrane-bottom-label" id="membraneBottomLabel">Thylakoid Membrane</div>
+            
+            <div class="complex" id="cytb6f">
+                <div class="complex-label">Cytochrome b6f</div>
+                <div class="rieske">Rieske (FeS)</div>
+                <div class="cyt-f">Cyt f</div>
+                <div class="cyt-bL">Cyt bL</div>
+                <div class="cyt-bH">Cyt bH</div>
+                
+                <div class="binding-site qi-site" id="qi-site" title="Qi Site (Stromal Side)">Qi</div>
+                <div class="binding-site qo-site" id="qo-site" title="Qo Site (Lumenal Side)">Qo</div>
+            </div>
+            
+            <div class="plastoquinone" id="pqh2-1">PQH₂</div>
+            <div class="plastoquinone" id="pq-pool">PQ</div>
+            <div class="plastoquinone" id="pqh2-2">PQH₂</div>
+            <div class="plastoquinone" id="semiquinone">PQ•⁻</div>
+
+            <div class="plastocyanin" id="pc">PC</div>
+            <div class="plastocyanin" id="pc2">PC</div>
+            <div class="photosystem" id="psii_complex">Photosystem II</div>
+            <div class="photosystem" id="psi">Photosystem I</div>
+            
+            <div class="electron" id="e1">e⁻</div>
+            <div class="electron" id="e2">e⁻</div>
+            <div class="electron" id="e3">e⁻</div>
+            <div class="electron" id="e4">e⁻</div>
+            <div class="electron" id="e5">e⁻</div>
+            <div class="electron" id="e6">e⁻</div>
+            
+            <div class="proton" id="h1">H⁺</div>
+            <div class="proton" id="h2">H⁺</div>
+            <div class="proton" id="h3">H⁺</div>
+            <div class="proton" id="h4">H⁺</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="nextStep()">Next Step</button>
+            <button class="btn" onclick="resetAnimation()">Reset</button>
+            <button class="btn" onclick="toggleAutoplay()">Auto Play</button>
+        </div>
+
+        <div class="step-info-container">
+            <h3 class="step-title" style="text-align: center; margin-bottom: 20px;">Q Cycle Flow Chart</h3>
+            <div class="step-flow-chart" id="flowChartContainer">
+                <div id="initial-welcome-message" class="flow-step active-flow-step" style="opacity: 1; transform: scale(1);">
+                    <div class="flow-step-title">Welcome to the Q Cycle Animation!</div>
+                    <div class="flow-step-description">Click 'Next Step' to begin the animation. The Q cycle is a crucial process in the electron transport chain of photosynthesis, contributing to the proton gradient across the thylakoid membrane.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-container" id="summaryPointsContainer">
+            <h2>Summary of the Q Cycle</h2>
+            <div class="summary-section">
+                <h3>Proton & Electron Accounting</h3>
+                <ul>
+                    <li><strong>Per PQH₂ oxidized at Qo:</strong>
+                        <ul>
+                            <li>2 H⁺ released into the lumen.</li>
+                            <li>1 electron sent to PSI (via PC).</li>
+                            <li>1 electron sent to cytochrome b₆.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Per cycle (2 PQH₂ oxidized):</strong>
+                        <ul>
+                            <li>4 H⁺ pumped into the lumen.</li>
+                            <li>2 electrons sent to PSI.</li>
+                            <li>1 PQH₂ regenerated at Qᵢ (using 2 H⁺ from stroma).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Net Result:</strong> 4 H⁺ translocated per 2 electrons (doubling H⁺/e⁻ ratio).</li>
+                </ul>
+            </div>
+            <div class="summary-section">
+                <h3>Key Features</h3>
+                <ul>
+                    <li><strong>Quinone Bifurcation:</strong> PQH₂ oxidation splits electrons into high- and low-energy paths.</li>
+                    <li><strong>Asymmetric Sites:</strong> Qo (lumen) and Qi (stroma) enable cross-membrane proton movement.</li>
+                    <li><strong>Dimeric Structure:</strong> Two identical monomers share substrates, enhancing efficiency.</li>
+                    <li><strong>Proton Gradient Amplification:</strong> Critical for ATP synthesis in photosynthesis.</li>
+                </ul>
+            </div>
+            <div class="summary-section">
+                <h3>Biological Significance</h3>
+                <ul>
+                    <li><strong>Energy Efficiency:</strong> Maximizes ATP yield per electron for carbon fixation (Calvin cycle).</li>
+                    <li><strong>Regulation:</strong> Sensitive to pH, redox state, and inhibitors (e.g., antimycin A blocks Qi).</li>
+                    <li><strong>Evolution:</strong> Conserved from cytochrome bc₁ in mitochondria, optimized for photosynthesis.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <h2>Review Quiz</h2>
+            <form id="quizForm">
+            </form>
+            <div class="quiz-controls">
+                <button type="button" class="btn" onclick="submitQuiz()">Submit Answers</button>
+                <button type="button" class="btn" onclick="resetQuiz()">Reset Quiz</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: #555; font-size: 0.9em;">
+            <div id="security-email-display">
+                betabiosciences@gmail.com
+            </div>
+            <div style="margin-top: 8px;">
+                <a href="https://t.me/betascience_csir" target="_blank" style="color: #007bff; text-decoration: none;">Join our Telegram Channel</a>
+            </div>
+        </div>
+        <!-- This hidden div contains a security string to verify the script's origin -->
+        <div id="security-check-value" style="display: none;">betabiosciences@gmail.com</div>
+    </div>
+
+    <script>
+        // Security check - START: This must be at the very top of the script
+        const allowedDomain = "betabiosciences.github.io"; // The allowed hostname
+        const currentHostname = window.location.hostname;
+
+        if (currentHostname !== allowedDomain) {
+            // If the current hostname does not match the allowed domain,
+            // prevent the script from executing.
+            // This is done by overriding window.onload and throwing an error,
+            // which stops further script parsing/execution without showing an error to the user.
+            window.onload = function() {}; // Override onload to do nothing
+            throw new Error("Unauthorized domain. Script execution halted."); // This will stop script execution here
+        }
+        // Security check - END
+
+        let currentStep = 0;
+        let isPlaying = false;
+        let autoplayInterval;
+        const animationSpeed = 3500; // General animation speed in milliseconds (increased for slower animation)
+        const subAnimationSpeed = animationSpeed / 3; // For sequential steps within a phase
+
+
+        // Get elements once to avoid repeated DOM queries
+        const pqh2_1 = document.getElementById('pqh2-1');
+        const pq_pool = document.getElementById('pq-pool');
+        const pc = document.getElementById('pc');
+        const pc2 = document.getElementById('pc2'); // Get the new PC element
+        const electron1 = document.getElementById('e1');
+        const electron2 = document.getElementById('e2');
+        const electron3 = document.getElementById('e3');
+        const electron4 = document.getElementById('e4');
+        const electron5 = document.getElementById('e5');
+        const electron6 = document.getElementById('e6');
+        const proton1 = document.getElementById('h1');
+        const proton2 = document.getElementById('h2');
+        const proton3 = document.getElementById('h3');
+        const proton4 = document.getElementById('h4');
+        const phaseIndicator = document.getElementById('phaseIndicator');
+        const flowChartContainer = document.getElementById('flowChartContainer'); // Changed from stepInfoDiv
+        const qoSite = document.getElementById('qo-site');
+        const qiSite = document.getElementById('qi-site');
+        const cytb6f = document.getElementById('cytb6f');
+        const psi = document.getElementById('psi'); 
+        const psii_complex = document.getElementById('psii_complex'); 
+        const summaryPointsContainer = document.getElementById('summaryPointsContainer');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizForm = document.getElementById('quizForm');
+        const membraneBottomLabel = document.getElementById('membraneBottomLabel');
+
+
+        let pqh2_2 = document.getElementById('pqh2-2');
+        let semiquinone = document.getElementById('semiquinone');
+
+        // Define quiz questions and answers
+        const quizQuestions = [
+            {
+                question: "1. The Q cycle in the cytochrome b₆f complex primarily serves to:",
+                options: [
+                    "A) Transfer electrons directly from PSII to PSI.",
+                    "B) Increase the proton gradient across the thylakoid membrane.",
+                    "C) Synthesize ATP directly.",
+                    "D) Reduce NADP⁺ to NADPH."
+                ],
+                answer: "B) Increase the proton gradient across the thylakoid membrane."
+            },
+            {
+                question: "2. How many protons are pumped into the thylakoid lumen per full Q cycle (oxidation of 2 PQH₂ molecules)?",
+                options: [
+                    "A) 2",
+                    "B) 4",
+                    "C) 6",
+                    "D) 8"
+                ],
+                answer: "B) 4"
+            },
+            {
+                question: "3. The Qo site in the cytochrome b₆f complex is located:",
+                options: [
+                    "A) On the stromal side.",
+                    "B) On the lumenal side.",
+                    "C) In the thylakoid matrix.",
+                    "D) Bound to PSI."
+                ],
+                answer: "B) On the lumenal side."
+            },
+            {
+                question: "4. What happens to the second electron from PQH₂ oxidation at the Qo site?",
+                options: [
+                    "A) It is transferred directly to PSI.",
+                    "B) It reduces cytochrome b₆ (heme bₛ → heme bₕ).",
+                    "C) It is lost as heat.",
+                    "D) It reduces ferredoxin."
+                ],
+                answer: "B) It reduces cytochrome b₆ (heme bₛ → heme bₕ)."
+            },
+            {
+                question: "5. The Qi site of the cytochrome b₆f complex is responsible for:",
+                options: [
+                    "A) Oxidizing PQH₂ and releasing protons into the lumen.",
+                    "B) Reducing plastoquinone (PQ) to PQH₂ using stromal protons.",
+                    "C) Transferring electrons to plastocyanin.",
+                    "D) Binding to the oxygen-evolving complex."
+                ],
+                answer: "B) Reducing plastoquinone (PQ) to PQH₂ using stromal protons."
+            },
+            {
+                question: "6. What is the net reaction of the Q cycle after oxidation of two PQH₂ molecules?",
+                options: [
+                    "A) 2 PQH₂ → 2 PQ + 4 H⁺ (lumen) + 2 e⁻ (to PSI)",
+                    "C) 2 PQH₂ → 1 PQ + 1 PQH₂ + 4 H⁺ (lumen) + 2 e⁻ (to PSI)",
+                    "D) 2 PQH₂ → 2 PQ + 2 H⁺ (lumen) + 4 e⁻ (to PSI)"
+                ],
+                answer: "C) 2 PQH₂ → 1 PQ + 1 PQH₂ + 4 H⁺ (lumen) + 2 e⁻ (to PSI)"
+            },
+            {
+                question: "7. Which of the following best describes the electron bifurcation in the Q cycle?",
+                options: [
+                    "A) Both electrons from plastoquinol follow the same path",
+                    "B) One electron is transferred to a high-potential chain, and the other to a low-potential chain",
+                    "C) Electrons are transferred directly to ATP synthase",
+                    "D) Electrons are cycled back to photosystem II"
+                ],
+                answer: "B) One electron is transferred to a high-potential chain, and the other to a low-potential chain"
+            },
+            {
+                question: "8. What is the net outcome of two complete Q cycles in the cytochrome b6f complex?",
+                options: [
+                    "A) Oxidation of one plastoquinol and reduction of two plastoquinones",
+                    "B) Oxidation of two plastoquinols and reduction of one plastoquinone",
+                    "C) Transfer of four electrons to photosystem I",
+                    "D) Translocation of two protons across the membrane"
+                ],
+                answer: "B) Oxidation of two plastoquinols and reduction of one plastoquinone"
+            },
+            {
+                question: "9. How does the Q cycle contribute to the proton motive force in chloroplasts?",
+                options: [
+                    "A) By reducing plastoquinone at the Qo site",
+                    "B) By translocating protons from the stroma to the thylakoid lumen",
+                    "C) By transferring electrons directly to NADP+",
+                    "D) By synthesizing ATP in the cytochrome b6f complex"
+                ],
+                answer: "B) By translocating protons from the stroma to the thylakoid lumen"
+            },
+            {
+                question: "10. In the absence of the Q cycle, what would be the primary consequence for photosynthesis?",
+                options: [
+                    "A) Complete cessation of electron transport",
+                    "B) Reduced proton gradient across the thylakoid membrane",
+                    "C) Increased NADPH production",
+                    "D) Direct reduction of ferredoxin"
+                ],
+                answer: "B) Reduced proton gradient across the thylakoid membrane"
+            }
+        ];
+
+
+        function updatePositions() {
+            // Get bounding rectangles dynamically
+            complexRect = cytb6f.getBoundingClientRect(); 
+            diagramRect = document.getElementById('diagram').getBoundingClientRect();
+            membraneRect = document.querySelector('.membrane').getBoundingClientRect();
+
+            // Calculate positions relative to the diagram container
+            complexLeft = complexRect.left - diagramRect.left; 
+            complexTop = complexRect.top - diagramRect.top;   
+            complexWidth = complexRect.width;
+            complexHeight = complexRect.height;
+
+            // Calculate Qo and Qi site positions relative to the complex
+            // These positions should be relative to the diagram container's top-left for consistency
+            // The Qo and Qi sites are children of .complex, so their offsetTop/Left are relative to .complex.
+            // To get their position relative to the diagram, add complexLeft/Top.
+            qiX = complexLeft + qiSite.offsetLeft;
+            qiY = complexTop + qiSite.offsetTop; 
+
+            qoX = complexLeft + qoSite.offsetLeft;
+            qoY = complexTop + qoSite.offsetTop; 
+
+            // Calculate positions of sub-complexes relative to the diagram
+            // These are also children of .complex, so combine complex's position with their relative offsets.
+            rieskeX = complexLeft + document.querySelector('.rieske').offsetLeft + (document.querySelector('.rieske').offsetWidth / 2); 
+            rieskeY = complexTop + document.querySelector('.rieske').offsetTop + (document.querySelector('.rieske').offsetHeight / 2);
+            cytfX = complexLeft + document.querySelector('.cyt-f').offsetLeft + (document.querySelector('.cyt-f').offsetWidth / 2);
+            cytfY = complexTop + document.querySelector('.cyt-f').offsetTop + (document.querySelector('.cyt-f').offsetHeight / 2);
+            cytbLX = complexLeft + document.querySelector('.cyt-bL').offsetLeft + (document.querySelector('.cyt-bL').offsetWidth / 2);
+            cytbLY = complexTop + document.querySelector('.cyt-bL').offsetTop + (document.querySelector('.cyt-bL').offsetHeight / 2);
+            cytbHX = complexLeft + document.querySelector('.cyt-bH').offsetLeft + (document.querySelector('.cyt-bH').offsetWidth / 2);
+            cytbHY = complexTop + document.querySelector('.cyt-bH').offsetTop + (document.querySelector('.cyt-bH').offsetHeight / 2);
+
+            membraneThickness = membraneRect.height;
+            membraneHalfThickness = membraneThickness / 2;
+            membraneCenterY = membraneRect.top - diagramRect.top + membraneHalfThickness;
+
+            // Calculate stroma and lumen positions based on diagram height
+            stromaY = membraneCenterY - membraneHalfThickness - 70; // Position above membrane
+            lumenY = diagramRect.height - 44; 
+            
+            if (window.innerWidth <= 768) {
+                lumenY = diagramRect.height - 30;
+            }
+
+            plastoquinoneHeight = pqh2_1.offsetHeight; // Get actual height
+            photosystemHeight = psii_complex.offsetHeight;
+
+            // Dynamically position the membrane-bottom-label
+            // Its top should be just below the membrane's bottom edge, relative to the diagram.
+            membraneBottomLabel.style.top = `${membraneCenterY + membraneHalfThickness + 5}px`; // 5px offset below membrane
+            membraneBottomLabel.style.right = '15px'; // Keep its right position
+            membraneBottomLabel.style.bottom = 'auto'; // Remove conflicting bottom setting
+            membraneBottomLabel.style.transform = 'none'; // Remove conflicting transform
+        }
+
+        const steps = [
+            {
+                title: "Step 1: PQH₂ Diffuses and Binds to Qo Site",
+                description: "A plastoquinol (PQH₂) molecule diffuses within the thylakoid membrane and binds to the Qo site (Quinone-outside) on the lumenal side of the Cytochrome b6f complex.",
+                action: () => {
+                    resetElements(); // Ensure a clean state before step 1
+                    pqh2_1.style.display = 'flex';
+                    // Initial position slightly left within the membrane
+                    pqh2_1.style.left = `100px`; 
+                    pqh2_1.style.top = `${membraneCenterY - plastoquinoneHeight / 2}px`; 
+
+                    setTimeout(() => {
+                        pqh2_1.style.left = `${qoX + (qoSite.offsetWidth / 2) - (pqh2_1.offsetWidth / 2)}px`; /* Centered in Qo */
+                        pqh2_1.style.top = `${qoY + (qoSite.offsetHeight / 2) - (pqh2_1.offsetHeight / 2)}px`; /* Centered in Qo */
+                        pqh2_1.classList.add('active');
+                    }, 100);
+                    updatePhaseIndicator('Phase 1: PQH₂ → Qo (Lumenal)');
+                }
+            },
+            {
+                title: "Step 2: Oxidation of PQH₂ & Proton Release; Oxidized PQ Returns to PSII",
+                description: "PQH₂ is oxidized to PQ at the Qo site, releasing two protons (H⁺) into the thylakoid lumen. The oxidized PQ then returns to Photosystem II (PSII).",
+                action: () => {
+                    pqh2_1.classList.remove('active');
+                    pqh2_1.innerHTML = 'PQ';
+                    pqh2_1.style.background = '#95a5a6'; // Change color to oxidized
+
+                    proton1.style.display = 'flex';
+                    proton2.style.display = 'flex';
+
+                    // Position them initially at the bottom edge of Qo site, slightly apart
+                    // This is their *starting* point for diffusion
+                    proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`; // To the left of Qo center
+                    proton1.style.top = `${qoY + qoSite.offsetHeight}px`; // At the bottom edge of Qo
+
+                    proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`; // To the right of Qo center
+                    proton2.style.top = `${qoY + qoSite.offsetHeight}px`; // At the bottom edge of Qo
+
+                    // Animate them diffusing into the lumen
+                    setTimeout(() => {
+                        proton1.style.left = `${qoX - 60}px`; // Further left
+                        proton1.style.top = `${lumenY}px`; // Down into the lumen
+
+                        proton2.style.left = `${qoX + 60}px`; // Further right
+                        proton2.style.top = `${lumenY}px`; // Down into the lumen
+                    }, 50); // Small delay to ensure initial render before transition starts
+
+                    // Protons disappear after completing diffusion animation
+                    setTimeout(() => {
+                        proton1.style.display = 'none';
+                        proton2.style.display = 'none';
+                        // Reset positions to ensure they reappear correctly next time
+                        proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                        proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
+                        proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                        proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
+                    }, animationSpeed + 500); // 500ms after animation is visually done
+
+
+                    // Oxidized PQ returns to PSII
+                    setTimeout(() => {
+                        pqh2_1.style.left = `${psii_complex.offsetLeft + psii_complex.offsetWidth / 2 - pqh2_1.offsetWidth / 2}px`;
+                        pqh2_1.style.top = `${membraneCenterY - pqh2_1.offsetHeight / 2}px`; // Returns inside membrane near PSII
+                        pqh2_1.style.opacity = '0'; // Fade out as it reaches PSII
+                    }, animationSpeed); // After protons are released and have time to move
+
+                    updatePhaseIndicator('Phase 2: PQH₂ Oxidation, 2H⁺ to Lumen, PQ → PSII');
+                }
+            },
+            {
+                title: "Step 3: Electron 1 to Rieske Centre",
+                description: "One electron from the oxidized PQH₂ is transferred to the Rieske Iron-Sulfur (FeS) center within the cytochrome b6f complex.",
+                action: () => {
+                    electron1.style.display = 'flex';
+                    electron1.style.left = `${qoX + (qoSite.offsetWidth / 2) - (electron1.offsetWidth / 2)}px`; /* Start from center of Qo */
+                    electron1.style.top = `${qoY + (qoSite.offsetHeight / 2) - (electron1.offsetHeight / 2)}px`; /* Start from center of Qo */
+                    
+                    setTimeout(() => {
+                        electron1.style.left = `${rieskeX - (electron1.offsetWidth / 2)}px`; 
+                        electron1.style.top = `${rieskeY - (electron1.offsetHeight / 2)}px`; 
+                    }, animationSpeed / 5);
+                    updatePhaseIndicator('Phase 3: 1e⁻ → Rieske');
+                }
+            },
+            {
+                title: "Step 4: Second Electron to Cytochrome bL",
+                description: "The second electron from PQH₂ is transferred to cytochrome bL (Cyt bL) within the complex.",
+                action: () => {
+                    electron2.style.display = 'flex';
+                    electron2.style.left = `${qoX + (qoSite.offsetWidth / 2) - (electron2.offsetWidth / 2)}px`; /* Start from center of Qo */
+                    electron2.style.top = `${qoY + (qoSite.offsetHeight / 2) - (electron2.offsetHeight / 2)}px`; /* Start from center of Qo */
+
+                    setTimeout(() => {
+                        electron2.style.left = `${cytbLX - (electron2.offsetWidth / 2)}px`; 
+                        electron2.style.top = `${cytbLY - (electron2.offsetHeight / 2)}px`; 
+                    }, animationSpeed / 5);
+                    updatePhaseIndicator('Phase 4: second e⁻ → Cyt bL');
+                }
+            },
+            {
+                title: "Step 5: Electron from Rieske to Cytochrome f",
+                description: "The electron from the Rieske center moves to Cytochrome f (Cyt f).",
+                action: () => {
+                    electron1.style.left = `${cytfX - (electron1.offsetWidth / 2)}px`; 
+                    electron1.style.top = `${cytfY - (electron1.offsetHeight / 2)}px`; 
+                    updatePhaseIndicator('Phase 5: e⁻ (Rieske) → Cyt f');
+                }
+            },
+            {
+                title: "Step 6: Electron from Cytochrome f to Plastocyanin",
+                description: "The electron from Cytochrome f is then transferred to Plastocyanin (PC), which is a mobile electron carrier in the lumen. The electron remains bound to PC.",
+                action: () => {
+                    electron1.style.zIndex = '4'; 
+                    electron1.style.left = `${pc.offsetLeft + (pc.offsetWidth / 2) - (electron1.offsetWidth / 2)}px`;
+                    electron1.style.top = `${pc.offsetTop + (pc.offsetHeight / 2) - (electron1.offsetHeight / 2)}px`;
+                    
+                    pc.style.background = '#27ae60'; // PC becomes reduced (green)
+                    pc.innerHTML = 'PC⁻';
+                    updatePhaseIndicator('Phase 6: e⁻ (Cyt f) → PC');
+                }
+            },
+            {
+                title: "Step 7: Plastocyanin (with electron) Diffuses to Photosystem I",
+                description: "The reduced Plastocyanin (PC⁻), still carrying its electron, diffuses through the thylakoid lumen to deliver its electron to Photosystem I (PSI).",
+                action: () => {
+                    electron1.style.zIndex = '10'; 
+
+                    const targetLeft = psi.offsetLeft + psi.offsetWidth / 2 - pc.offsetWidth / 2;
+                    const targetTop = psi.offsetTop + psi.offsetHeight / 2 - pc.offsetHeight / 2 + 50; 
+
+                    pc.style.left = `${targetLeft}px`; 
+                    pc.style.top = `${targetTop}px`; 
+                    pc.style.opacity = '0'; 
+
+                    electron1.style.left = `${targetLeft + (pc.offsetWidth / 2) - (electron1.offsetWidth / 2)}px`; 
+                    electron1.style.top = `${targetTop + (pc.offsetHeight / 2) - (electron1.offsetHeight / 2)}px`;
+                    electron1.style.opacity = '0'; 
+
+                    setTimeout(() => {
+                        electron1.style.display = 'none'; 
+                    }, animationSpeed); 
+                    
+                    updatePhaseIndicator('Phase 7: PC (with e⁻) → PSI');
+                }
+            },
+            {
+                title: "Step 8: Electron from Cytochrome bL to Cytochrome bH",
+                description: "The electron from Cytochrome bL is transferred to Cytochrome bH (Cyt bH).",
+                action: () => {
+                    electron2.style.left = `${cytbHX - (electron2.offsetWidth / 2)}px`; 
+                    electron2.style.top = `${cytbHY - (electron2.offsetHeight / 2)}px`; 
+                    updatePhaseIndicator('Phase 8: e⁻ (Cyt bL) → Cyt bH');
+                }
+            },
+            {
+                title: "Step 9: Electron from Cytochrome bH to Qi Site",
+                description: "The electron from Cytochrome bH moves to the Qi site (Quinone-inside) of the complex.",
+                action: () => {
+                    electron2.style.left = `${qiX + (qiSite.offsetWidth / 2) - (electron2.offsetWidth / 2)}px`; 
+                    electron2.style.top = `${qiY + (qiSite.offsetHeight / 2) - (electron2.offsetHeight / 2)}px`; 
+                    updatePhaseIndicator('Phase 9: e⁻ (Cyt bH) → Qi (Stromal)');
+                }
+            },
+            {
+                title: "Step 10: Semiquinone (PQ•⁻) Forms at Qi Site",
+                description: "The electron at the Qi site reduces a molecule of oxidized plastoquinone (PQ) from the membrane pool to form a semiquinone radical (PQ•⁻). This requires one electron and one proton from the stroma. The PQ pool becomes temporarily hidden as one PQ molecule is used.",
+                action: () => {
+                    electron2.style.display = 'none'; 
+                    pq_pool.style.display = 'none'; 
+                    semiquinone.style.display = 'flex';
+                    semiquinone.style.left = `${qiX + (qiSite.offsetWidth / 2) - (semiquinone.offsetWidth / 2)}px`; /* Centered in Qi */
+                    semiquinone.style.top = `${qiY + (qiSite.offsetHeight / 2) - (semiquinone.offsetHeight / 2)}px`; /* Centered in Qi */
+                    semiquinone.classList.add('active');
+                    semiquinone.innerHTML = 'PQ•⁻';
+                    semiquinone.style.background = '#e67e22'; 
+
+                    proton3.style.display = 'flex';
+                    proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - (proton3.offsetWidth / 2) - 5}px`; 
+                    proton3.style.top = `${stromaY}px`; 
+                    setTimeout(() => { 
+                         proton3.style.left = `${qiX - 20}px`;
+                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; 
+                    }, animationSpeed / 5);
+
+                    setTimeout(() => { proton3.style.display = 'none'; }, animationSpeed); 
+                    
+                    updatePhaseIndicator('Phase 10: PQ → PQ•⁻ (Qi)');
+                }
+            },
+            {
+                title: "Step 11: Second PQH₂ Diffuses and Binds to Qo Site",
+                description: "A second PQH₂ molecule diffuses within the thylakoid membrane and binds to the Qo site (lumenal side), initiating the second half of the Q cycle.",
+                action: () => {
+                    pqh2_1.style.display = 'none';
+                    pqh2_1.style.opacity = '1'; 
+
+                    pqh2_2.style.display = 'flex';
+                    pqh2_2.innerHTML = 'PQH₂';
+                    pqh2_2.style.background = '#f39c12';
+                    pqh2_2.style.left = `100px`; 
+                    pqh2_2.style.top = `${membraneCenterY - plastoquinoneHeight / 2}px`; 
+                    
+                    setTimeout(() => {
+                        pqh2_2.style.left = `${qoX + (qoSite.offsetWidth / 2) - (pqh2_2.offsetWidth / 2)}px`; /* Centered in Qo */
+                        pqh2_2.style.top = `${qoY + (qoSite.offsetHeight / 2) - (pqh2_2.offsetHeight / 2)}px`; /* Centered in Qo */
+                        pqh2_2.classList.add('active');
+                    }, animationSpeed / 2);
+
+                    updatePhaseIndicator('Phase 11: Second PQH₂ → Qo (Lumenal)');
+                }
+            },
+            {
+                title: "Step 12: Second PQH₂ Oxidation and PC Delivery to Photosystem I",
+                description: "The second PQH₂ molecule undergoes oxidation at the Qo site, releasing two more protons into the lumen. Electron flow: 1e⁻ → Rieske center → Cytochrome f → PC → PSI.",
+                action: () => {
+                    pqh2_2.classList.remove('active');
+                    pqh2_2.innerHTML = 'PQ';
+                    pqh2_2.style.background = '#95a5a6'; 
+                    setTimeout(() => {
+                        pqh2_2.style.left = `${psii_complex.offsetLeft + psii_complex.offsetWidth / 2 - pqh2_2.offsetWidth / 2}px`;
+                        pqh2_2.style.top = `${membraneCenterY - pqh2_2.offsetHeight / 2}px`; 
+                        pqh2_2.style.opacity = '0';
+                    }, animationSpeed);
+
+                    proton1.style.display = 'flex';
+                    proton2.style.display = 'flex';
+
+                    proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                    proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
+
+                    proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                    proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
+
+                    setTimeout(() => {
+                        proton1.style.left = `${qoX - 60}px`;
+                        proton1.style.top = `${lumenY}px`;
+
+                        proton2.style.left = `${qoX + 60}px`;
+                        proton2.style.top = `${lumenY}px`;
+                    }, 50);
+
+                    setTimeout(() => {
+                        proton1.style.display = 'none';
+                        proton2.style.display = 'none';
+                        proton1.style.left = `${qoX + (qoSite.offsetWidth / 2) - proton1.offsetWidth - 10}px`;
+                        proton1.style.top = `${qoY + qoSite.offsetHeight}px`;
+                        proton2.style.left = `${qoX + (qoSite.offsetWidth / 2) + 10}px`;
+                        proton2.style.top = `${qoY + qoSite.offsetHeight}px`;
+                    }, animationSpeed + 500);
+
+                    electron3.style.display = 'flex';
+                    electron3.style.left = `${qoX + (qoSite.offsetWidth / 2) - (electron3.offsetWidth / 2)}px`; /* Start from center of Qo */
+                    electron3.style.top = `${qoY + (qoSite.offsetHeight / 2) - (electron3.offsetHeight / 2)}px`; /* Start from center of Qo */
+
+                    setTimeout(() => { 
+                        electron3.style.left = `${rieskeX - (electron3.offsetWidth / 2)}px`;
+                        electron3.style.top = `${rieskeY - (electron3.offsetHeight / 2)}px`;
+                        setTimeout(() => { 
+                            setTimeout(() => { 
+                                electron3.style.left = `${cytfX - (electron3.offsetWidth / 2)}px`;
+                                electron3.style.top = `${cytfY - (electron3.offsetHeight / 2)}px`;
+                                setTimeout(() => { 
+                                    pc2.style.display = 'flex';
+                                    pc2.style.opacity = '1';
+
+                                    electron3.style.left = `${pc2.offsetLeft + (pc2.offsetWidth / 2) - (electron3.offsetWidth / 2)}px`;
+                                    electron3.style.top = `${pc2.offsetTop + (pc2.offsetHeight / 2) - (electron3.offsetHeight / 2)}px`;
+                                    setTimeout(() => { 
+                                        electron3.style.display = 'none'; 
+                                        pc2.style.background = '#27ae60'; 
+                                        pc2.innerHTML = 'PC₂⁻'; 
+                                        setTimeout(() => { 
+                                            setTimeout(() => { 
+                                                const targetLeft = psi.offsetLeft + psi.offsetWidth / 2 - pc2.offsetWidth / 2;
+                                                const targetTop = psi.offsetTop + psi.offsetHeight / 2 - pc2.offsetHeight / 2 + 50; 
+
+                                                pc2.style.left = `${targetLeft}px`; 
+                                                pc2.style.top = `${targetTop}px`; 
+                                                pc2.style.opacity = '0'; 
+
+                                                setTimeout(() => {
+                                                    pc2.style.display = 'none'; 
+                                                }, subAnimationSpeed); 
+                                            }, subAnimationSpeed); 
+                                        }, subAnimationSpeed); 
+                                    }, subAnimationSpeed); 
+                                }, subAnimationSpeed); 
+                            }, subAnimationSpeed); 
+                        }, subAnimationSpeed); 
+                    }, subAnimationSpeed); 
+
+                    updatePhaseIndicator('Phase 12: 2nd PQH₂ oxidation, 2H⁺ to Lumen. 1e⁻ → Rieske center → Cyt f → PC → PSI.');
+                }
+            },
+            {
+                title: "Step 13: Electron 2 (from 2nd PQH₂) to Qi Site",
+                description: "The second electron from the newly bound PQH₂ moves to Cytochrome bL, then to Cytochrome bH, and finally to the Qi site (stromal side).",
+                action: () => {
+                    electron4.style.display = 'flex';
+                    electron4.style.left = `${qoX + (qoSite.offsetWidth / 2) - (electron4.offsetWidth / 2)}px`; /* Start from center of Qo */
+                    electron4.style.top = `${qoY + (qoSite.offsetHeight / 2) - (electron4.offsetHeight / 2)}px`; /* Start from center of Qo */
+
+                    setTimeout(() => { 
+                        electron4.style.left = `${cytbLX - (electron4.offsetWidth / 2)}px`;
+                        electron4.style.top = `${cytbLY - (electron4.offsetHeight / 2)}px`;
+                        setTimeout(() => { 
+                            setTimeout(() => { 
+                                electron4.style.left = `${cytbHX - (electron4.offsetWidth / 2)}px`;
+                                electron4.style.top = `${cytbHY - (electron4.offsetHeight / 2)}px`;
+                                setTimeout(() => { 
+                                    setTimeout(() => { 
+                                        electron4.style.left = `${qiX + (qiSite.offsetWidth / 2) - (electron4.offsetWidth / 2)}px`;
+                                        electron4.style.top = `${qiY + (qiSite.offsetHeight / 2) - (electron4.offsetHeight / 2)}px`;
+                                    }, subAnimationSpeed); 
+                                }, subAnimationSpeed); 
+                            }, subAnimationSpeed); 
+                        }, subAnimationSpeed); 
+                    }, subAnimationSpeed); 
+                    updatePhaseIndicator('Phase 13: second e⁻ (2nd PQH₂) → Cyt bL → Cyt bH → Qi (Stromal)');
+                }
+            },
+            {
+                title: "Step 14: PQ•⁻ at Qi Reduced to PQH₂ (2H⁺ from Stroma)",
+                description: "The second electron arriving at the Qi site, along with another electron from the first PQH₂ oxidation (which formed the semiquinone), and two protons from the stroma, fully reduces the semiquinone (PQ•⁻) to PQH₂.",
+                action: () => {
+                    electron4.style.display = 'none'; 
+
+                    semiquinone.classList.remove('active');
+                    semiquinone.innerHTML = 'PQH₂';
+                    semiquinone.style.background = '#f39c12'; 
+
+                    proton3.style.display = 'flex';
+                    proton4.style.display = 'flex';
+                    
+                    proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - proton3.offsetWidth - 10}px`;
+                    proton3.style.top = `${stromaY}px`; 
+                    proton4.style.left = `${qiX + (qiSite.offsetWidth / 2) + 10}px`;
+                    proton4.style.top = `${stromaY}px`; 
+
+                    setTimeout(() => {
+                         proton3.style.left = `${qiX - 20}px`;
+                         proton3.style.top = `${qiY + qiSite.offsetHeight / 2 - proton3.offsetHeight / 2}px`; 
+                         proton4.style.left = `${qiX + 20}px`;
+                         proton4.style.top = `${qiY + qiSite.offsetHeight / 2 - proton4.offsetHeight / 2}px`; 
+                    }, 50);
+
+                    setTimeout(() => { 
+                        proton3.style.display = 'none'; 
+                        proton4.style.display = 'none'; 
+                        proton3.style.left = `${qiX + (qiSite.offsetWidth / 2) - proton3.offsetWidth - 10}px`;
+                        proton3.style.top = `${stromaY}px`; 
+                        proton4.style.left = `${qiX + (qiSite.offsetWidth / 2) + 10}px`;
+                        proton4.style.top = `${stromaY}px`;
+                    }, animationSpeed + 500); 
+
+                    updatePhaseIndicator('Phase 14: PQ•⁻ + 2e⁻ + 2H⁺ → PQH₂ (Qi)');
+                }
+            },
+            {
+                title: "Step 15: PQH₂ Released from Qi Site",
+                description: "The newly regenerated PQH₂ molecule is released from the Qi site (stromal side) back into the thylakoid membrane pool.",
+                action: () => {
+                    semiquinone.style.opacity = '1'; 
+                    semiquinone.innerHTML = 'PQH₂';
+                    semiquinone.style.background = '#f39c12';
+
+                    semiquinone.style.left = `${qiX + (qiSite.offsetWidth / 2) - (semiquinone.offsetWidth / 2)}px`; /* Start from center of Qi */
+                    semiquinone.style.top = `${qiY + (qiSite.offsetHeight / 2) - (semiquinone.offsetHeight / 2)}px`; /* Start from center of Qi */
+
+                    setTimeout(() => {
+                        semiquinone.style.left = `${complexLeft - semiquinone.offsetWidth - 50}px`; 
+                        semiquinone.style.top = `${membraneCenterY - semiquinone.offsetHeight / 2}px`; 
+                    }, 50);
+
+                    setTimeout(() => {
+                        semiquinone.style.display = 'none'; 
+                        pq_pool.style.display = 'flex'; 
+                        semiquinone.style.left = `${qiX}px`;
+                        semiquinone.style.top = `${qiY}px`;
+                    }, animationSpeed + 500); 
+                    
+                    pqh2_1.style.display = 'none';
+                    pqh2_2.style.display = 'none';
+
+                    updatePhaseIndicator('Phase 15: PQH₂ Released from Qi');
+                }
+            },
+            {
+                title: "Step 16: One Q Cycle Completed",
+                description: "At the completion of one Q cycle, two PQH₂ molecules are oxidized at the Qo site (lumenal side), resulting in the release of four protons into the lumen and the transfer of two electrons to Plastocyanin. One PQ is regenerated at the Qi site (stromal side), utilizing two electrons from the Qo site and two protons from the stroma. This process efficiently moves protons across the membrane, building the proton-motive force.",
+                action: () => {
+                    updatePhaseIndicator('Q Cycle Completed!');
+                    phaseIndicator.style.background = '#27ae60'; 
+                    summaryPointsContainer.style.display = 'block'; 
+                    quizContainer.style.display = 'block'; 
+                }
+            }
+        ];
+
+        // Function to render the flow chart steps dynamically
+        function renderFlowChart(stepIndexToRender) {
+            if (stepIndexToRender === 0) {
+                flowChartContainer.innerHTML = '';
+                const initialWelcomeDiv = document.createElement('div');
+                initialWelcomeDiv.id = 'initial-welcome-message';
+                initialWelcomeDiv.classList.add('flow-step', 'active-flow-step');
+                initialWelcomeDiv.style.opacity = '1';
+                initialWelcomeDiv.style.transform = 'scale(1)';
+                initialWelcomeDiv.innerHTML = `
+                    <div class="flow-step-title">Welcome to the Q Cycle Animation!</div>
+                    <div class="flow-step-description">Click 'Next Step' to begin the animation. The Q cycle is a crucial process in the electron transport chain of photosynthesis, contributing to the proton gradient across the thylakoid membrane.</div>
+                `;
+                flowChartContainer.appendChild(initialWelcomeDiv);
+            }
+
+            if (stepIndexToRender < steps.length) {
+                if (stepIndexToRender > 0) {
+                    const connectorDiv = document.createElement('div');
+                    connectorDiv.classList.add('flow-connector');
+                    connectorDiv.innerHTML = '&#8595;'; 
+                    flowChartContainer.appendChild(connectorDiv);
+                }
+
+                const step = steps[stepIndexToRender];
+                const flowStepDiv = document.createElement('div');
+                flowStepDiv.id = `flow-step-${stepIndexToRender}`;
+                flowStepDiv.classList.add('flow-step');
+                flowStepDiv.innerHTML = `
+                    <div class="flow-step-title">${step.title}</div>
+                    <div class="flow-step-description">${step.description}</div>
+                `;
+                flowChartContainer.appendChild(flowStepDiv);
+            }
+        }
+
+        // Modified updateStepInfo to highlight and manage flow chart steps visibility
+        function updateStepInfo(stepIndex) {
+            document.querySelectorAll('.flow-step').forEach(step => {
+                step.classList.remove('active-flow-step'); 
+            });
+
+            if (stepIndex === steps.length) {
+                document.querySelectorAll('.flow-step').forEach(step => {
+                    step.classList.add('completed-flow-step');
+                    step.classList.remove('active-flow-step');
+                    step.style.opacity = '1'; 
+                    step.style.transform = 'scale(1)'; 
+                });
+                return; 
+            }
+
+            if (stepIndex >= 0 && stepIndex < steps.length) {
+                const initialWelcomeMessage = document.getElementById('initial-welcome-message');
+                if (initialWelcomeMessage && stepIndex === 0 && currentStep === 0) { 
+                    flowChartContainer.innerHTML = ''; 
+                }
+
+                if (!document.getElementById(`flow-step-${stepIndex}`)) {
+                    renderFlowChart(stepIndex);
+                }
+
+                if (stepIndex > 0) {
+                    const prevFlowStep = document.getElementById(`flow-step-${stepIndex - 1}`);
+                    if (prevFlowStep) {
+                        prevFlowStep.classList.add('completed-flow-step');
+                    }
+                }
+
+                const currentFlowStep = document.getElementById(`flow-step-${stepIndex}`);
+                if (currentFlowStep) {
+                    currentFlowStep.classList.add('active-flow-step');
+                    currentFlowStep.style.opacity = '1'; 
+                    currentFlowStep.style.transform = 'scale(1)'; 
+                }
+            }
+        }
+
+
+        function updatePhaseIndicator(phase) {
+            phaseIndicator.innerHTML = phase;
+        }
+
+
+        function resetElements() {
+            updatePositions(); 
+
+            // Reset all movable elements to their initial, hidden, or default states
+            // Remove inline styles from HTML and manage display/position here
+            pqh2_1.style.display = 'flex';
+            pqh2_1.style.left = `100px`;
+            pqh2_1.style.top = `${membraneCenterY - pqh2_1.offsetHeight / 2}px`;
+            pqh2_1.innerHTML = 'PQH₂';
+            pqh2_1.style.background = '#f39c12';
+            pqh2_1.classList.remove('active');
+            pqh2_1.style.opacity = '1';
+
+            pq_pool.style.display = 'none'; // Initially hidden
+            pq_pool.style.left = `100px`;
+            pq_pool.style.top = `${membraneCenterY - pq_pool.offsetHeight / 2 + 50}px`;
+            pq_pool.innerHTML = 'PQ';
+            pq_pool.style.background = '#95a5a6';
+            pq_pool.style.opacity = '1';
+
+            pqh2_2.style.display = 'none';
+            pqh2_2.style.left = `100px`;
+            pqh2_2.style.top = `${membraneCenterY - pqh2_2.offsetHeight / 2}px`;
+            pqh2_2.innerHTML = 'PQH₂';
+            pqh2_2.style.background = '#f39c12';
+            pqh2_2.classList.remove('active');
+            pqh2_2.style.opacity = '1';
+
+            semiquinone.style.display = 'none';
+            semiquinone.style.left = `${qiX}px`; 
+            semiquinone.style.top = `${qiY}px`;
+            semiquinone.innerHTML = 'PQ•⁻';
+            semiquinone.style.background = '#e67e22';
+            semiquinone.classList.remove('active');
+            semiquinone.style.opacity = '1';
+
+            pc.style.left = `${cytfX - (pc.offsetWidth / 2)}px`; 
+            pc.style.top = `${cytfY + (pc.offsetHeight / 2) + 15}px`; 
+            pc.style.background = '#3498db'; 
+            pc.innerHTML = 'PC';
+            pc.style.opacity = '1';
+            pc.style.display = 'flex';
+            
+            pc2.style.left = `${cytfX - (pc2.offsetWidth / 2)}px`; 
+            pc2.style.top = `${cytfY + (pc2.offsetHeight / 2) + 15}px`; 
+            pc2.style.background = '#3498db'; 
+            pc2.innerHTML = 'PC';
+            pc2.style.opacity = '1';
+            pc2.style.display = 'none'; 
+            
+            const electrons = [electron1, electron2, electron3, electron4, electron5, electron6];
+            electrons.forEach(e => {
+                e.style.display = 'none';
+                e.style.left = '50%'; 
+                e.style.top = '50%';
+                e.style.opacity = '1'; 
+                e.style.zIndex = '10'; 
+            });
+
+            const protons = [proton1, proton2, proton3, proton4];
+            protons.forEach(p => {
+                p.style.display = 'none';
+                p.style.left = `${qoX + (qoSite.offsetWidth / 2) - p.offsetWidth - 10}px`; 
+                p.style.top = `${qoY + qoSite.offsetHeight}px`; 
+
+                if (p.id === 'h3' || p.id === 'h4') {
+                     p.style.left = `${qiX + (qiSite.offsetWidth / 2) - p.offsetWidth - 10}px`;
+                     p.style.top = `${stromaY}px`;
+                }
+            });
+
+            // Photosystems are primarily CSS positioned, but ensure initial visibility if needed
+            psii_complex.style.display = 'flex';
+            psi.style.display = 'flex';
+            
+            summaryPointsContainer.style.display = 'none';
+            quizContainer.style.display = 'none'; 
+            resetQuizState(); 
+        }
+
+
+        function startCycle() {
+            currentStep = 0;
+            resetAnimation();
+            nextStep();
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length) {
+                const step = steps[currentStep];
+                updateStepInfo(currentStep); 
+                step.action();
+                currentStep++;
+            } else {
+                updateStepInfo(steps.length); 
+                phaseIndicator.innerHTML = 'Animation Finished';
+                phaseIndicator.style.background = '#28a745'; 
+                if (isPlaying) {
+                    toggleAutoplay();
+                }
+                summaryPointsContainer.style.display = 'block'; 
+                quizContainer.style.display = 'block'; 
+            }
+        }
+
+        function resetAnimation() {
+            currentStep = 0;
+            resetElements(); 
+            updatePhaseIndicator('Initialization');
+            phaseIndicator.style.background = '#34495e';
+            renderFlowChart(0); 
+            if (isPlaying) { 
+                toggleAutoplay();
+            }
+            summaryPointsContainer.style.display = 'none'; 
+            quizContainer.style.display = 'none'; 
+        }
+
+        function toggleAutoplay() {
+            const autoPlayBtn = document.querySelector('[onclick="toggleAutoplay()"]');
+            if (isPlaying) {
+                clearInterval(autoplayInterval);
+                isPlaying = false;
+                autoPlayBtn.innerHTML = 'Auto Play';
+            } else {
+                isPlaying = true;
+                autoPlayBtn.innerHTML = 'Stop Auto';
+                autoplayInterval = setInterval(() => {
+                    nextStep();
+                    if (currentStep >= steps.length) {
+                        setTimeout(() => {
+                            resetAnimation();
+                            currentStep = 0;
+                        }, 2000); 
+                    }
+                }, 3000); 
+            }
+        }
+
+        // Function to render the quiz
+        function renderQuiz() {
+            quizForm.innerHTML = ''; 
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question-item');
+                questionDiv.innerHTML = `<p class="question-text">${q.question}</p><div class="options"></div>`;
+                const optionsDiv = questionDiv.querySelector('.options');
+
+                q.options.forEach((option, optIndex) => {
+                    const displayOption = option.replace(/^[A-Z]\)\s/, ''); 
+                    const label = document.createElement('label');
+                    label.innerHTML = `<input type="radio" name="question${index}" value="${option}"> ${displayOption}`;
+                    optionsDiv.appendChild(label);
+                });
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('answer-feedback');
+                feedbackDiv.id = `feedback-q${index}`;
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+        }
+
+        // Function to submit quiz and show answers
+        function submitQuiz() {
+            quizQuestions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-q${index}`);
+                feedbackDiv.style.display = 'block'; 
+
+                if (selectedOption) {
+                    if (selectedOption.value === q.answer) {
+                        feedbackDiv.innerHTML = '<strong>Correct!</strong>';
+                        feedbackDiv.classList.remove('incorrect');
+                        feedbackDiv.classList.add('correct');
+                    } else {
+                        feedbackDiv.innerHTML = `<strong>Incorrect. The correct answer is: ${q.answer}</strong>`;
+                        feedbackDiv.classList.remove('correct');
+                        feedbackDiv.classList.add('incorrect');
+                    }
+                } else {
+                    feedbackDiv.innerHTML = `<strong>Please select an answer. The correct answer is: ${q.answer}</strong>`;
+                    feedbackDiv.classList.remove('correct');
+                    feedbackDiv.classList.add('incorrect');
+                }
+            });
+        }
+
+        // Function to reset quiz
+        function resetQuiz() {
+            quizForm.reset(); 
+            document.querySelectorAll('.answer-feedback').forEach(feedbackDiv => {
+                feedbackDiv.style.display = 'none'; 
+                feedbackDiv.classList.remove('correct', 'incorrect');
+                feedbackDiv.innerHTML = ''; 
+            });
+            document.querySelectorAll('.quiz-container input[type="radio"]').forEach(radio => {
+                radio.disabled = false;
+            });
+        }
+
+        // Function to reset quiz state (called from resetElements/resetAnimation)
+        function resetQuizState() {
+            resetQuiz(); 
+        }
+
+        // Initialize animation on window load
+        window.onload = function() {
+            updatePositions(); 
+            renderFlowChart(0); 
+            renderQuiz(); 
+            resetAnimation(); 
+            window.addEventListener('resize', updatePositions);
+        };
+    </script>
+</body>
+</html>
