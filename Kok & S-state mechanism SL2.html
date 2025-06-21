@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photolysis of Water & OEC Animation</title>
+    <style>
+        /* General styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c1b27 0%, #123652 100%);
+            color: #e0f2fe;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%; /* Make container full width on mobile */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 20px; /* Space between animation sections */
+        }
+        
+        @media (min-width: 768px) {
+            .content-wrapper {
+                flex-direction: row;
+            }
+        }
+        
+        .animation-container {
+            flex: 2;
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            display: block;
+            background: transparent;
+        }
+        
+        .info-panel {
+            flex: 1;
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+        }
+        
+        .info-panel h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #4facfe;
+            border-bottom: 2px solid rgba(64, 186, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        .state-info {
+            background: rgba(3, 32, 54, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4facfe;
+        }
+        
+        .state-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #00f2fe;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Space below controls */
+        }
+        
+        button {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #0ea5e9, #0d9488);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        /* Autoplay button distinct styling */
+        #sStateAutoplayBtn, #oecAutoplayBtn {
+            background: linear-gradient(45deg, #a855f7, #ec4899);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        #sStateAutoplayBtn:hover, #oecAutoplayBtn:hover {
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Speed control styling */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 15px;
+            color: #a5f3fc;
+            flex: 1.5;
+            justify-content: center;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(14, 165, 233, 0.3);
+            outline: none;
+        }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(64, 186, 255, 0.2);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .description-box {
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+            margin-top: 20px;
+            margin-bottom: 20px; /* Space between description box and next section */
+        }
+
+        .description-box h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00f2fe;
+            border-bottom: 2px solid rgba(64, 186, 255, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flowchart-step {
+            background: rgba(3, 32, 54, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border-left: 4px solid #4facfe;
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .flowchart-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; 
+            left: 50%;
+            transform: translateX(-50%); 
+            width: 2px; 
+            height: 30px; 
+            background-color: rgba(64, 186, 255, 0.4); 
+            border-radius: 1px; 
+            z-index: -1; 
+        }
+
+        .flowchart-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            bottom: -25px; 
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg); 
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid rgba(64, 186, 255, 0.4); 
+            border-bottom: 2px solid rgba(64, 186, 255, 0.4); 
+            z-index: 0; 
+        }
+
+        .flowchart-step.visible {
+            background-color: rgba(74, 172, 254, 0.8);
+            border-left: 4px solid #00f2fe;
+            box-shadow: 0 0 15px rgba(74, 172, 254, 0.5);
+        }
+
+        .flowchart-step h3 {
+            font-size: 1.1rem;
+            color: #00f2fe;
+            margin-bottom: 10px;
+        }
+
+        .flowchart-step.visible h3 {
+            color: #ffffff;
+        }
+
+        .flowchart-step ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .flowchart-step ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .flowchart-step ul li::before {
+            content: '•';
+            color: #4facfe;
+            font-size: 1.2em;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .flowchart-step.visible ul li::before {
+            color: #ffffff;
+        }
+
+        .notes-box {
+            background: rgba(8, 47, 73, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(64, 186, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(1, 65, 255, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .notes-box h2 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #00f2fe;
+            border-bottom: 2px solid rgba(64, 186, 255, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .notes-box ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .notes-box ul li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            padding: 10px;
+            color: #e0f2fe;
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .telegram-link {
+            display: block; /* Make it a block element to go to a new line */
+            margin-top: 5px; /* Adjust spacing as needed */
+            color: #007bff; /* Blue color for hyperlink */
+            text-decoration: none; /* Remove underline */
+            font-size: 0.9rem;
+            text-align: center;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .telegram-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        /* Styles for when content is hidden */
+        body.hidden-content > *:not(script) {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="hidden-content">
+    <div class="container" id="mainContent">
+        <header>
+            <h1>Photolysis of Water: The Foundation of Oxygenic Photosynthesis</h1>
+            <p class="subtitle">Interactive visualization of the Kok cycle and OEC mechanism</p>
+        </header>
+
+        <!-- S-State Animation Section (notes first, then animation) -->
+        <div class="notes-box" id="sStateNotes">
+            <h2>Key Concepts: Photolysis of Water</h2>
+            <ul>
+                <li>Photolysis of water (also termed water splitting or oxygen evolution) is the fundamental photochemical process in oxygenic photosynthesis.</li>
+                <li>Light energy drives the oxidation of water (H₂O) into molecular oxygen (O₂), protons (H⁺), and electrons (e⁻).</li>
+                <li>This reaction occurs exclusively within the Photosystem II (PSII) complex, embedded in the thylakoid membranes of plants, algae, and cyanobacteria.</li>
+                <li>The overall reaction is: 2H₂O → O₂ + 4H⁺ + 4e⁻.</li>
+                <li>The energy required for this demanding reaction is supplied by light energy captured by PSII pigments and funneled to the specialized oxygen-evolving complex (OEC).</li>
+            </ul>
+        </div>
+
+        <!-- OEC Notes Section (moved after S-State notes, before any animations) -->
+        <div class="notes-box" id="oecNotes">
+            <h2>The Kok Cycle: Mechanism of Water Oxidation</h2>
+            <ul>
+                <li>The step-wise mechanism of water oxidation is described by the Kok Cycle (proposed by Bessel Kok in the 1970s).</li>
+                <li>It involves a tetranuclear manganese-calcium-oxo cluster (Mn₄CaO₅) within the OEC, progressing through five distinct intermediate S-states (S₀ to S₄), driven sequentially by photon absorption by the PSII reaction center (P680).</li>
+                <li><h3 style="color: #FFFF00; font-weight: bold;">Core Principles of the Kok Cycle:</h3>
+                    <ul>
+                        <li>Four-Quantum Process: Four photons (absorbed by PSII) are required to drive the oxidation of two water molecules to yield one O₂ molecule.</li>
+                        <li>S-State Transitions: Each absorbed photon advances the Mn₄CaO₅ cluster from a lower S-state to the next higher S-state (S₀ → S₁ → S₂ → S₃ → S₄).</li>
+                        <li>Charge Accumulation: The cluster accumulates oxidizing equivalents (positive charges) through successive light-driven oxidations. These equivalents are stored as changes in the oxidation states of the Mn ions.</li>
+                        <li>O-O Bond Formation: Dioxygen bond formation occurs during the transient S₄ state, followed by rapid O₂ release and reset to S₀.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="animation-container">
+                <canvas id="sStateCanvas"></canvas>
+            </div>
+            
+            <div id="sStateInfoPanel" class="info-panel">
+                <h2>Process Information</h2>
+                <div class="state-info">
+                    <h3>Current State: <span id="sStateCurrentState">S0 (Resting State)</span></h3>
+                    <p id="sStateDescription">The Oxygen Evolving Complex (OEC) is in its most reduced state, ready to absorb photons and begin the cycle.</p>
+                </div>
+                
+                <div>
+                    <h3>Chemical Reaction</h3>
+                    <p>2H₂O → O₂ + 4H⁺ + 4e⁻</p>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(45deg, #ff9e00, #ff5400);"></div>
+                        <span>Photons (Light)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #38b000;"></div>
+                        <span>Electrons (e⁻)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #90e0ef;"></div>
+                        <span>Protons (H⁺)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e5383b;"></div>
+                        <span>Oxygen (O₂)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4facfe;"></div>
+                        <span>Water (H₂O)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="sStateControls" class="controls">
+            <button id="sStatePrevBtn">Previous Step</button>
+            <button id="sStateNextBtn">Next Step</button>
+            <button id="sStateAutoplayBtn">Autoplay</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="sStateSpeedControl" min="1" max="10" value="5">
+            </div>
+        </div>
+
+        <div id="sStateDescriptionBox" class="description-box">
+            <h2>Step-by-Step Process</h2>
+            <div id="sStateFlowchartContainer" class="flowchart-container">
+                <div id="sState-step-0-desc" class="flowchart-step">
+                    <h3>S0 (Resting State)</h3>
+                    <ul>
+                        <li>OEC is in its most reduced state.</li>
+                        <li>The Mn₄CaO₅ cluster is stable and ready.</li>
+                    </ul>
+                </div>
+                <div id="sState-step-1-desc" class="flowchart-step">
+                    <h3>S1 (First Photon)</h3>
+                    <ul>
+                        <li>First photon absorbed, leading to a charge separation.</li>
+                        <li>One electron (e⁻) is released.</li>
+                    </ul>
+                </div>
+                <div id="sState-step-2-desc" class="flowchart-step">
+                    <h3>S2 (Second Photon)</h3>
+                    <ul>
+                        <li>Second photon absorbed, further oxidizing the OEC.</li>
+                        <li>Another electron (e⁻) is released.</li>
+                        <li>Binding of water molecule(s) may occur.</li>
+                    </ul>
+                </div>
+                <div id="sState-step-3-desc" class="flowchart-step">
+                    <h3>S3 (Third Photon)</h3>
+                    <ul>
+                        <li>Third photon absorbed, highly oxidized state.</li>
+                        <li>Third electron (e⁻) released.</li>
+                        <li>Water molecules (H₂O) bind and are prepared for oxidation.</li>
+                        <li>One proton (H⁺) is released.</li>
+                    </ul>
+                </div>
+                <div id="sState-step-4-desc" class="flowchart-step">
+                    <h3>S4 (Fourth Photon)</h3>
+                    <ul>
+                        <li>Fourth photon absorbed, leading to the formation of O₂.</li>
+                        <li>Fourth electron (e⁻) released.</li>
+                        <li>Molecular oxygen (O₂) is released.</li>
+                        <li>Three additional protons (3H⁺) are released, completing the cycle.</li>
+                        <li>OEC returns to S0 state.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="content-wrapper">
+            <div class="animation-container">
+                <canvas id="oecCanvas"></canvas>
+            </div>
+            
+            <div id="oecInfoPanel" class="info-panel">
+                <h2>Process Information</h2>
+                <div class="state-info">
+                    <h3>Current State: <span id="oecCurrentState">S0 (Resting State)</span></h3>
+                    <p id="oecStateDescription">The Oxygen Evolving Complex (OEC) is in its resting state. The Mn₄CaO₅ cluster is stable, waiting for the first photon.</p>
+                </div>
+                
+                <div>
+                    <h3>Chemical Reaction</h3>
+                    <p>2H₂O → O₂ + 4H⁺ + 4e⁻</p>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9d4edd;"></div>
+                        <span>Manganese (Mn)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #ff9e00;"></div>
+                        <span>Calcium (Ca)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e5383b;"></div>
+                        <span>Oxygen (O)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #90e0ef;"></div>
+                        <span>Hydrogen (H)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #38b000;"></div>
+                        <span>Electrons (e⁻)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(45deg, #ff9e00, #ff5400);"></div>
+                        <span>Photons (Light)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="oecControls" class="controls">
+            <button id="oecPrevBtn">Previous Step</button>
+            <button id="oecNextBtn">Next Step</button>
+            <button id="oecAutoplayBtn">Autoplay</button>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" id="oecSpeedControl" min="1" max="10" value="5">
+            </div>
+        </div>
+
+        <div id="oecDescriptionBox" class="description-box">
+            <h2>Step-by-Step Process</h2>
+            <div id="oecFlowchartContainer" class="flowchart-container">
+                <div id="oec-step-0-desc" class="flowchart-step">
+                    <h3>S0 (Resting State)</h3>
+                    <ul>
+                        <li>OEC in resting state.</li>
+                        <li>Mn₄CaO₅ cluster is stable.</li>
+                        <li>Awaiting first photon input.</li>
+                    </ul>
+                </div>
+                <div id="oec-step-1-desc" class="flowchart-step">
+                    <h3>S1 (First Photon)</h3>
+                    <ul>
+                        <li>First photon absorbed.</li>
+                        <li>One Mn(III) oxidized to Mn(IV).</li>
+                        <li>One electron (e⁻) is released to Photosystem II.</li>
+                    </ul>
+                </div>
+                <div id="oec-step-2-desc" class="flowchart-step">
+                    <h3>S2 (Second Photon)</h3>
+                    <ul>
+                        <li>Second photon absorbed.</li>
+                        <li>Another Mn(III) oxidized to Mn(IV).</li>
+                        <li>Second electron (e⁻) released.</li>
+                    </ul>
+                </div>
+                <div id="oec-step-3-desc" class="flowchart-step">
+                    <h3>S3 (Third Photon)</h3>
+                    <ul>
+                        <li>Third photon absorbed.</li>
+                        <li>Oxygen-oxygen bond formation starts.</li>
+                        <li>Third electron (e⁻) released.</li>
+                        <li>Water molecules (H₂O) approach the OEC for substrate binding.</li>
+                    </ul>
+                </div>
+                <div id="oec-step-4-desc" class="flowchart-step">
+                    <h3>S4 (Fourth Photon)</h3>
+                    <ul>
+                        <li>Fourth photon absorbed.</li>
+                        <li>Molecular oxygen (O₂) is formed and released.</li>
+                        <li>Fourth electron (e⁻) released.</li>
+                        <li>Four protons (4H⁺) produced and released into Thylakoid lumen.</li>
+                        <li>OEC returns to S0 state, ready for new cycle.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- New Notes Section from Key Components.docx -->
+        <div class="notes-box">
+            <h2>Key Components</h2>
+            <ul>
+                <li><strong>Mn₄CaO₅ Cluster:</strong> The catalytic heart. Mn ions cycle between Mn(III) and Mn(IV) (and possibly Mn(II) in S₀), storing oxidizing equivalents. The Ca²⁺ ion is crucial for structural integrity and likely participates in substrate water binding.</li>
+                <li><strong>P680⁺:</strong> The primary electron donor of PSII, a very strong oxidant (E⁰' ≈ +1.2 V), generated by light excitation (P680* → P680⁺ + e⁻). It oxidizes the OEC.</li>
+                <li><strong>Tyr-Z (Yz):</strong> A redox-active tyrosine residue (D1-Tyr161). Acts as the immediate electron acceptor from the Mn cluster (reducing P680⁺) and proton donor/acceptor between the cluster and the lumen. Forms the Tyr radical (Tyr•).</li>
+                <li><strong>Chloride (Cl⁻) & Calcium (Ca²⁺):</strong> Essential cofactors. Cl⁻ likely facilitates proton egress and stabilizes S-states. Ca²⁺ is integral to the cluster structure and water binding/activation.</li>
+            </ul>
+        </div>
+        
+        <!-- Significance of Water Photolysis Notes Section -->
+        <div class="notes-box">
+            <h2>Significance of Water Photolysis</h2>
+            <ul>
+                <li><strong>Source of Atmospheric Oxygen:</strong> It is the primary source of virtually all free oxygen (O₂) in Earth's atmosphere, enabling aerobic respiration and shaping the planet's redox chemistry and evolution of complex life.</li>
+                <li><strong>Electron Source for Photosynthesis:</strong> It provides the low-potential electrons required to reduce NADP⁺ to NADPH, essential for carbon fixation (Calvin cycle).</li>
+                <li><strong>Proton Gradient Driver:</strong> The release of protons (H⁺) into the thylakoid lumen directly contributes to the proton motive force (ΔpH) driving ATP synthesis via chemiosmosis.</li>
+                <li><strong>Evolutionary Milestone:</strong> The evolution of water-splitting capability by ancient cyanobacteria (~2.4-3.5 Gya) triggered the Great Oxidation Event, fundamentally altering Earth's geochemistry and biosphere.</li>
+            </ul>
+        </div>
+        
+        <!-- Hidden div for email and its integrity check -->
+        <div id="emailIntegrity" style="display:none;">betabiosciences@gmail.com</div>
+
+    </div>
+
+    <p class="footer-text">betabiosciences@gmail.com</p>
+    <a href="https://t.me/betascience_csir" target="_blank" class="telegram-link">Join our Telegram Channel</a>
+
+    <script>
+        // Security check: Define the allowed domain
+        const ALLOWED_DOMAIN = "betabiosciences.github.io";
+
+        // Function to perform the domain check
+        function checkDomain() {
+            return window.location.hostname === ALLOWED_DOMAIN;
+        }
+
+        // Security check: Calculate a simple hash of the email string
+        const expectedEmail = "betabiosciences@gmail.com";
+        const expectedHash = Array.from(expectedEmail).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+
+        function checkEmailIntegrity() {
+            const emailElement = document.getElementById('emailIntegrity');
+            if (!emailElement) {
+                // If the element is removed, integrity check fails silently
+                return false;
+            }
+            const currentEmail = emailElement.textContent.trim();
+            const currentHash = Array.from(currentEmail).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+            return currentHash === expectedHash && currentEmail === expectedEmail;
+        }
+
+        // Base Animation Class for common functionality
+        class BaseAnimation {
+            constructor(canvas, infoPanelId, controlsId, descriptionBoxId) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.infoPanel = document.getElementById(infoPanelId);
+                this.controls = document.getElementById(controlsId);
+                this.descriptionBox = document.getElementById(descriptionBoxId);
+
+                this.width = canvas.width;
+                this.height = canvas.height;
+                
+                this.currentState = 0;
+                this.isAutoplaying = false;
+                this.animationActive = false;
+                this.animationSpeed = 5; 
+                this.lastFrameTime = 0;
+                this.animationId = null;
+                this.stateTransitionTimeout = null;
+
+                this.photonHitTimestamp = 0; 
+            }
+
+            // Abstract methods to be implemented by subclasses
+            init() {}
+            updateStateInfo() {}
+            prevState() {}
+            nextState() {}
+            draw(timestamp) {}
+            drawBackground() {}
+            resetAnimationElements(fullReset = true) {} 
+
+            bindControls() {
+                this.removeControlsListeners(); 
+
+                // Ensure 'this' context is preserved for event listeners
+                this.handlePrevClick = () => {
+                    this.isAutoplaying = false; 
+                    this.getAutoplayButton().textContent = 'Autoplay';
+                    this.prevState();
+                };
+                this.handleNextClick = () => {
+                    this.isAutoplaying = false; 
+                    this.getAutoplayButton().textContent = 'Autoplay';
+                    this.nextState();
+                };
+                this.handleAutoplayClick = () => {
+                    this.toggleAutoplay();
+                };
+                this.handleSpeedInput = (e) => {
+                    this.setSpeed(e.target.value);
+                };
+                this.handleKeyDownBind = this.handleKeyDown.bind(this); // Bind once for removal
+
+                this.getPrevButton().addEventListener('click', this.handlePrevClick);
+                this.getNextButton().addEventListener('click', this.handleNextClick);
+                this.getAutoplayButton().addEventListener('click', this.handleAutoplayClick);
+                this.getSpeedControl().addEventListener('input', this.handleSpeedInput);
+                document.addEventListener('keydown', this.handleKeyDownBind);
+            }
+
+            removeControlsListeners() {
+                const prevBtn = this.getPrevButton(false); 
+                const nextBtn = this.getNextButton(false);
+                const autoplayBtn = this.getAutoplayButton(false);
+                const speedControl = this.getSpeedControl(false);
+
+                if (prevBtn && this.handlePrevClick) prevBtn.removeEventListener('click', this.handlePrevClick);
+                if (nextBtn && this.handleNextClick) nextBtn.removeEventListener('click', this.handleNextClick);
+                if (autoplayBtn && this.handleAutoplayClick) autoplayBtn.removeEventListener('click', this.handleAutoplayClick);
+                if (speedControl && this.handleSpeedInput) speedControl.removeEventListener('input', this.handleSpeedInput);
+                if (this.handleKeyDownBind) document.removeEventListener('keydown', this.handleKeyDownBind);
+            }
+
+            handleKeyDown(e) {
+                if (e.key === 'ArrowLeft') {
+                    this.isAutoplaying = false; 
+                    this.getAutoplayButton().textContent = 'Autoplay';
+                    this.prevState();
+                }
+                if (e.key === 'ArrowRight') {
+                    this.isAutoplaying = false; 
+                    this.getAutoplayButton().textContent = 'Autoplay';
+                    this.nextState();
+                }
+            }
+            
+            getPrevButton(throwError = true) {
+                const id = this.controls.querySelector('[id$="PrevBtn"]').id;
+                const btn = document.getElementById(id);
+                if (!btn && throwError) throw new Error(`Button with ID ${id} not found.`);
+                return btn;
+            }
+            getNextButton(throwError = true) {
+                const id = this.controls.querySelector('[id$="NextBtn"]').id;
+                const btn = document.getElementById(id);
+                if (!btn && throwError) throw new Error(`Button with ID ${id} not found.`);
+                return btn;
+            }
+            getAutoplayButton(throwError = true) {
+                const id = this.controls.querySelector('[id$="AutoplayBtn"]').id;
+                const btn = document.getElementById(id);
+                if (!btn && throwError) throw new Error(`Button with ID ${id} not found.`);
+                return btn;
+            }
+            getSpeedControl(throwError = true) {
+                const id = this.controls.querySelector('[id$="SpeedControl"]').id;
+                const ctrl = document.getElementById(id);
+                if (!ctrl && throwError) throw new Error(`Speed control with ID ${id} not found.`);
+                return ctrl;
+            }
+            getCurrentStateSpan(throwError = true) {
+                const id = this.infoPanel.querySelector('[id$="CurrentState"]').id;
+                const span = document.getElementById(id);
+                if (!span && throwError) throw new Error(`Current state span with ID ${id} not found.`);
+                return span;
+            }
+            getStateDescriptionParagraph(throwError = true) {
+                const id = this.infoPanel.querySelector('[id$="StateDescription"]').id;
+                const p = document.getElementById(id);
+                if (!p && throwError) throw new Error(`State description paragraph with ID ${id} not found.`);
+                return p;
+            }
+            getFlowchartContainer(throwError = true) {
+                const id = this.descriptionBox.querySelector('[id$="FlowchartContainer"]').id;
+                const container = document.getElementById(id);
+                if (!container && throwError) throw new Error(`Flowchart container with ID ${id} not found.`);
+                return container;
+            }
+
+            toggleAutoplay() {
+                this.isAutoplaying = !this.isAutoplaying;
+                this.getAutoplayButton().textContent = this.isAutoplaying ? 'Pause Autoplay' : 'Autoplay';
+                
+                if (this.isAutoplaying) {
+                    this.nextState(); 
+                } else {
+                    this.cancelPendingTransition();
+                    this.stopAnimation(); 
+                }
+            }
+            
+            setSpeed(speed) {
+                this.animationSpeed = speed;
+                if (this.isAutoplaying) {
+                    this.cancelPendingTransition();
+                    this.stateTransitionTimeout = setTimeout(() => {
+                        this.nextState();
+                    }, (this.totalParticleAnimationDuration + 500) / (this.animationSpeed / 5)); 
+                }
+            }
+            
+            startAnimation() {
+                if (!this.animationActive) {
+                    this.animationActive = true;
+                    this.lastFrameTime = performance.now();
+                    this.animationId = requestAnimationFrame((ts) => this.animate(ts));
+                }
+            }
+            
+            stopAnimation() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+                this.animationActive = false;
+                this.cancelPendingTransition(); 
+            }
+            
+            scheduleNextState(delayBuffer = 500) {
+                this.cancelPendingTransition();
+                const delay = (this.totalParticleAnimationDuration || 2000) / (this.animationSpeed / 5) + delayBuffer; 
+                this.stateTransitionTimeout = setTimeout(() => {
+                    if (this.isAutoplaying) {
+                        this.nextState(); 
+                    }
+                }, delay);
+            }
+            
+            cancelPendingTransition() {
+                if (this.stateTransitionTimeout) {
+                    clearTimeout(this.stateTransitionTimeout);
+                    this.stateTransitionTimeout = null;
+                }
+            }
+
+            animate(timestamp) {
+                throw new Error("animate() must be implemented by subclass");
+            }
+        }
+
+        // SStateAnimation Class (adapted)
+        class SStateAnimation extends BaseAnimation {
+            constructor(canvas, infoPanelId, controlsId, descriptionBoxId, notesBoxId) {
+                super(canvas, infoPanelId, controlsId, descriptionBoxId);
+                this.notesBox = document.getElementById(notesBoxId);
+                
+                this.electronReleaseDelay = 500; 
+                this.protonReleaseDelay = 800; 
+                this.oxygenReleaseDelay = 1200; 
+                this.totalParticleAnimationDuration = 2000; 
+
+                this.photons = [];
+                this.electrons = [];
+                this.protons = [];
+                this.oxygenBubble = null;
+                this.waterMolecules = [];
+
+                this.electronsReleased = false;
+                this.protonsReleased = false;
+                this.oxygenReleased = false;
+                this.waterApproaching = false;
+
+                this.highlightAnimating = false;
+                this.highlightAnimStartTime = 0;
+                this.highlightAnimDuration = 700; 
+
+                this.statesData = [
+                    { name: "S0", description: "The Oxygen Evolving Complex (OEC) is in its most reduced state.", x: 0, y: 0 },
+                    { name: "S1", description: "First photon absorbed, leading to a charge separation.", x: 0, y: 0 },
+                    { name: "S2", description: "Second photon absorbed, further oxidizing the OEC.", x: 0, y: 0 },
+                    { name: "S3", description: "Third photon absorbed, highly oxidized state.", x: 0, y: 0 },
+                    { name: "S4", description: "Fourth photon absorbed, leading to the formation of O₂.", x: 0, y: 0 }
+                ];
+
+                this.circleRadius = 120;
+                this.nodeRadius = 25;
+
+                this.init(); 
+                this.resizeCanvas(); 
+            }
+            
+            init() {
+                this.calculateNodePositions();
+                this.initializeWaterMolecules();
+            }
+
+            resizeCanvas() {
+                this.canvas.width = this.canvas.parentElement.clientWidth > 600 ? 600 : this.canvas.parentElement.clientWidth;
+                this.canvas.height = 400; 
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.centerX = this.width / 2;
+                this.centerY = this.height / 2;
+                this.calculateNodePositions();
+                this.initializeWaterMolecules();
+                this.draw(performance.now()); 
+            }
+
+            calculateNodePositions() {
+                const numStates = this.statesData.length;
+                for (let i = 0; i < numStates; i++) {
+                    const angle = (Math.PI / 2) - (i * (2 * Math.PI / numStates)); 
+                    this.statesData[i].x = this.centerX + this.circleRadius * Math.cos(angle);
+                    this.statesData[i].y = this.centerY - this.circleRadius * Math.sin(angle); 
+                }
+            }
+
+            initializeWaterMolecules() {
+                this.waterMolecules = [
+                    { x: this.centerX - 100, y: this.centerY + 150, opacity: 1, reachedTarget: false, size: 18, targetX: undefined, targetY: undefined, isConsumed: false, consumptionStartTime: null, consumptionDuration: 1000 },
+                    { x: this.centerX + 100, y: this.centerY + 150, opacity: 1, reachedTarget: false, size: 18, targetX: undefined, targetY: undefined, isConsumed: false, consumptionStartTime: null, consumptionDuration: 1000 }
+                ];
+            }
+
+            updateStateInfo() {
+                const currentStateData = this.statesData[this.currentState];
+                this.getCurrentStateSpan().textContent = currentStateData.name;
+                this.getStateDescriptionParagraph().textContent = currentStateData.description;
+                
+                const flowchartContainer = this.getFlowchartContainer();
+                for (let i = 0; i < this.statesData.length; i++) {
+                    const stepElement = document.getElementById(`sState-step-${i}-desc`); 
+                    if (stepElement) {
+                        if (i === this.currentState) {
+                            stepElement.classList.add('visible');
+                        } else {
+                            stepElement.classList.remove('visible');
+                        }
+                    }
+                }
+            }
+            
+            prevState() {
+                this.cancelPendingTransition();
+                this.resetAnimationElements(false); 
+
+                this.animationSourceState = this.currentState; 
+                const nextHighlightedState = (this.currentState - 1 + this.statesData.length) % this.statesData.length;
+
+                const isPhotonVisible = (this.animationSourceState !== 4); 
+
+                this.photons.push({
+                    x: this.statesData[this.animationSourceState].x,
+                    y: -50, 
+                    targetX: this.statesData[this.animationSourceState].x,
+                    targetY: this.statesData[this.animationSourceState].y + this.nodeRadius, 
+                    hitTime: null,
+                    stateTriggered: this.animationSourceState, 
+                    visible: isPhotonVisible 
+                });
+
+                this.startAnimation(); 
+
+                const photonHitDuration = 500; 
+                this.stateTransitionTimeout = setTimeout(() => {
+                    this.currentState = nextHighlightedState; 
+                    this.updateStateInfo(); 
+                    
+                    this.highlightAnimating = true;
+                    this.highlightAnimStartTime = performance.now();
+
+                    if (this.currentState === 2 || this.currentState === 3) {
+                        this.waterApproaching = true;
+                        this.waterMolecules.forEach((wm, idx) => {
+                            wm.targetX = this.statesData[this.currentState].x + (idx === 0 ? -this.nodeRadius : this.nodeRadius);
+                            wm.targetY = this.statesData[this.currentState].y + this.nodeRadius;
+                            wm.isConsumed = false; 
+                            wm.opacity = 1; 
+                        });
+                    } else {
+                        this.waterApproaching = false;
+                    }
+
+                    this.stateTransitionTimeout = setTimeout(() => {
+                        this.resetAnimationElements(true); 
+                        if (!this.isAutoplaying) {
+                            this.stopAnimation();
+                        }
+                    }, this.totalParticleAnimationDuration / (this.animationSpeed / 5)); 
+                    
+                }, photonHitDuration / (this.animationSpeed / 5));
+            }
+            
+            nextState() {
+                this.cancelPendingTransition();
+                this.resetAnimationElements(false); 
+
+                this.animationSourceState = this.currentState; 
+                const nextHighlightedState = (this.currentState + 1) % this.statesData.length;
+
+                const isPhotonVisible = (this.animationSourceState !== 4); 
+
+                this.photons.push({
+                    x: this.statesData[this.animationSourceState].x,
+                    y: -50, 
+                    targetX: this.statesData[this.animationSourceState].x,
+                    targetY: this.statesData[this.animationSourceState].y + this.nodeRadius, 
+                    hitTime: null,
+                    stateTriggered: this.animationSourceState, 
+                    visible: isPhotonVisible 
+                });
+
+                this.startAnimation(); 
+
+                const photonHitDuration = 500; 
+                this.stateTransitionTimeout = setTimeout(() => {
+                    this.currentState = nextHighlightedState; 
+                    this.updateStateInfo(); 
+                    
+                    this.highlightAnimating = true;
+                    this.highlightAnimStartTime = performance.now();
+
+                    if (this.currentState === 2 || this.currentState === 3) {
+                        this.waterApproaching = true;
+                        this.waterMolecules.forEach((wm, idx) => {
+                            wm.targetX = this.statesData[this.currentState].x + (idx === 0 ? -this.nodeRadius : this.nodeRadius);
+                            wm.targetY = this.statesData[this.currentState].y + this.nodeRadius;
+                            wm.isConsumed = false; 
+                            wm.opacity = 1; 
+                        });
+                    } else {
+                        this.waterApproaching = false;
+                    }
+
+                    this.stateTransitionTimeout = setTimeout(() => {
+                        this.resetAnimationElements(true); 
+                        if (this.isAutoplaying) {
+                            this.scheduleNextState();
+                        } else {
+                            this.stopAnimation();
+                        }
+                    }, this.totalParticleAnimationDuration / (this.animationSpeed / 5)); 
+                    
+                }, photonHitDuration / (this.animationSpeed / 5));
+            }
+            
+            resetAnimationElements(fullReset = true) {
+                this.photons = [];
+                this.electrons = [];
+                this.protons = [];
+                this.oxygenBubble = null;
+
+                this.electronsReleased = false;
+                this.protonsReleased = false;
+                this.oxygenReleased = false;
+                this.photonHitTimestamp = 0; 
+
+                if (fullReset) { 
+                     this.initializeWaterMolecules(); 
+                     this.waterApproaching = false; 
+                } else {
+                    this.waterMolecules.forEach(wm => wm.reachedTarget = false);
+                }
+            }
+            
+            animate(timestamp) {
+                const deltaTime = timestamp - this.lastFrameTime;
+                this.lastFrameTime = timestamp;
+                
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.drawBackground();
+                this.drawSStates(timestamp); 
+                
+                this.drawPhotons(deltaTime, timestamp);
+
+                if (this.photons.length > 0 && this.photons[0].hitTime !== null) {
+                    const photon = this.photons[0]; 
+                    const hitStateIndex = photon.stateTriggered;
+                    const hitTimestamp = photon.hitTime;
+
+                    if (!this.electronsReleased && (timestamp - hitTimestamp >= this.electronReleaseDelay)) {
+                        this.electronsReleased = true; 
+                        this.electrons.push({ x: this.statesData[hitStateIndex].x, y: this.statesData[hitStateIndex].y, targetX: this.width + 50, targetY: this.height / 2 + (hitStateIndex * 30 - 60), size: 10, opacity: 1, animationStarted: false, startTime: null, duration: 1500 });
+                    }
+
+                    if (!this.protonsReleased && (timestamp - hitTimestamp >= this.protonReleaseDelay)) {
+                        this.protonsReleased = true;
+                        switch(hitStateIndex) {
+                            case 3: 
+                                this.protons.push({ x: this.statesData[hitStateIndex].x, y: this.statesData[hitStateIndex].y, targetX: this.statesData[hitStateIndex].x - 50, targetY: this.height - 50, size: 8, opacity: 1, animationStarted: false, startTime: null, duration: 2000 });
+                                break;
+                            case 4: 
+                                this.protons.push({ x: this.statesData[hitStateIndex].x - 20, y: this.statesData[hitStateIndex].y, targetX: this.statesData[hitStateIndex].x - 70, targetY: this.height - 50, size: 8, opacity: 1, animationStarted: false, startTime: null, duration: 2000 });
+                                this.protons.push({ x: this.statesData[hitStateIndex].x, y: this.statesData[hitStateIndex].y, targetX: this.statesData[hitStateIndex].x, targetY: this.height - 50, size: 8, opacity: 1, animationStarted: false, startTime: null, duration: 2000 });
+                                this.protons.push({ x: this.statesData[hitStateIndex].x + 20, y: this.statesData[hitStateIndex].y, targetX: this.statesData[hitStateIndex].x + 70, targetY: this.height - 50, size: 8, opacity: 1, animationStarted: false, startTime: null, duration: 2000 });
+                                break;
+                        }
+                    }
+
+                    if (!this.oxygenReleased && (timestamp - hitTimestamp >= this.oxygenReleaseDelay)) {
+                        this.oxygenReleased = true;
+                        if (hitStateIndex === 4) { 
+                            const startX = this.statesData[hitStateIndex].x;
+                            const startY = this.statesData[hitStateIndex].y; 
+                            
+                            const vecX = startX - this.centerX;
+                            const vecY = startY - this.centerY;
+                            const len = Math.sqrt(vecX * vecX + vecY * vecY);
+                            const normVecX = vecX / len;
+                            const normVecY = vecY / len;
+
+                            const diffusionDistance = 150; 
+                            const targetX = startX + normVecX * diffusionDistance;
+                            const targetY = startY + normVecY * diffusionDistance;
+
+                            this.oxygenBubble = { 
+                                x: startX, 
+                                y: startY, 
+                                radius: 15, 
+                                targetX: targetX, 
+                                targetY: targetY, 
+                                opacity: 1,
+                                animationStarted: false, 
+                                startTime: null, 
+                                duration: 2000 
+                            };
+                        }
+                    }
+
+                    if (hitStateIndex === 4) { 
+                        if (this.protonsReleased && this.electronsReleased && this.oxygenReleased) { 
+                            this.waterMolecules.forEach(wm => {
+                                if (!wm.isConsumed) { 
+                                    wm.isConsumed = true;
+                                    wm.consumptionStartTime = timestamp;
+                                }
+                            });
+                        }
+                    } else if (hitStateIndex === 3) {
+                         this.waterMolecules.forEach(wm => {
+                            wm.isConsumed = false;
+                            wm.consumptionStartTime = null;
+                            wm.opacity = 1; 
+                         });
+                    }
+                }
+
+                this.drawElectrons(deltaTime);
+                this.drawProtons(deltaTime);
+                this.drawOxygenBubble(deltaTime);
+                this.drawWaterMolecules(deltaTime);
+
+                const elementsStillAnimating = 
+                    this.photons.length > 0 || 
+                    this.electrons.length > 0 || 
+                    this.protons.length > 0 || 
+                    (this.oxygenBubble !== null && (this.oxygenBubble.opacity > 0)) || 
+                    (this.waterMolecules.some(wm => !wm.reachedTarget || wm.isConsumed && wm.opacity > 0)) || 
+                    this.highlightAnimating; 
+                
+                if (this.isAutoplaying || elementsStillAnimating) {
+                    this.animationId = requestAnimationFrame((ts) => this.animate(ts));
+                } else {
+                    this.stopAnimation();
+                }
+            }
+            
+            drawBackground() {
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
+                gradient.addColorStop(0, '#0c1b27');
+                gradient.addColorStop(1, '#123652');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                this.ctx.fillStyle = 'rgba(224, 242, 254, 0.1)';
+                this.ctx.font = 'bold 24px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('PHOTOSYSTEM II', this.width / 2, 40);
+            }
+            
+            drawSStates(timestamp) {
+                const numStates = this.statesData.length;
+                for (let i = 0; i < numStates; i++) {
+                    const state = this.statesData[i];
+                    const nextState = this.statesData[(i + 1) % numStates];
+
+                    this.drawArrow(state.x, state.y, nextState.x, nextState.y);
+
+                    let currentFillColor = 'rgba(64, 186, 255, 0.3)';
+                    let currentStrokeColor = 'rgba(64, 186, 255, 0.5)';
+                    let currentLineWidth = 2;
+                    let currentShadowBlur = 0;
+
+                    if (i === this.currentState) {
+                        currentFillColor = '#4facfe'; 
+                        currentStrokeColor = '#00f2fe'; 
+
+                        if (this.highlightAnimating) {
+                            const elapsed = timestamp - this.highlightAnimStartTime;
+                            let progress = elapsed / this.highlightAnimDuration;
+
+                            if (progress >= 1) {
+                                this.highlightAnimating = false; 
+                                progress = 1; 
+                            }
+
+                            const pulseThickness = 2 + Math.sin(progress * Math.PI) * 5; 
+                            currentLineWidth = pulseThickness;
+
+                            currentShadowBlur = 10 * Math.sin(progress * Math.PI); 
+                        }
+                    }
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(state.x, state.y, this.nodeRadius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = currentFillColor;
+                    this.ctx.fill();
+                    
+                    this.ctx.strokeStyle = currentStrokeColor;
+                    this.ctx.lineWidth = currentLineWidth;
+                    this.ctx.shadowColor = currentStrokeColor;
+                    this.ctx.shadowBlur = currentShadowBlur;
+                    this.ctx.stroke();
+
+                    this.ctx.shadowBlur = 0;
+
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = 'bold 16px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(state.name, state.x, state.y);
+                }
+            }
+
+            drawArrow(fromX, fromY, toX, toY) {
+                const headlen = 10; 
+                const angle = Math.atan2(toY - fromY, toX - fromX);
+
+                const startX = fromX + this.nodeRadius * Math.cos(angle);
+                const startY = fromY + this.nodeRadius * Math.sin(angle);
+                const endX = toX - this.nodeRadius * Math.cos(angle);
+                const endY = toY - this.nodeRadius * Math.sin(angle);
+
+                this.ctx.strokeStyle = '#a5f3fc';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(startX, startY);
+                this.ctx.lineTo(endX, endY);
+                this.ctx.stroke();
+
+                this.ctx.beginPath();
+                this.ctx.moveTo(endX, endY);
+                this.ctx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
+                this.ctx.moveTo(endX, endY);
+                this.ctx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
+                this.ctx.stroke();
+            }
+            
+            drawPhotons(deltaTime, timestamp) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1;
+                const lightningSize = 25; 
+                const lightningColor = 'rgba(255, 215, 0, 0.9)'; 
+
+                this.photons = this.photons.filter(photon => {
+                    if (!photon.animationStarted) {
+                        photon.animationStarted = true;
+                        photon.startTime = timestamp;
+                    }
+
+                    const elapsed = timestamp - photon.startTime;
+                    const duration = 500; 
+
+                    if (elapsed < duration) {
+                        const progress = elapsed / duration;
+                        photon.y = -50 + (photon.targetY + 50) * progress; 
+                        photon.x = photon.targetX; 
+                    } else if (photon.hitTime === null) {
+                        photon.y = photon.targetY;
+                        photon.hitTime = timestamp;
+                    }
+
+                    if (photon.visible && (photon.hitTime === null || (timestamp - photon.hitTime) < this.totalParticleAnimationDuration)) {
+                        this.ctx.save();
+                        this.ctx.translate(photon.x - lightningSize / 2, photon.y - lightningSize / 2);
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(lightningSize * 0.65, lightningSize * 0.7);
+                        this.ctx.lineTo(lightningSize * 0.95, lightningSize * 0.7);
+                        this.ctx.lineTo(lightningSize * 0.55, lightningSize * 1.1);
+                        this.ctx.lineTo(lightningSize * 0.25, lightningSize * 0.8);
+                        this.ctx.lineTo(lightningSize * 0.55, lightningSize * 0.5);
+                        this.ctx.lineTo(lightningSize * 0.25, lightningSize * 0.5);
+                        this.ctx.closePath();
+                        
+                        this.ctx.fillStyle = lightningColor;
+                        this.ctx.shadowColor = lightningColor;
+                        this.ctx.shadowBlur = 20; 
+                        this.ctx.fill();
+                        this.ctx.restore();
+                    }
+                    return photon.hitTime === null || (timestamp - photon.hitTime) < this.totalParticleAnimationDuration;
+                });
+            }
+            
+            drawElectrons(deltaTime) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                this.electrons = this.electrons.filter(electron => {
+                    if (!electron.animationStarted) {
+                        electron.animationStarted = true;
+                        electron.startTime = performance.now(); 
+                    }
+                    const elapsed = performance.now() - electron.startTime;
+                    const duration = electron.duration; 
+
+                    if (elapsed < duration) {
+                        electron.x += (electron.targetX - electron.x) * 0.03 * deltaFactor; 
+                        electron.y += (electron.targetY - electron.y) * 0.03 * deltaFactor; 
+                        return true; 
+                    } else {
+                        electron.opacity -= 0.01 * deltaFactor; 
+                        return electron.opacity > 0;
+                    }
+                });
+
+                this.electrons.forEach(electron => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(electron.x, electron.y, electron.size, 0, Math.PI * 2);
+                    const gradient = this.ctx.createRadialGradient(
+                        electron.x, electron.y, 0, 
+                        electron.x, electron.y, electron.size
+                    );
+                    gradient.addColorStop(0, `rgba(56, 176, 0, ${electron.opacity})`); 
+                    gradient.addColorStop(1, `rgba(56, 176, 0, ${electron.opacity * 0.3})`); 
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${electron.opacity})`;
+                    this.ctx.font = 'bold 12px Arial'; 
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('e⁻', electron.x, electron.y);
+                });
+            }
+            
+            drawProtons(deltaTime) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                this.protons = this.protons.filter(proton => {
+                    if (!proton.animationStarted) {
+                        proton.animationStarted = true;
+                        proton.startTime = performance.now(); 
+                    }
+                    const elapsed = performance.now() - proton.startTime;
+                    const duration = proton.duration; 
+
+                    if (elapsed < duration) {
+                        proton.x += (proton.targetX - proton.x) * 0.02 * deltaFactor; 
+                        proton.y += (proton.targetY - proton.y) * 0.02 * deltaFactor; 
+                        return true;
+                    } else {
+                        proton.opacity -= 0.01 * deltaFactor; 
+                        return proton.opacity > 0;
+                    }
+                });
+
+                this.protons.forEach(proton => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(proton.x, proton.y, proton.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(144, 224, 239, ${proton.opacity * 0.8})`; 
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${proton.opacity})`;
+                    this.ctx.font = 'bold 14px Arial'; 
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('H⁺', proton.x, proton.y);
+                });
+            }
+            
+            drawOxygenBubble(deltaTime) {
+                if (!this.oxygenBubble) return;
+                
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+
+                if (!this.oxygenBubble.animationStarted) {
+                    this.oxygenBubble.animationStarted = true;
+                    this.oxygenBubble.startTime = performance.now(); 
+                }
+                const elapsed = performance.now() - this.oxygenBubble.startTime;
+                const duration = this.oxygenBubble.duration; 
+
+                if (elapsed < duration) {
+                    this.oxygenBubble.x += (this.oxygenBubble.targetX - this.oxygenBubble.x) * 0.02 * deltaFactor; 
+                    this.oxygenBubble.y += (this.oxygenBubble.targetY - this.oxygenBubble.y) * 0.02 * deltaFactor; 
+                } else {
+                    this.oxygenBubble.opacity -= 0.01 * deltaFactor; 
+                }
+
+                if (this.oxygenBubble.opacity !== undefined && this.oxygenBubble.opacity <= 0) {
+                    this.oxygenBubble = null;
+                    return;
+                }
+                
+                const opacity = this.oxygenBubble.opacity !== undefined ? this.oxygenBubble.opacity : 1;
+
+                this.ctx.beginPath();
+                this.ctx.arc(this.oxygenBubble.x, this.oxygenBubble.y, this.oxygenBubble.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = `rgba(229, 56, 59, ${opacity * 0.5})`; 
+                this.ctx.fill();
+                this.ctx.strokeStyle = `rgba(229, 56, 59, ${opacity})`; 
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                
+                this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                this.ctx.font = 'bold 14px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('O₂', this.oxygenBubble.x, this.oxygenBubble.y);
+            }
+
+            drawWaterMolecules(deltaTime) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                this.waterMolecules = this.waterMolecules.filter(water => {
+                    if (water.isConsumed) {
+                        const elapsedConsumption = performance.now() - water.consumptionStartTime;
+                        let consumptionProgress = elapsedConsumption / water.consumptionDuration;
+                        if (consumptionProgress >= 1) {
+                            return false; 
+                        }
+                        water.opacity = Math.max(0, 1 - consumptionProgress); 
+                    } else if (this.waterApproaching && water.targetX !== undefined && !water.reachedTarget) {
+                        const dx = water.targetX - water.x;
+                        const dy = water.targetY - water.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist > 1) { 
+                            water.x += dx * 0.05 * deltaFactor;
+                            water.y += dy * 0.05 * deltaFactor;
+                        } else { 
+                            water.x = water.targetX;
+                            water.y = water.targetY;
+                            water.reachedTarget = true; 
+                        }
+                    }
+                    return water.opacity > 0;
+                });
+
+                this.waterMolecules.forEach(water => {
+                    if (water.opacity <= 0) return; 
+                    const opacity = water.opacity; 
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(water.x, water.y, water.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(229, 56, 59, ${opacity})`; 
+                    this.ctx.fill();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(water.x - water.size, water.y + water.size * 0.5, water.size * 0.6, 0, Math.PI * 2);
+                    this.ctx.arc(water.x + water.size, water.y + water.size * 0.5, water.size * 0.6, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(144, 224, 239, ${opacity})`; 
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    this.ctx.font = '12px Arial'; 
+                    this.ctx.fillText('H₂O', water.x, water.y + water.size + 10);
+                });
+            }
+            
+            draw(timestamp) {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.drawBackground();
+                this.drawSStates(timestamp); 
+                this.drawWaterMolecules(0); 
+            }
+        }
+
+        // OECAnimation Class (adapted)
+        class OECAnimation extends BaseAnimation {
+            constructor(canvas, infoPanelId, controlsId, descriptionBoxId, notesBoxId) {
+                super(canvas, infoPanelId, controlsId, descriptionBoxId);
+                this.notesBox = document.getElementById(notesBoxId);
+                
+                this.electronReleaseDelay = 750;
+                this.totalParticleAnimationDuration = 1500; 
+
+                this.clusterDisplayX = this.width / 2; 
+                this.clusterDisplayY = this.height / 2 + 5; 
+                
+                this.molecules = [];
+                this.electrons = [];
+                this.photons = [];
+                this.oxygenBubble = null;
+                this.protons = []; 
+                
+                this.states = [
+                    { 
+                        name: "S0", 
+                        description: "The Oxygen Evolving Complex (OEC) is in its resting state. The Mn₄CaO₅ cluster is stable, waiting for the first photon."
+                    },
+                    { 
+                        name: "S1", 
+                        description: "First photon absorbed. Mn(III) oxidized to Mn(IV). An electron is released."
+                    },
+                    { 
+                        name: "S2", 
+                        description: "Second photon absorbed. Another Mn(III) oxidized to Mn(IV). Second electron released."
+                    },
+                    { 
+                        name: "S3", 
+                        description: "Third photon absorbed. Oxygen-oxygen bond formation begins. Third electron released."
+                    },
+                    { 
+                        name: "S4", 
+                        description: "Fourth photon absorbed. Molecular oxygen (O₂) is formed and released. Protons and electrons are produced."
+                    }
+                ];
+                
+                this.init();
+                this.resizeCanvas();
+            }
+            
+            init() {
+                this.createOECStructure();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = this.canvas.parentElement.clientWidth > 600 ? 600 : this.canvas.parentElement.clientWidth;
+                this.canvas.height = 400; 
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.clusterDisplayX = this.width / 2; 
+                this.clusterDisplayY = this.height / 2 + 5; 
+                this.createOECStructure(); 
+                this.draw(performance.now()); 
+            }
+            
+            createOECStructure() {
+                this.molecules = [
+                    { type: 'Mn', x: this.clusterDisplayX - 40, y: this.clusterDisplayY - 20, radius: 18 },
+                    { type: 'Mn', x: this.clusterDisplayX + 40, y: this.clusterDisplayY - 20, radius: 18 },
+                    { type: 'Mn', x: this.clusterDisplayX - 20, y: this.clusterDisplayY + 30, radius: 18 },
+                    { type: 'Mn', x: this.clusterDisplayX + 20, y: this.clusterDisplayY + 30, radius: 18 },
+                    
+                    { type: 'Ca', x: this.clusterDisplayX, y: this.clusterDisplayY, radius: 16 },
+                    
+                    { type: 'O', x: this.clusterDisplayX - 30, y: this.clusterDisplayY, radius: 12 },
+                    { type: 'O', x: this.clusterDisplayX + 30, y: this.clusterDisplayY, radius: 12 },
+                    { type: 'O', x: this.clusterDisplayX, y: this.clusterDisplayY - 30, radius: 12 },
+                    { type: 'O', x: this.clusterDisplayX, y: this.clusterDisplayY + 15, radius: 12 },
+                    { type: 'O', x: this.clusterDisplayX, y: this.clusterDisplayY + 45, radius: 12 },
+                ];
+                
+                this.waterMolecules = [
+                    { x: this.clusterDisplayX - 100, y: this.clusterDisplayY + 50 },
+                    { x: this.clusterDisplayX + 100, y: this.clusterDisplayY + 50 }
+                ];
+            }
+            
+            updateStateInfo() {
+                const currentStateData = this.states[this.currentState];
+                this.getCurrentStateSpan().textContent = currentStateData.name;
+                this.getStateDescriptionParagraph().textContent = currentStateData.description;
+                
+                const flowchartContainer = this.getFlowchartContainer();
+                for (let i = 0; i < this.states.length; i++) {
+                    const stepElement = document.getElementById(`oec-step-${i}-desc`); 
+                    if (stepElement) {
+                        if (i <= this.currentState) {
+                            stepElement.classList.add('visible');
+                        } else {
+                            stepElement.classList.remove('visible');
+                        }
+                    }
+                }
+            }
+            
+            prevState() {
+                this.currentState = (this.currentState - 1 + 5) % 5;
+                this.updateStateInfo();
+                this.updateVisuals(); 
+                this.startAnimation(); 
+                this.cancelPendingTransition(); 
+            }
+            
+            nextState() {
+                this.currentState = (this.currentState + 1) % 5;
+                this.updateStateInfo();
+                this.updateVisuals(); 
+                this.startAnimation(); 
+                this.cancelPendingTransition(); 
+                
+                if (this.isAutoplaying) {
+                    this.scheduleNextState();
+                }
+            }
+            
+            resetAnimationElements() {
+                this.photons = [];
+                this.electrons = []; 
+                this.oxygenBubble = null;
+                this.protons = []; 
+                this.photonHitTimestamp = 0; 
+
+                this.waterMolecules = [
+                    { x: this.clusterDisplayX - 100, y: this.clusterDisplayY + 50 },
+                    { x: this.clusterDisplayX + 100, y: this.clusterDisplayY + 50 }
+                ];
+            }
+
+            updateVisuals() {
+                this.resetAnimationElements();
+
+                switch(this.currentState) {
+                    case 0: 
+                        break;
+                    case 1: 
+                        this.photons.push({ x: this.clusterDisplayX, y: -20, targetY: this.clusterDisplayY, hitTime: null }); 
+                        break;
+                    case 2: 
+                        this.photons.push({ x: this.clusterDisplayX, y: -20, targetY: this.clusterDisplayY, hitTime: null });
+                        break;
+                    case 3: 
+                        this.photons.push({ x: this.clusterDisplayX, y: -20, targetY: this.clusterDisplayY, hitTime: null });
+                        this.waterMolecules[0] = { x: this.clusterDisplayX - 100, y: this.clusterDisplayY + 50, targetX: this.clusterDisplayX - 30, targetY: this.clusterDisplayY + 30 };
+                        this.waterMolecules[1] = { x: this.clusterDisplayX + 100, y: this.clusterDisplayY + 50, targetX: this.clusterDisplayX + 30, targetY: this.clusterDisplayY + 30 };
+                        break;
+                    case 4: 
+                        this.photons.push({ x: this.clusterDisplayX, y: -20, targetY: this.clusterDisplayY, hitTime: null });
+                        this.oxygenBubble = { x: this.clusterDisplayX, y: this.clusterDisplayY + 30, radius: 5, growing: true };
+                        this.protons = [
+                            { x: this.clusterDisplayX - 20, y: this.clusterDisplayY + 30, targetY: this.height + 50 },
+                            { x: this.clusterDisplayX + 20, y: this.clusterDisplayY + 30, targetY: this.height + 50 }
+                        ];
+                        this.waterMolecules = []; 
+                        break;
+                }
+            }
+            
+            animate(timestamp) {
+                const deltaTime = timestamp - this.lastFrameTime;
+                this.lastFrameTime = timestamp;
+                
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                
+                this.drawBackground();
+                this.drawOEC();
+                this.drawWaterMolecules(deltaTime);
+                
+                this.drawPhotons(deltaTime, timestamp); 
+
+                if (this.photonHitTimestamp > 0 && timestamp - this.photonHitTimestamp >= this.electronReleaseDelay) {
+                    if (this.electrons.length === 0) {
+                        switch(this.currentState) {
+                            case 1: 
+                                this.electrons.push({ x: this.clusterDisplayX, y: this.clusterDisplayY, targetX: this.width + 50, targetY: 100 });
+                                break;
+                            case 2: 
+                                this.electrons.push({ x: this.clusterDisplayX, y: this.clusterDisplayY, targetX: this.width + 50, targetY: 150 });
+                                break;
+                            case 3: 
+                                this.electrons.push({ x: this.clusterDisplayX, y: this.clusterDisplayY, targetX: this.width + 50, targetY: 200 });
+                                break;
+                            case 4: 
+                                this.electrons.push({ x: this.clusterDisplayX, y: this.clusterDisplayY, targetX: this.width + 50, targetY: 250 });
+                                this.electrons.push({ x: this.clusterDisplayX, y: this.clusterDisplayY, targetX: this.width + 50, targetY: 300 });
+                                break;
+                        }
+                    }
+                }
+                
+                this.drawElectrons(deltaTime);
+                this.drawOxygenBubble(deltaTime);
+                this.drawProtons(deltaTime);
+                
+                const elementsStillAnimating = 
+                    this.photons.length > 0 || 
+                    this.electrons.length > 0 || 
+                    (this.oxygenBubble !== null && (this.oxygenBubble.growing || this.oxygenBubble.y > -30)) || 
+                    (this.protons && this.protons.length > 0) ||
+                    (this.waterMolecules.length > 0 && this.waterMolecules[0].targetX !== undefined && 
+                     (Math.abs(this.waterMolecules[0].targetX - this.waterMolecules[0].x) > 0.5 || Math.abs(this.waterMolecules[0].targetY - this.waterMolecules[0].y) > 0.5));
+                
+                if (this.isAutoplaying || elementsStillAnimating) {
+                    this.animationId = requestAnimationFrame((ts) => this.animate(ts));
+                } else {
+                    this.stopAnimation();
+                }
+            }
+            
+            drawBackground() {
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
+                gradient.addColorStop(0, '#0c1b27');
+                gradient.addColorStop(1, '#123652');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                this.ctx.fillStyle = 'rgba(224, 242, 254, 0.1)';
+                this.ctx.font = 'bold 24px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('PHOTOSYSTEM II', this.width / 2, 40);
+                
+                this.ctx.strokeStyle = 'rgba(255, 215, 0, 0.1)';
+                this.ctx.lineWidth = 1;
+                for (let i = 0; i < this.width; i += 20) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(i, 0);
+                    this.ctx.lineTo(i, this.height);
+                    this.ctx.stroke();
+                }
+            }
+            
+            drawOEC() {
+                this.ctx.strokeStyle = 'rgba(224, 242, 254, 0.4)';
+                this.ctx.lineWidth = 2;
+                
+                for (let i = 0; i < 4; i++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.molecules[i].x, this.molecules[i].y);
+                    this.ctx.lineTo(this.molecules[4].x, this.molecules[4].y);
+                    this.ctx.stroke();
+                }
+                
+                for (let i = 0; i < 4; i++) {
+                    for (let j = 5; j < 10; j++) {
+                        const dx = this.molecules[i].x - this.molecules[j].x;
+                        const dy = this.molecules[i].y - this.molecules[j].y;
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        if (dist < 45) { 
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(this.molecules[i].x, this.molecules[i].y);
+                            this.ctx.lineTo(this.molecules[j].x, this.molecules[j].y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+                
+                this.molecules.forEach(atom => {
+                    let color;
+                    switch(atom.type) {
+                        case 'Mn': color = '#9d4edd'; break; 
+                        case 'Ca': color = '#ff9e00'; break; 
+                        case 'O': color = '#e5383b'; break; 
+                    }
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(atom.x, atom.y, atom.radius, 0, Math.PI * 2);
+                    this.ctx.fillStyle = color;
+                    this.ctx.fill();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(atom.x - atom.radius/3, atom.y - atom.radius/3, atom.radius/3, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = 'bold 14px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(atom.type, atom.x, atom.y);
+                });
+                
+                this.ctx.fillStyle = '#90e0ef';
+                this.ctx.font = 'bold 16px Arial';
+                this.ctx.fillText('Mn₄CaO₅ Cluster', this.clusterDisplayX, this.clusterDisplayY - 70); 
+            }
+            
+            drawWaterMolecules(deltaTime) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                this.waterMolecules.forEach(water => {
+                    if (water.targetX !== undefined) {
+                        water.x += (water.targetX - water.x) * 0.05 * deltaFactor;
+                        water.y += (water.targetY - water.y) * 0.05 * deltaFactor;
+                        if (Math.abs(water.targetX - water.x) < 0.5 && Math.abs(water.targetY - water.y) < 0.5) {
+                            water.x = water.targetX;
+                            water.y = water.targetY;
+                            delete water.targetX; 
+                            delete water.targetY;
+                        }
+                    }
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(water.x, water.y, 12, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#e5383b'; 
+                    this.ctx.fill();
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(water.x - 15, water.y, 8, 0, Math.PI * 2);
+                    this.ctx.arc(water.x + 15, water.y, 8, 0, Math.PI * 2);
+                    this.ctx.fillStyle = '#90e0ef'; 
+                    this.ctx.fill();
+                    
+                    this.ctx.strokeStyle = 'rgba(224, 242, 254, 0.6)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(water.x - 10, water.y);
+                    this.ctx.lineTo(water.x - 15, water.y);
+                    this.ctx.moveTo(water.x + 10, water.y);
+                    this.ctx.lineTo(water.x + 15, water.y);
+                    this.ctx.stroke();
+                    
+                    this.ctx.fillStyle = '#90e0ef';
+                    this.ctx.font = '14px Arial';
+                    this.ctx.fillText('H₂O', water.x, water.y + 30);
+                });
+            }
+            
+            drawPhotons(deltaTime, timestamp) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1;
+                const lightningSize = 20;
+                const lightningColor = '#FFD700';
+
+                this.photons = this.photons.filter(photon => {
+                    if (photon.hitTime === null) {
+                        photon.y += 5 * deltaFactor; 
+                        if (photon.y >= photon.targetY) {
+                            photon.y = photon.targetY; 
+                            photon.hitTime = timestamp; 
+                            if (this.photonHitTimestamp === 0) { 
+                                this.photonHitTimestamp = timestamp;
+                            }
+                        }
+                    }
+
+                    if (photon.hitTime === null || (timestamp - photon.hitTime) < this.electronReleaseDelay) {
+                        this.ctx.save();
+                        this.ctx.translate(photon.x - lightningSize / 2, photon.y - lightningSize / 2);
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(lightningSize * 0.65, lightningSize * 0.7);
+                        this.ctx.lineTo(lightningSize * 0.95, lightningSize * 0.7);
+                        this.ctx.lineTo(lightningSize * 0.55, lightningSize * 1.1);
+                        this.ctx.lineTo(lightningSize * 0.25, lightningSize * 0.8);
+                        this.ctx.lineTo(lightningSize * 0.55, lightningSize * 0.5);
+                        this.ctx.lineTo(lightningSize * 0.25, lightningSize * 0.5);
+                        this.ctx.closePath();
+                        
+                        this.ctx.fillStyle = lightningColor;
+                        this.ctx.shadowColor = lightningColor;
+                        this.ctx.shadowBlur = 15;
+                        this.ctx.fill();
+                        this.ctx.restore();
+                        return true; 
+                    }
+                    return false; 
+                });
+            }
+            
+            drawElectrons(deltaTime) {
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                this.electrons = this.electrons.filter(electron => 
+                    Math.abs(electron.targetX - electron.x) > 1 || Math.abs(electron.targetY - electron.y) > 1
+                );
+
+                this.electrons.forEach(electron => {
+                    if (electron.targetX) {
+                        electron.x += (electron.targetX - electron.x) * 0.015 * deltaFactor; 
+                        electron.y += (electron.targetY - electron.y) * 0.015 * deltaFactor; 
+                    }
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(electron.x, electron.y, 8, 0, Math.PI * 2);
+                    const gradient = this.ctx.createRadialGradient(
+                        electron.x, electron.y, 0, 
+                        electron.x, electron.y, 8
+                    );
+                    gradient.addColorStop(0, '#38b000'); 
+                    gradient.addColorStop(1, 'rgba(56, 176, 0, 0.3)'); 
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = 'bold 10px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('e⁻', electron.x, electron.y);
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.clusterDisplayX, this.clusterDisplayY); 
+                    this.ctx.lineTo(electron.x, electron.y);
+                    this.ctx.strokeStyle = 'rgba(56, 176, 0, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.stroke();
+                });
+            }
+            
+            drawOxygenBubble(deltaTime) {
+                if (!this.oxygenBubble) return;
+                
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                if (this.oxygenBubble.growing) {
+                    this.oxygenBubble.radius += 0.2 * deltaFactor;
+                    if (this.oxygenBubble.radius > 20) {
+                        this.oxygenBubble.growing = false;
+                    }
+                } else {
+                    this.oxygenBubble.y -= 1.5 * deltaFactor; 
+                }
+                
+                this.ctx.beginPath();
+                this.ctx.arc(this.oxygenBubble.x, this.oxygenBubble.y, this.oxygenBubble.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = 'rgba(229, 56, 59, 0.5)'; 
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#e5383b'; 
+                this.ctx.lineWidth = 2;
+                this.ctx.stroke();
+                
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = 'bold 14px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('O₂', this.oxygenBubble.x, this.oxygenBubble.y);
+                
+                if (this.oxygenBubble.y < -30) {
+                    this.oxygenBubble = null;
+                }
+            }
+            
+            drawProtons(deltaTime) {
+                if (!this.protons || this.protons.length === 0) return;
+                
+                const deltaFactor = deltaTime ? Math.min(deltaTime / 16, 2) : 1; 
+                
+                this.protons = this.protons.filter(proton => proton.y < proton.targetY);
+
+                this.protons.forEach(proton => {
+                    proton.y += 2 * deltaFactor;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(proton.x, proton.y, 6, 0, Math.PI * 2);
+                    this.ctx.fillStyle = 'rgba(144, 224, 239, 0.8)'; 
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = 'white';
+                    this.ctx.font = 'bold 12px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText('H⁺', proton.x, proton.y);
+                });
+            }
+            
+            draw(timestamp) {
+                this.ctx.clearRect(0, 0, this.width, this.height);
+                this.drawBackground();
+                this.drawOEC();
+                this.drawWaterMolecules(0); 
+                this.drawPhotons(0, timestamp); 
+                this.drawElectrons(0); 
+                this.drawOxygenBubble(0);
+                this.drawProtons(0);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('mainContent');
+            if (checkDomain() && checkEmailIntegrity()) {
+                document.body.classList.remove('hidden-content');
+
+                // Initialize S-State Animation (now first)
+                const sStateCanvas = document.getElementById('sStateCanvas');
+                const sStateAnimation = new SStateAnimation(sStateCanvas, 'sStateInfoPanel', 'sStateControls', 'sStateDescriptionBox', 'sStateNotes');
+                sStateAnimation.bindControls();
+                sStateAnimation.updateStateInfo();
+                sStateAnimation.draw(performance.now());
+                sStateAnimation.startAnimation();
+
+                // Initialize OEC Animation (now second)
+                const oecCanvas = document.getElementById('oecCanvas');
+                const oecAnimation = new OECAnimation(oecCanvas, 'oecInfoPanel', 'oecControls', 'oecDescriptionBox', 'oecNotes');
+                oecAnimation.bindControls();
+                oecAnimation.updateStateInfo();
+                oecAnimation.draw(performance.now());
+                oecAnimation.startAnimation();
+            } else {
+                // If integrity check fails or domain is incorrect, do nothing.
+                // The .hidden-content class on the body will keep content hidden.
+                console.warn("Domain or script integrity check failed. Content will not load.");
+                // Optionally, clear canvases to ensure no partial rendering if they were already initialized
+                const sStateCanvas = document.getElementById('sStateCanvas');
+                if (sStateCanvas) sStateCanvas.getContext('2d').clearRect(0, 0, sStateCanvas.width, sStateCanvas.height);
+                const oecCanvas = document.getElementById('oecCanvas');
+                if (oecCanvas) oecCanvas.getContext('2d').clearRect(0, 0, oecCanvas.width, oecCanvas.height);
+            }
+        });
+    </script>
+</body>
+</html>
