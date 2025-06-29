@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glycolysis Master: Interactive Learning Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif; /* Changed to Inter font */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1; /* Allow container to grow and push footer down */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .game-mode {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid transparent;
+        }
+
+        .game-mode:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .game-mode.active {
+            background: rgba(255,255,255,0.25);
+            border-color: #ffd700;
+        }
+
+        .game-area {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            min-height: 500px;
+        }
+
+        .pathway-builder {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pathway-step {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(255,255,255,0.3);
+            position: relative; /* For drop zone highlighting */
+        }
+
+        .pathway-step.filled {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4CAF50;
+        }
+
+        .pathway-step.wrong {
+            background: rgba(244, 67, 54, 0.3);
+            border: 2px solid #f44336;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .pathway-step.drag-over { /* Highlight for drag-and-drop */
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .enzyme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .enzyme-card {
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: grab; /* Indicate draggable */
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            touch-action: none; /* Prevent browser default touch behavior */
+            word-break: break-word; /* Allow long words to break */
+        }
+
+        .enzyme-card:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .enzyme-card.selected {
+            background: rgba(255, 193, 7, 0.3);
+            border: 2px solid #FFC107;
+        }
+
+        .enzyme-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Ghost element for touch drag */
+        .drag-ghost {
+            position: fixed;
+            background: rgba(255,255,255,0.8);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            pointer-events: none; /* Don't block elements beneath */
+            z-index: 1000;
+            transform: translate(-50%, -50%); /* Center the ghost on the finger */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: #333; /* Darker text for ghost */
+            max-width: 150px; /* Constrain ghost size */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        .question-area {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+
+        .regulation-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .regulator-card {
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .regulator-type {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .activator {
+            background: rgba(76, 175, 80, 0.3);
+        }
+
+        .inhibitor {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            height: 25px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 25px;
+        }
+
+        .feedback {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .molecule-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .molecule {
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .molecule:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .molecule.selected-regulator { /* New class for selected regulators */
+            background: rgba(255, 193, 7, 0.3); /* Highlight color */
+            border: 2px solid #FFC107;
+        }
+
+        .molecule.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+
+        .drop-zone {
+            border: 3px dashed rgba(255,255,255,0.5);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: auto; /* Push footer to the bottom */
+        }
+
+        /* Styles for the Telegram link */
+        .telegram-link {
+            color: #87CEEB; /* Sky Blue */
+            text-decoration: none; /* Remove underline */
+            transition: all 0.2s ease-in-out; /* Smooth transition for hover effects */
+            display: inline-block; /* Allows transform */
+        }
+
+        .telegram-link:hover {
+            color: #ADD8E6; /* Lighter blue on hover */
+            transform: scale(1.05); /* Slightly enlarge on hover */
+            text-shadow: 0 0 8px rgba(135, 206, 235, 0.8); /* Glow effect */
+        }
+
+        .telegram-link:active {
+            transform: scale(0.98); /* Slightly shrink on click */
+            color: #6A5ACD; /* Slate Blue on active */
+        }
+
+        /* --- Mobile Optimizations --- */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            .game-stats {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+            }
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            .game-modes, .enzyme-options, .molecule-display {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjusted min-width for cards/options */
+                gap: 15px; /* Keep gap consistent or adjust */
+            }
+            .game-mode, .enzyme-card, .molecule, .option {
+                padding: 15px; /* Slightly reduce padding for smaller screens */
+            }
+            .question {
+                font-size: 1.1rem; /* Smaller font for questions */
+            }
+            .btn {
+                padding: 10px 20px; /* Adjust button padding */
+                font-size: 0.95rem;
+                margin: 5px; /* Adjust margin between buttons */
+            }
+            .pathway-builder {
+                grid-template-columns: repeat(2, 1fr); /* Two columns on tablets/larger phones */
+            }
+            .pathway-step {
+                min-height: 100px; /* Adjust step height */
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            .drop-zone {
+                min-height: 90px;
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .game-stats {
+                padding: 8px;
+            }
+            .stat-value {
+                font-size: 1.1rem;
+            }
+            .game-mode h3 {
+                font-size: 1rem;
+            }
+            .game-mode p {
+                font-size: 0.85rem;
+            }
+            .game-modes, .enzyme-options, .molecule-display {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Further reduced min-width */
+                gap: 8px; /* Slightly reduce gap for tighter fit */
+            }
+            .enzyme-card {
+                padding: 10px; /* Reduced padding for enzyme cards */
+            }
+            .enzyme-card strong { /* Targeting enzyme name specifically */
+                font-size: 0.8rem; /* Smaller font for enzyme names */
+                line-height: 1.2; /* Tighter line height for long names */
+            }
+            .enzyme-card small { /* Targeting substrate/product text */
+                font-size: 0.7rem; /* Even smaller font for details */
+            }
+            .pathway-builder {
+                grid-template-columns: repeat(1, 1fr); /* Single column on very small phones */
+            }
+            .pathway-step {
+                min-height: 80px; /* Adjust step height */
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+            .question {
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+            .drop-zone {
+                min-height: 70px;
+                padding: 10px;
+            }
+        }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 500px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .modal-content p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .modal-content .btn {
+            background: linear-gradient(45deg, #4ECDC4, #FF6B6B); /* Inverted colors for contrast */
+            padding: 10px 25px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // --- Primary Security Layer: Domain Check ---
+        // This script block MUST be at the very top of the <body>.
+        // It checks if the current hostname matches the allowed domain.
+        // If not, it clears all HTML content and stops further script execution,
+        // effectively showing a blank page without errors.
+        const ALLOWED_HOSTNAME = "betabiosciences.github.io";
+        const currentHostname = window.location.hostname;
+
+        if (currentHostname !== ALLOWED_HOSTNAME) {
+            // Clear all HTML content to prevent display and further script execution
+            document.documentElement.innerHTML = '';
+            // Throw an error to stop script execution, but it won't be visible to the user
+            // because the DOM has been cleared.
+            throw new Error("Access denied: This page can only be accessed from " + ALLOWED_HOSTNAME);
+        }
+        // --- End Primary Security Layer ---
+
+        // Security check string: This string is used for internal integrity verification.
+        // If this string is modified, the game will not initialize.
+        const SECURITY_STRING = "betabiosciences@gmail.com";
+
+        // Function to verify the security string for game initialization.
+        function verifySecurity() {
+            // Check if the security string is present and unmodified.
+            // This acts as an internal integrity check for the script.
+            if (typeof SECURITY_STRING === 'undefined' || SECURITY_STRING !== "betabiosciences@gmail.com") {
+                // If the string is missing or modified, prevent the game content from loading.
+                // IMPORTANT: This specific check DOES NOT clear the entire HTML,
+                // allowing the page structure (header/footer) to remain, but the game area will be empty.
+                return false;
+            }
+            // If the string is valid, proceed with loading the game.
+            return true;
+        }
+
+        // Call the internal security verification.
+        // If this fails, the game will not load, but the page itself won't be blanked.
+        // The primary domain security check above handles blanking the page if the domain is wrong.
+        if (!verifySecurity()) {
+            // Log an error for debugging purposes (won't be visible to the end-user on a blanked page).
+            console.error("Internal script integrity check failed. Game will not load.");
+            // No need to clear document.documentElement.innerHTML here, as the primary domain check
+            // already handles making the page blank if accessed from an unauthorized domain.
+            // If on the correct domain and this fails, the game simply won't start.
+        }
+
+        // Add copyright notice to the footer
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyrightNotice = document.getElementById('copyright-notice');
+            if (copyrightNotice) {
+                // The SECURITY_STRING is also used for a simple copyright notice display.
+                copyrightNotice.textContent = `${SECURITY_STRING}`; 
+            }
+            // Initialize the game if all security checks pass
+            if (verifySecurity()) { // Re-check verifySecurity to ensure game only starts if this is true
+                updateStats();
+                loadPathwayBuilder(); // Load the default mode on start
+            }
+        });
+
+
+        let gameState = {
+            currentMode: 'pathway',
+            score: 0,
+            level: 1,
+            streak: 0,
+            energy: 100,
+            currentQuestion: 0,
+            selectedEnzyme: null,
+            pathwayProgress: [],
+            pathwayCompleted: false, // Flag for Pathway Builder completion
+            regulationCompleted: false, // Flag for Regulation Master completion
+            anaerobicCompleted: false, // Flag for Anaerobic Challenge completion
+            quizCompleted: false, // Flag for Knowledge Quiz completion
+            regulationCorrectAnswersInCurrentLoop: 0,
+            anaerobicCorrectAnswersInCurrentLoop: 0,
+            quizCorrectAnswersInCurrentLoop: 0,
+        };
+
+        const glycolysisSteps = [
+            { enzyme: 'Hexokinase', substrate: 'Glucose', product: 'Glucose-6-phosphate', regulation: 'Inhibited by G6P' },
+            { enzyme: 'Phosphoglucose isomerase', substrate: 'Glucose-6-phosphate', product: 'Fructose-6-phosphate', regulation: 'None' },
+            { enzyme: 'Phosphofructokinase-1', substrate: 'Fructose-6-phosphate', product: 'Fructose-1,6-bisphosphate', regulation: 'Key regulatory step' },
+            { enzyme: 'Aldolase', substrate: 'Fructose-1,6-bisphosphate', product: 'DHAP + G3P', regulation: 'None' },
+            { enzyme: 'Triose phosphate isomerase', substrate: 'DHAP', product: 'Glyceraldehyde-3-phosphate', regulation: 'None' },
+            { enzyme: 'Glyceraldehyde-3-phosphate dehydrogenase', substrate: 'G3P', product: '1,3-Bisphosphoglycerate', regulation: 'NADH production' },
+            { enzyme: 'Phosphoglycerate kinase', substrate: '1,3-BPG', product: '3-Phosphoglycerate', regulation: 'ATP production' },
+            { enzyme: 'Phosphoglycerate mutase', substrate: '3-Phosphoglycerate', product: '2-Phosphoglycerate', regulation: 'None' },
+            { enzyme: 'Enolase', substrate: '2-Phosphoglycerate', product: 'Phosphoenolpyruvate', regulation: 'Inhibited by fluoride' },
+            { enzyme: 'Pyruvate kinase', substrate: 'PEP', product: 'Pyruvate', regulation: 'Allosteric regulation' }
+        ];
+
+        const allRegulators = {
+            activators: ['AMP', 'ADP', 'Pi', 'Insulin', 'Fructose-2,6-bisphosphate', 'Fructose-1,6-bisphosphate (for PK)', 'Glucose (for Glucokinase)'],
+            inhibitors: ['ATP', 'Citrate', 'Glucose-6-phosphate', 'Glucagon', 'Alanine', 'NADH', 'Fatty Acids', 'Acetyl-CoA', 'High H+ (low pH)', 'Long-chain fatty acids']
+        };
+
+        // Regulation scenarios with specific correct activators and inhibitors
+        const regulationScenarios = [
+            {
+                question: "A muscle cell is exercising intensely. ATP levels are low, AMP levels are high. Which regulators should be active to increase glycolysis rate?",
+                correctActivators: ['AMP', 'ADP'],
+                correctInhibitors: [],
+                explanation: "Low ATP and high AMP signal an energy deficit, activating glycolysis to produce more ATP."
+            },
+            {
+                question: "The liver has just consumed a high-carbohydrate meal. Blood glucose is high. How should glycolysis be regulated in the liver?",
+                correctActivators: ['Insulin', 'Fructose-2,6-bisphosphate'],
+                correctInhibitors: [],
+                explanation: "High glucose and insulin signal a fed state, promoting glucose utilization and storage via glycolysis."
+            },
+            {
+                question: "A cell has abundant energy reserves. ATP levels are high, and the cell is performing anabolic processes. How should glycolysis be regulated affinities?",
+                correctActivators: [],
+                correctInhibitors: ['ATP', 'Citrate'],
+                explanation: "High ATP and citrate (from TCA cycle) indicate sufficient energy, inhibiting glycolysis to conserve glucose."
+            },
+            {
+                question: "During a fasting state, glucagon levels are high. How does this affect glycolysis in the liver?",
+                correctActivators: [],
+                correctInhibitors: ['Glucagon'],
+                explanation: "Glucagon signals low blood glucose, inhibiting glycolysis in the liver to promote gluconeogenesis."
+            },
+            {
+                question: "A cell is undergoing vigorous exercise, leading to an accumulation of Fructose-1,6-bisphosphate. How does this affect pyruvate kinase?",
+                correctActivators: ['Fructose-1,6-bisphosphate (for PK)'],
+                correctInhibitors: [],
+                explanation: "Fructose-1,6-bisphosphate is a potent allosteric activator of pyruvate kinase, ensuring metabolites flow through the pathway."
+            },
+            {
+                question: "A cell has an excess of fatty acids. How might this impact glycolysis?",
+                correctActivators: [],
+                correctInhibitors: ['Fatty Acids', 'Acetyl-CoA'],
+                explanation: "High fatty acids can lead to increased Acetyl-CoA, which inhibits pyruvate dehydrogenase and can indirectly inhibit glycolysis."
+            },
+            {
+                question: "A strenuous workout leads to a decrease in cellular pH (increase in H+). How does this acidotic condition affect glycolysis?",
+                correctActivators: [],
+                correctInhibitors: ['High H+ (low pH)'],
+                explanation: "Low pH inhibits PFK-1 activity, preventing further acid accumulation and protecting the muscle from damage."
+            },
+            {
+                question: "In adipose tissue, insulin promotes the conversion of glucose to fatty acids for storage. How does insulin affect glycolysis in this tissue?",
+                correctActivators: ['Insulin'],
+                correctInhibitors: [],
+                explanation: "Insulin promotes glucose uptake and utilization in adipose tissue, including glycolysis for fatty acid synthesis."
+            },
+            {
+                question: "During starvation, liver glycogen stores are depleted, and amino acids are being used for gluconeogenesis. What effect does alanine have on liver glycolysis?",
+                correctActivators: [],
+                correctInhibitors: ['Alanine'],
+                explanation: "Alanine signals protein breakdown for gluconeogenesis, inhibiting glycolysis in the liver to spare glucose."
+            },
+            {
+                question: "A cell is experiencing oxidative stress, leading to a build-up of NADH. How might this affect the activity of Glyceraldehyde-3-phosphate dehydrogenase (GAPDH)?",
+                correctActivators: [],
+                correctInhibitors: ['NADH'],
+                explanation: "High NADH inhibits GAPDH, as the enzyme needs NAD+ to proceed. This is a form of product inhibition."
+            },
+            {
+                question: "A patient with a rare genetic disorder has a deficiency in pyruvate kinase. Which regulator would you expect to accumulate upstream of this enzyme?",
+                correctActivators: [],
+                correctInhibitors: ['ATP'], // ATP would accumulate if PK is deficient and glycolysis is not consuming it
+                explanation: "If pyruvate kinase is deficient, intermediates like PEP will accumulate. High ATP would also indicate energy surplus if other pathways are compensating."
+            },
+            {
+                question: "In red blood cells, which lack mitochondria, glycolysis is the sole source of ATP. How is glycolysis regulated to ensure a constant supply of energy?",
+                correctActivators: ['AMP', 'ADP'],
+                correctInhibitors: ['ATP'],
+                explanation: "Red blood cells rely heavily on glycolysis, so its regulation is tightly linked to energy demands, with AMP/ADP activating and ATP inhibiting."
+            },
+            {
+                question: "A cell is under aerobic conditions, and the Krebs cycle is highly active, producing a lot of citrate. How does citrate impact glycolysis?",
+                correctActivators: [],
+                correctInhibitors: ['Citrate'],
+                explanation: "Citrate is an allosteric inhibitor of PFK-1, signaling that precursors for the Krebs cycle are abundant and glycolysis can slow down."
+            },
+            {
+                question: "What happens to glycolysis in the liver when Glucose-6-phosphate levels are high due to hexokinase activity?",
+                correctActivators: [],
+                correctInhibitors: ['Glucose-6-phosphate'],
+                explanation: "Glucose-6-phosphate is a feedback inhibitor of hexokinase, preventing excessive phosphorylation of glucose when product is abundant."
+            }
+        ];
+
+        const anaerobicScenarios = [
+            {
+                question: "Oxygen levels have dropped to zero! Your muscle cells need to continue producing ATP. What happens to pyruvate in these conditions?",
+                correctProduct: 'lactate',
+                explanation: "In anaerobic conditions, pyruvate is reduced to lactate by lactate dehydrogenase. This regenerates NAD+ allowing glycolysis to continue."
+            },
+            {
+                question: "A yeast cell is fermenting grape juice in the absence of oxygen. What product is pyruvate converted into?",
+                correctProduct: 'ethanol',
+                explanation: "Yeast performs alcoholic fermentation, converting pyruvate to ethanol and carbon dioxide, regenerating NAD+."
+            },
+            {
+                question: "You're sprinting for a short burst. Your muscles rapidly deplete oxygen. What is the immediate fate of pyruvate to sustain glycolysis?",
+                correctProduct: 'lactate',
+                explanation: "During intense, short bursts of exercise, muscles switch to lactate fermentation to quickly regenerate NAD+ for glycolysis."
+            },
+            {
+                question: "A bacterium is growing in an oxygen-free environment. It generates energy through fermentation. If it produces butanol, what is one key intermediate it would need to regenerate from pyruvate?",
+                correctProduct: 'nadh_regeneration', // This is a bit abstract, but relates to the need to regenerate NAD+
+                explanation: "While complex, various fermentations regenerate NAD+ from pyruvate and its derivatives. NAD+ is crucial for glycolysis to continue."
+            },
+            {
+                question: "A red blood cell, which lacks mitochondria, must produce ATP anaerobically. How does it dispose of pyruvate?",
+                correctProduct: 'lactate',
+                explanation: "Red blood cells rely entirely on glycolysis and convert pyruvate to lactate to regenerate NAD+ for continuous ATP production."
+            },
+            {
+                question: "If a cell's lactate dehydrogenase enzyme was non-functional in anaerobic conditions, what would be the immediate consequence for glycolysis?",
+                correctProduct: 'glycolysis_stops_nad_depletion', // Represents a conceptual outcome
+                explanation: "Without functional lactate dehydrogenase, NAD+ cannot be regenerated, and glycolysis would halt due to NAD+ depletion."
+            },
+            {
+                question: "During an intense weightlifting session, your muscles feel a burning sensation. What accumulates that contributes to this feeling?",
+                correctProduct: 'lactate',
+                explanation: "Lactate accumulation is associated with the burning sensation during intense anaerobic exercise."
+            },
+            {
+                question: "Some bacteria perform mixed acid fermentation. While producing various acids, what is the fundamental purpose for their pyruvate metabolism in an anaerobic environment?",
+                correctProduct: 'nadh_regeneration',
+                explanation: "The primary purpose of various fermentation pathways is to regenerate NAD+ from NADH, allowing glycolysis to continue."
+            },
+            {
+                question: "A cell is in an environment completely devoid of an electron acceptor for the electron transport chain. What pathway will pyruvate enter?",
+                correctProduct: 'fermentation', // More general term, but valid
+                explanation: "Without an external electron acceptor (like oxygen), pyruvate must undergo fermentation to regenerate NAD+ for glycolysis."
+            },
+            {
+                question: "If a cell had a mutation preventing the conversion of pyruvate to lactate or ethanol, and no oxygen was present, what would be the critical limiting factor for ATP production?",
+                correctProduct: 'nadh_regeneration',
+                explanation: "The inability to regenerate NAD+ would be the critical limiting factor, as glycolysis would stop due to lack of oxidized NAD+."
+            }
+        ];
+
+
+        const quizQuestions = [
+            {
+                question: "What is the net ATP yield from glycolysis per glucose molecule?",
+                options: ["1 ATP", "2 ATP", "4 ATP", "6 ATP"],
+                correct: 1,
+                explanation: "Glycolysis produces 4 ATP but consumes 2 ATP, resulting in a net gain of 2 ATP."
+            },
+            {
+                question: "Which enzyme catalyzes the rate-limiting step of glycolysis?",
+                options: ["Hexokinase", "Phosphofructokinase-1", "Pyruvate kinase", "Aldolase"],
+                correct: 1,
+                explanation: "PFK-1 is the major rate-limiting enzyme and primary control point of glycolysis."
+            },
+            {
+                question: "In anaerobic conditions, pyruvate is converted to:",
+                options: ["Acetyl-CoA", "Lactate", "Ethanol", "Both B and C"],
+                correct: 3,
+                explanation: "In anaerobic conditions, pyruvate can be converted to lactate (animals) or ethanol (yeast)."
+            },
+            {
+                question: "Which molecule is the primary allosteric activator of PFK-1?",
+                options: ["ATP", "Citrate", "AMP", "Glucose-6-phosphate"],
+                correct: 2,
+                explanation: "AMP is a key allosteric activator of PFK-1, signaling low energy status."
+            },
+            {
+                question: "The Pasteur effect refers to:",
+                options: ["Inhibition of glycolysis by oxygen", "Acceleration of glycolysis by oxygen", "Independence of glycolysis from oxygen", "Conversion of glucose to lactate"],
+                correct: 0,
+                explanation: "The Pasteur effect is the inhibition of glucose consumption when oxygen is present."
+            },
+            {
+                question: "How many NADH molecules are produced per glucose molecule during glycolysis?",
+                options: ["0", "1", "2", "4"],
+                correct: 2,
+                explanation: "Two molecules of NADH are produced during the oxidation of Glyceraldehyde-3-phosphate."
+            },
+            {
+                question: "Where does glycolysis occur within a eukaryotic cell?",
+                options: ["Mitochondria", "Cytoplasm", "Nucleus", "Endoplasmic Reticulum"],
+                correct: 1,
+                explanation: "Glycolysis is a cytoplasmic pathway."
+            },
+            {
+                question: "Which of the following is NOT an intermediate of glycolysis?",
+                options: ["Glucose-6-phosphate", "Pyruvate", "Acetyl-CoA", "Fructose-1,6-bisphosphate"],
+                correct: 2,
+                explanation: "Acetyl-CoA is a product of pyruvate oxidation, not an intermediate of glycolysis itself."
+            },
+            {
+                question: "What is the role of ATP in the initial phase of glycolysis?",
+                options: ["It is produced", "It is consumed", "It activates enzymes", "It inhibits enzymes"],
+                correct: 1,
+                explanation: "ATP is consumed in the initial 'energy investment' phase to phosphorylate glucose and fructose-6-phosphate."
+            },
+            {
+                question: "Which enzyme is responsible for the substrate-level phosphorylation step that directly produces ATP in glycolysis?",
+                options: ["Hexokinase", "Phosphofructokinase-1", "Enolase", "Phosphoglycerate kinase"],
+                correct: 3, // Phosphoglycerate kinase is at index 3, which is still correct
+                explanation: "Phosphoglycerate kinase and pyruvate kinase catalyze substrate-level phosphorylation, directly producing ATP."
+            }
+        ];
+
+        let currentRegulationScenarioIndex = 0;
+        let currentAnaerobicScenarioIndex = 0; // New index for anaerobic scenarios
+
+        // Touch drag and drop variables
+        let draggedElement = null;
+        let dragGhost = null;
+        let currentDropTarget = null;
+        let scrollInterval = null; // To hold the interval for auto-scrolling
+
+        function updateStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('streak').textContent = gameState.streak;
+            document.getElementById('energy').textContent = gameState.energy;
+        }
+
+        // Function to show the custom modal
+        function showModal(title, message) {
+            const modalOverlay = document.getElementById('completionModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+
+            if (modalTitle && modalMessage && modalOverlay) {
+                modalTitle.textContent = title;
+                modalMessage.innerHTML = message;
+                modalOverlay.classList.add('show');
+            }
+        }
+
+        // Function to hide the custom modal
+        function hideModal() {
+            const modalOverlay = document.getElementById('completionModal');
+            if (modalOverlay) {
+                modalOverlay.classList.remove('show');
+            }
+        }
+
+
+        function selectMode(mode) {
+            gameState.currentMode = mode;
+            
+            // Update active mode visual
+            document.querySelectorAll('.game-mode').forEach(el => el.classList.remove('active'));
+            event.target.closest('.game-mode').classList.add('active');
+            
+            loadGameMode(mode);
+        }
+
+        function loadGameMode(mode) {
+            const gameArea = document.getElementById('gameArea');
+            
+            switch(mode) {
+                case 'pathway':
+                    loadPathwayBuilder();
+                    break;
+                case 'regulation':
+                    loadRegulationGame();
+                    break;
+                case 'anaerobic':
+                    loadAnaerobicChallenge();
+                    break;
+                case 'quiz':
+                    loadQuizMode();
+                    break;
+            }
+        }
+
+        // Fisher-Yates (Knuth) Shuffle for array randomization
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+            return array;
+        }
+
+        function loadPathwayBuilder() {
+            const gameArea = document.getElementById('gameArea');
+            
+            // Create a shuffled copy of glycolysisSteps for display
+            const shuffledEnzymes = shuffleArray([...glycolysisSteps]); // Use spread to create a shallow copy
+
+            gameArea.innerHTML = `
+                <h2>🔄 Pathway Builder Challenge</h2>
+                <p>Drag and drop the correct enzymes and intermediates to complete the glycolysis pathway!</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${(gameState.pathwayProgress.length / 10) * 100}%"></div>
+                </div>
+                
+                <div class="pathway-builder" id="pathwaySteps">
+                    ${Array(10).fill(0).map((_, i) => `
+                        <div class="pathway-step" data-step="${i}" ondrop="dropEnzyme(event)" ondragover="allowDrop(event)" ondragleave="dragLeavePathwayStep(event)">
+                            <div class="step-number">Step ${i + 1}</div>
+                            <div class="step-content" id="step-${i}">
+                                ${gameState.pathwayProgress[i] ? `
+                                    <div><strong>${gameState.pathwayProgress[i].enzyme}</strong></div>
+                                    <div>${gameState.pathwayProgress[i].substrate} → ${gameState.pathwayProgress[i].product}</div>
+                                ` : 'Drop enzyme here'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <h3>Available Enzymes:</h3>
+                <div class="enzyme-options">
+                    ${shuffledEnzymes.map((step, i) => `
+                        <div class="enzyme-card" draggable="true" ondragstart="dragEnzyme(event)" 
+                             ontouchstart="touchStartEnzyme(event)" 
+                             data-enzyme-original-index="${glycolysisSteps.indexOf(step)}">
+                            <strong>${step.enzyme}</strong>
+                            <br><small>${step.substrate} → ${step.product}</small>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <button class="btn" onclick="checkPathway()">Check Pathway</button>
+                <button class="btn" onclick="resetPathway()">Reset</button>
+                
+                <div id="pathwayFeedback"></div>
+            `;
+        }
+
+        function loadRegulationGame() {
+            const gameArea = document.getElementById('gameArea');
+            selectedRegulators = []; // Reset selected regulators for the new scenario
+
+            const currentScenario = regulationScenarios[currentRegulationScenarioIndex];
+
+            // Reset correct answers for a new loop of the challenge
+            if (currentRegulationScenarioIndex === 0) {
+                gameState.regulationCorrectAnswersInCurrentLoop = 0;
+            }
+
+            gameArea.innerHTML = `
+                <h2>⚖️ Regulation Master</h2>
+                <p>Scenario ${currentRegulationScenarioIndex + 1} of ${regulationScenarios.length}</p>
+                
+                <div class="question-area">
+                    <div class="question">
+                        ${currentScenario.question}
+                    </div>
+                </div>
+                
+                <div class="regulation-panel">
+                    <div class="regulator-card">
+                        <div class="regulator-type activator">Activators</div>
+                        <div class="molecule-display" id="activatorMolecules">
+                            ${allRegulators.activators.map(reg => `
+                                <div class="molecule" id="regulator-${reg.replace(/\s/g, '-')}" onclick="selectRegulator('${reg}', 'activator')">${reg}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="regulator-card">
+                        <div class="regulator-type inhibitor">Inhibitors</div>
+                        <div class="molecule-display" id="inhibitorMolecules">
+                            ${allRegulators.inhibitors.map(reg => `
+                                <div class="molecule" id="regulator-${reg.replace(/\s/g, '-')}" onclick="selectRegulator('${reg}', 'inhibitor')">${reg}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="drop-zone" id="selectedRegulatorsZone">
+                    Selected Regulators: <span id="regulatorList">None</span>
+                </div>
+                
+                <button class="btn" onclick="checkRegulation()">Apply Regulation</button>
+                <button class="btn" onclick="resetCurrentRegulationScenario()">Reset Scenario</button> <!-- Reset button -->
+                <button class="btn" onclick="nextRegulationScenario()">Next Scenario</button>
+                
+                <div id="regulationFeedback"></div>
+            `;
+            // Ensure display is updated AFTER HTML is rendered
+            updateRegulatorDisplay(); 
+        }
+
+        function loadAnaerobicChallenge() {
+            const gameArea = document.getElementById('gameArea');
+            const currentScenario = anaerobicScenarios[currentAnaerobicScenarioIndex];
+
+            // Reset correct answers for a new loop of the challenge
+            if (currentAnaerobicScenarioIndex === 0) {
+                gameState.anaerobicCorrectAnswersInCurrentLoop = 0;
+            }
+
+            gameArea.innerHTML = `
+                <h2>🏃‍♂️ Anaerobic Challenge</h2>
+                <p>Scenario ${currentAnaerobicScenarioIndex + 1} of ${anaerobicScenarios.length}</p>
+                
+                <div class="question-area">
+                    <div class="question">
+                        ${currentScenario.question}
+                    </div>
+                </div>
+                
+                <div class="molecule-display" style="display: flex; align-items: center; justify-content: center; gap: 30px; margin: 30px 0;">
+                    <div class="molecule" style="flex: 0 0 150px; display: flex; align-items: center; justify-content: center; min-height: 80px;">
+                        <strong>Pyruvate</strong>
+                    </div>
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <div style="width: 100%; height: 3px; background: white; position: relative;">
+                            <div style="position: absolute; right: -10px; top: -8px; width: 0; height: 0; border-left: 15px solid white; border-top: 8px solid transparent; border-bottom: 8px solid transparent;"></div>
+                        </div>
+                    </div>
+                    <div class="drop-zone" id="anaerobicProduct" ondrop="dropProduct(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" style="flex: 0 0 200px; display: flex; align-items: center; justify-content: center; min-height: 80px;">
+                        Drop product here
+                    </div>
+                </div>
+                
+                <h3>Available Products (drag to complete the reaction):</h3>
+                <div class="enzyme-options">
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="lactate" style="cursor: grab;">
+                        <strong>Lactate</strong><br><small>(+ NAD+ regeneration)</small>
+                    </div>
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="ethanol" style="cursor: grab;">
+                        <strong>Ethanol + CO₂</strong><br><small>(yeast fermentation)</small>
+                    </div>
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="acetyl" style="cursor: grab;">
+                        <strong>Acetyl-CoA</strong><br><small>(requires oxygen)</small>
+                    </div>
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="nadh_regeneration" style="cursor: grab;">
+                        <strong>NAD+ Regeneration</strong><br><small>(Key anaerobic goal)</small>
+                    </div>
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="glycolysis_stops_nad_depletion" style="cursor: grab;">
+                        <strong>Glycolysis Stops</strong><br><small>(NAD+ Depletion)</small>
+                    </div>
+                    <div class="enzyme-card" draggable="true" ondragstart="dragProduct(event)" data-product="fermentation" style="cursor: grab;">
+                        <strong>Fermentation Pathway</strong><br><small>(General Term)</small>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="checkAnaerobicAnswer()">Check Answer</button>
+                <button class="btn" onclick="resetCurrentAnaerobicScenario()">Reset Scenario</button> <!-- Reset button -->
+                <button class="btn" onclick="nextAnaerobicScenario()">Next Scenario</button>
+                
+                <div id="anaerobicFeedback"></div>
+            `;
+
+            // Now that the elements are in the DOM, we can safely access and manipulate them
+            const anaerobicProductDropZone = document.getElementById('anaerobicProduct');
+            if (anaerobicProductDropZone) {
+                anaerobicProductDropZone.innerHTML = 'Drop product here';
+                anaerobicProductDropZone.dataset.selected = ''; // Clear selected product data
+                anaerobicProductDropZone.classList.remove('active');
+                anaerobicProductDropZone.style.background = ''; // Clear background highlight
+            }
+            document.getElementById('anaerobicFeedback').innerHTML = ''; // Clear feedback
+        }
+
+        function loadQuizMode() {
+            const gameArea = document.getElementById('gameArea');
+            const question = quizQuestions[gameState.currentQuestion];
+            
+            // Reset correct answers for a new loop of the challenge
+            if (gameState.currentQuestion === 0) {
+                gameState.quizCorrectAnswersInCurrentLoop = 0;
+            }
+
+            gameArea.innerHTML = `
+                <h2>🧠 Knowledge Quiz</h2>
+                <p>Question ${gameState.currentQuestion + 1} of ${quizQuestions.length}</p>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${(gameState.currentQuestion / quizQuestions.length) * 100}%"></div>
+                </div>
+                
+                <div class="question-area">
+                    <div class="question">${question.question}</div>
+                </div>
+                
+                <div class="options">
+                    ${question.options.map((option, i) => `
+                        <div class="option" onclick="selectQuizAnswer(${i})">${option}</div>
+                    `).join('')}
+                </div>
+                
+                <div id="quizFeedback"></div>
+                
+                <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display: none;">Next Question</button>
+            `;
+        }
+
+        // --- Pathway Builder Drag & Drop (Mouse Events) ---
+        function dragEnzyme(event) {
+            // Now we store the original index from the glycolysisSteps array
+            event.dataTransfer.setData("text/plain", event.target.dataset.enzymeOriginalIndex);
+            event.target.classList.add('dragging'); // Add dragging class
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+            // Add visual highlight to the drop zone
+            if (event.target.closest('.pathway-step')) {
+                event.target.closest('.pathway-step').classList.add('drag-over');
+            }
+        }
+
+        function dropEnzyme(event) {
+            event.preventDefault();
+            const originalEnzymeIndex = event.dataTransfer.getData("text/plain"); // Get the original index
+            const stepElement = event.target.closest('.pathway-step');
+            const stepIndex = stepElement.dataset.step;
+            
+            gameState.pathwayProgress[stepIndex] = glycolysisSteps[originalEnzymeIndex]; // Use original index
+            
+            // Remove dragging class from the original element if it's still in the DOM
+            const draggedCard = document.querySelector(`.enzyme-card.dragging`);
+            if (draggedCard) {
+                draggedCard.classList.remove('dragging');
+            }
+
+            // Remove drag-over class from the drop zone
+            stepElement.classList.remove('drag-over');
+
+            loadPathwayBuilder(); // Re-render to show dropped enzyme
+        }
+
+        function dragLeavePathwayStep(event) {
+            // Remove visual highlight when dragging leaves the drop zone
+            event.target.closest('.pathway-step').classList.remove('drag-over');
+        }
+
+        // --- Pathway Builder Drag & Drop (Touch Events) ---
+        function touchStartEnzyme(event) {
+            event.preventDefault(); // Prevent default browser scrolling/zooming
+            
+            draggedElement = event.target.closest('.enzyme-card');
+            if (!draggedElement) return;
+
+            draggedElement.classList.add('dragging');
+
+            // Create a ghost element for visual feedback
+            dragGhost = document.createElement('div');
+            dragGhost.classList.add('drag-ghost');
+            dragGhost.innerHTML = draggedElement.innerHTML;
+            document.body.appendChild(dragGhost);
+
+            // Position the ghost element initially
+            const touch = event.touches[0];
+            dragGhost.style.left = `${touch.clientX}px`;
+            dragGhost.style.top = `${touch.clientY}px`;
+
+            // Add touchmove and touchend listeners globally or to a specific parent
+            document.addEventListener('touchmove', touchMoveEnzyme);
+            document.addEventListener('touchend', touchEndEnzyme);
+        }
+
+        function touchMoveEnzyme(event) {
+            if (!draggedElement || !dragGhost) return;
+            event.preventDefault(); // Prevent scrolling while dragging
+
+            const touch = event.touches[0];
+            dragGhost.style.left = `${touch.clientX}px`;
+            dragGhost.style.top = `${touch.clientY}px`;
+
+            // Auto-scrolling logic
+            const scrollThreshold = 80; // Pixels from edge to start scrolling
+            const scrollSpeed = 15; // Pixels to scroll per interval
+            const viewportHeight = window.innerHeight;
+
+            if (touch.clientY < scrollThreshold) {
+                // Scroll up
+                if (!scrollInterval) {
+                    scrollInterval = setInterval(() => {
+                        window.scrollBy(0, -scrollSpeed);
+                    }, 50);
+                }
+            } else if (touch.clientY > viewportHeight - scrollThreshold) {
+                // Scroll down
+                if (!scrollInterval) {
+                    scrollInterval = setInterval(() => {
+                        window.scrollBy(0, scrollSpeed);
+                    }, 50);
+                }
+            } else {
+                // Stop scrolling if not near edge
+                clearInterval(scrollInterval);
+                scrollInterval = null;
+            }
+
+
+            // Find the element under the touch point
+            const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+            const newDropTarget = targetElement ? targetElement.closest('.pathway-step') : null;
+
+            if (newDropTarget && newDropTarget !== currentDropTarget) {
+                if (currentDropTarget) {
+                    currentDropTarget.classList.remove('drag-over');
+                }
+                newDropTarget.classList.add('drag-over');
+                currentDropTarget = newDropTarget;
+            } else if (!newDropTarget && currentDropTarget) {
+                currentDropTarget.classList.remove('drag-over');
+                currentDropTarget = null;
+            }
+        }
+
+        function touchEndEnzyme(event) {
+            if (!draggedElement) return;
+
+            // Stop any active scrolling
+            clearInterval(scrollInterval);
+            scrollInterval = null;
+
+            draggedElement.classList.remove('dragging');
+
+            if (dragGhost) {
+                dragGhost.remove();
+                dragGhost = null;
+            }
+
+            if (currentDropTarget) {
+                const originalEnzymeIndex = draggedElement.dataset.enzymeOriginalIndex;
+                const stepIndex = currentDropTarget.dataset.step;
+
+                gameState.pathwayProgress[stepIndex] = glycolysisSteps[originalEnzymeIndex];
+                
+                currentDropTarget.classList.remove('drag-over');
+                currentDropTarget = null;
+                loadPathwayBuilder(); // Re-render to show dropped enzyme
+            }
+
+            // Clean up event listeners
+            document.removeEventListener('touchmove', touchMoveEnzyme);
+            document.removeEventListener('touchend', touchEndEnzyme);
+            draggedElement = null; // Clear the dragged element reference
+        }
+
+        function resetPathway() {
+            gameState.pathwayProgress = Array(10).fill(null); // Reset pathway progress
+            loadPathwayBuilder(); // Re-render the pathway builder
+            document.getElementById('pathwayFeedback').innerHTML = ''; // Clear feedback
+            document.querySelectorAll('.pathway-step').forEach(step => {
+                step.classList.remove('filled', 'wrong'); // Remove visual feedback classes
+            });
+        }
+
+
+        function checkPathway() {
+            let correctCount = 0;
+            const steps = document.querySelectorAll('.pathway-step');
+            
+            steps.forEach((step, i) => {
+                if (gameState.pathwayProgress[i] && 
+                    gameState.pathwayProgress[i].enzyme === glycolysisSteps[i].enzyme) {
+                    step.classList.add('filled');
+                    correctCount++;
+                } else if (gameState.pathwayProgress[i]) {
+                    step.classList.add('wrong');
+                }
+            });
+            
+            const feedback = document.getElementById('pathwayFeedback');
+            if (correctCount === 10) {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(76, 175, 80, 0.3);">
+                        🎉 Perfect! You've mastered the glycolysis pathway! 
+                        <br>+${correctCount * 10} points!
+                    </div>
+                `;
+                gameState.score += correctCount * 10;
+                if (!gameState.pathwayCompleted) {
+                    const oldLevel = gameState.level;
+                    gameState.level++;
+                    gameState.pathwayCompleted = true;
+                    updateStats(); // Update stats immediately so the modal reflects the new level
+                    showModal('Pathway Challenge Complete!', `Congratulations! You've successfully mastered the Pathway Builder! Your level has increased from ${oldLevel} to ${gameState.level}!`);
+                }
+                gameState.streak++;
+            } else {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(255, 193, 7, 0.3);">
+                        Good effort! ${correctCount}/10 correct. 
+                        <br>Remember: Hexokinase starts, PFK-1 is key regulatory step, Pyruvate kinase finishes!
+                    </div>
+                `;
+                gameState.streak = 0;
+            }
+            
+            updateStats();
+        }
+
+        function selectQuizAnswer(answerIndex) {
+            const question = quizQuestions[gameState.currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((option, i) => {
+                if (i === question.correct) {
+                    option.classList.add('correct');
+                } else if (i === answerIndex && i !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('quizFeedback');
+            const isCorrect = answerIndex === question.correct;
+            
+            if (isCorrect) {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(76, 175, 80, 0.3);">
+                        ✅ Correct! ${question.explanation}
+                    </div>
+                `;
+                gameState.score += 20;
+                gameState.streak++;
+                gameState.energy += 10;
+                gameState.quizCorrectAnswersInCurrentLoop++;
+            } else {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(244, 67, 54, 0.3);">
+                        ❌ Incorrect. ${question.explanation}
+                    </div>
+                `;
+                gameState.streak = 0;
+                gameState.energy -= 5;
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+            updateStats();
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            if (gameState.currentQuestion >= quizQuestions.length) {
+                if (gameState.quizCorrectAnswersInCurrentLoop === quizQuestions.length && !gameState.quizCompleted) {
+                    const oldLevel = gameState.level;
+                    gameState.level++;
+                    gameState.quizCompleted = true;
+                    updateStats(); // Update stats immediately so the modal reflects the new level
+                    showModal('Knowledge Quiz Completed!', `Congratulations! You've successfully completed the Knowledge Quiz! Your level has increased from ${oldLevel} to ${gameState.level}!`);
+                }
+                gameState.currentQuestion = 0; // Loop back
+                gameState.quizCorrectAnswersInCurrentLoop = 0; // Reset for next full pass
+            }
+            loadQuizMode();
+        }
+
+        // Anaerobic Challenge Functions
+        function dragProduct(event) {
+            event.dataTransfer.setData("text/plain", event.target.dataset.product);
+            event.target.classList.add('dragging'); // Add dragging class
+        }
+
+        function dropProduct(event) {
+            event.preventDefault();
+            const product = event.dataTransfer.getData("text/plain");
+            const dropZone = document.getElementById('anaerobicProduct');
+            
+            // Remove dragging class from the original element
+            const draggedCard = document.querySelector(`.enzyme-card.dragging`);
+            if (draggedCard) {
+                draggedCard.classList.remove('dragging');
+            }
+            
+            let productName = '';
+            // Update product name based on the data-product for display purposes
+            switch(product) {
+                case 'lactate':
+                    productName = 'Lactate + NAD+';
+                    break;
+                case 'ethanol':
+                    productName = 'Ethanol + CO₂';
+                    break;
+                case 'acetyl':
+                    productName = 'Acetyl-CoA';
+                    break;
+                case 'nadh_regeneration':
+                    productName = 'NAD+ Regeneration';
+                    break;
+                case 'glycolysis_stops_nad_depletion':
+                    productName = 'Glycolysis Stops';
+                    break;
+                case 'fermentation':
+                    productName = 'Fermentation Pathway';
+                    break;
+            }
+            
+            dropZone.innerHTML = `<strong>${productName}</strong>`;
+            dropZone.dataset.selected = product;
+            dropZone.classList.add('active');
+            dropZone.style.background = 'rgba(76, 175, 80, 0.2)';
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+            event.target.style.background = 'rgba(76, 175, 80, 0.1)';
+        }
+
+        function dragLeave(event) {
+            event.target.style.background = '';
+        }
+
+        function checkAnaerobicAnswer() {
+            const selected = document.getElementById('anaerobicProduct').dataset.selected;
+            const feedback = document.getElementById('anaerobicFeedback');
+            const currentScenario = anaerobicScenarios[currentAnaerobicScenarioIndex];
+            
+            if (selected === currentScenario.correctProduct) {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(76, 175, 80, 0.3);">
+                        ✅ Correct! ${currentScenario.explanation} +25 points!
+                    </div>
+                `;
+                gameState.score += 25;
+                gameState.streak++;
+                gameState.energy += 15;
+                gameState.anaerobicCorrectAnswersInCurrentLoop++; // Increment correct count
+            } else {
+                feedback.innerHTML = `
+                    <div class="feedback" style="background: rgba(244, 67, 54, 0.3);">
+                        ❌ Incorrect! ${currentScenario.explanation}
+                    </div>
+                `;
+                gameState.streak = 0;
+                gameState.energy -= 5;
+            }
+            
+            updateStats();
+        }
+
+        function resetCurrentAnaerobicScenario() {
+            const anaerobicProductDropZone = document.getElementById('anaerobicProduct');
+            if (anaerobicProductDropZone) {
+                anaerobicProductDropZone.innerHTML = 'Drop product here';
+                anaerobicProductDropZone.dataset.selected = ''; // Clear selected product data
+                anaerobicProductDropZone.classList.remove('active');
+                anaerobicProductDropZone.style.background = ''; // Clear background highlight
+            }
+            document.getElementById('anaerobicFeedback').innerHTML = ''; // Clear feedback
+            // Ensure all dragged elements reset their opacity/transform if still in selection area
+            document.querySelectorAll('.enzyme-card').forEach(card => {
+                card.style.opacity = "1";
+                card.style.transform = "none";
+            });
+        }
+
+        function nextAnaerobicScenario() {
+            currentAnaerobicScenarioIndex++;
+            if (currentAnaerobicScenarioIndex >= anaerobicScenarios.length) {
+                // Check for 100% success in the current loop for Anaerobic Challenge
+                if (gameState.anaerobicCorrectAnswersInCurrentLoop === anaerobicScenarios.length && !gameState.anaerobicCompleted) {
+                    const oldLevel = gameState.level;
+                    gameState.level++;
+                    gameState.anaerobicCompleted = true;
+                    updateStats();
+                    showModal('Anaerobic Challenge Completed!', `Congratulations! You've successfully completed the Anaerobic Challenge! Your level has increased from ${oldLevel} to ${gameState.level}!`);
+                }
+                currentAnaerobicScenarioIndex = 0; // Loop back to the beginning
+                gameState.anaerobicCorrectAnswersInCurrentLoop = 0; // Reset for next full pass
+            }
+            loadAnaerobicChallenge();
+        }
+
+
+        // Regulation Game Functions
+        let selectedRegulators = [];
+
+        function selectRegulator(regulatorName, type) {
+            const regulatorObj = { name: regulatorName, type: type };
+            const index = selectedRegulators.findIndex(r => r.name === regulatorName);
+            const moleculeElement = document.getElementById(`regulator-${regulatorName.replace(/\s/g, '-')}`);
+            
+            if (index > -1) {
+                selectedRegulators.splice(index, 1);
+                if (moleculeElement) {
+                    moleculeElement.classList.remove('selected-regulator');
+                }
+            } else {
+                selectedRegulators.push(regulatorObj);
+                if (moleculeElement) {
+                    moleculeElement.classList.add('selected-regulator');
+                }
+            }
+            
+            updateRegulatorDisplay();
+        }
+
+        function updateRegulatorDisplay() {
+            const display = document.getElementById('regulatorList');
+            // Check if display element exists before trying to set its textContent
+            if (display) { 
+                if (selectedRegulators.length === 0) {
+                    display.textContent = 'None';
+                } else {
+                    display.innerHTML = selectedRegulators.map(r => 
+                        `<span style="background: ${r.type === 'activator' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)'}; padding: 5px; border-radius: 5px; margin: 2px;">${r.name}</span>`
+                    ).join(' ');
+                }
+            } else {
+                console.error("Error: 'regulatorList' element not found. It might not be the DOM yet.");
+            }
+        }
+
+        function checkRegulation() {
+            const feedback = document.getElementById('regulationFeedback');
+            const currentScenario = regulationScenarios[currentRegulationScenarioIndex];
+
+            let score = 0;
+            let messages = [];
+            
+            const selectedActivators = selectedRegulators.filter(r => r.type === 'activator').map(r => r.name);
+            const selectedInhibitors = selectedRegulators.filter(r => r.type === 'inhibitor').map(r => r.name);
+
+            // Check correct activators
+            const correctActivatorsMatch = currentScenario.correctActivators.every(act => selectedActivators.includes(act)) &&
+                                          selectedActivators.every(act => currentScenario.correctActivators.includes(act));
+            // Check correct inhibitors
+            const correctInhibitorsMatch = currentScenario.correctInhibitors.every(inh => selectedInhibitors.includes(inh)) &&
+                                          selectedInhibitors.every(inh => currentScenario.correctInhibitors.includes(inh));
+
+            if (correctActivatorsMatch && correctInhibitorsMatch) {
+                score = 20; // Full points for correct selection
+                messages.push(`✅ All regulators correctly identified for this scenario!`);
+                gameState.regulationCorrectAnswersInCurrentLoop++; // Increment correct count for level tracking
+            } else {
+                messages.push(`❌ Incorrect regulation. Review the scenario and regulators.`);
+                score = -10; // Penalty for incorrect selection
+            }
+
+            // Provide detailed feedback if incorrect
+            if (!correctActivatorsMatch) {
+                const missingActivators = currentScenario.correctActivators.filter(act => !selectedActivators.includes(act));
+                const extraActivators = selectedActivators.filter(act => !currentScenario.correctActivators.includes(act));
+                if (missingActivators.length > 0) messages.push(`Missing activators: ${missingActivators.join(', ')}`);
+                if (extraActivators.length > 0) messages.push(`Extra activators selected: ${extraActivators.join(', ')}`);
+            }
+            if (!correctInhibitorsMatch) {
+                const missingInhibitors = currentScenario.correctInhibitors.filter(inh => !selectedInhibitors.includes(inh));
+                const extraInhibitors = selectedInhibitors.filter(inh => !currentScenario.correctInhibitors.includes(inh));
+                if (missingInhibitors.length > 0) messages.push(`Missing inhibitors: ${missingInhibitors.join(', ')}`);
+                if (extraInhibitors.length > 0) messages.push(`Extra inhibitors selected: ${extraInhibitors.join(', ')}`);
+            }
+
+            // Ensure score doesn't go below zero for a single check
+            if (score < 0) score = 0; // Penalties can't make score negative for a single check
+
+            feedback.innerHTML = `
+                <div class="feedback" style="background: rgba(${score > 0 ? '76, 175, 80' : '244, 67, 54'}, 0.3);">
+                    ${messages.join('<br>')}
+                    <br><strong>Score: +${score} points!</strong>
+                    <br><em>Explanation: ${currentScenario.explanation}</em>
+                </div>
+            `;
+            
+            gameState.score += score;
+            updateStats();
+        }
+
+        function resetCurrentRegulationScenario() {
+            selectedRegulators = [];
+            // Remove 'selected-regulator' class from all molecules
+            document.querySelectorAll('.molecule').forEach(el => {
+                el.classList.remove('selected-regulator');
+            });
+            updateRegulatorDisplay();
+            document.getElementById('regulationFeedback').innerHTML = ''; // Clear feedback
+        }
+
+        function nextRegulationScenario() {
+            // Check for 100% success in the current loop for Regulation Master
+            if (gameState.regulationCorrectAnswersInCurrentLoop === regulationScenarios.length && !gameState.regulationCompleted) {
+                const oldLevel = gameState.level;
+                gameState.level++;
+                gameState.regulationCompleted = true;
+                updateStats();
+                showModal('Regulation Master Challenge Completed!', `Congratulations! You've successfully completed the Regulation Master! Your level has increased from ${oldLevel} to ${gameState.level}!`);
+            }
+            currentRegulationScenarioIndex++;
+            if (currentRegulationScenarioIndex >= regulationScenarios.length) {
+                currentRegulationScenarioIndex = 0; // Loop back to the beginning
+                gameState.regulationCorrectAnswersInCurrentLoop = 0; // Reset for next full pass
+            }
+            selectedRegulators = []; // Reset selected regulators for the new scenario
+            loadRegulationGame();
+            updateRegulatorDisplay(); // Ensure display is updated for new scenario
+        }
+
+    </script>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🧬 Glycolysis Master</h1>
+            <p class="subtitle">Master the metabolic pathway that powers life!</p>
+        </div>
+
+        <div class="game-stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div>Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="level">1</div>
+                <div>Level</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="streak">0</div>
+                <div>Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="energy">100</div>
+                <div>ATP Energy</div>
+            </div>
+        </div>
+
+        <div class="game-modes">
+            <div class="game-mode active" onclick="selectMode('pathway')">
+                <h3>🔄 Pathway Builder</h3>
+                <p>Arrange the 10 steps of glycolysis in correct order. Drag and drop enzymes and intermediates!</p>
+            </div>
+            <div class="game-mode" onclick="selectMode('regulation')">
+                <h3>⚖️ Regulation Master</h3>
+                <p>Control glycolysis through allosteric regulation, hormones, and feedback mechanisms.</p>
+            </div>
+            <div class="game-mode" onclick="selectMode('anaerobic')">
+                <h3>🏃‍♂️ Anaerobic Challenge</h3>
+                <p>Navigate oxygen-free conditions and master lactate fermentation pathways.</p>
+            </div>
+            <div class="game-mode" onclick="selectMode('quiz')">
+                <h3>🧠 Knowledge Quiz</h3>
+                <p>Test your understanding of glycolysis features, properties, and clinical significance.</p>
+            </div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Custom Modal for Completion -->
+    <div id="completionModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle">Challenge Complete!</h3>
+            <p id="modalMessage"></p>
+            <button class="btn" onclick="hideModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <span id="copyright-notice"></span>
+        <br>
+        <a href="https://t.me/betascience_csir" target="_blank" class="telegram-link">Join Our Telegram Channel</a>
+    </footer>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>
