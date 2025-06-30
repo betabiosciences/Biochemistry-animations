@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitochondrial Biology: An Interactive Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- MathJax for rendering LaTeX -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <script>
+        // Configure MathJax to process LaTeX wrapped in $...$ and $$...$$
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+            /* Added properties for improved font rendering */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .animate-pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        .animate-slideInLeft {
+            animation: slideInLeft 0.7s ease-out forwards;
+        }
+        .animate-slideInRight {
+            animation: slideInRight 0.7s ease-out forwards;
+        }
+
+        /* Specific section styles */
+        .section-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .section-header:hover {
+            background-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 0;
+            padding: 0 1.5rem; /* Initial padding to be zero for smooth transition */
+        }
+        .section-content.open {
+            opacity: 1;
+            padding: 1.5rem;
+            /* max-height will be set by JS dynamically */
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Security layer CSS to hide content by default */
+        #main-app-content.hidden-content {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <!-- Hidden element for integrity check -->
+    <div id="integrity-string" style="display:none;">betabiosciences@gmail.com_VERIFY</div>
+
+    <!-- Main application content wrapper -->
+    <div id="main-app-content" class="hidden-content">
+        <div class="container py-8">
+            <!-- Header Section -->
+            <header class="text-center mb-12 animate-fadeIn">
+                <h1 class="text-5xl md:text-6xl font-extrabold text-blue-700 mb-4 tracking-tight">
+                    The Powerhouse Unveiled: Mitochondria
+                </h1>
+            </header>
+
+            <!-- Introduction Section -->
+            <section class="card p-8 mb-12 animate-fadeIn" style="animation-delay: 0.2s;">
+                <h2 class="text-3xl font-bold text-blue-600 mb-4">I. Evolutionary Origin & Fundamental Role</h2>
+                <p class="text-lg mb-4">
+                    Mitochondria, often called the "powerhouse of the cell," are double-membrane-bound organelles
+                    critical for eukaryotic life. They are believed to have evolved from a symbiotic relationship
+                    with an ancestral $\alpha$-proteobacterium, a theory known as the <strong class="text-blue-500">Endosymbiotic Theory</strong>.
+                    This origin explains their unique features like a circular genome, bacterial-like ribosomes, and independent replication.
+                </p>
+                <p class="text-lg">
+                    Their primary function is <strong class="text-green-600">ATP synthesis via oxidative phosphorylation (OXPHOS)</strong>,
+                    the process that generates the vast majority of cellular energy.
+                    Beyond energy production, mitochondria serve as a central hub for various metabolic pathways (e.g., $\beta$-oxidation of fatty acids,
+                    TCA cycle, heme synthesis), play crucial roles in calcium buffering, initiate apoptosis (intrinsic pathway) in programmed cell death,
+                    contribute to thermogenesis (heat production), and participate in reactive oxygen species (ROS) signaling.
+                </p>
+            </section>
+
+            <!-- Structural Organization Section - Accordion Style -->
+            <section class="mb-12">
+                <h2 class="text-4xl font-extrabold text-center text-blue-700 mb-8 animate-fadeIn" style="animation-delay: 0.4s;">
+                    II. Structural Organization: Membranes & Compartments
+                </h2>
+
+                <!-- Mitochondria Image -->
+                <div class="flex justify-center mb-8 animate-fadeIn" style="animation-delay: 0.5s;">
+                    <img src="https://betabiosciences.github.io/Biochemistry-animations/Mitochondria.png"
+                         alt="Diagram of Mitochondrial Structure"
+                         class="w-full md:w-3/4 lg:w-2/3 rounded-lg shadow-lg"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found';">
+                </div>
+
+                <!-- Outer Mitochondrial Membrane (OMM) -->
+                <div class="card mb-6 animate-slideInLeft" style="animation-delay: 0.6s;">
+                    <div class="section-header p-6 flex justify-between items-center rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700">
+                        <h3 class="text-2xl font-semibold">Outer Mitochondrial Membrane (OMM)</h3>
+                        <span class="text-3xl arrow-icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <p class="mb-3 text-lg"><strong class="text-blue-600">Structure:</strong> The OMM is a smooth, porous phospholipid bilayer, similar in lipid composition to the endoplasmic reticulum, and is particularly high in phosphatidylcholine.</p>
+                        <p class="mb-3 text-lg"><strong class="text-blue-600">Permeability:</strong> It is freely permeable to small molecules ($<$5 kDa) and ions due to the presence of abundant <strong class="text-green-600">Porins (VDAC - Voltage-Dependent Anion Channels)</strong>, which form large aqueous channels.</p>
+                        <h4 class="text-xl font-semibold text-blue-500 mb-2">Key Proteins:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-lg">
+                            <li><strong>VDAC (Voltage-Dependent Anion Channels):</strong> These are the primary metabolite transporters, facilitating the passage of molecules like ATP, ADP, Pi, and various ions between the cytosol and the intermembrane space.</li>
+                            <li><strong>TOM Complex (Translocase of the Outer Membrane):</strong> This multiprotein complex serves as the main entry gate for virtually all nuclear-encoded mitochondrial proteins. It recognizes targeting signals and translocates proteins across the OMM.</li>
+                            <li><strong>Bcl-2 Family Proteins:</strong> Crucial regulators of apoptosis, this family includes pro-apoptotic members (e.g., Bax, Bak) which promote OMM permeabilization and the release of pro-apoptotic factors, and anti-apoptotic members (e.g., Bcl-2, Bcl-XL) which inhibit this process.</li>
+                            <li><strong>Mitofusins (Mfn1/2):</strong> These are large GTPases embedded in the OMM that mediate and regulate the fusion of the outer mitochondrial membranes, a process essential for maintaining mitochondrial network integrity.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Intermembrane Space (IMS) -->
+                <div class="card mb-6 animate-slideInRight" style="animation-delay: 0.8s;">
+                    <div class="section-header p-6 flex justify-between items-center rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md hover:from-purple-600 hover:to-purple-700">
+                        <h3 class="text-2xl font-semibold">Intermembrane Space (IMS)</h3>
+                        <span class="text-3xl arrow-icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <p class="mb-3 text-lg"><strong class="text-purple-600">Composition:</strong> The IMS is the region between the OMM and IMM. Due to the high permeability of the OMM, its small molecule and ion composition is remarkably similar to that of the cytosol.</p>
+                        <h4 class="text-xl font-semibold text-purple-500 mb-2">Key Components:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-lg">
+                            <li><strong>Cytochrome c:</strong> A mobile electron carrier component of the Electron Transport Chain (ETC). When released from the IMS into the cytosol (a key event in apoptosis), it acts as a pro-apoptotic factor, triggering the activation of caspases.</li>
+                            <li><strong>Adenylate Kinase (AK):</strong> An enzyme that catalyzes the interconversion of adenine nucleotides: ATP + AMP $\leftrightarrow$ 2 ADP. This reaction is crucial for maintaining cellular energy balance.</li>
+                            <li><strong>Creatine Kinase (CK):</strong> Particularly abundant in muscle and brain cells, CK regenerates ATP from phosphocreatine, providing a rapid buffer for ATP levels during periods of high energy demand.</li>
+                            <li><strong>Protein Import Machinery:</strong> This space houses components of the MIA (Mitochondrial IMS Import and Assembly) pathway, which is specialized for the oxidative folding and import of cysteine-rich proteins (e.g., Mia40, Erv1) into the IMS.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Inner Mitochondrial Membrane (IMM) -->
+                <div class="card mb-6 animate-slideInLeft" style="animation-delay: 1.0s;">
+                    <div class="section-header p-6 flex justify-between items-center rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md hover:from-green-600 hover:to-green-700">
+                        <h3 class="text-2xl font-semibold">Inner Mitochondrial Membrane (IMM)</h3>
+                        <span class="text-3xl arrow-icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <p class="mb-3 text-lg"><strong class="text-green-600">Structure:</strong> The IMM is highly impermeable to most ions and small molecules, a critical feature for maintaining the proton gradient. It is extensively folded into <strong class="text-red-500">cristae</strong>, which dramatically increase its surface area, providing ample space for embedded protein complexes. The IMM is notably rich in cardiolipin (diphosphatidylglycerol), a unique conical phospholipid that promotes membrane curvature and is essential for the assembly and stability of many protein complexes, particularly those of the ETC.</p>
+                        <h4 class="text-xl font-semibold text-green-500 mb-2">Key Functional Regions:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-lg">
+                            <li><strong>Inner Boundary Membrane (IBM):</strong> The region of the IMM that runs parallel to the OMM.</li>
+                            <li><strong>Cristae Membrane:</strong> This highly folded region is the primary site of the OXPHOS complexes. It is connected to the IBM via narrow tubular openings called <strong class="text-red-500">cristae junctions</strong>, whose structure and function are precisely regulated by the <strong class="text-orange-500">MICOS complex</strong> and <strong class="text-orange-500">Opa1</strong>.</li>
+                        </ul>
+                        <h4 class="text-xl font-semibold text-green-500 mb-2">Key Protein Complexes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-lg">
+                            <li><strong>Electron Transport Chain (ETC) Complexes (I-IV):</strong> These are multi-subunit protein complexes (NADH Dehydrogenase, Succinate Dehydrogenase, Cytochrome $bc_1$, Cytochrome c Oxidase) embedded in the IMM. They sequentially transfer electrons, pumping protons ($H^+$) from the matrix into the IMS, thereby generating an electrochemical proton gradient across the IMM.</li>
+                            <li><strong>ATP Synthase (Complex V / $F_0F_1$ ATPase):</strong> This remarkable rotary motor uses the energy from the proton gradient (proton motive force) to synthesize ATP from ADP and inorganic phosphate (Pi) through a process called chemiosmosis.</li>
+                            <li><strong>TIM Complex (Translocase of the Inner Membrane):</strong> Comprising TIM23 and TIM22, these translocons are responsible for the import and insertion of various nuclear-encoded proteins into the IMM and matrix. TIM23 imports matrix-targeted proteins, while TIM22 inserts multipass IMM proteins.</li>
+                            <li><strong>Metabolite Carriers (SLC25 Family):</strong> A large family of transport proteins facilitating the selective exchange of metabolites across the impermeable IMM. Examples include AAC (ADP/ATP Carrier) which exchanges cytosolic ADP for matrix ATP, the Phosphate Carrier (PiC) which imports Pi with $H^+$, and the Citrate Carrier.</li>
+                            <li><strong>Uncoupling Proteins (UCPs):</strong> These are proton leak channels in the IMM that allow protons to flow back into the matrix without passing through ATP synthase. This dissipates the proton gradient as heat, a process particularly active in brown adipose tissue for non-shivering thermogenesis (e.g., UCP1).</li>
+                            <li><strong>Mitochondrial Contact Site and Cristae Organizing System (MICOS):</strong> A large protein complex that helps stabilize cristae junctions, links the IMM to the OMM at contact sites, and plays a crucial role in maintaining cristae morphology.</li>
+                            <li><strong>Opa1:</strong> A dynamin-related GTPase that regulates both inner mitochondrial membrane fusion and the dynamic remodeling of cristae, essential for mitochondrial function and apoptosis.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Mitochondrial Matrix -->
+                <div class="card mb-6 animate-slideInRight" style="animation-delay: 1.2s;">
+                    <div class="section-header p-6 flex justify-between items-center rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white shadow-md hover:from-red-600 hover:to-red-700">
+                        <h3 class="text-2xl font-semibold">Mitochondrial Matrix</h3>
+                        <span class="text-3xl arrow-icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <p class="mb-3 text-lg"><strong class="text-red-600">Composition:</strong> The matrix is a dense, gel-like interior compartment, rich in proteins, enzymes, and various metabolites. It contains its own genetic material and machinery.</p>
+                        <h4 class="text-xl font-semibold text-red-500 mb-2">Key Components & Processes:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-lg">
+                            <li><strong>mtDNA & Replication/Transcription Machinery:</strong> The matrix contains multiple copies of circular mitochondrial DNA (mtDNA), along with the necessary DNA polymerases (e.g., POLG), RNA polymerases, and transcription factors for its replication and gene expression.</li>
+                            <li><strong>TCA Cycle (Krebs Cycle) Enzymes:</strong> All enzymes of the tricarboxylic acid cycle, except succinate dehydrogenase (Complex II of ETC, embedded in IMM), are located in the matrix. This cycle is central to oxidative metabolism, producing $NADH$ and $FADH_2$.</li>
+                            <li><strong>Pyruvate Dehydrogenase Complex (PDH):</strong> A large, multi-enzyme complex that converts pyruvate (derived from glycolysis in the cytosol) into acetyl-CoA, which then enters the TCA cycle.</li>
+                            <li><strong>$\beta$-Oxidation Enzymes:</strong> A complete set of enzymes for the $\beta$-oxidation of fatty acids, which breaks down fatty acyl-CoAs into acetyl-CoA, generating $NADH$ and $FADH_2$.</li>
+                            <li><strong>Mitochondrial Ribosomes (55-60S):</strong> These ribosomes are smaller than cytosolic ribosomes but resemble bacterial ones. They are responsible for translating the 13 proteins encoded by mtDNA, all of which are essential subunits of the OXPHOS complexes.</li>
+                            <li><strong>Mitochondrial-Specific tRNAs & rRNAs:</strong> The mtDNA also encodes its own transfer RNAs and ribosomal RNAs, which are distinct from their nuclear-encoded counterparts and necessary for matrix protein synthesis.</li>
+                            <li><strong>Metabolite Pools:</strong> The matrix maintains specific pools of key metabolites and cofactors, including $NAD^+/NADH$, $FAD/FADH_2$, Coenzyme A (CoA), and various metabolic intermediates.</li>
+                            <li><strong>Calcium Buffering:</strong> Mitochondria play a crucial role in buffering intracellular calcium. The matrix facilitates low-affinity, high-capacity calcium uptake via the Mitochondrial Calcium Uniporter (MCU) complex, linking calcium signaling to energy metabolism.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mitochondrial Genome (mtDNA) Section -->
+            <section class="card p-8 mb-12 animate-fadeIn" style="animation-delay: 1.4s;">
+                <h2 class="text-3xl font-bold text-yellow-600 mb-4">III. Mitochondrial Genome (mtDNA)</h2>
+                <p class="text-lg mb-4">
+                    The human mtDNA is a <strong class="text-yellow-500">small, circular, double-stranded molecule</strong>, typically 16.6 kb in length,
+                    and exists in <strong class="text-yellow-500">multiple copies</strong> per mitochondrion (hundreds to thousands per cell).
+                    It is extremely compact, lacking introns and histones, and is packaged by the high-mobility group protein <strong class="text-orange-500">TFAM (Transcription Factor A, Mitochondrial)</strong>.
+                </p>
+                <h4 class="text-xl font-semibold text-yellow-500 mb-2">Content (Human):</h4>
+                <ul class="list-disc list-inside space-y-1 text-lg mb-4">
+                    <li>Encodes 13 essential proteins, all of which are subunits of the OXPHOS complexes (7 for Complex I, 1 for Complex III, 3 for Complex IV, 2 for Complex V).</li>
+                    <li>Encodes 22 distinct transfer RNAs (tRNAs) required for mitochondrial protein synthesis.</li>
+                    <li>Encodes 2 ribosomal RNAs (rRNAs), specifically 12S and 16S rRNAs, which are components of the mitochondrial ribosomes.</li>
+                </ul>
+                <h4 class="text-xl font-semibold text-yellow-500 mb-2">Key Features:</h4>
+                <ul class="list-disc list-inside space-y-1 text-lg">
+                    <li><strong>High Copy Number:</strong> The presence of hundreds to thousands of mtDNA copies per cell provides redundancy and flexibility in energy production.</li>
+                    <li><strong>Maternal Inheritance:</strong> In most animal species, mtDNA is exclusively inherited from the mother, as the sperm's mitochondria are typically degraded after fertilization. This makes it a valuable tool for tracing maternal lineages.</li>
+                    <li><strong>High Mutation Rate:</strong> mtDNA has an approximately $\sim$10x higher mutation rate compared to nuclear DNA. This is attributed to its proximity to reactive oxygen species (ROS) generated during OXPHOS, the lack of protective histones, and less efficient DNA repair mechanisms.</li>
+                    <li><strong>Relaxed Replication:</strong> Unlike nuclear DNA, mtDNA replication occurs continuously throughout the cell cycle and is not tightly coupled to cell division. It is regulated by the nucleoids.</li>
+                    <li><strong>Genetic Code:</strong> The mitochondrial genetic code differs slightly from the universal nuclear code. For example, UGA codes for Tryptophan instead of a stop codon, and AUA codes for Methionine instead of Isoleucine.</li>
+                    <li><strong>Polycistronic Transcription:</strong> Genes within the mtDNA are often transcribed as large polycistronic RNA molecules, which are then processed by endonucleases into individual mRNAs, tRNAs, and rRNAs.</li>
+                    <li><strong>Heteroplasmy & Threshold Effect:</strong> Heteroplasmy refers to the presence of both wild-type and mutant mtDNA molecules within a single cell or tissue. Mitochondrial diseases often manifest clinically only when the percentage of mutant mtDNA (mutant load) exceeds a certain biochemical threshold specific to a given tissue or organ.</li>
+                    <li><strong>Nucleoids:</strong> mtDNA is organized into discrete protein-DNA complexes called nucleoids. These structures contain not only TFAM but also key enzymes involved in mtDNA replication (e.g., POLG, TWINKLE) and maintenance (e.g., SSBP1).</li>
+                </ul>
+            </section>
+
+            <!-- Protein Targeting & Import Section -->
+            <section class="card p-8 mb-12 animate-fadeIn" style="animation-delay: 1.6s;">
+                <h2 class="text-3xl font-bold text-teal-600 mb-4">IV. Protein Targeting & Import</h2>
+                <p class="text-lg mb-4">
+                    Despite having their own genome, over 99% of mitochondrial proteins ($\sim$1500+) are <strong class="text-teal-500">nuclear-encoded</strong>.
+                    These proteins are synthesized on cytosolic ribosomes and then post-translationally imported into their specific mitochondrial compartments via complex machinery.
+                </p>
+                <h4 class="text-xl font-semibold text-teal-500 mb-2">General Import Pathways:</h4>
+                <ul class="list-disc list-inside space-y-1 text-lg">
+                    <li><strong>Presequence Pathway (Matrix):</strong> Proteins destined for the matrix (and some for the IMM or IMS) typically possess an N-terminal cleavable presequence. This signal is recognized by the TOM complex in the OMM, and the protein is then transferred to the TIM23 complex in the IMM. Translocation across the IMM is driven by the mitochondrial membrane potential ($\Delta\Psi$) and ATP-dependent matrix chaperones (e.g., mtHsp70), with the presequence cleaved by MPP (Mitochondrial Processing Peptidase).</li>
+                    <li><strong>Carrier Pathway (IMM):</strong> Multi-spanning inner mitochondrial membrane proteins, such as metabolite carriers (e.g., ADP/ATP carrier), often lack a cleavable presequence and contain internal targeting signals. They are recognized by TOM70 in the OMM, escorted by cytosolic chaperones (e.g., Hsp70/90), and then imported via the TIM22 complex, a process that also utilizes the membrane potential ($\Delta\Psi$).</li>
+                    <li><strong>IMS Pathway:</strong> Proteins destined for the intermembrane space, particularly cysteine-rich proteins, are often imported via the MIA (Mitochondrial Intermembrane Space Import and Assembly) pathway. This pathway involves Mia40 and Erv1, which facilitates the oxidative folding and disulfide bond formation of these proteins.</li>
+                    <li><strong>OMM Proteins:</strong> Proteins of the outer mitochondrial membrane employ diverse import mechanisms. Tail-anchored proteins (e.g., Bcl-2) are inserted by the GET/TRC pathway, while $\beta$-barrel proteins (e.g., VDAC, TOM40) are first translocated through TOM and then inserted and folded into the OMM by the SAM (Sorting and Assembly Machinery) complex.</li>
+                </ul>
+            </section>
+
+            <!-- Dynamics & Quality Control Section -->
+            <section class="card p-8 mb-12 animate-fadeIn" style="animation-delay: 1.8s;">
+                <h2 class="text-3xl font-bold text-indigo-600 mb-4">V. Dynamics & Quality Control</h2>
+                <p class="text-lg mb-4">
+                    Mitochondria are highly dynamic organelles, constantly undergoing changes in their shape, size, and number through a balance of fission and fusion events, as well as selective degradation, all crucial for maintaining their health and function.
+                </p>
+                <h4 class="text-xl font-semibold text-indigo-500 mb-2">Mitochondrial Dynamics:</h4>
+                <ul class="list-disc list-inside space-y-1 text-lg mb-4">
+                    <li><strong>Fusion:</strong> This process involves the merging of two mitochondria, allowing for the mixing of their contents (e.g., mtDNA, metabolites, proteins). Fusion is important for rescuing partially damaged mitochondria, maintaining ATP production, and buffering oxidative stress. OMM fusion is mediated by <strong class="text-indigo-500">Mitofusins (Mfn1/2)</strong>, while IMM fusion is regulated by <strong class="text-indigo-500">Opa1</strong>.</li>
+                    <li><strong>Fission:</strong> This is the process of mitochondrial division, leading to the formation of smaller mitochondria. Fission facilitates the segregation of damaged mitochondrial segments, allows for their removal via quality control pathways, and is essential for mitochondrial distribution within the cell, particularly during cell division. It is primarily mediated by <strong class="text-indigo-500">Drp1</strong> (Dynamin-related protein 1), a cytosolic GTPase that is recruited to the OMM by receptor proteins (e.g., MFF, MiD49/51, Fis1) to constrict and divide the membrane.</li>
+                </ul>
+                <h4 class="text-xl font-semibold text-indigo-500 mb-2">Quality Control:</h4>
+                <ul class="list-disc list-inside space-y-1 text-lg">
+                    <li><strong>Mitophagy:</strong> This is a highly selective autophagic degradation pathway specifically targeting damaged or dysfunctional mitochondria for removal. The <strong class="text-indigo-500">PINK1/Parkin pathway</strong> is the most well-characterized mechanism: PINK1 (PTEN-induced kinase 1) accumulates on the outer membrane of depolarized mitochondria, recruiting and activating the E3 ubiquitin ligase Parkin, which then tags mitochondrial proteins for autophagic degradation. Other receptor-mediated pathways (e.g., involving BNIP3, NIX, FUNDC1) also exist.</li>
+                    <li><strong>Proteostasis:</strong> Mitochondria have robust systems to maintain protein homeostasis (proteostasis), ensuring proper protein folding and degradation. This includes the <strong class="text-indigo-500">Mitochondrial Unfolded Protein Response (UPR$^ {mt}$)</strong>, which is activated in response to mitochondrial protein misfolding stress and leads to nuclear gene expression changes to restore proteostasis. Additionally, various AAA+ proteases (e.g., Lon, ClpXP in the matrix; m-AAA/i-AAA proteases in the IMM) are present to degrade misfolded or damaged proteins.</li>
+                </ul>
+            </section>
+
+            <!-- Key Mitochondrial Functions Section -->
+            <section class="card p-8 mb-12 animate-fadeIn" style="animation-delay: 2.0s;">
+                <h2 class="text-3xl font-bold text-orange-600 mb-4">VI. Key Mitochondrial Functions</h2>
+                <p class="text-lg mb-4">Beyond their structural organization, mitochondria perform a wide array of vital functions essential for cellular life and overall organismal health:</p>
+                <ul class="list-disc list-inside space-y-2 text-lg">
+                    <li><strong>Energy Metabolism (ATP Production):</strong> This is the most recognized function, primarily through <strong class="text-green-600">Oxidative Phosphorylation (OXPHOS)</strong>. The Electron Transport Chain (ETC) generates a proton gradient, which ATP Synthase utilizes to produce ATP, the cell's main energy currency.</li>
+                    <li><strong>Metabolic Integration:</strong> Mitochondria are central metabolic hubs. They are involved in:
+                        <ul class="list-circle list-inside ml-5">
+                            <li><strong class="text-blue-600">TCA Cycle (Krebs Cycle):</strong> Oxidizes acetyl-CoA, derived from carbohydrates, fats, and proteins, to produce $NADH$ and $FADH_2$.</li>
+                            <li><strong class="text-blue-600">Beta-Oxidation:</strong> Breaks down fatty acids into acetyl-CoA for energy production.</li>
+                            <li><strong class="text-blue-600">Heme Synthesis:</strong> The initial and final steps of heme (a component of hemoglobin and cytochromes) synthesis occur in the mitochondria.</li>
+                            <li><strong class="text-blue-600">Amino Acid Metabolism:</strong> Participate in the synthesis and degradation of various amino acids.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Calcium Homeostasis:</strong> Mitochondria act as dynamic calcium buffers, capable of rapidly taking up and releasing calcium ions. This role is critical for regulating intracellular calcium signaling, affecting processes like muscle contraction, neurotransmission, and gene expression.</li>
+                    <li><strong>Apoptosis Regulation:</strong> Mitochondria play a pivotal role in initiating the intrinsic pathway of programmed cell death (apoptosis). The release of pro-apoptotic factors, such as cytochrome c, from the intermembrane space into the cytosol triggers a cascade of events leading to cellular demise.</li>
+                    <li><strong>Reactive Oxygen Species (ROS) Signaling and Production:</strong> While mitochondria are a major source of ROS (like superoxide) as a byproduct of OXPHOS, these molecules also act as important signaling molecules at physiological concentrations, regulating various cellular processes. However, excessive ROS can lead to oxidative damage.</li>
+                    <li><strong>Thermogenesis (Heat Production):</strong> Particularly in specialized tissues like brown adipose tissue, mitochondria can uncouple electron transport from ATP synthesis via Uncoupling Proteins (UCPs). This allows the energy from the proton gradient to be dissipated as heat, crucial for maintaining body temperature.</li>
+                    <li><strong>Iron-Sulfur Cluster Biogenesis:</strong> Mitochondria are essential for the assembly of iron-sulfur (Fe-S) clusters, critical cofactors for a wide range of proteins involved in electron transport, DNA replication and repair, and various metabolic pathways.</li>
+                </ul>
+            </section>
+
+            <!-- Conclusion Section -->
+            <section class="text-center py-8 animate-fadeIn" style="animation-delay: 2.2s;">
+                <p class="text-2xl font-bold text-gray-700 mb-2">
+                    These features collectively define the mitochondrion as the powerhouse of the cell,
+                    integrating structural specialization, unique genetic systems, and dynamic cellular roles.
+                </p>
+                <p class="text-md text-gray-500">
+                    betabiosciences@gmail.com
+                </p>
+                <p class="text-md text-gray-500 mt-1">
+                    <a href="https://t.me/betascience_csir" target="_blank" class="text-blue-500 hover:underline">Join Our Telegram Channel</a>
+                </p>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const expectedEmailString = "betabiosciences@gmail.com_VERIFY";
+            const expectedOrigin = "https://betabiosciences.github.io"; // Added expected origin
+            
+            const integrityElement = document.getElementById('integrity-string');
+            const mainAppContent = document.getElementById('main-app-content');
+
+            // Combined integrity check
+            if (integrityElement && 
+                integrityElement.textContent === expectedEmailString &&
+                window.location.origin === expectedOrigin) { // Added origin check
+                // If all integrity checks pass, make content visible
+                mainAppContent.classList.remove('hidden-content');
+            } else {
+                // If any integrity check fails, content remains hidden, and no error is shown.
+                console.warn("Content integrity check failed. Displaying no content.");
+                return; // Stop further script execution
+            }
+
+            // Smooth scroll to top when header is clicked
+            const header = document.querySelector('header h1');
+            header.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Accordion functionality for structural organization sections
+            const sectionHeaders = document.querySelectorAll('.section-header');
+            
+            // Store MutationObservers to disconnect them later
+            const observers = new Map();
+
+            sectionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const arrowIcon = header.querySelector('.arrow-icon');
+
+                    // Close other open sections
+                    sectionHeaders.forEach(otherHeader => {
+                        if (otherHeader !== header) {
+                            const otherContent = otherHeader.nextElementSibling;
+                            const otherArrowIcon = otherHeader.querySelector('.arrow-icon');
+                            if (otherContent.classList.contains('open')) {
+                                otherContent.classList.remove('open');
+                                otherContent.style.maxHeight = '0'; // Ensure max-height is set to 0 on close
+                                otherArrowIcon.textContent = '+';
+                                // Disconnect observer when closing a section
+                                if (observers.has(otherContent)) {
+                                    observers.get(otherContent).disconnect();
+                                    observers.delete(otherContent);
+                                }
+                            }
+                        }
+                    });
+
+                    // Toggle current section
+                    const isOpen = content.classList.toggle('open');
+                    if (isOpen) {
+                        arrowIcon.textContent = '−'; // Minus sign
+
+                        // Function to set max-height after content has rendered
+                        const adjustHeight = () => {
+                            // Temporarily set max-height to 'none' to get full scrollHeight
+                            content.style.maxHeight = 'none'; 
+                            const scrollHeight = content.scrollHeight;
+                            content.style.maxHeight = scrollHeight + 'px';
+                        };
+
+                        // Observe mutations in the content to adjust height after rendering (e.g., MathJax)
+                        const observer = new MutationObserver((mutationsList, observer) => {
+                            // Re-adjust height if content size changes
+                            adjustHeight();
+                        });
+
+                        // Start observing the target node for configured mutations
+                        observer.observe(content, { childList: true, subtree: true, characterData: true });
+                        observers.set(content, observer);
+
+                        // Initial adjustment (important for cases where content is already rendered)
+                        // Also re-adjust after a short delay to account for initial MathJax rendering
+                        requestAnimationFrame(() => {
+                            adjustHeight();
+                            setTimeout(adjustHeight, 200); // Small delay to catch MathJax rendering
+                        });
+
+                    } else {
+                        arrowIcon.textContent = '+';
+                        content.style.maxHeight = '0';
+                        // Disconnect observer when closing a section
+                        if (observers.has(content)) {
+                            observers.get(content).disconnect();
+                            observers.delete(content);
+                        }
+                    }
+                });
+            });
+
+            // Intersection Observer for fade-in animations on scroll
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-visible'); // Add a class when visible
+                        entry.target.style.opacity = '1'; // Ensure visibility
+                        observer.unobserve(entry.target); // Stop observing once animated
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-fadeIn, .animate-slideInLeft, .animate-slideInRight').forEach(element => {
+                element.style.opacity = '0'; // Hide elements initially
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>
