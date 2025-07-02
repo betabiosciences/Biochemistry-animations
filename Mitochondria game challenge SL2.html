@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitochondrial Masters</title>
+    <style>
+        /* General Reset and Body Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex; /* Use flexbox for centering content */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px; /* Add some padding around the whole body */
+        }
+
+        /* Container for overall layout */
+        .container {
+            max-width: 1200px;
+            width: 100%; /* Make container full width on smaller screens */
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2); /* Slightly darker background for content area */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Game Stats Bar */
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap; /* Allow stats to wrap on smaller screens */
+        }
+
+        .stat {
+            text-align: center;
+            flex: 1; /* Distribute space evenly */
+            min-width: 80px; /* Ensure stats don't get too small */
+            margin: 5px; /* Add margin between stats */
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        /* Game Area Transitions */
+        .game-area {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        /* Main Menu Grid */
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjusted minmax for better mobile fit */
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: #4ecdc4;
+            box-shadow: 0 20px 40px rgba(78, 205, 196, 0.3);
+        }
+
+        .game-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ff6b6b;
+        }
+
+        /* Mitochondria Diagram (Structure Game) */
+        .mitochondria-diagram {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto; /* Centered with margin */
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            aspect-ratio: 4 / 3; /* Maintain aspect ratio for responsiveness */
+        }
+
+        .mitochondria-diagram svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .mito-part {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        .mito-part:hover {
+            transform: scale(1.5);
+            z-index: 10;
+        }
+
+        /* Style for inactive parts */
+        .inactive-part {
+            opacity: 0.5; /* Dim it */
+            cursor: default; /* Change cursor */
+            pointer-events: none; /* Disable clicks */
+            animation: none; /* Stop pulse animation */
+            border-color: #888; /* Change border color */
+        }
+
+        /* Positioning for mito parts (adjust for responsiveness if needed) */
+        .outer-membrane { background: #ff6b6b; top: 25%; left: 10%; }
+        .inner-membrane { background: #4ecdc4; top: 35%; left: 20%; }
+        .cristae { background: #45b7d1; top: 45%; left: 40%; }
+        .matrix { background: #96ceb4; top: 50%; left: 50%; }
+        .intermembrane { background: #feca57; top: 20%; left: 60%; }
+
+        /* Molecule Grid */
+        .molecule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusted minmax for mobile */
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .molecule-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .molecule-card:hover {
+            border-color: #4ecdc4;
+            transform: scale(1.05);
+        }
+
+        .molecule-card.selected {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax for mobile */
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+            width: fit-content; /* Adjust button width */
+            display: block; /* Make buttons block level for better stacking on mobile */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Pathway Diagram */
+        .pathway-diagram {
+            display: flex;
+            justify-content: center; /* Center items */
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+        }
+
+        .pathway-step {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            min-width: 120px; /* Smaller min-width for mobile */
+            flex-grow: 1; /* Allow steps to grow */
+            cursor: grab; /* Indicate draggable */
+            transition: all 0.3s ease;
+        }
+
+        .pathway-step:hover {
+            background: rgba(78, 205, 196, 0.2);
+            transform: scale(1.05);
+        }
+
+        .pathway-step.dragging {
+            opacity: 0.5;
+            border: 2px dashed #4ecdc4;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #4ecdc4;
+            margin: 0 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            max-width: 250px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Timer */
+        .timer {
+            font-size: 1.2em;
+            color: #ff6b6b;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Custom Dialog Box */
+        .custom-dialog {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1001; /* Above tooltip */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7); /* Dark overlay */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dialog-content {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            margin: auto;
+            padding: 30px;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            animation: fadeInScale 0.3s ease-out;
+        }
+
+        .dialog-content h3 {
+            color: #ff6b6b;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .dialog-content p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .dialog-content .btn {
+            margin-top: 0; /* Override default button margin */
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Mastery Dialog Specific Styles */
+        .mastery-dialog {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1002; /* Above other dialogs */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8); /* Darker overlay */
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .mastery-content {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            margin: auto;
+            padding: 40px;
+            border: 3px solid #ffd700; /* Gold border */
+            border-radius: 25px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Bouncy animation */
+            position: relative;
+            overflow: hidden; /* For particles/stars effect */
+        }
+
+        .mastery-content::before {
+            content: '✨'; /* Star/sparkle effect */
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 2em;
+            animation: sparkle 1.5s infinite alternate;
+        }
+        .mastery-content::after {
+            content: '✨';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 2em;
+            animation: sparkle 1.5s infinite alternate-reverse;
+        }
+
+        .mastery-medal {
+            font-size: 5em; /* Large medal icon */
+            color: #ffd700; /* Gold color */
+            margin-bottom: 20px;
+            animation: rotateAndScale 2s infinite ease-in-out;
+            display: block; /* Ensure it's block for margin-auto */
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 0 0 15px rgba(255,215,0,0.8);
+        }
+
+        .mastery-content h3 {
+            color: #ffd700; /* Gold title */
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .mastery-content p {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes rotateAndScale {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+
+        /* Responsive Adjustments for Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px; /* Reduce overall body padding */
+            }
+            .container {
+                padding: 15px; /* Reduce container padding */
+            }
+            .header h1 {
+                font-size: 2em; /* Smaller font size for header on mobile */
+            }
+            .game-stats {
+                flex-direction: column; /* Stack stats vertically */
+                gap: 5px; /* Reduce gap between stacked stats */
+                padding: 10px;
+            }
+            .stat {
+                margin: 3px 0; /* Adjust margin for vertical stacking */
+            }
+            .menu {
+                grid-template-columns: 1fr; /* Single column for menu cards */
+                gap: 15px; /* Reduce gap between menu cards */
+            }
+            .game-card {
+                padding: 20px; /* Smaller padding for game cards */
+            }
+            .mitochondria-diagram {
+                padding: 10px; /* Smaller padding for diagram */
+            }
+            .molecule-grid, .options {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Adjust minmax for smaller screens */
+                gap: 10px; /* Reduce gap */
+            }
+            .quiz-container {
+                padding: 20px; /* Smaller padding for quiz container */
+            }
+            .btn {
+                padding: 12px 20px; /* Smaller padding for buttons */
+                font-size: 1em; /* Smaller font size for buttons */
+            }
+            .pathway-step {
+                min-width: 100px; /* Even smaller min-width for pathway steps */
+                padding: 15px;
+            }
+            .arrow {
+                font-size: 1.5em; /* Smaller arrows */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8em; /* Even smaller font size for very small screens */
+            }
+            .stat-value {
+                font-size: 1.2em; /* Smaller stat values */
+            }
+            .game-card h3 {
+                font-size: 1.3em; /* Smaller game card titles */
+            }
+            .question {
+                font-size: 1em; /* Smaller question font size */
+            }
+            .option, .molecule-card, .pathway-step {
+                padding: 10px; /* Reduce padding for interactive elements */
+                font-size: 0.9em; /* Smaller font size for options/cards */
+            }
+        }
+
+        #footer a {
+            color: #00a0e9;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: pulse-blue 2s infinite;
+        }
+
+        @keyframes pulse-blue {
+            0% {
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(0, 160, 233, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 15px rgba(0, 160, 233, 1);
+            }
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(0, 160, 233, 0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><img src="https://betabiosciences.github.io/Biochemistry-animations/mitochondria%203d.png" alt="Mitochondria" style="height: 1em; vertical-align: middle;"> Mitochondrial Masters</h1>
+            <p>Master the Powerhouse of the Cell - Advanced Interactive Learning</p>
+        </div>
+
+        <div class="game-stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div>Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="level">1</div>
+                <div>Level</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="streak">0</div>
+                <div>Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="accuracy">100%</div>
+                <div>Accuracy</div>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="game-area active">
+            <div class="menu">
+                <div class="game-card" onclick="startGame('structure')">
+                    <h3>🏗️ Structure Challenge</h3>
+                    <p>Identify mitochondrial compartments and their structural features</p>
+                </div>
+                <div class="game-card" onclick="startGame('molecules')">
+                    <h3>🧪 Molecular Hunt</h3>
+                    <p>Match molecules to their locations and functions</p>
+                </div>
+                <div class="game-card" onclick="startGame('pathways')">
+                    <h3>⚡ Pathway Master</h3>
+                    <p>Navigate metabolic pathways and energy production</p>
+                </div>
+                <div class="game-card" onclick="startGame('quiz')">
+                    <h3>🧠 Expert Quiz</h3>
+                    <p>Advanced questions on mitochondrial biology</p>
+                </div>
+                <div class="game-card" onclick="startGame('genome')">
+                    <h3>🧬 Mitochondrial Genome</h3>
+                    <p>Explore the unique characteristics of mtDNA</p>
+                </div>
+                <div class="game-card" onclick="startGame('dynamics')">
+                    <h3>🔄 Dynamic Processes</h3>
+                    <p>Explore fission, fusion, and mitochondrial dynamics</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Structure Challenge -->
+        <div id="structure-game" class="game-area">
+            <h2>🏗️ Mitochondrial Structure Challenge</h2>
+            <p>Click on the highlighted structures to identify them and learn their functions!</p>
+            <div class="timer" id="structure-timer">Time: 120s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="structure-progress"></div>
+            </div>
+            
+            <div class="mitochondria-diagram" id="mito-diagram">
+                <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+                    <!-- Outer membrane -->
+                    <ellipse cx="400" cy="200" rx="350" ry="150" fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                    <!-- Inner membrane with cristae -->
+                    <ellipse cx="400" cy="200" rx="320" ry="120" fill="none" stroke="#4ecdc4" stroke-width="2"/>
+                    <!-- Cristae -->
+                    <path d="M150 200 Q200 150 250 200 Q300 250 350 200" fill="none" stroke="#45b7d1" stroke-width="2"/>
+                    <path d="M450 200 Q500 150 550 200 Q600 250 650 200" fill="none" stroke="#45b7d1" stroke-width="2"/>
+                    <path d="M200 250 Q250 200 300 250 Q350 300 400 250" fill="none" stroke="#45b7d1" stroke-width="2"/>
+                    <!-- Matrix -->
+                    <text x="400" y="200" text-anchor="middle" fill="#96ceb4" font-size="16">Matrix</text>
+                    <!-- Intermembrane space label -->
+                    <text x="400" y="120" text-anchor="middle" fill="#feca57" font-size="14">Intermembrane Space</text>
+                </svg>
+                
+                <div class="mito-part outer-membrane" data-part="outer-membrane" style="top: 25%; left: 10%;"></div>
+                <div class="mito-part inner-membrane" data-part="inner-membrane" style="top: 35%; left: 20%;"></div>
+                <div class="mito-part cristae" data-part="cristae" style="top: 45%; left: 40%;"></div>
+                <div class="mito-part matrix" data-part="matrix" style="top: 50%; left: 50%;"></div>
+                <div class="mito-part intermembrane" data-part="intermembrane" style="top: 20%; left: 60%;"></div>
+            </div>
+            
+            <div id="structure-question" class="quiz-container" style="display: none;">
+                <div class="question" id="structure-q"></div>
+                <div class="options" id="structure-options"></div>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Molecules Game -->
+        <div id="molecules-game" class="game-area">
+            <h2>🧪 Molecular Hunt Challenge</h2>
+            <p>Match the molecules to their correct compartments and understand their functions!</p>
+            <div class="timer" id="molecules-timer">Time: 90s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="molecules-progress"></div>
+            </div>
+            
+            <div id="molecules-challenge">
+                <h3>Select molecules found in: <span id="target-compartment"></span></h3>
+                <div class="molecule-grid" id="molecule-options"></div>
+                <button class="btn" onclick="checkMoleculeSelection()">Check Selection</button>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Pathways Game -->
+        <div id="pathways-game" class="game-area">
+            <h2>⚡ Metabolic Pathway Master</h2>
+            <p>Arrange the steps of key mitochondrial pathways in the correct order!</p>
+            <div class="timer" id="pathways-timer">Time: 240s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="pathways-progress"></div>
+            </div>
+            
+            <div id="pathway-challenge">
+                <h3 id="pathway-title">Electron Transport Chain</h3>
+                <div class="pathway-diagram" id="pathway-steps"></div>
+                <button class="btn" onclick="checkPathwayOrder()">Check Order</button>
+                <button class="btn" onclick="nextPathway()">Next Pathway</button>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Quiz Game -->
+        <div id="quiz-game" class="game-area">
+            <h2>🧠 Expert Knowledge Quiz</h2>
+            <div class="timer" id="quiz-timer">Time: 120s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="quiz-progress"></div>
+            </div>
+            
+            <div class="quiz-container">
+                <div class="question" id="quiz-question"></div>
+                <div class="options" id="quiz-options"></div>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Mitochondrial Genome Challenge -->
+        <div id="genome-game" class="game-area">
+            <h2>🧬 Mitochondrial Genome Challenge</h2>
+            <p>Test your knowledge on mitochondrial DNA and its unique features!</p>
+            <div class="timer" id="genome-timer">Time: 360s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="genome-progress"></div>
+            </div>
+            
+            <div class="quiz-container">
+                <div class="question" id="genome-question"></div>
+                <div class="options" id="genome-options"></div>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+
+        <!-- Dynamics Challenge -->
+        <div id="dynamics-game" class="game-area">
+            <h2>🔄 Dynamic Processes Challenge</h2>
+            <p>Master mitochondrial fission, fusion, and cellular dynamics!</p>
+            <div class="timer" id="dynamics-timer">Time: 360s</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="dynamics-progress"></div>
+            </div>
+            
+            <div id="dynamics-challenge">
+                <div class="quiz-container">
+                    <div class="question" id="dynamics-question"></div>
+                    <div class="options" id="dynamics-options"></div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="showMenu()">Back to Menu</button>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Custom Dialog HTML -->
+    <div id="custom-dialog" class="custom-dialog">
+        <div class="dialog-content">
+            <h3 id="dialog-title"></h3>
+            <p id="dialog-message"></p>
+            <button class="btn" id="dialog-close-btn">OK</button>
+        </div>
+    </div>
+
+    <!-- Mastery Dialog HTML -->
+    <div id="mastery-dialog" class="mastery-dialog">
+        <div class="mastery-content">
+            <div class="mastery-medal">🏅</div>
+            <h3>Mitochondrial Master!</h3>
+            <p>Congratulations! You have achieved 100% mastery across all challenges and are now a true Mitochondrial Master!</p>
+            <button class="btn" id="mastery-close-btn">Awesome!</button>
+        </div>
+    </div>
+    <div id="footer" style="text-align: center; padding: 10px; color: white;">
+        <span id="email-check">betabiosciences@gmail.com</span>
+        <br>
+        <a href="https://t.me/betascience_csir">Join Our Telegram Channel</a>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            score: 0,
+            level: 1,
+            streak: 0,
+            totalQuestions: 0,
+            correctAnswers: 0,
+            currentGame: null,
+            currentQuestion: 0,
+            timeLeft: 0,
+            timer: null,
+            currentActivePart: null, // Added to store the currently clicked mito-part
+            shuffledQuizQuestions: [], // New: to store shuffled quiz questions
+            shuffledMoleculeCompartments: [], // New: to store shuffled compartments for molecules game
+            shuffledPathways: [], // New: to store shuffled pathways for pathways game
+            shuffledGenomeQuestions: [], // New: to store shuffled genome questions
+            shuffledDynamicsQuestions: [] // New: to store shuffled dynamics questions
+        };
+
+        // Global object to track progress for each game type
+        // This will be loaded from localStorage
+        let gameProgress = {
+            structure: { completed: false, perfect: false },
+            molecules: { completed: false, perfect: false },
+            pathways: { completed: false, perfect: false },
+            quiz: { completed: false, perfect: false },
+            genome: { completed: false, perfect: false },
+            dynamics: { completed: false, perfect: false }
+        };
+
+        // Global variable for drag and drop
+        let draggedItem = null;
+
+        // Mitochondrial data
+        const mitochondrialData = {
+            structures: {
+                'outer-membrane': {
+                    name: 'Outer Membrane',
+                    description: 'Permeable to ions and small molecules, contains porins (VDAC)',
+                    molecules: ['VDAC', 'Monoamine oxidase', 'Fatty acid CoA synthetase'],
+                    functions: ['Metabolite transport', 'Lipid metabolism', 'Apoptosis regulation']
+                },
+                'inner-membrane': {
+                    name: 'Inner Membrane',
+                    description: 'Impermeable barrier containing respiratory complexes',
+                    molecules: ['ATP synthase', 'Respiratory complexes I-IV', 'Cardiolipin', 'ANT'],
+                    functions: ['ATP synthesis', 'Electron transport', 'Proton pumping']
+                },
+                'cristae': {
+                    name: 'Cristae',
+                    description: 'Folded inner membrane structures increasing surface area',
+                    molecules: ['ATP synthase dimers', 'Respiratory supercomplexes', 'Cytochrome c'],
+                    functions: ['Optimize ATP synthesis', 'Efficient electron transport', 'Compartmentalization']
+                },
+                'matrix': {
+                    name: 'Matrix',
+                    description: 'Innermost compartment containing metabolic enzymes',
+                    molecules: ['PDH complex', 'TCA cycle enzymes', 'mtDNA', 'Ribosomes', 'Mg2+', 'Ca2+'],
+                    functions: ['Citric acid cycle', 'Fatty acid oxidation', 'mtDNA replication', 'Protein synthesis']
+                },
+                'intermembrane': {
+                    name: 'Intermembrane Space',
+                    description: 'Space between outer and inner membranes',
+                    molecules: ['Cytochrome c', 'AIF', 'Smac/DIABLO', 'Adenylate kinase'],
+                    functions: ['Electron transport', 'Apoptosis signaling', 'Nucleotide metabolism']
+                }
+            },
+            
+            pathways: {
+                etc: {
+                    name: 'Electron Transport Chain',
+                    steps: [
+                        'NADH → Complex I → CoQ → Complex III → Cytochrome c → Complex IV → O₂',
+                        'FADH₂ → Complex II → CoQ → Complex III → Cytochrome c → Complex IV → O₂',
+                        'Proton pumping by Complexes I, III, and IV',
+                        'Electrochemical gradient gradient formation',
+                        'ATP synthesis by ATP synthase'
+                    ]
+                },
+                tca: {
+                    name: 'TCA Cycle',
+                    steps: [
+                        'Acetyl-CoA + Oxaloacetate → Citrate',
+                        'Citrate → Isocitrate (NADH produced)',
+                        'Isocitrate → α-Ketoglutarate (NADH produced)',
+                        'α-Ketoglutarate → Succinyl-CoA (NADH produced)',
+                        'Succinyl-CoA → Succinate (GTP produced)',
+                        'Succinate → Fumarate (FADH₂ produced)',
+                        'Fumarate → Malate',
+                        'Malate → Oxaloacetate (NADH produced)'
+                    ]
+                }
+            },
+            
+            quizQuestions: [
+                {
+                    question: "Which complex is NOT part of the electron transport chain?",
+                    options: ["Complex I (NADH dehydrogenase)", "Complex II (Succinate dehydrogenase)", "Complex III (Cytochrome bc1)", "Complex V (ATP synthase)"],
+                    correct: 3,
+                    explanation: "Complex V (ATP synthase) uses the proton gradient to synthesize ATP but is not part of the electron transport chain itself."
+                },
+                {
+                    question: "What is the primary function of cardiolipin in mitochondria?",
+                    options: ["Protein synthesis", "Membrane stability and respiratory complex function", "DNA replication", "Ion transport"],
+                    correct: 1,
+                    explanation: "Cardiolipin is a unique phospholipid that stabilizes respiratory complexes and is essential for optimal mitochondrial function."
+                },
+                {
+                    question: "Which molecule signals the opening of the mitochondrial permeability transition pore?",
+                    options: ["ATP", "Ca²⁺ overload", "NADH", "Pyruvate"],
+                    correct: 1,
+                    explanation: "Calcium overload is a major trigger for opening the mitochondrial permeability transition pore, leading to mitochondrial dysfunction."
+                },
+                {
+                    question: "What is the approximate P/O ratio for NADH oxidation?",
+                    options: ["1", "2", "2.5", "3.5"],
+                    correct: 2,
+                    explanation: "The P/O ratio for NADH is approximately 2.5, meaning 2.5 ATP molecules are produced per NADH oxidized."
+                },
+                {
+                    question: "Which process is primarily responsible for mitochondrial quality control?",
+                    options: ["Glycolysis", "Mitophagy", "Gluconeogenesis", "Lipogenesis"],
+                    correct: 1,
+                    explanation: "Mitophagy is the selective autophagy of damaged mitochondria, crucial for maintaining mitochondrial quality."
+                }
+            ],
+            genomeQuestions: [
+                {
+                    question: "Where is mitochondrial DNA (mtDNA) located?",
+                    options: ["Nucleus", "Cytosol", "Mitochondrial matrix", "Endoplasmic Reticulum"],
+                    correct: 2, // Index of "Mitochondrial matrix"
+                    explanation: "Mitochondrial DNA (mtDNA) is located in the mitochondrial matrix."
+                },
+                {
+                    question: "How many genes are typically encoded by human mitochondrial DNA?",
+                    options: ["~20000", "~37", "~1000", "~500"],
+                    correct: 1, // Index of "~37"
+                    explanation: "Human mitochondrial DNA typically encodes 37 genes (13 proteins, 22 tRNAs, 2 rRNAs)."
+                },
+                {
+                    question: "Which of the following is true about mitochondrial DNA inheritance?",
+                    options: ["It is inherited paternally", "It is inherited maternally", "It is inherited from both parents", "It is only present in males"],
+                    correct: 1, // Index of "It is inherited maternally"
+                    explanation: "Mitochondrial DNA is almost exclusively inherited maternally."
+                },
+                {
+                    question: "What is a common feature of mitochondrial DNA mutations?",
+                    options: ["They always cause severe disease", "They are always repaired perfectly", "They accumulate with age and can contribute to aging", "They are only found in germline cells"],
+                    correct: 2, // Index of "They accumulate with age and can contribute to aging"
+                    explanation: "Mitochondrial DNA mutations can accumulate over time due to high oxidative stress and less robust repair mechanisms, contributing to aging and age-related diseases."
+                },
+                {
+                    question: "What is the shape of mitochondrial DNA?",
+                    options: ["Linear", "Circular", "Branched", "Irregular"],
+                    correct: 1,
+                    explanation: "Mitochondrial DNA is typically circular, similar to bacterial chromosomes."
+                },
+                {
+                    question: "Which enzyme is responsible for mtDNA replication?",
+                    options: ["DNA polymerase alpha", "DNA polymerase delta", "DNA polymerase gamma", "RNA polymerase II"],
+                    correct: 2,
+                    explanation: "DNA polymerase gamma is the sole DNA polymerase responsible for replicating mitochondrial DNA."
+                },
+                {
+                    question: "What is the phenomenon where a cell contains a mixture of normal and mutated mtDNA called?",
+                    options: ["Homoplasmy", "Heteroplasmy", "Polyploidy", "Aneuploidy"],
+                    correct: 1,
+                    explanation: "Heteroplasmy refers to the presence of more than one type of mitochondrial DNA within a cell or individual."
+                },
+                {
+                    question: "Mitochondrial DNA primarily encodes proteins involved in which process?",
+                    options: ["Glycolysis", "Fatty acid synthesis", "Oxidative phosphorylation", "Protein degradation"],
+                    correct: 2,
+                    explanation: "Mitochondrial DNA primarily encodes subunits of the electron transport chain complexes involved in oxidative phosphorylation."
+                },
+                {
+                    question: "Compared to nuclear DNA, mitochondrial DNA has a higher mutation rate due to:",
+                    options: ["More efficient repair mechanisms", "Lack of histones and proximity to reactive oxygen species", "Larger size", "Presence of introns"],
+                    correct: 1,
+                    explanation: "Mitochondrial DNA lacks protective histones and is in close proximity to reactive oxygen species generated during oxidative phosphorylation, leading to a higher mutation rate."
+                },
+                {
+                    question: "What is the term for the process by which mitochondria are selectively degraded?",
+                    options: ["Apoptosis", "Necrosis", "Autophagy", "Mitophagy"],
+                    correct: 3,
+                    explanation: "Mitophagy is the selective degradation of damaged or superfluous mitochondria by autophagy."
+                }
+            ],
+            dynamicsQuestions: [
+                {
+                    question: "Which process involves the division of a single mitochondrion into two or more smaller mitochondria?",
+                    options: ["Fission", "Fusion", "Mitophagy", "Biogenesis"],
+                    correct: 0,
+                    explanation: "Fission is the process where a single mitochondrion divides into two or more daughter mitochondria."
+                },
+                {
+                    question: "What is the process where two or more mitochondria combine to form a larger, interconnected mitochondrion?",
+                    options: ["Fission", "Fusion", "Apoptosis", "Autophagy"],
+                    correct: 1,
+                    explanation: "Fusion is the process where two or more mitochondria combine to form a larger, interconnected mitochondrion."
+                },
+                {
+                    question: "Which protein is crucial for mitochondrial fission by constricting and dividing the mitochondrial outer membrane?",
+                    options: ["OPA1", "Mfn1/2", "Drp1", "TIM23"],
+                    correct: 2,
+                    explanation: "Drp1 (Dynamin-related protein 1) is a key GTPase that mediates mitochondrial fission by constricting and dividing the mitochondrial outer membrane."
+                },
+                {
+                    question: "Which proteins mediate mitochondrial outer membrane fusion?",
+                    options: ["Drp1", "Mfn1 and Mfn2", "OPA1", "FIS1"],
+                    correct: 1,
+                    explanation: "Mfn1 and Mfn2 (Mitofusins 1 and 2) are GTPases located on the outer mitochondrial membrane that mediate outer membrane fusion."
+                },
+                {
+                    question: "What is a primary reason for mitochondrial fission in the context of quality control?",
+                    options: ["To increase ATP production", "To remove damaged mitochondria", "To create a more interconnected network", "To enhance protein synthesis"],
+                    correct: 1,
+                    explanation: "Mitochondrial fission often precedes mitophagy, allowing for the isolation and removal of damaged mitochondrial segments."
+                },
+                {
+                    question: "Mitochondrial fusion is important for which of the following?",
+                    options: ["Segregating damaged parts", "Maintaining mitochondrial network integrity and content mixing", "Initiating apoptosis", "Reducing mitochondrial volume"],
+                    correct: 1,
+                    explanation: "Mitochondrial fusion promotes the mixing of mitochondrial contents, which helps to maintain the integrity of the mitochondrial network and dilute damaged components."
+                },
+                {
+                    question: "Dysregulation of mitochondrial fission is implicated in which type of disease?",
+                    options: ["Type 1 Diabetes", "Neurodegenerative diseases (e.g., Alzheimer's)", "Cystic Fibrosis", "Sickle Cell Anemia"],
+                    correct: 1,
+                    explanation: "Excessive mitochondrial fission and fragmentation are often observed in neurodegenerative diseases like Alzheimer's and Parkinson's."
+                },
+                {
+                    question: "Which protein is involved in inner mitochondrial membrane fusion?",
+                    options: ["Drp1", "Mfn1", "OPA1", "FIS1"],
+                    correct: 2,
+                    explanation: "OPA1 (Optic atrophy 1) is a dynamin-related GTPase that mediates inner mitochondrial membrane fusion."
+                },
+                {
+                    question: "What happens to the mitochondrial network during cellular stress that induces fission?",
+                    options: ["It becomes more elongated", "It becomes more fragmented", "It becomes more interconnected", "It disappears entirely"],
+                    correct: 1,
+                    explanation: "During cellular stress, mitochondria often undergo increased fission, leading to a fragmented mitochondrial network."
+                },
+                {
+                    question: "A balanced cycle of fission and fusion is essential for which of these?",
+                    options: ["Glycolysis efficiency", "Maintaining mitochondrial health and function", "Nuclear DNA replication", "Cell membrane permeability"],
+                    correct: 1,
+                    explanation: "The dynamic balance between mitochondrial fission and fusion is critical for maintaining mitochondrial morphology, distribution, and overall health and function."
+                }
+            ]
+        };
+
+        // Initialize game
+        function updateStats() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('streak').textContent = gameState.streak;
+            const accuracy = gameState.totalQuestions > 0 ? 
+                Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100) : 100;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        function showMenu() {
+            document.querySelectorAll('.game-area').forEach(area => area.classList.remove('active'));
+            document.getElementById('main-menu').classList.add('active');
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+            }
+            // Explicitly hide the custom dialog when showing the menu
+            document.getElementById('custom-dialog').style.display = 'none';
+            document.getElementById('mastery-dialog').style.display = 'none'; // Also hide mastery dialog
+        }
+
+        function startGame(gameType) {
+            gameState.currentGame = gameType;
+            document.querySelectorAll('.game-area').forEach(area => area.classList.remove('active'));
+            document.getElementById(gameType + '-game').classList.add('active');
+            
+            // Reset game state for a new challenge
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.totalQuestions = 0;
+            gameState.correctAnswers = 0;
+            updateStats(); // Update stats display immediately
+
+            // Ensure the dialogs are hidden when starting a new game
+            document.getElementById('custom-dialog').style.display = 'none';
+            document.getElementById('mastery-dialog').style.display = 'none';
+
+            switch(gameType) {
+                case 'structure':
+                    initStructureGame();
+                    break;
+                case 'molecules':
+                    initMoleculesGame();
+                    break;
+                case 'pathways':
+                    initPathwaysGame();
+                    break;
+                case 'quiz':
+                    initQuizGame();
+                    break;
+                case 'genome': // New case for genome game
+                    initGenomeGame();
+                    break;
+                case 'dynamics':
+                    initDynamicsGame();
+                    break;
+            }
+        }
+
+        // Structure Game
+        function initStructureGame() {
+            gameState.timeLeft = 120; // Changed from 60 to 120 seconds (2 minutes)
+            gameState.currentQuestion = 0;
+            gameState.currentActivePart = null; // Reset for a new game
+            startTimer('structure');
+            
+            // Re-enable all parts and attach event listeners for a new game
+            document.querySelectorAll('.mito-part').forEach(part => {
+                part.classList.remove('inactive-part'); // Ensure it's active
+                // Remove existing listeners to prevent duplicates
+                part.removeEventListener('click', handleStructureClick);
+                part.removeEventListener('mouseenter', showTooltip);
+                part.removeEventListener('mouseleave', hideTooltip);
+
+                // Add listeners
+                part.addEventListener('click', handleStructureClick);
+                part.addEventListener('mouseenter', showTooltip);
+                part.addEventListener('mouseleave', hideTooltip);
+            });
+            // For structure game, questions are chosen by clicking parts.
+            // The question *type* for a clicked part is already randomized in showStructureQuestion.
+            // The options within that question are also shuffled.
+        }
+
+        function handleStructureClick(event) {
+            const partType = event.target.dataset.part;
+            const structureData = mitochondrialData.structures[partType];
+            
+            gameState.currentActivePart = event.target; // Store the clicked part
+            showStructureQuestion(structureData, partType);
+        }
+
+        function showStructureQuestion(structureData, partType) {
+            const questionContainer = document.getElementById('structure-question');
+            const questionEl = document.getElementById('structure-q');
+            const optionsEl = document.getElementById('structure-options');
+            
+            // Generate question about the structure
+            const questions = [
+                `What is the primary function of the ${structureData.name}?`,
+                `Which molecules are characteristically found in the ${structureData.name}?`,
+                `What structural feature distinguishes the ${structureData.name}?`
+            ];
+            
+            const questionIndex = Math.floor(Math.random() * questions.length);
+            questionEl.textContent = questions[questionIndex];
+            
+            // Generate options based on question type
+            let correctAnswer, options;
+            if (questionIndex === 0) {
+                correctAnswer = structureData.functions[0];
+                options = [correctAnswer, 'DNA replication', 'Protein folding', 'Lipid storage'];
+            } else if (questionIndex === 1) {
+                correctAnswer = structureData.molecules[0];
+                options = [correctAnswer, 'Hemoglobin', 'Insulin', 'Collagen'];
+            } else {
+                correctAnswer = structureData.description;
+                options = [correctAnswer, 'Contains ribosomes only', 'Stores calcium ions', 'Produces hormones'];
+            }
+            
+            // Shuffle options
+            options = shuffleArray(options);
+            const correctIndex = options.indexOf(correctAnswer);
+            
+            optionsEl.innerHTML = '';
+            options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.onclick = () => handleStructureAnswer(index === correctIndex, optionEl);
+                optionsEl.appendChild(optionEl);
+            });
+            
+            questionContainer.style.display = 'block';
+        }
+
+        function handleStructureAnswer(isCorrect, optionEl) {
+            gameState.totalQuestions++;
+            
+            if (isCorrect) {
+                optionEl.classList.add('correct');
+                gameState.score += 10;
+                gameState.streak++;
+                gameState.correctAnswers++;
+            } else {
+                optionEl.classList.add('incorrect');
+                gameState.streak = 0;
+                // Show correct answer
+                document.querySelectorAll('.option').forEach(opt => {
+                    if (!opt.classList.contains('incorrect')) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            updateStats();
+            updateProgress('structure', (gameState.currentQuestion + 1) / 5 * 100);
+            
+            setTimeout(() => {
+                document.getElementById('structure-question').style.display = 'none';
+                gameState.currentQuestion++;
+                
+                if (gameState.currentQuestion >= 5) {
+                    endGame('Structure Challenge Complete!');
+                }
+            }, 2000);
+        }
+
+        // Molecules Game
+        function initMoleculesGame() {
+            gameState.timeLeft = 90;
+            gameState.currentQuestion = 0;
+            // Shuffle compartments for the molecules game
+            gameState.shuffledMoleculeCompartments = shuffleArray(Object.keys(mitochondrialData.structures));
+            startTimer('molecules');
+            
+            showMoleculeChallenge();
+        }
+
+        function showMoleculeChallenge() {
+            if (gameState.currentQuestion >= gameState.shuffledMoleculeCompartments.length) {
+                endGame('Molecular Hunt Complete!');
+                return;
+            }
+
+            const targetCompartment = gameState.shuffledMoleculeCompartments[gameState.currentQuestion];
+            const structureData = mitochondrialData.structures[targetCompartment];
+            
+            document.getElementById('target-compartment').textContent = structureData.name;
+            
+            // Create molecule options (correct + distractors)
+            const correctMolecules = structureData.molecules.slice(0, 2);
+            const distractorMolecules = ['Hemoglobin', 'Insulin', 'Pepsin', 'Keratin', 'Albumin', 'Myosin'];
+            const randomDistractors = shuffleArray(distractorMolecules).slice(0, 4);
+            
+            const allOptions = shuffleArray([...correctMolecules, ...randomDistractors]);
+            
+            const optionsContainer = document.getElementById('molecule-options');
+            optionsContainer.innerHTML = '';
+            
+            allOptions.forEach(molecule => {
+                const card = document.createElement('div');
+                card.className = 'molecule-card';
+                card.textContent = molecule;
+                card.onclick = () => toggleMoleculeSelection(card, molecule, correctMolecules);
+                optionsContainer.appendChild(card);
+            });
+        }
+
+        function toggleMoleculeSelection(card, molecule, correctMolecules) {
+            card.classList.toggle('selected');
+        }
+
+        function checkMoleculeSelection() {
+            const selectedCards = document.querySelectorAll('.molecule-card.selected');
+            const selectedMolecules = Array.from(selectedCards).map(card => card.textContent);
+            
+            const targetCompartment = gameState.shuffledMoleculeCompartments[gameState.currentQuestion];
+            const correctMolecules = mitochondrialData.structures[targetCompartment].molecules.slice(0, 2);
+            
+            gameState.totalQuestions++;
+            
+            // Check if selection is correct
+            const isCorrect = correctMolecules.every(mol => selectedMolecules.includes(mol)) && 
+                             selectedMolecules.every(mol => correctMolecules.includes(mol));
+            
+            if (isCorrect) {
+                gameState.score += 15;
+                gameState.streak++;
+                gameState.correctAnswers++;
+                selectedCards.forEach(card => card.classList.add('correct'));
+            } else {
+                gameState.streak = 0;
+                selectedCards.forEach(card => {
+                    if (correctMolecules.includes(card.textContent)) {
+                        card.classList.add('correct');
+                    } else {
+                        card.classList.add('incorrect');
+                    }
+                });
+                
+                // Highlight correct answers not selected
+                document.querySelectorAll('.molecule-card').forEach(card => {
+                    if (correctMolecules.includes(card.textContent) && !card.classList.contains('selected')) {
+                        card.classList.add('correct');
+                    }
+                });
+            }
+            
+            updateStats();
+            updateProgress('molecules', (gameState.currentQuestion + 1) / gameState.shuffledMoleculeCompartments.length * 100);
+            
+            setTimeout(() => {
+                gameState.currentQuestion++;
+                if (gameState.currentQuestion >= gameState.shuffledMoleculeCompartments.length) {
+                    endGame('Molecular Hunt Complete!');
+                }
+                else {
+                    showMoleculeChallenge();
+                }
+            }, 3000);
+        }
+
+        // Pathways Game
+        function initPathwaysGame() {
+            gameState.timeLeft = 240; // Changed from 120 to 240 seconds (4 minutes)
+            gameState.currentQuestion = 0;
+            // Shuffle pathways for the pathways game
+            gameState.shuffledPathways = shuffleArray(Object.keys(mitochondrialData.pathways));
+            // Set the first pathway from the shuffled list
+            gameState.currentPathway = gameState.shuffledPathways[gameState.currentQuestion]; 
+            startTimer('pathways');
+            
+            showPathwayChallenge();
+
+            // Add drag and drop listeners to the container itself
+            const pathwayDiagram = document.getElementById('pathway-steps');
+            pathwayDiagram.addEventListener('dragover', handleDragOver);
+            pathwayDiagram.addEventListener('drop', handleDrop);
+        }
+
+        function showPathwayChallenge() {
+            if (gameState.currentQuestion >= gameState.shuffledPathways.length) {
+                endGame('Pathway Master Complete!');
+                return;
+            }
+            const pathwayKey = gameState.shuffledPathways[gameState.currentQuestion];
+            const pathway = mitochondrialData.pathways[pathwayKey];
+            document.getElementById('pathway-title').textContent = pathway.name;
+            
+            const stepsContainer = document.getElementById('pathway-steps');
+            stepsContainer.innerHTML = '';
+            
+            // Shuffle the steps for the challenge
+            const shuffledSteps = shuffleArray([...pathway.steps]);
+            
+            shuffledSteps.forEach((step, index) => {
+                const stepEl = document.createElement('div');
+                stepEl.className = 'pathway-step';
+                stepEl.textContent = step; // Display full step text
+                stepEl.dataset.originalStep = step; // Store original step text for comparison
+                stepEl.draggable = true;
+                
+                // Add drag and drop event listeners
+                stepEl.addEventListener('dragstart', handleDragStart);
+                stepEl.addEventListener('dragover', handleDragOver);
+                stepEl.addEventListener('drop', handleDrop);
+                stepEl.addEventListener('dragleave', handleDragLeave); // Optional: for visual feedback
+                stepEl.addEventListener('dragenter', handleDragEnter); // Optional: for visual feedback
+
+                stepsContainer.appendChild(stepEl);
+                
+                // Add arrow only between steps, not after the last one
+                if (index < shuffledSteps.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    stepsContainer.appendChild(arrow);
+                }
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            // Add a class to the dragged item for visual feedback
+            setTimeout(() => {
+                e.target.classList.add('dragging');
+            }, 0);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Necessary to allow dropping
+            e.dataTransfer.dropEffect = 'move';
+            const targetElement = e.target.closest('.pathway-step');
+            if (targetElement && targetElement !== draggedItem) {
+                // Optional: Add visual feedback for where the item will be dropped
+                const rect = targetElement.getBoundingClientRect();
+                const offset = e.clientY - rect.top;
+                if (offset > rect.height / 2) {
+                    targetElement.style.borderBottom = '2px solid #ff6b6b';
+                    targetElement.style.borderTop = 'none';
+                } else {
+                    targetElement.style.borderTop = '2px solid #ff6b6b';
+                    targetElement.style.borderBottom = 'none';
+                }
+            }
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const targetElement = e.target.closest('.pathway-step');
+            if (targetElement && targetElement !== draggedItem) {
+                targetElement.style.background = 'rgba(78, 205, 196, 0.3)'; // Highlight on enter
+            }
+        }
+
+        function handleDragLeave(e) {
+            const targetElement = e.target.closest('.pathway-step');
+            if (targetElement) {
+                targetElement.style.background = ''; // Remove highlight
+                targetElement.style.borderTop = 'none';
+                targetElement.style.borderBottom = 'none';
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropTarget = e.target.closest('.pathway-step'); // Will be null if dropped on container background
+            const stepsContainer = document.getElementById('pathway-steps');
+
+            // Remove all visual drop indicators
+            document.querySelectorAll('.pathway-step').forEach(step => {
+                step.style.borderTop = 'none';
+                step.style.borderBottom = 'none';
+                step.style.background = ''; // Remove highlight
+            });
+
+            if (draggedItem) { // Ensure there's an item being dragged
+                if (dropTarget && draggedItem !== dropTarget) {
+                    const dropTargetRect = dropTarget.getBoundingClientRect();
+                    const offset = e.clientY - dropTargetRect.top;
+
+                    if (offset > dropTargetRect.height / 2) {
+                        stepsContainer.insertBefore(draggedItem, dropTarget.nextSibling);
+                    } else {
+                        stepsContainer.insertBefore(draggedItem, dropTarget);
+                    }
+                } else if (e.target === stepsContainer) {
+                    // Dropped directly onto the container, append to end
+                    stepsContainer.appendChild(draggedItem);
+                }
+            }
+            
+            if (draggedItem) { // Ensure draggedItem is not null before trying to remove class
+                draggedItem.classList.remove('dragging');
+            }
+            draggedItem = null;
+            
+            updatePathwayArrows();
+        }
+
+
+        function updatePathwayArrows() {
+            const stepsContainer = document.getElementById('pathway-steps');
+            let children = Array.from(stepsContainer.children);
+            
+            // Remove all existing arrows
+            children.filter(child => child.classList.contains('arrow'))
+                    .forEach(arrow => arrow.remove());
+
+            // Re-insert arrows based on the new order of steps
+            children = Array.from(stepsContainer.children).filter(child => child.classList.contains('pathway-step')); // Get only steps
+            
+            children.forEach((stepEl, index) => {
+                if (index < children.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    stepsContainer.insertBefore(arrow, children[index + 1]);
+                }
+            });
+        }
+
+
+        function checkPathwayOrder() {
+            const stepsContainer = document.getElementById('pathway-steps');
+            const currentOrderElements = Array.from(stepsContainer.querySelectorAll('.pathway-step'));
+            const currentOrder = currentOrderElements.map(el => el.dataset.originalStep);
+            
+            const pathwayKey = gameState.shuffledPathways[gameState.currentQuestion];
+            const correctPathwaySteps = mitochondrialData.pathways[pathwayKey].steps;
+            
+            gameState.totalQuestions++;
+            
+            // Compare the current order with the correct order
+            const isCorrect = JSON.stringify(currentOrder) === JSON.stringify(correctPathwaySteps);
+
+            if (isCorrect) {
+                gameState.score += 20;
+                gameState.streak++;
+                gameState.correctAnswers++;
+                currentOrderElements.forEach(step => step.style.background = 'rgba(76, 175, 80, 0.3)');
+            } else {
+                gameState.streak = 0;
+                currentOrderElements.forEach(step => step.style.background = 'rgba(244, 67, 54, 0.3)');
+                // Optionally highlight correct steps in place or show correct order
+            }
+            
+            updateStats();
+            updateProgress('pathways', (gameState.currentQuestion + 1) / gameState.shuffledPathways.length * 100);
+        }
+
+        function nextPathway() {
+            gameState.currentQuestion++;
+            if (gameState.currentQuestion < gameState.shuffledPathways.length) {
+                gameState.currentPathway = gameState.shuffledPathways[gameState.currentQuestion];
+                showPathwayChallenge();
+            } else {
+                endGame('Pathway Master Complete!');
+            }
+        }
+
+        // Quiz Game
+        function initQuizGame() {
+            gameState.timeLeft = 120; // Changed from 30 to 120 seconds (2 minutes)
+            gameState.currentQuestion = 0;
+            // Shuffle quiz questions
+            gameState.shuffledQuizQuestions = shuffleArray([...mitochondrialData.quizQuestions]);
+            startTimer('quiz');
+            
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            if (gameState.currentQuestion >= gameState.shuffledQuizQuestions.length) {
+                endGame('Quiz Complete!');
+                return;
+            }
+            
+            const question = gameState.shuffledQuizQuestions[gameState.currentQuestion];
+            document.getElementById('quiz-question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.onclick = () => handleQuizAnswer(index, question.correct, optionEl, question.explanation);
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            updateProgress('quiz', (gameState.currentQuestion / gameState.shuffledQuizQuestions.length) * 100);
+        }
+
+        function handleQuizAnswer(selectedIndex, correctIndex, optionEl, explanation) {
+            gameState.totalQuestions++;
+            
+            // Disable all options
+            document.querySelectorAll('#quiz-options .option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (selectedIndex === correctIndex) {
+                optionEl.classList.add('correct');
+                gameState.score += 15;
+                gameState.streak++;
+                gameState.correctAnswers++;
+            } else {
+                optionEl.classList.add('incorrect');
+                gameState.streak = 0;
+                // Show correct answer
+                document.querySelectorAll('#quiz-options .option')[correctIndex].classList.add('correct');
+            }
+            
+            // Show explanation (using console.log as a placeholder for a custom modal)
+            setTimeout(() => {
+                console.log(explanation); // Replace with custom modal display
+                gameState.currentQuestion++;
+                gameState.timeLeft = 120; // Reset timer for next question
+                showQuizQuestion();
+            }, 1500);
+            
+            updateStats();
+        }
+
+        // Mitochondrial Genome Game
+        function initGenomeGame() {
+            gameState.timeLeft = 360; // 6 minutes for 10 questions
+            gameState.currentQuestion = 0;
+            gameState.shuffledGenomeQuestions = shuffleArray([...mitochondrialData.genomeQuestions]);
+            startTimer('genome');
+            showGenomeQuestion();
+        }
+
+        function showGenomeQuestion() {
+            if (gameState.currentQuestion >= gameState.shuffledGenomeQuestions.length) {
+                endGame('Mitochondrial Genome Challenge Complete!');
+                return;
+            }
+            
+            const question = gameState.shuffledGenomeQuestions[gameState.currentQuestion];
+            document.getElementById('genome-question').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('genome-options');
+            optionsContainer.innerHTML = '';
+            
+            // Shuffle options for the current question
+            const shuffledOptions = shuffleArray([...question.options]);
+            const correctOptionText = question.options[question.correct];
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                // Pass the original correct index based on the shuffled options
+                optionEl.onclick = () => handleGenomeAnswer(option === correctOptionText, optionEl, correctOptionText, question.explanation);
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            updateProgress('genome', (gameState.currentQuestion / gameState.shuffledGenomeQuestions.length) * 100);
+        }
+
+        function handleGenomeAnswer(isCorrect, optionEl, correctOptionText, explanation) {
+            gameState.totalQuestions++;
+            
+            // Disable all options
+            document.querySelectorAll('#genome-options .option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (isCorrect) {
+                optionEl.classList.add('correct');
+                gameState.score += 15;
+                gameState.streak++;
+                gameState.correctAnswers++;
+            } else {
+                optionEl.classList.add('incorrect');
+                gameState.streak = 0;
+                // Show correct answer
+                document.querySelectorAll('#genome-options .option').forEach(opt => {
+                    if (opt.textContent === correctOptionText) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                console.log(explanation); // Replace with custom modal display
+                gameState.currentQuestion++;
+                gameState.timeLeft = 360; // Reset timer for next question
+                showGenomeQuestion();
+            }, 1500);
+            
+            updateStats();
+        }
+
+        // Dynamics Challenge
+        function initDynamicsGame() {
+            gameState.timeLeft = 360; // 6 minutes for 10 questions
+            gameState.currentQuestion = 0;
+            gameState.shuffledDynamicsQuestions = shuffleArray([...mitochondrialData.dynamicsQuestions]);
+            startTimer('dynamics');
+            showDynamicsChallenge();
+        }
+
+        function showDynamicsChallenge() {
+            if (gameState.currentQuestion >= gameState.shuffledDynamicsQuestions.length) {
+                endGame('Dynamic Processes Challenge Complete!');
+                return;
+            }
+
+            const currentDynamicsQuestion = gameState.shuffledDynamicsQuestions[gameState.currentQuestion];
+            document.getElementById('dynamics-question').textContent = currentDynamicsQuestion.question;
+            
+            const optionsContainer = document.getElementById('dynamics-options');
+            optionsContainer.innerHTML = '';
+            
+            // Re-enable options (no animation to wait for)
+            optionsContainer.style.pointerEvents = 'auto';
+
+            // Shuffle options for the current question
+            const shuffledOptions = shuffleArray([...currentDynamicsQuestion.options]);
+            const correctOptionText = currentDynamicsQuestion.options[currentDynamicsQuestion.correct];
+            
+            shuffledOptions.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.onclick = () => handleDynamicsAnswer(option === correctOptionText, optionEl, correctOptionText, currentDynamicsQuestion.explanation);
+                optionsContainer.appendChild(optionEl);
+            });
+            
+            updateProgress('dynamics', (gameState.currentQuestion / gameState.shuffledDynamicsQuestions.length) * 100);
+        }
+
+        function handleDynamicsAnswer(isCorrect, optionEl, correctOptionText, explanation) {
+            gameState.totalQuestions++;
+            
+            // Disable all options
+            document.querySelectorAll('#dynamics-options .option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (isCorrect) {
+                optionEl.classList.add('correct');
+                gameState.score += 20; // Dynamics questions are worth more
+                gameState.streak++;
+                gameState.correctAnswers++;
+            } else {
+                optionEl.classList.add('incorrect');
+                gameState.streak = 0;
+                // Show correct answer
+                document.querySelectorAll('#dynamics-options .option').forEach(opt => {
+                    if (opt.textContent === correctOptionText) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            setTimeout(() => {
+                console.log(explanation); // Replace with custom modal display
+                gameState.currentQuestion++;
+                // Reset timer for next question, or end game
+                if (gameState.currentQuestion < gameState.shuffledDynamicsQuestions.length) {
+                    gameState.timeLeft = 360; // Reset timer for next question
+                    showDynamicsChallenge();
+                } else {
+                    endGame('Dynamic Processes Challenge Complete!');
+                }
+            }, 2000); // Give time to see feedback and explanation
+            
+            updateStats();
+        }
+
+        // Utility functions
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function startTimer(gameType) {
+            const timerEl = document.getElementById(gameType + '-timer');
+            
+            gameState.timer = setInterval(() => {
+                gameState.timeLeft--;
+                timerEl.textContent = `Time: ${gameState.timeLeft}s`;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timer);
+                    endGame('Time\'s up!');
+                }
+            }, 1000);
+        }
+
+        function updateProgress(gameType, percentage) {
+            const progressEl = document.getElementById(gameType + '-progress');
+            progressEl.style.width = percentage + '%';
+        }
+
+        // Custom Dialog functions
+        function showCustomDialog(title, message) {
+            const dialog = document.getElementById('custom-dialog');
+            document.getElementById('dialog-title').textContent = title;
+            document.getElementById('dialog-message').innerHTML = message; // Use innerHTML for potential line breaks
+            dialog.style.display = 'flex'; // Show the dialog
+            
+            // Set up close button
+            const closeBtn = document.getElementById('dialog-close-btn');
+            closeBtn.onclick = () => {
+                dialog.style.display = 'none'; // Hide the dialog
+                showMenu(); // Go back to menu after dialog is closed
+            };
+        }
+
+        function showMasteryDialog() {
+            const dialog = document.getElementById('mastery-dialog');
+            dialog.style.display = 'flex'; // Show the mastery dialog
+            
+            // Set up close button for mastery dialog
+            const closeBtn = document.getElementById('mastery-close-btn');
+            closeBtn.onclick = () => {
+                dialog.style.display = 'none'; // Hide the dialog
+                showMenu(); // Go back to menu after dialog is closed
+            };
+        }
+
+        function checkOverallMastery() {
+            let allGamesCompletedPerfectly = true;
+            for (const gameType in gameProgress) {
+                if (!gameProgress[gameType].completed || !gameProgress[gameType].perfect) {
+                    allGamesCompletedPerfectly = false;
+                    break;
+                }
+            }
+
+            if (allGamesCompletedPerfectly) {
+                showMasteryDialog();
+                return true; // Indicate that mastery dialog was shown
+            }
+            return false; // Indicate that mastery dialog was NOT shown
+        }
+
+        function endGame(message) {
+            clearInterval(gameState.timer);
+            
+            const accuracy = gameState.totalQuestions > 0 ? 
+                Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100) : 100;
+
+            // Determine if the current game was completed perfectly
+            const isPerfectForCurrentGame = accuracy === 100 && gameState.totalQuestions > 0;
+
+            // Update game progress for the current game
+            gameProgress[gameState.currentGame].completed = true;
+            gameProgress[gameState.currentGame].perfect = isPerfectForCurrentGame; // Use isPerfectForCurrentGame here
+            localStorage.setItem('gameProgress', JSON.stringify(gameProgress)); // Save progress
+
+            // Check for overall mastery
+            if (checkOverallMastery()) {
+                // Mastery dialog was shown, no need for regular end game dialog
+                return;
+            }
+
+            // If not overall mastery, proceed with regular end game dialog logic
+            let dialogTitle = "Game Over!";
+            let dialogBody = `Final Score: ${gameState.score}<br>Accuracy: ${accuracy}%`;
+            
+            // Level up if the current game was completed perfectly
+            if (isPerfectForCurrentGame) { 
+                const oldLevel = gameState.level;
+                gameState.level++;
+                dialogTitle = "Congratulations!";
+                dialogBody = `Awesome! You completed the ${gameState.currentGame === 'molecules' ? 'Molecular Hunt' : gameState.currentGame === 'quiz' ? 'Expert Quiz' : gameState.currentGame === 'genome' ? 'Mitochondrial Genome Challenge' : gameState.currentGame === 'dynamics' ? 'Dynamic Processes Challenge' : gameState.currentGame === 'structure' ? 'Structure Challenge' : 'Pathway Master'} with 100% accuracy!<br>Your score: ${gameState.score}<br>Accuracy: ${accuracy}%<br>Level Up! Your level is now ${oldLevel} → ${gameState.level}!`;
+            } else {
+                dialogTitle = "Game Over!";
+                dialogBody = `Final Score: ${gameState.score}<br>Accuracy: ${accuracy}%`;
+            }
+            
+            updateStats(); // Update stats before showing dialog so level is correct
+            showCustomDialog(dialogTitle, dialogBody);
+        }
+
+        function showTooltip(event) {
+            const tooltip = document.getElementById('tooltip');
+            const partType = event.target.dataset.part;
+            const structureData = mitochondrialData.structures[partType];
+            
+            tooltip.innerHTML = `<strong>${structureData.name}</strong><br>${structureData.description}`;
+            tooltip.style.opacity = '1';
+            
+            // Position tooltip
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.left = rect.right + 10 + 'px';
+            tooltip.style.top = rect.top + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').style.opacity = '0';
+        }
+
+        // Initialize the game when the window loads
+        window.onload = function() {
+            // Security Check
+            if (window.location.hostname !== 'betabiosciences.github.io') {
+                document.body.innerHTML = '';
+                return;
+            }
+            const emailCheck = document.getElementById('email-check');
+            if (!emailCheck || emailCheck.textContent !== 'betabiosciences@gmail.com') {
+                document.body.innerHTML = '';
+                return;
+            }
+
+            // Load game progress from localStorage
+            const savedProgress = localStorage.getItem('gameProgress');
+            if (savedProgress) {
+                gameProgress = JSON.parse(savedProgress);
+            }
+            updateStats();
+            showMenu(); // Ensure main menu is shown and dialog is hidden initially
+        };
+    </script>
+</body>
+</html>
