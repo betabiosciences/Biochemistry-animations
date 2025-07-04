@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Peroxisome Unveiled</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <!-- MathJax CDN for LaTeX rendering -->
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        :root {
+            /* New Color Palette for Dark Theme */
+            --background-color: #1A1A2E; /* Deep dark blue/purple */
+            --text-color: #E0E0E0; /* Soft light grey for main text */
+            --primary-color: #00BCD4; /* Vibrant Cyan/Turquoise for main headings, accents */
+            --secondary-color: #FFC107; /* Golden Yellow for subheadings, secondary accents */
+            --card-bg-color: #2C3A47; /* Dark Slate Blue for cards/sections */
+
+            /* Diagram specific colors adjusted for the new dark theme */
+            --light-blue-bg: #34495E; /* Slightly lighter dark blue for diagram background */
+            --medium-blue: #00838F; /* Dark Cyan/Teal for peroxisome body */
+            --darker-blue-border: #006064; /* Even darker cyan/teal for membrane border */
+            --lighter-blue-core: #FF9800; /* Rich Orange for crystalline core */
+            --text-blue: #E0F7FA; /* Very light cyan for diagram labels */
+
+            /* Quiz feedback colors */
+            --quiz-correct-color: var(--secondary-color); /* Uses new golden yellow */
+            --quiz-incorrect-color: #EF5350; /* Softer red for incorrect */
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            visibility: hidden; /* Hide body initially for security check */
+            opacity: 0; /* Start with opacity 0 for fade-in effect */
+            transition: visibility 0s, opacity 0.5s linear; /* Smooth transition */
+        }
+
+        .text-muted {
+            color: #A9B1BD !important; /* Lighter color for muted text on dark background */
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            /* Using a gradient that fits the new dark theme */
+            background: linear-gradient(45deg, #1A1A2E, #2C3A47);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0,0,0,0.5);
+            color: var(--primary-color); /* Ensure hero title uses primary color */
+        }
+
+        .hero-animation {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: float 10s infinite ease-in-out alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(20px) scale(1); }
+            100% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        .section {
+            padding: 80px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color); /* Main section titles use primary color */
+        }
+
+        /* General Card Styling */
+        .section-card {
+            background-color: var(--card-bg-color);
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            margin-bottom: 2rem;
+            padding: 2rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .section-card:hover {
+            transform: translateY(-5px); /* Lift effect on hover */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 3px solid var(--primary-color); /* Underline */
+            padding-bottom: 0.5rem;
+            color: var(--primary-color); /* H2 uses primary color */
+        }
+        h3 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-top: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color); /* H3 uses secondary color */
+        }
+
+        /* Details/Summary (Collapsible Sections) */
+        details {
+            background-color: #3A506B; /* Lighter background for collapsible sections */
+            border-left: 5px solid var(--primary-color); /* Blue accent border */
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        details[open] {
+            background-color: #4A6582; /* Slightly darker when open */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        summary {
+            font-weight: 600;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            outline: none;
+            display: flex; /* Keep flex for separating content from +/- icon */
+            align-items: center; /* Vertically center the content wrapper with the icon */
+            justify-content: space-between;
+            font-size: 1.3rem; /* Increased font size for summary headings */
+            color: #00FFFF; /* Fluorescent blue for summary headings */
+            transition: background-color 0.2s ease;
+            /* Removed white-space, overflow, text-overflow from summary */
+        }
+        summary:hover {
+            background-color: #304A62; /* Lighter hover effect */
+        }
+        summary::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--primary-color); /* Icon uses primary color */
+            transition: transform 0.2s ease;
+        }
+        details[open] summary::after {
+            content: '-';
+            transform: rotate(0deg);
+        }
+        .summary-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align text to the left within the column */
+            flex-grow: 1; /* Allow this wrapper to take available space */
+            min-width: 0; /* Allow content to shrink if needed */
+        }
+        .summary-main-heading {
+            /* Removed white-space, overflow, text-overflow to allow wrapping */
+        }
+        .summary-expand-text {
+            font-size: 0.75rem; /* Reduced font size */
+            margin-top: 0.1rem; /* Small margin to separate from heading */
+            color: var(--text-color) !important; /* Ensure it uses the general text color */
+        }
+        .details-content {
+            padding: 1rem 1.5rem 1.5rem;
+            border-top: 1px solid #4A6582;
+            color: var(--text-color);
+        }
+        /* Style for strong tags within details-content list items */
+        .details-content ul li strong {
+            color: var(--secondary-color); /* Apply secondary color to strong tags in lists */
+        }
+
+        /* Peroxisome Diagram */
+        .peroxisome-diagram-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 2rem auto; /* Center the image */
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+
+        /* Animation for processes */
+        .process-item {
+            display: flex;
+            align-items: center; /* Changed from flex-start to center for vertical alignment */
+            margin-bottom: 1.5rem;
+            padding: 0; /* Remove padding here as details will have its own */
+            border-radius: 0.75rem;
+            background-color: transparent; /* Remove background here as details will have its own */
+            border: none; /* Remove border here as details will have its own */
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .process-item:hover {
+            background-color: transparent; /* No hover background change on the wrapper */
+            transform: none; /* No transform on the wrapper */
+        }
+        .process-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color); /* Icon background uses primary color */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .process-content p {
+            margin-bottom: 0.5rem;
+        }
+        .process-content ul {
+            list-style-type: none;
+            padding-left: 0; /* Remove default padding from Bootstrap's .list-unstyled */
+            margin-left: 0; /* Ensure no default margin */
+            color: var(--text-color);
+        }
+        .process-content ul li {
+            display: flex; /* Use flex to align icon and text */
+            align-items: flex-start; /* Align items to the top */
+            margin-bottom: 0.25rem;
+            padding-left: 1.5rem; /* Indent the entire list item from the left edge of its container */
+        }
+        .process-content ul li i {
+            margin-right: 0.5rem; /* Space between icon and text */
+            font-size: 1rem;
+            line-height: 1.6;
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+        .process-text-wrapper {
+            flex-grow: 1; /* Allow the text content to take up available space */
+            text-align: left; /* Ensure text within wrapper is left-aligned */
+        }
+        /* Style for the subheadings within process list items */
+        .process-subheading {
+            font-weight: bold;
+            color: var(--secondary-color); /* Subheadings use secondary color (golden yellow) */
+            white-space: nowrap; /* Keep subheading on a single line */
+            margin-right: 0.25rem; /* Small space after subheading */
+            display: inline;
+        }
+
+
+        /* Tabs */
+        .nav-tabs .nav-link {
+            background-color: var(--card-bg-color);
+            border: none;
+            color: var(--text-color);
+        }
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-color); /* Active tab uses primary color */
+            color: white;
+        }
+        .tab-content {
+            background-color: var(--card-bg-color);
+            padding: 30px;
+            border-radius: 0 5px 5px 5px;
+        }
+
+        /* Flip Cards */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 250px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .flip-card-front {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)); /* Gradient using primary and secondary */
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+        .flip-card-back {
+            background-color: var(--card-bg-color);
+            transform: rotateY(180deg);
+            color: var(--text-color);
+        }
+
+        /* Quiz */
+        .quiz-container {
+            background-color: var(--card-bg-color);
+            padding: 40px;
+            border-radius: 10px;
+        }
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .quiz-options .btn {
+            width: 100%;
+            margin: 5px 0;
+            text-align: left;
+            /* Changed font color to match the question */
+            color: var(--text-color); /* Set button text color to the general text color */
+            border-color: var(--primary-color); /* Keep border color as primary */
+        }
+        .quiz-options .btn:hover {
+            color: white; /* Maintain white text on hover */
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .quiz-options .btn:focus,
+        .quiz-options .btn:active {
+            color: white; /* Maintain white text on focus/active */
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: none; /* Remove default focus shadow if it clashes */
+        }
+        .quiz-feedback {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.5rem; }
+            .section-card { padding: 1.5rem; margin-bottom: 1.5rem; }
+            summary { padding: 1rem 1.2rem; }
+            .details-content { padding: 0.8rem 1.2rem 1.2rem; }
+            /* Removed peroxisome-circle and core adjustments as they are no longer interactive */
+        }
+
+        /* Footer Link Styling */
+        .footer-link {
+            text-decoration: none; /* Remove underline */
+            color: #007bff; /* Blue color */
+            transition: color 0.3s ease-in-out;
+            animation: breathe 2s infinite alternate; /* Apply breathing animation */
+        }
+
+        .footer-link:hover {
+            color: #0056b3; /* Darker blue on hover */
+            text-decoration: underline; /* Add underline on hover for better UX */
+        }
+
+        /* Breathing Animation */
+        @keyframes breathe {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.8; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-animation"></div>
+        <div class="container" data-aos="fade-up">
+            <h1>The Peroxisome Unveiled</h1>
+            <!-- Removed the subtitle as requested -->
+        </div>
+    </section>
+
+    <!-- Section 1: Introduction to Peroxisomes -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Introduction to Peroxisomes</h2>
+            <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+                <ul class="list-unstyled ps-4 mb-4">
+                    <li><i class="bi bi-dot"></i> Peroxisomes are ubiquitous, single-membrane-bound eukaryotic organelles.</li>
+                    <li><i class="bi bi-dot"></i> They are involved in a diverse range of metabolic processes.</li>
+                    <li><i class="bi bi-dot"></i> First described by Christian de Duve in 1967.</li>
+                    <li><i class="bi bi-dot"></i> Initially recognized for their role in hydrogen peroxide metabolism.</li>
+                    <li><i class="bi bi-dot"></i> Subsequent research revealed critical involvement in lipid metabolism, reactive oxygen species (ROS) homeostasis, and various anabolic and catabolic pathways.</li>
+                    <li><i class="bi bi-dot"></i> These pathways are essential for cellular viability and organismal health.</li>
+                    <li><i class="bi bi-dot"></i> Dysfunctions in peroxisomal metabolism are linked to severe human genetic disorders, underscoring their physiological importance.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Membrane Architecture and Characteristic Molecules -->
+    <section class="section bg-dark">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Membrane Architecture and Characteristic Molecules</h2>
+            <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+                <p class="mb-4">The peroxisomal membrane, though seemingly simple as a single lipid bilayer, is a highly specialized and dynamic structure critical for maintaining the organelle's integrity and regulating the transport of metabolites and proteins. Unlike mitochondria and chloroplasts, peroxisomes do not contain their own genetic material and thus import all their proteins from the cytosol.</p>
+
+                <h3 class="mt-6">Membrane Composition</h3>
+                <ul class="list-unstyled ps-4 mb-4">
+                    <li><i class="bi bi-dot"></i> <strong>Phospholipid Bilayer:</strong> Similar to other membranes, forming the basic structural framework.</li>
+                    <li><i class="bi bi-dot"></i> <strong>Cholesterol:</strong> Present, contributing to membrane stability and fluidity.</li>
+                    <li><i class="bi bi-dot"></i> <strong>Unique Lipid Species:</strong> While not extensively studied as the ER or mitochondrial membranes, specific lipid environments are crucial for peroxisomal protein insertion and function.</li>
+                </ul>
+
+                <h3 class="mt-6">Characteristic Membrane Molecules (Peroxins and Transporters)</h3>
+                <p class="mb-2">The functionality of the peroxisomal membrane is largely dictated by its resident proteins, particularly the peroxins (Pex proteins) and various solute transporters. These proteins are crucial for biogenesis, protein import, and metabolic exchange.</p>
+                <details class="mb-3">
+                    <summary>
+                        <div class="summary-content-wrapper">
+                            <span class="summary-main-heading">Peroxins (Pex Proteins)</span>
+                            <span class="summary-expand-text text-muted">(Click to expand)</span>
+                        </div>
+                    </summary>
+                    <div class="details-content">
+                        <p>Peroxins are a family of proteins encoded by <em>PEX</em> genes, essential for peroxisome biogenesis (Pexophagy, fission, import machinery assembly). Over 30 different peroxins have been identified in various organisms, each playing a specific role in the formation and maintenance of functional peroxisomes. Key peroxins include:</p>
+                        <ul class="list-unstyled ps-4 mt-2">
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Pex3, Pex16, Pex19:</strong> Involved in the initial steps of peroxisome membrane formation and insertion of membrane proteins. Pex3 and Pex16 are integral membrane proteins, while Pex19 is a cytosolic receptor for peroxisomal membrane proteins (PMPs).</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Pex10, Pex12, Pex2:</strong> Form the RING finger complex, a crucial component of the peroxisomal importomer responsible for translocating matrix proteins into the peroxisomal lumen.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Pex5, Pex7:</strong> Cytosolic receptors that recognize peroxisomal targeting signals (PTS1 and PTS2, respectively) on matrix proteins and guide them to the peroxisomal membrane for import.</li>
+                        </ul>
+                        <p class="mt-3">Mutations in <em>PEX</em> genes lead to peroxisome biogenesis disorders (PBDs), such as Zellweger syndrome, highlighting the indispensable role of peroxins.</p>
+                    </div>
+                </details>
+
+                <details class="mb-3">
+                    <summary>
+                        <div class="summary-content-wrapper">
+                            <span class="summary-main-heading">Solute Transporters</span>
+                            <span class="summary-expand-text text-muted">(Click to expand)</span>
+                        </div>
+                    </summary>
+                    <div class="details-content">
+                        <p>The peroxisomal membrane contains various transporters that regulate the passage of substrates into and products out of the organelle. These transporters are crucial for maintaining metabolic flux and preventing the accumulation of toxic intermediates.</p>
+                        <ul class="list-unstyled ps-4 mt-2">
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">ATP-binding cassette (ABC) transporters:</strong> A prominent family, particularly ABCD1, ABCD2, and ABCD3 (also known as ALDP, ALDRP, and PMP70, respectively). These transporters facilitate the import of very long-chain fatty acids (VLCFAs) and their CoA esters into the peroxisome for $\beta$-oxidation.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Pex11 proteins:</strong> While primarily involved in peroxisome proliferation and fission, some Pex11 isoforms may also play a role in metabolite transport or membrane dynamics.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Other transporters:</strong> Less characterized transporters are thought to exist for the import of cofactors (e.g., NAD+, FAD) and the export of products (e.g., acetyl-CoA, hydrogen peroxide).</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Peroxisomal Compartments and Functional Roles -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Peroxisomal Compartments and Functional Roles</h2>
+            <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+                <p class="mb-4">Peroxisomes are structurally simple, yet functionally complex organelles, divided into two main compartments: the limiting membrane and the internal matrix. Some peroxisomes also contain a dense, crystalline core.</p>
+
+                <!-- Replaced interactive diagram with a static image -->
+                <div class="text-center">
+                    <img src="https://betabiosciences.github.io/Biochemistry-animations/peroxisome-1.png" alt="Diagram of a Peroxisome" class="peroxisome-diagram-img">
+                    <p class="text-muted mt-2"><em>Diagram of a Peroxisome showing its membrane, matrix, and crystalline core.</em></p>
+                </div>
+
+
+                <details class="mb-3" id="membrane-info-details">
+                    <summary>
+                        <div class="summary-content-wrapper">
+                            <span class="summary-main-heading">The Peroxisomal Membrane</span>
+                            <span class="summary-expand-text text-muted">(Click to expand)</span>
+                        </div>
+                    </summary>
+                    <div class="details-content">
+                        <p>The single limiting membrane of the peroxisome serves as a crucial barrier and a platform for various processes:</p>
+                        <ul class="list-unstyled ps-4 mt-2">
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Transport Regulation:</strong> Contains specific transporters (e.g., ABC transporters) that regulate the influx of substrates (like VLCFAs) and the efflux of products. This selective permeability is vital for maintaining the unique metabolic environment of the matrix.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Protein Import Machinery:</strong> Houses the importomer complex, composed of various peroxins (e.g., Pex2, Pex10, Pex12), which facilitates the translocation of peroxisomal matrix proteins from the cytosol.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Biogenesis and Dynamics:</strong> Involved in peroxisome proliferation (via fission, often mediated by Pex11 proteins) and peroxisome degradation (pexophagy). It also serves as the site for the insertion of peroxisomal membrane proteins (PMPs).</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Ether Lipid Synthesis:</strong> The initial steps of plasmalogen synthesis, a type of ether lipid, occur on the peroxisomal membrane.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="mb-3" id="matrix-info-details">
+                    <summary>
+                        <div class="summary-content-wrapper">
+                            <span class="summary-main-heading">The Peroxisomal Matrix</span>
+                            <span class="summary-expand-text text-muted">(Click to expand)</span>
+                        </div>
+                    </summary>
+                    <div class="details-content">
+                        <p>The matrix is the internal lumen of the peroxisome, filled with a dense array of enzymes, many of which are oxidases. This compartment is the primary site for the majority of peroxisomal metabolic reactions:</p>
+                        <ul class="list-unstyled ps-4 mt-2">
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Oxidative Metabolism:</strong> Contains numerous oxidases that use molecular oxygen to oxidize various organic substrates, producing hydrogen peroxide ($H_2O_2$) as a byproduct.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Hydrogen Peroxide Detoxification:</strong> Rich in catalase, an enzyme that rapidly converts $H_2O_2$ into water and oxygen, thereby protecting the cell from oxidative damage.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Fatty Acid $\beta$-oxidation:</strong> The primary site for the $\beta$-oxidation of very long-chain fatty acids (VLCFAs), branched-chain fatty acids, and dicarboxylic acids. This process is distinct from mitochondrial $\beta$-oxidation.</li>
+                            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Other Metabolic Pathways:</strong> Involved in aspects of bile acid synthesis, cholesterol synthesis, and the metabolism of purines and polyamines.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="mb-3" id="core-info-details">
+          <summary>
+            <div class="summary-content-wrapper">
+              <span class="summary-main-heading">The Crystalline Core</span>
+              <span class="summary-expand-text text-muted">(Click to expand)</span>
+            </div>
+          </summary>
+          <div class="details-content">
+            <p>Some peroxisomes, particularly in certain organisms or under specific physiological conditions, contain a dense, electron-dense crystalline core within their matrix. This core is typically composed of highly concentrated enzymes.</p>
+            <ul class="list-unstyled ps-4 mt-2">
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Urate Oxidase (Uricase):</strong> In many species (e.g., rodents, but not humans), the crystalline core is primarily formed by urate oxidase, an enzyme involved in purine catabolism, converting uric acid to allantoin. Humans have lost functional urate oxidase during evolution, leading to uric acid as the end product of purine metabolism.</li>
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Other Enzymes:</strong> In some plants and fungi, other enzymes like catalase or D-amino acid oxidase can also form crystalline inclusions.</li>
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Significance:</strong> The presence and composition of the core can vary, reflecting the specific metabolic demands and enzymatic profiles of the cell or organism. Its crystalline nature suggests a highly ordered, possibly inactive, storage form of these enzymes.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Key Metabolic Processes in Peroxisomes -->
+  <section class="section bg-dark">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Key Metabolic Processes in Peroxisomes</h2>
+      <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+        <p class="mb-4">Peroxisomes are metabolic powerhouses, hosting a diverse array of biochemical reactions crucial for cellular homeostasis. Here's a brief summary of their primary functional roles:</p>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="process-item">
+              <div class="process-icon">🛢️</div>
+              <details class="flex-grow-1">
+                <summary>
+                  <div class="summary-content-wrapper">
+                    <span class="summary-main-heading">Fatty Acid $\beta$-Oxidation</span>
+                    <span class="summary-expand-text text-muted">(Click to expand)</span>
+                  </div>
+                </summary>
+                <div class="details-content">
+                  <p>Peroxisomes are the primary site for the $\beta$-oxidation of very long-chain fatty acids (VLCFAs, $\ge$C22), branched-chain fatty acids (e.g., phytanic acid), and dicarboxylic acids. Unlike mitochondrial $\beta$-oxidation, the initial step in peroxisomes is catalyzed by an acyl-CoA oxidase, which directly transfers electrons to oxygen, producing hydrogen peroxide ($H_2O_2$).</p>
+                  <ul class="list-unstyled">
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">VLCFA Breakdown:</strong> Essential for degrading fatty acids too long for mitochondrial processing.
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Branched-chain FA:</strong> Important for phytanic acid degradation (deficiency leads to Refsum disease).
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">$H_2O_2$ Production:</strong> A characteristic feature, subsequently detoxified by catalase.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="process-item">
+              <div class="process-icon">🧪</div>
+              <details class="flex-grow-1">
+                <summary>
+                  <div class="summary-content-wrapper">
+                    <span class="summary-main-heading">Ether Lipid Synthesis (Plasmalogens)</span>
+                    <span class="summary-expand-text text-muted">(Click to expand)</span>
+                  </div>
+                </summary>
+                <div class="details-content">
+                  <p>Peroxisomes play a critical role in the biosynthesis of plasmalogens, a unique class of phospholipids characterized by a vinyl ether bond at the sn-1 position of the glycerol backbone. These lipids are abundant in myelin and cell membranes, contributing to membrane fluidity and acting as endogenous antioxidants.</p>
+                  <ul class="list-unstyled">
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Initial Steps:</strong> The first two enzymes in plasmalogen synthesis (Glycerone phosphate acyltransferase and Alkyl-DHAP synthase) are exclusively peroxisomal.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="process-item">
+              <div class="process-icon">🛡️</div>
+              <details class="flex-grow-1">
+                <summary>
+                  <div class="summary-content-wrapper">
+                    <span class="summary-main-heading">Reactive Oxygen Species (ROS) Metabolism</span>
+                    <span class="summary-expand-text text-muted">(Click to expand)</span>
+                  </div>
+                </summary>
+                <div class="details-content">
+                  <p>Peroxisomes are both producers and degraders of reactive oxygen species. While many peroxisomal oxidases generate $H_2O_2$, the organelle is equipped with potent antioxidant enzymes to neutralize these harmful byproducts.</p>
+                  <ul class="list-unstyled">
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Catalase:</strong> Converts $H_2O_2$ to water and oxygen, preventing oxidative damage. It is one of the most abundant peroxisomal proteins.
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Superoxide Dismutase (SOD):</strong> Some peroxisomes also contain SOD, which converts superoxide radicals into $H_2O_2$, which is then handled by catalase.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="process-item">
+              <div class="process-icon"><i class="bi bi-droplet-fill"></i></div> <!-- Icon for Bile Acid Synthesis -->
+              <details class="flex-grow-1">
+                <summary>
+                  <div class="summary-content-wrapper">
+                    <span class="summary-main-heading">Bile Acid Synthesis</span>
+                    <span class="summary-expand-text text-muted">(Click to expand)</span>
+                  </div>
+                </summary>
+                <div class="details-content">
+                  <p>Peroxisomes are involved in the final steps of bile acid synthesis, particularly the side-chain shortening of cholesterol derivatives. This process is crucial for lipid digestion and absorption in the intestine.</p>
+                  <ul class="list-unstyled">
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Cholesterol Catabolism:</strong> Peroxisomal enzymes catalyze the $\beta$-oxidation of C27-steroid side chains, leading to the formation of C24 bile acids.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="process-item">
+              <div class="process-icon">🧬</div>
+              <details class="flex-grow-1">
+                <summary>
+                  <div class="summary-content-wrapper">
+                    <span class="summary-main-heading">Other Metabolic Roles</span>
+                    <span class="summary-expand-text text-muted">(Click to expand)</span>
+                  </div>
+                </summary>
+                <div class="details-content">
+                  <p>Beyond these major functions, peroxisomes participate in several other metabolic pathways:</p>
+                  <ul class="list-unstyled">
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Cholesterol Synthesis:</strong> Some enzymes involved in cholesterol biosynthesis (e.g., mevalonate pathway intermediates) are found in peroxisomes.
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">D-amino Acid Oxidation:</strong> Peroxisomes contain D-amino acid oxidase, which oxidizes D-amino acids (uncommon in mammals but present in diet and bacteria).
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Purine and Polyamine Catabolism:</strong> Involved in the breakdown of purines (e.g., urate oxidase in non-human mammals) and polyamines.
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-arrow-right-short"></i>
+                      <div class="process-text-wrapper">
+                        <strong class="process-subheading">Glyoxylate Cycle (in Plants):</strong> In plants, specialized peroxisomes called glyoxysomes convert fatty acids into carbohydrates, essential for seed germination.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Evolutionary Origins of Peroxisomes -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Evolutionary Origins of Peroxisomes</h2>
+      <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+        <p class="mb-4">The evolutionary origin of peroxisomes has been a subject of debate. Unlike mitochondria and chloroplasts, which are thought to have originated from endosymbiotic events, peroxisomes do not contain their own DNA, leading to alternative theories:</p>
+
+        <details class="mb-3">
+          <summary>
+            <div class="summary-content-wrapper">
+              <span class="summary-main-heading">ER Budding Model</span>
+              <span class="summary-expand-text text-muted">(Click to expand)</span>
+            </div>
+          </summary>
+          <div class="details-content">
+            <p>The prevailing view suggests that peroxisomes originate from the endoplasmic reticulum (ER) and grow by importing proteins and lipids. This model is supported by several observations:</p>
+            <ul class="list-unstyled ps-4 mt-2">
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">ER-Derived Vesicles:</strong> Studies have shown that peroxisomal membrane proteins (PMPs) like Pex3 and Pex16 are initially inserted into the ER membrane and then bud off in vesicles that mature into peroxisomes.</li>
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Lipid Transfer:</strong> Lipids are also thought to be supplied from the ER, either directly or via lipid transfer proteins.</li>
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">De Novo Biogenesis:
+                </strong> This model explains how new peroxisomes can be formed <em>de novo</em> even in the absence of pre-existing peroxisomes.</li>
+            </ul>
+            <p class="mt-3">This model emphasizes the dynamic interplay between the ER and peroxisomes, highlighting their interconnectedness within the endomembrane system.</p>
+          </div>
+        </details>
+
+        <details class="mb-3">
+          <summary>
+            <div class="summary-content-wrapper">
+              <span class="summary-main-heading">Fission of Pre-existing Peroxisomes</span>
+              <span class="summary-expand-text text-muted">(Click to expand)</span>
+            </div>
+          </summary>
+          <div class="details-content">
+            <p>While <em>de novo</em> biogenesis occurs, the primary mechanism for increasing peroxisome number in most cells is through the growth and subsequent fission of pre-existing peroxisomes. This process is regulated by specific peroxins:</p>
+            <ul class="list-unstyled ps-4 mt-2">
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Pex11 proteins:</strong> A family of peroxins (Pex11$\alpha$, Pex11$\beta$, Pex11$\gamma$) that play a crucial role in regulating peroxisome size and number by promoting membrane elongation and constriction, leading to fission.</li>
+              <li><i class="bi bi-dot"></i> <strong class="subheading-details">Dynamin-related Protein 1 (Drp1):
+                </strong> A cytosolic dynamin-related GTPase that is recruited to the peroxisomal membrane and mediates the final scission event, similar to mitochondrial fission.</li>
+            </ul>
+            <p class="mt-3">This mechanism allows cells to rapidly adapt their peroxisome population to changing metabolic demands.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Interesting Facts about Peroxisomes -->
+  <section class="section bg-dark">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Interesting Facts about Peroxisomes</h2>
+      <div class="section-card" data-aos="fade-up" data-aos-delay="100">
+        <ul class="list-unstyled ps-4">
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Not Just for Detoxification:</strong> While initially known for $H_2O_2$ metabolism, their roles in lipid biosynthesis (plasmalogens) and fatty acid oxidation are equally, if not more, critical for human health.</li>
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Dynamic and Plastic:</strong> Peroxisomes are highly dynamic organelles, capable of changing their size, shape, and number in response to cellular needs and environmental stimuli (e.g., fatty acid overload, nutrient deprivation).</li>
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Peroxisome Proliferators:</strong> Certain compounds, known as peroxisome proliferator-activated receptors (PPARs) agonists, can induce peroxisome proliferation and increase the expression of peroxisomal enzymes. These are targets for drugs treating metabolic disorders.</li>
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Peroxisome Biogenesis Disorders (PBDs):</strong> Genetic defects in <em>PEX</em> genes lead to a spectrum of severe, often fatal, disorders collectively known as PBDs (e.g., Zellweger syndrome, neonatal adrenoleukodystrophy). These conditions result from a generalized impairment of peroxisome formation and function, leading to the accumulation of toxic metabolites.</li>
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Cross-talk with Other Organelles:</strong> Peroxisomes do not function in isolation. They engage in extensive metabolic and physical interactions with other organelles, particularly the ER, mitochondria, and lipid droplets, forming a complex network of cellular metabolism.</li>
+          <li class="mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i> <strong>Role in Aging and Neurodegeneration:</strong> Emerging research suggests that peroxisomal dysfunction contributes to the pathogenesis of various age-related diseases and neurodegenerative disorders, including Alzheimer's and Parkinson's disease, due to impaired lipid metabolism and increased oxidative stress.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Test Your Knowledge -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Test Your Knowledge</h2>
+      <div class="quiz-container mx-auto" style="max-width: 800px;" data-aos="fade-up" data-aos-delay="100">
+        <div id="quiz-question-container">
+          <p class="quiz-question">1. What is the primary function of Catalase in the peroxisome?</p>
+          <div class="quiz-options">
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q1')">A) Synthesizing VLCFAs</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(true, 'q1')">B) Decomposing hydrogen peroxide</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q1')">C) Importing matrix proteins</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q1')">D) Initiating apoptosis</button>
+          </div>
+          <div id="quiz-feedback-q1" class="quiz-feedback mt-2"></div>
+        </div>
+
+        <hr class="my-5">
+
+        <div id="quiz-question-container-2">
+          <p class="quiz-question">2. Which of the following fatty acids are primarily oxidized in peroxisomes?</p>
+          <div class="quiz-options">
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q2')">A) Short-chain fatty acids</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q2')">B) Medium-chain fatty acids</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(true, 'q2')">C) Very long-chain fatty acids (VLCFAs)</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q2')">D) Saturated fatty acids</button>
+          </div>
+          <div id="quiz-feedback-q2" class="quiz-feedback mt-2"></div>
+        </div>
+
+        <hr class="my-5">
+
+        <div id="quiz-question-container-3">
+          <p class="quiz-question">3. Name two peroxins crucial for the import of matrix proteins into the peroxisome.</p>
+          <div class="quiz-options">
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q3')">A) Pex3 and Pex16</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(true, 'q3')">B) Pex5 and Pex7</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q3')">C) Pex10 and Pex12</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q3')">D) Pex11 and Drp1</button>
+          </div>
+          <div id="quiz-feedback-q3" class="quiz-feedback mt-2"></div>
+        </div>
+
+        <hr class="my-5">
+
+        <div id="quiz-question-container-4">
+          <p class="quiz-question">4. What class of unique lipids has its initial synthesis steps exclusively in peroxisomes?</p>
+          <div class="quiz-options">
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q4')">A) Triglycerides</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q4')">B) Cholesterol</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(true, 'q4')">C) Plasmalogens</button>
+            <button class="btn btn-outline-primary" onclick="checkAnswer(false, 'q4')">D) Sphingolipids</button>
+          </div>
+          <div id="quiz-feedback-q4" class="quiz-feedback mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modals for Interactive Diagram (Updated content) -->
+  <div class="modal fade" id="modal-membrane" tabindex="-1" aria-labelledby="modal-membrane-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-membrane-label">The Peroxisomal Membrane</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>The single limiting membrane of the peroxisome serves as a crucial barrier and a platform for various processes:</p>
+          <ul class="list-unstyled ps-4 mt-2">
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Transport Regulation:</strong> Contains specific transporters (e.g., ABC transporters) that regulate the influx of substrates (like VLCFAs) and the efflux of products. This selective permeability is vital for maintaining the unique metabolic environment of the matrix.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Protein Import Machinery:</strong> Houses the importomer complex, composed of various peroxins (e.g., Pex2, Pex10, Pex12), which facilitates the translocation of peroxisomal matrix proteins from the cytosol.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Biogenesis and Dynamics:</strong> Involved in peroxisome proliferation (via fission, often mediated by Pex11 proteins) and peroxisome degradation (pexophagy). It also serves as the site for the insertion of peroxisomal membrane proteins (PMPs).</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Ether Lipid Synthesis:</strong> The initial steps of plasmalogen synthesis, a type of ether lipid, occur on the peroxisomal membrane.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal-matrix" tabindex="-1" aria-labelledby="modal-matrix-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-matrix-label">The Peroxisomal Matrix</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>The matrix is the internal lumen of the peroxisome, filled with a dense array of enzymes, many of which are oxidases. This compartment is the primary site for the majority of peroxisomal metabolic reactions:</p>
+          <ul class="list-unstyled ps-4 mt-2">
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Oxidative Metabolism:</strong> Contains numerous oxidases that use molecular oxygen to oxidize various organic substrates, producing hydrogen peroxide ($H_2O_2$) as a byproduct.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Hydrogen Peroxide Detoxification:</strong> Rich in catalase, an enzyme that rapidly converts $H_2O_2$ into water and oxygen, thereby protecting the cell from oxidative damage.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Fatty Acid $\beta$-oxidation:</strong> The primary site for the $\beta$-oxidation of very long-chain fatty acids (VLCFAs), branched-chain fatty acids, and dicarboxylic acids. This process is distinct from mitochondrial $\beta$-oxidation.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Other Metabolic Pathways:</strong> Involved in aspects of bile acid synthesis, cholesterol synthesis, and the metabolism of purines and polyamines.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modal-core" tabindex="-1" aria-labelledby="modal-core-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-core-label">The Crystalline Core</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>In many species, the high concentration of certain enzymes within the matrix leads to the formation of a paracrystalline array, visible under electron microscopy as a dense core. This core is typically composed of highly concentrated enzymes.</p>
+          <ul class="list-unstyled ps-4 mt-2">
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Urate Oxidase (Uricase):</strong> In many species (e.g., rodents, but not humans), the crystalline core is primarily formed by urate oxidase, an enzyme involved in purine catabolism, converting uric acid to allantoin. Humans have lost functional urate oxidase during evolution, leading to uric acid as the end product of purine metabolism.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Other Enzymes:</strong> In some plants and fungi, other enzymes like catalase or D-amino acid oxidase can also form crystalline inclusions.</li>
+            <li><i class="bi bi-dot"></i> <strong class="subheading-details">Significance:</strong> The presence and composition of the core can vary, reflecting the specific metabolic demands and enzymatic profiles of the cell or organism. Its crystalline nature suggests a highly ordered, possibly inactive, storage form of these enzymes.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true,
+    });
+
+    // Quiz functionality
+    function checkAnswer(isCorrect, questionId) {
+      const feedbackEl = document.getElementById(`quiz-feedback-${questionId}`);
+      if (isCorrect) {
+        feedbackEl.textContent = 'Correct! Well done.';
+        feedbackEl.style.color = 'var(--quiz-correct-color)';
+      } else {
+        feedbackEl.textContent = 'Not quite. Please review the material and try again!';
+        feedbackEl.style.color = 'var(--quiz-incorrect-color)';
+      }
+    }
+  </script>
+
+  <footer id="main-footer" class="text-center py-3 bg-dark text-muted">
+    <span id="email-address">betabiosciences@gmail.com</span>
+    <br>
+    <a href="https://t.me/betascience_csir" target="_blank" class="footer-link">Join Our Telegram Channel</a>
+  </footer>
+
+  <!-- Security layer script moved to after the footer to ensure element is loaded -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const emailElement = document.getElementById('email-address');
+      const expectedEmail = 'betabiosciences@gmail.com';
+      const allowedDomain = 'https://betabiosciences.github.io'; // The allowed domain
+
+      // Check if the email element exists, its trimmed content is as expected, AND the domain matches
+      if (emailElement && emailElement.textContent.trim() === expectedEmail && window.location.origin === allowedDomain) {
+        // If all checks pass, make the body visible and opaque
+        document.body.style.visibility = 'visible';
+        document.body.style.opacity = '1';
+      }
+      // If any check fails, do nothing. The body will remain hidden by CSS.
+    });
+  </script>
+</body>
+</html>
