@@ -1,0 +1,1788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peroxisome Tower Defense</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow-x: hidden; /* Prevent horizontal scrollbars */
+            overflow-y: auto; /* Allow vertical scrolling */
+            display: flex;
+            flex-direction: column; /* Stack title, game, and footer vertically */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            align-items: center; /* Center content horizontally */
+        }
+
+        /* Main Game Title */
+        h1 {
+            font-size: 2.5em; /* Larger font size */
+            color: #fff; /* White color */
+            text-align: center;
+            margin: 20px 0 10px; /* Margin above and below, reduced bottom margin */
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); /* Subtle glow effect */
+            letter-spacing: 2px; /* Slightly spaced letters */
+            z-index: 100; /* Ensure it's above other elements if any overlap */
+            flex-shrink: 0; /* Prevent title from shrinking */
+        }
+
+        /* Game Wrapper - new container for UI and Canvas */
+        #gameWrapper {
+            display: flex;
+            flex-direction: column; /* Stack topBar, canvas, towerMenu vertically */
+            width: 100vw;
+            max-width: 1200px; /* Max width for larger screens */
+            flex-grow: 1; /* Allow game wrapper to take remaining vertical space */
+            border-radius: 15px;
+            overflow: hidden; /* Keep game content contained */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 0 10px 10px; /* Add horizontal margin, reduced bottom margin */
+        }
+
+        /* Top Bar */
+        #topBar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            pointer-events: all; /* Re-enable pointer events for UI elements */
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0; /* Prevent top bar from shrinking */
+            width: 100%; /* Ensure it spans full width */
+            position: static; /* Changed from absolute */
+        }
+
+        #stats {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #e0f2f7;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .health-icon { background: #e74c3c; } /* Red */
+        .atp-icon { background: #f39c12; }    /* Orange */
+        .wave-icon { background: #3498db; }   /* Blue */
+        .score-icon { background: #2ecc71; }  /* Green */
+
+        /* Game Canvas */
+        #gameCanvas {
+            background: radial-gradient(circle at center, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            border: 2px solid #4a90e2;
+            flex: 1; /* Allow canvas to fill its parent's height */
+            cursor: crosshair;
+            width: 100%;
+            height: auto; /* Allow flexbox to determine height */
+            min-height: 300px; /* Ensure a minimum height for canvas */
+        }
+
+        /* Tower Menu */
+        #towerMenu {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            pointer-events: all;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0; /* Prevent tower menu from shrinking */
+            margin-bottom: 20px; /* Add margin to separate from footer */
+            width: fit-content; /* Adjust width to content */
+            max-width: 95%; /* Limit max width */
+            position: static; /* Changed from absolute */
+        }
+
+        .tower-button {
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            text-align: center;
+            font-size: 1em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tower-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.6s ease-in-out;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            z-index: 0;
+        }
+
+        .tower-button:hover::before {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0;
+        }
+
+        .tower-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .tower-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #444 0%, #555 100%);
+            box-shadow: none;
+            transform: none;
+        }
+
+        .tower-button.selected {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.6);
+            border: 2px solid #fff;
+        }
+
+        /* Info Panel */
+        #infoPanel {
+            position: absolute; /* Keep info panel absolute */
+            top: 90px;
+            right: 20px;
+            width: 320px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            pointer-events: all;
+            max-height: calc(100% - 120px);
+            overflow-y: auto;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            display: block; /* Ensure it's visible by default, will be controlled by JS */
+            z-index: 999; /* Ensure it's above canvas but below modals */
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #4a90e2;
+            text-align: center;
+            border-bottom: 2px solid rgba(74, 144, 226, 0.5);
+            padding-bottom: 8px;
+            position: relative; /* For close button positioning */
+        }
+
+        #infoPanelCloseBtn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: #e74c3c;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        #infoPanelCloseBtn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-content {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #e0f2f7;
+        }
+
+        .info-content strong {
+            color: #a7d9ff;
+        }
+
+        /* Game Over Modal */
+        #gameOverModal, #messageModal, #gameWonModal {
+            position: fixed; /* Changed to fixed to stay in viewport */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            pointer-events: all;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            border: 2px solid #e74c3c;
+            z-index: 1000;
+        }
+
+        #gameOverTitle, #messageTitle {
+            font-size: 2.2em;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.7);
+        }
+
+        #gameWonTitle {
+            font-size: 2.2em;
+            color: #2ecc71; /* Green for victory */
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(46, 204, 113, 0.7);
+        }
+
+        #gameOverMessage, #messageContent, #gameWonMessage {
+            font-size: 1.3em;
+            color: #e0f2f7;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .modal-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* Trophy and Medal Icons */
+        .trophy-icon, .medal-icon {
+            font-size: 4em; /* Larger icons */
+            margin: 0 15px 20px;
+            display: inline-block;
+            animation: bounceIn 0.8s ease-out;
+            color: #f1c40f; /* Gold color */
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.7);
+        }
+
+        .medal-icon {
+            color: #bdc3c7; /* Silver color */
+            animation-delay: 0.2s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+
+        /* Tutorial Popup */
+        .tutorial-popup {
+            position: fixed; /* Changed to fixed to stay in viewport */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 550px;
+            text-align: center;
+            pointer-events: all;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            border: 2px solid #3498db;
+        }
+
+        .scientist-avatar {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+            animation: pulse 2s infinite;
+        }
+
+        #tutorialTitle {
+            font-size: 1.8em;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        #tutorialContent {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #e0f2f7;
+            margin-bottom: 25px;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(52, 152, 219, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(52, 152, 219, 1); }
+        }
+
+        @keyframes explosion {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .explosion {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ff6b6b 0%, #ee5a24 100%);
+            border-radius: 50%;
+            animation: explosion 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+
+        .damage-text {
+            position: absolute;
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 16px;
+            pointer-events: none;
+            animation: fadeUp 1s ease-out forwards;
+            text-shadow: 0 0 5px black;
+            z-index: 501;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-40px); }
+        }
+
+        /* Tooltip for Tower Buttons */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .tower-button:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Footer */
+        #footer {
+            margin-top: 10px; /* Reduced margin to bring it closer */
+            padding: 10px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            width: 100%; /* Ensure footer spans full width */
+            flex-shrink: 0; /* Prevent footer from shrinking */
+            display: flex; /* Use flexbox for footer content */
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            gap: 5px; /* Space between items */
+            pointer-events: all; /* Re-enable pointer events for the link */
+        }
+
+        /* Telegram Link Styling */
+        .telegram-link {
+            color: #87CEEB; /* Light blue color for the link */
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s ease-in-out; /* Smooth transition for zoom effect */
+            display: inline-block; /* Essential for transform to work */
+            font-size: 1em; /* Ensure consistent font size */
+        }
+
+        .telegram-link:hover {
+            transform: scale(1.1); /* Zoom in effect on hover */
+            text-shadow: 0 0 8px rgba(135, 206, 235, 0.7); /* Glow effect on hover */
+        }
+
+        /* --- Mobile Optimizations (Media Queries) --- */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em; /* Smaller title on mobile */
+                margin: 15px 0 10px; /* Adjusted margin for mobile */
+            }
+
+            #gameWrapper {
+                border-radius: 0; /* No rounded corners on small screens for full coverage */
+                max-width: 100vw;
+                margin: 0; /* Remove horizontal margin on mobile */
+                height: auto; /* Allow height to be determined by content */
+                min-height: calc(100vh - 100px); /* Ensure minimum height for game area */
+            }
+
+            #topBar {
+                flex-direction: column; /* Stack stats and button */
+                padding: 10px;
+                gap: 10px;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            #stats {
+                flex-wrap: wrap; /* Allow stats to wrap */
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .stat {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+
+            .stat-icon {
+                width: 20px;
+                height: 20px;
+                font-size: 1em;
+            }
+
+            #towerMenu {
+                flex-wrap: wrap; /* Allow buttons to wrap */
+                gap: 8px;
+                padding: 10px;
+                margin-bottom: 10px; /* Keep some margin */
+                width: calc(100% - 20px); /* Take full width with margin */
+            }
+
+            .tower-button {
+                min-width: unset; /* Remove min-width constraint */
+                flex: 1 1 auto; /* Allow buttons to grow and shrink */
+                font-size: 0.9em;
+                padding: 10px 15px;
+            }
+
+            #infoPanel {
+                width: calc(100% - 40px); /* Take full width on mobile */
+                top: 10px; /* Adjust position to avoid topBar */
+                left: 20px;
+                right: 20px;
+                max-height: calc(100% - 20px); /* Allow it to take more height if needed */
+                padding: 15px;
+                font-size: 0.9em;
+            }
+
+            .info-title {
+                font-size: 1.4em;
+            }
+
+            .info-content {
+                font-size: 0.9em;
+            }
+
+            #gameOverModal, #messageModal, #tutorialPopup {
+                padding: 25px;
+                max-width: 90%; /* Max width for modals */
+            }
+
+            #gameOverTitle, #messageTitle {
+                font-size: 1.8em;
+            }
+
+            #gameOverMessage, #messageContent {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            .modal-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+
+            .scientist-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            /* Adjust canvas rendering elements for smaller screens */
+            canvas {
+                /* Path width and tower/enemy sizes are handled in JS render function,
+                   but if they were fixed in CSS, they'd be adjusted here. */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Peroxisome Tower Defense</h1>
+    <div id="gameWrapper">
+        <div id="topBar">
+            <div id="stats">
+                <div class="stat">
+                    <div class="stat-icon health-icon">❤️</div>
+                    <span>Health: <span id="health">100</span></span>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon atp-icon">⚡</div>
+                    <span>ATP: <span id="atp">100</span></span>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon wave-icon">🌊</div>
+                    <span>Wave: <span id="wave">1</span></span>
+                </div>
+                <div class="stat">
+                    <div class="stat-icon score-icon">⭐</div>
+                    <span>Score: <span id="score">0</span></span>
+                </div>
+            </div>
+            <button id="nextWaveBtn" class="modal-button">Start Next Wave</button>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="towerMenu">
+            <button class="tower-button" data-tower="catalase">
+                Catalase<br><small>Cost: 50 ATP</small>
+                <span class="tooltip">Neutralizes H₂O₂. Moderate damage, low range.</span>
+            </button>
+            <button class="tower-button" data-tower="oxidase">
+                Oxidase<br><small>Cost: 75 ATP</small>
+                <span class="tooltip">Handles general toxins. Good damage, medium range.</span>
+            </button>
+            <button class="tower-button" data-tower="beta-oxidation">
+                β-Oxidation<br><small>Cost: 100 ATP</small>
+                <span class="tooltip">Breaks down fatty acids. High damage, wide range.</span>
+            </button>
+            <button class="tower-button" data-tower="upgrade">
+                Upgrade<br><small>Cost: 80 ATP</small>
+                <span class="tooltip">Select an existing tower to upgrade its power.</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="infoPanel">
+        <div class="info-title">
+            Peroxisome Tower Defense
+            <button id="infoPanelCloseBtn" aria-label="Close information panel">✖</button>
+        </div>
+        <div class="info-content">
+            Deploy peroxisomes strategically to neutralize toxic molecules and protect the cell!
+            <br><br>
+            <strong>Current Mission:</strong> Defend against H₂O₂ and fatty acid toxins using specialized peroxisome enzymes.
+            <br><br>
+            <strong>Tips:</strong>
+            • Catalase towers neutralize H₂O₂.<br>
+            • Oxidase towers handle general toxins.<br>
+            • β-Oxidation towers break down fatty acids.<br>
+            • Upgrade towers for increased power and range!
+        </div>
+    </div>
+
+    <div id="gameOverModal">
+        <h2 id="gameOverTitle">Game Over</h2>
+        <p id="gameOverMessage">The cell has been compromised!</p>
+        <button class="modal-button" onclick="resetGame()">Try Again</button>
+    </div>
+
+    <div id="messageModal">
+        <h2 id="messageTitle"></h2>
+        <p id="messageContent"></p>
+        <button class="modal-button" onclick="closeMessageModal()">OK</button>
+    </div>
+
+    <div id="tutorialPopup" class="tutorial-popup" style="display: none;">
+        <div class="scientist-avatar">🔬</div>
+        <h3 id="tutorialTitle">Dr. Peroxisome</h3>
+        <p id="tutorialContent">Welcome to cellular defense!</p>
+        <button class="modal-button" onclick="closeTutorial()">Continue</button>
+    </div>
+
+    <div id="gameWonModal" class="modal">
+        <h2 id="gameWonTitle"></h2>
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+            <span class="trophy-icon">🏆</span>
+            <span class="medal-icon">🏅</span>
+        </div>
+        <p id="gameWonMessage"></p>
+        <button class="modal-button" onclick="resetGame()">Play Again</button>
+    </div>
+
+    <div id="footer">
+        <span id="securityEmail">betabiosciences@gmail.com</span>
+        <a href="https://t.me/betascience_csir" target="_blank" class="telegram-link">Join Our Telegram Channel</a>
+    </div>
+
+    <script>
+        // Security Layer: Perform all security checks
+        async function performSecurityChecks() {
+            const allowedDomain = "https://betabiosciences.github.io";
+            const EXPECTED_EMAIL = "betabiosciences@gmail.com";
+            const emailElement = document.getElementById('securityEmail');
+
+            // 1. Domain check
+            if (window.location.origin !== allowedDomain) {
+                document.body.innerHTML = ''; // Clear all content
+                return false; // Stop execution
+            }
+
+            // 2. Email integrity check (only if domain is allowed)
+            if (!emailElement || emailElement.textContent.trim() !== EXPECTED_EMAIL) {
+                document.body.innerHTML = ''; // Clear all content
+                return false; // Stop execution
+            }
+
+            return true; // All checks passed
+        }
+
+        // Game state
+        let gameState = {
+            health: 100,
+            atp: 100,
+            wave: 1,
+            score: 0,
+            towers: [],
+            enemies: [],
+            projectiles: [],
+            selectedTowerType: null,
+            gameRunning: true,
+            waveInProgress: false,
+            tutorialStep: 0,
+            placingTower: false,
+            targetCell: { x: 0, y: 0, radius: 40 }
+        };
+
+        // Game constants
+        const MAX_WAVES = 5;
+
+        const TOWER_TYPES = {
+            catalase: { cost: 50, damage: 25, range: 80, color: '#e74c3c', enzyme: 'Catalase', fireRate: 1000, description: 'Neutralizes H₂O₂. Moderate damage, low range.' },
+            oxidase: { cost: 75, damage: 35, range: 100, color: '#f39c12', enzyme: 'Oxidase', fireRate: 900, description: 'Handles general toxins. Good damage, medium range.' },
+            'beta-oxidation': { cost: 100, damage: 45, range: 120, color: '#9b59b6', enzyme: 'β-Oxidation', fireRate: 800, description: 'Breaks down fatty acids. High damage, wide range.' }
+        };
+
+        const ENEMY_TYPES = {
+            h2o2: { health: 30, speed: 0.5, damage: 15, color: '#3498db', name: 'H₂O₂', icon: '💧' }, // Reduced speed
+            fatty_acid: { health: 50, speed: 0.3, damage: 20, color: '#e67e22', name: 'Fatty Acid', icon: '🥓' }, // Reduced speed
+            ros: { health: 40, speed: 0.6, damage: 25, color: '#e74c3c', name: 'ROS', icon: '☢️' } // Reduced speed
+        };
+
+        // Define multiple possible paths for enemies
+        const ALL_PATHS = [
+            {
+                points: {
+                    'p0': { x: 0.05, y: 0.20 }, 'p1': { x: 0.25, y: 0.20 },
+                    'p2': { x: 0.25, y: 0.35 }, 'p3': { x: 0.5, y: 0.35 },
+                    'p4': { x: 0.5, y: 0.65 }, 'p5': { x: 0.75, y: 0.65 },
+                    'p6': { x: 0.75, y: 0.30 }, 'p7': { x: 0.95, y: 0.30 }
+                },
+                segments: [
+                    { from: 'p0', to: 'p1' }, { from: 'p1', to: 'p2' },
+                    { from: 'p2', to: 'p3' }, { from: 'p3', to: 'p4' },
+                    { from: 'p4', to: 'p5' }, { from: 'p5', to: 'p6' },
+                    { from: 'p6', to: 'p7' }
+                ],
+                junctions: {},
+                startNode: 'p0',
+                endNode: 'p7'
+            },
+            {
+                points: {
+                    'q0': { x: 0.05, y: 0.20 }, 'q1': { x: 0.2, y: 0.20 },
+                    'q2': { x: 0.2, y: 0.30 }, 'q3': { x: 0.4, y: 0.30 },
+                    'q4': { x: 0.4, y: 0.70 }, 'q5': { x: 0.6, y: 0.70 },
+                    'q6': { x: 0.6, y: 0.40 }, 'q7': { x: 0.8, y: 0.40 },
+                    'q8': { x: 0.95, y: 0.40 }
+                },
+                segments: [
+                    { from: 'q0', to: 'q1' }, { from: 'q1', to: 'q2' },
+                    { from: 'q2', to: 'q3' }, { from: 'q3', to: 'q4' },
+                    { from: 'q4', to: 'q5' }, { from: 'q5', to: 'q6' },
+                    { from: 'q6', to: 'q7' }, { from: 'q7', to: 'q8' }
+                ],
+                junctions: {},
+                startNode: 'q0',
+                endNode: 'q8'
+            },
+            {
+                points: {
+                    'r0': { x: 0.05, y: 0.25 },
+                    'r1': { x: 0.25, y: 0.25 },
+                    'r2': { x: 0.4, y: 0.40 },
+                    'r3': { x: 0.4, y: 0.55 },
+                    'r4': { x: 0.4, y: 0.70 },
+                    'r5': { x: 0.6, y: 0.40 },
+                    'r6': { x: 0.6, y: 0.55 },
+                    'r7': { x: 0.6, y: 0.70 },
+                    'r8': { x: 0.85, y: 0.50 },
+                    'r9': { x: 0.95, y: 0.50 }
+                },
+                segments: [
+                    { from: 'r0', to: 'r1' },
+                    { from: 'r1', to: 'r2' }, { from: 'r1', to: 'r3' }, { from: 'r1', to: 'r4' },
+                    { from: 'r2', to: 'r5' },
+                    { from: 'r3', to: 'r6' },
+                    { from: 'r4', to: 'r7' },
+                    { from: 'r5', to: 'r8' }, { from: 'r6', to: 'r8' }, { from: 'r7', to: 'r8' },
+                    { from: 'r8', to: 'r9' }
+                ],
+                junctions: {
+                    'r1': ['r2', 'r3', 'r4']
+                },
+                startNode: 'r0',
+                endNode: 'r9'
+            },
+            {
+                points: {
+                    's0': { x: 0.05, y: 0.25 },
+                    's1': { x: 0.2, y: 0.25 },
+                    's2': { x: 0.3, y: 0.35 },
+                    's3': { x: 0.3, y: 0.50 },
+                    's4': { x: 0.3, y: 0.65 },
+                    's5': { x: 0.5, y: 0.35 },
+                    's6': { x: 0.5, y: 0.50 },
+                    's7': { x: 0.5, y: 0.65 },
+                    's8': { x: 0.7, y: 0.25 },
+                    's9': { x: 0.7, y: 0.40 },
+                    's10': { x: 0.7, y: 0.55 },
+                    's11': { x: 0.7, y: 0.70 },
+                    's12': { x: 0.7, y: 0.80 },
+                    's13': { x: 0.85, y: 0.50 },
+                    's14': { x: 0.95, y: 0.50 }
+                },
+                segments: [
+                    { from: 's0', to: 's1' },
+                    { from: 's1', to: 's2' }, { from: 's1', to: 's3' }, { from: 's1', to: 's4' },
+                    { from: 's2', to: 's5' },
+                    { from: 's3', to: 's6' },
+                    { from: 's4', to: 's7' },
+                    { from: 's5', to: 's8' }, { from: 's5', to: 's9' },
+                    { from: 's6', to: 's9' }, { from: 's6', to: 's10' },
+                    { from: 's7', to: 's11' }, { from: 's7', to: 's12' },
+                    { from: 's8', to: 's13' },
+                    { from: 's9', to: 's13' },
+                    { from: 's10', to: 's13' },
+                    { from: 's11', to: 's13' },
+                    { from: 's12', to: 's13' },
+                    { from: 's13', to: 's14' }
+                ],
+                junctions: {
+                    's1': ['s2', 's3', 's4'],
+                    's5': ['s8', 's9'],
+                    's6': ['s9', 's10'],
+                    's7': ['s11', 's12']
+                },
+                startNode: 's0',
+                endNode: 's14'
+            },
+            {
+                points: {
+                    't0': { x: 0.05, y: 0.25 },
+                    't1': { x: 0.15, y: 0.25 },
+                    't2': { x: 0.25, y: 0.35 },
+                    't3': { x: 0.25, y: 0.50 },
+                    't4': { x: 0.25, y: 0.65 },
+                    't5': { x: 0.4, y: 0.35 },
+                    't6': { x: 0.4, y: 0.50 },
+                    't7': { x: 0.4, y: 0.65 },
+                    't8': { x: 0.55, y: 0.25 },
+                    't9': { x: 0.55, y: 0.40 },
+                    't10': { x: 0.55, y: 0.55 },
+                    't11': { x: 0.55, y: 0.70 },
+                    't12': { x: 0.7, y: 0.35 },
+                    't13': { x: 0.7, y: 0.60 },
+                    't14': { x: 0.85, y: 0.45 },
+                    't15': { x: 0.85, y: 0.55 },
+                    't16': { x: 0.95, y: 0.50 }
+                },
+                segments: [
+                    { from: 't0', to: 't1' },
+                    { from: 't1', to: 't2' }, { from: 't1', to: 't3' }, { from: 't1', to: 't4' },
+                    { from: 't2', to: 't5' },
+                    { from: 't3', to: 't5' }, { from: 't3', to: 't6' },
+                    { from: 't4', to: 't6' }, { from: 't4', to: 't7' },
+                    { from: 't5', to: 't8' }, { from: 't5', to: 't9' },
+                    { from: 't6', to: 't9' }, { from: 't6', to: 't10' },
+                    { from: 't7', to: 't10' }, { from: 't7', to: 't11' },
+                    { from: 't8', to: 't12' },
+                    { from: 't9', to: 't12' }, { from: 't9', to: 't13' },
+                    { from: 't10', to: 't12' }, { from: 't10', to: 't13' },
+                    { from: 't11', to: 't13' },
+                    { from: 't12', to: 't14' },
+                    { from: 't13', to: 't15' },
+                    { from: 't14', to: 't16' }, { from: 't15', to: 't16' }
+                ],
+                junctions: {
+                    't1': ['t2', 't3', 't4'],
+                    't3': ['t5', 't6'],
+                    't4': ['t6', 't7'],
+                    't5': ['t8', 't9'],
+                    't6': ['t9', 't10'],
+                    't7': ['t10', 't11'],
+                    't9': ['t12', 't13'],
+                    't10': ['t12', 't13']
+                },
+                startNode: 't0',
+                endNode: 't16'
+            }
+        ];
+
+        let currentPathDefinition = {};
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameWrapper = document.getElementById('gameWrapper'); // Changed from gameContainer
+
+        // Set canvas dimensions initially and on resize
+        function setCanvasDimensions() {
+            // Set canvas dimensions based on its parent container's actual size
+            // Now, canvas itself will have its dimensions set by flexbox.
+            // We need to get the computed style or clientWidth/clientHeight after layout.
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            const waveIndex = Math.min(gameState.wave - 1, ALL_PATHS.length - 1);
+            const newPathDefinition = ALL_PATHS[waveIndex];
+            
+            const oldPathPoints = currentPathDefinition.points;
+            currentPathDefinition = newPathDefinition;
+
+            const absolutePoints = {};
+            for (const key in currentPathDefinition.points) {
+                const p = currentPathDefinition.points[key];
+                absolutePoints[key] = {
+                    x: p.x * canvas.width,
+                    y: p.y * canvas.height
+                };
+            }
+            currentPathDefinition.absolutePoints = absolutePoints;
+
+            gameState.targetCell.x = currentPathDefinition.absolutePoints[currentPathDefinition.endNode].x;
+            gameState.targetCell.y = currentPathDefinition.absolutePoints[currentPathDefinition.endNode].y;
+
+            if (oldPathPoints && JSON.stringify(oldPathPoints) !== JSON.stringify(currentPathDefinition.points)) {
+                repositionTowers();
+            }
+        }
+
+        setCanvasDimensions(); // Initial call
+
+        // Helper function to find the closest point on a line segment
+        function closestPointOnSegment(px, py, p1x, p1y, p2x, p2y) {
+            const dx = p2x - p1x;
+            const dy = p2y - p1y;
+            const lengthSq = dx * dx + dy * dy;
+
+            if (lengthSq === 0) return { x: p1x, y: p1y };
+
+            const t = ((px - p1x) * dx + (py - p1y) * dy) / lengthSq;
+            const clampedT = Math.max(0, Math.min(1, t));
+
+            const closestX = p1x + clampedT * dx;
+            const closestY = p1y + clampedT * dy;
+
+            return { x: closestX, y: closestY };
+        }
+
+        // Helper function to find the closest point on the entire path (graph)
+        function findClosestPointOnPath(towerX, towerY, pathDefinition) {
+            let minDistanceSq = Infinity;
+            let closestPoint = { x: towerX, y: towerY };
+
+            pathDefinition.segments.forEach(segment => {
+                const p1 = pathDefinition.absolutePoints[segment.from];
+                const p2 = pathDefinition.absolutePoints[segment.to];
+
+                const cp = closestPointOnSegment(towerX, towerY, p1.x, p1.y, p2.x, p2.y);
+                const distSq = (towerX - cp.x)**2 + (towerY - cp.y)**2;
+
+                if (distSq < minDistanceSq) {
+                    minDistanceSq = distSq;
+                    closestPoint = cp;
+                }
+            });
+            return closestPoint;
+        }
+
+        // Function to reposition towers after path change
+        function repositionTowers() {
+            gameState.towers.forEach(tower => {
+                const newPos = findClosestPointOnPath(tower.x, tower.y, currentPathDefinition);
+                tower.x = newPos.x;
+                tower.y = newPos.y;
+            });
+        }
+
+        // Tutorial messages
+        const TUTORIAL_MESSAGES = [
+            {
+                title: "Welcome to Peroxisome Defense!",
+                content: "You are the cell's defense system. Peroxisomes are vital organelles that neutralize toxic molecules. Let's learn how to protect your cell!"
+            },
+            {
+                title: "Meet the Threats",
+                content: "Toxic molecules like H₂O₂ (hydrogen peroxide), fatty acids, and ROS (reactive oxygen species) are attacking your cell. Each requires specific enzymes to neutralize."
+            },
+            {
+                title: "Deploy Your Defenses",
+                content: "Click on tower buttons below to select different peroxisome types. Each has unique enzymes: Catalase breaks down H₂O₂, Oxidases handle general toxins, and β-Oxidation processes fatty acids."
+            },
+            {
+                title: "Strategic Placement",
+                content: "Click anywhere on the playing field to place your selected peroxisome tower. Position them strategically along the toxin pathway for maximum effectiveness!"
+            },
+            {
+                title: "Start the Wave!",
+                content: "Once you've placed your initial defenses, click the 'Start Next Wave' button to unleash the toxins. Good luck, Commander!"
+            }
+        ];
+
+        // Initialize game
+        async function init() {
+            // Perform security checks first
+            const securityPassed = await performSecurityChecks();
+            if (!securityPassed) {
+                return; // Stop game initialization if security checks fail
+            }
+
+            setupEventListeners();
+            resetGame();
+            showTutorial();
+            gameLoop();
+        }
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        function setupEventListeners() {
+            // Mouse events for desktop
+            canvas.addEventListener('click', handleCanvasClick);
+            canvas.addEventListener('mousemove', handleCanvasMouseMove);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleCanvasTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleCanvasTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleCanvasTouchEnd);
+
+            document.querySelectorAll('.tower-button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const towerType = e.currentTarget.getAttribute('data-tower');
+                    if (towerType === 'upgrade') {
+                        showMessageModal("Upgrade Feature", "Click on an existing tower to upgrade it!");
+                        selectTowerType('upgrade');
+                        return;
+                    }
+                    if (towerType && TOWER_TYPES[towerType]) {
+                        selectTowerType(towerType);
+                    }
+                });
+            });
+
+            document.getElementById('nextWaveBtn').addEventListener('click', startNextWave);
+            document.getElementById('infoPanelCloseBtn').addEventListener('click', toggleInfoPanel);
+            window.addEventListener('resize', setCanvasDimensions);
+        }
+
+        // Mouse event handlers
+        function handleCanvasClick(e) {
+            if (gameState.selectedTowerType && gameState.placingTower) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                placeTower(x, y);
+            }
+        }
+
+        function handleCanvasMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        }
+
+        // Touch event handlers
+        function handleCanvasTouchStart(e) {
+            e.preventDefault(); // Prevent scrolling/zooming
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.touches[0].clientX - rect.left;
+            mouseY = e.touches[0].clientY - rect.top;
+        }
+
+        function handleCanvasTouchMove(e) {
+            e.preventDefault(); // Prevent scrolling/zooming
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.touches[0].clientX - rect.left;
+            mouseY = e.touches[0].clientY - rect.top;
+        }
+
+        function handleCanvasTouchEnd(e) {
+            // For touch, we use the last known mouseX/mouseY from touchmove/touchstart
+            // or the coordinates from changedTouches if available and more precise for a tap.
+            const rect = canvas.getBoundingClientRect();
+            let touchX = mouseX; // Default to last known mouseX/Y
+            let touchY = mouseY;
+
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                touchX = e.changedTouches[0].clientX - rect.left;
+                touchY = e.changedTouches[0].clientY - rect.top;
+            }
+
+            if (gameState.selectedTowerType && gameState.placingTower) {
+                placeTower(touchX, touchY);
+            }
+        }
+
+
+        function selectTowerType(type) {
+            if (gameState.selectedTowerType === type && gameState.placingTower) {
+                gameState.selectedTowerType = null;
+                gameState.placingTower = false;
+                canvas.style.cursor = 'default';
+                document.querySelectorAll('.tower-button').forEach(btn => btn.classList.remove('selected'));
+                return;
+            }
+
+            if (type === 'upgrade') {
+                gameState.selectedTowerType = 'upgrade';
+                gameState.placingTower = true;
+                canvas.style.cursor = 'pointer';
+            } else if (TOWER_TYPES[type] && gameState.atp >= TOWER_TYPES[type].cost) {
+                gameState.selectedTowerType = type;
+                gameState.placingTower = true;
+                canvas.style.cursor = 'crosshair';
+            } else if (TOWER_TYPES[type] && gameState.atp < TOWER_TYPES[type].cost) {
+                showMessageModal("Insufficient ATP", `You need ${TOWER_TYPES[type].cost} ATP to build a ${TOWER_TYPES[type].enzyme} Tower.`);
+                return;
+            }
+            
+            document.querySelectorAll('.tower-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            const button = document.querySelector(`[data-tower="${type}"]`);
+            if (button) {
+                button.classList.add('selected');
+            }
+        }
+
+        function placeTower(x, y) {
+            if (gameState.selectedTowerType === 'upgrade') {
+                const clickedTower = gameState.towers.find(t => {
+                    const dist = Math.sqrt((x - t.x)**2 + (y - t.y)**2);
+                    return dist < 25;
+                });
+
+                if (clickedTower) {
+                    upgradeTower(clickedTower);
+                } else {
+                    showMessageModal("No Tower Selected", "Click on an existing tower to upgrade it.");
+                }
+                gameState.selectedTowerType = null;
+                gameState.placingTower = false;
+                canvas.style.cursor = 'default';
+                document.querySelectorAll('.tower-button').forEach(btn => btn.classList.remove('selected'));
+                return;
+            }
+
+            const towerType = gameState.selectedTowerType;
+            if (!towerType || !TOWER_TYPES[towerType]) {
+                return;
+            }
+            
+            const towerData = TOWER_TYPES[towerType];
+            
+            if (gameState.atp >= towerData.cost && isValidPlacement(x, y)) {
+                const tower = {
+                    x: x,
+                    y: y,
+                    type: towerType,
+                    level: 1,
+                    lastShot: 0,
+                    target: null,
+                    ...towerData,
+                    fireRate: towerData.fireRate
+                };
+                
+                gameState.towers.push(tower);
+                gameState.atp -= towerData.cost;
+                gameState.selectedTowerType = null;
+                gameState.placingTower = false;
+                
+                document.querySelectorAll('.tower-button').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                canvas.style.cursor = 'default';
+                
+                updateUI();
+                createExplosion(x, y, '#4a90e2');
+            } else if (gameState.atp < towerData.cost) {
+                showMessageModal("Insufficient ATP", `You need ${towerData.cost} ATP to build a ${towerData.enzyme} Tower.`);
+            } else {
+                showMessageModal("Invalid Placement", "You cannot place a tower too close to the path or another tower.");
+            }
+        }
+
+        function upgradeTower(tower) {
+            const upgradeCost = 80;
+            if (gameState.atp >= upgradeCost) {
+                if (tower.level < 3) {
+                    gameState.atp -= upgradeCost;
+                    tower.level++;
+                    tower.damage *= 1.2;
+                    tower.range *= 1.1;
+                    tower.fireRate *= 0.9;
+                    showMessageModal("Tower Upgraded!", `${tower.enzyme} Tower upgraded to Level ${tower.level}!`);
+                    updateUI();
+                    createExplosion(tower.x, tower.y, '#2ecc71');
+                } else {
+                    showMessageModal("Max Level Reached", `${tower.enzyme} Tower is already at max level.`);
+                }
+            } else {
+                showMessageModal("Insufficient ATP", `You need ${upgradeCost} ATP to upgrade this tower.`);
+            }
+        }
+
+        function isValidPlacement(x, y) {
+            // Check boundaries, ensuring towers are not placed too close to the edges
+            const padding = 30; // Minimum distance from canvas edges
+            if (x < padding || x > canvas.width - padding || y < padding || y > canvas.height - padding) {
+                return false;
+            }
+            
+            const pathWidth = 25; // Half width of the path
+            const towerRadius = 25; // Radius of the tower for collision
+            const minDistanceToPath = pathWidth + towerRadius; // Minimum distance from path center to tower center
+
+            // Check distance to path segments
+            for (const segment of currentPathDefinition.segments) {
+                const p1 = currentPathDefinition.absolutePoints[segment.from];
+                const p2 = currentPathDefinition.absolutePoints[segment.to];
+                const dist = distanceToLineSegment(x, y, p1, p2);
+                if (dist < minDistanceToPath) return false;
+            }
+
+            // Check distance to target cell
+            const distToTarget = Math.sqrt((x - gameState.targetCell.x)**2 + (y - gameState.targetCell.y)**2);
+            if (distToTarget < gameState.targetCell.radius + towerRadius) {
+                return false;
+            }
+            
+            // Check distance to other towers
+            for (const tower of gameState.towers) {
+                const dist = Math.sqrt((x - tower.x) ** 2 + (y - tower.y) ** 2);
+                if (dist < towerRadius * 2) return false; // Ensure towers don't overlap
+            }
+            
+            return true;
+        }
+
+        function distanceToLineSegment(px, py, p1, p2) {
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const lengthSq = dx * dx + dy * dy;
+            
+            if (lengthSq === 0) return Math.sqrt((px - p1.x) ** 2 + (py - p1.y) ** 2);
+            
+            const t = Math.max(0, Math.min(1, ((px - p1.x) * dx + (py - p1.y) * dy) / lengthSq));
+            const projection = { x: p1.x + t * dx, y: p1.y + t * dy };
+            
+            const distance = Math.sqrt((px - projection.x) ** 2 + (py - projection.y) ** 2);
+            return distance;
+        }
+
+        function startNextWave() {
+            if (gameState.waveInProgress) return;
+            
+            gameState.waveInProgress = true;
+            
+            const baseEnemyCount = 5;
+            const waveMultiplier = 2;
+            const maxEnemies = 30;
+            const enemyCount = Math.min(baseEnemyCount + gameState.wave * waveMultiplier, maxEnemies);
+            
+            const enemyTypes = Object.keys(ENEMY_TYPES);
+            
+            let enemiesSpawned = 0;
+            const spawnInterval = 700 - Math.min(gameState.wave * 20, 500);
+            
+            const spawnTimer = setInterval(() => {
+                if (enemiesSpawned < enemyCount) {
+                    const enemyType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+                    spawnEnemy(enemyType);
+                    enemiesSpawned++;
+                } else {
+                    clearInterval(spawnTimer);
+                    setTimeout(() => {
+                        checkWaveCompletion();
+                    }, 5000);
+                }
+            }, spawnInterval);
+            
+            gameState.atp += 50 + gameState.wave * 10;
+            updateUI();
+        }
+
+        function checkWaveCompletion() {
+            console.log(`[checkWaveCompletion] Start. Enemies: ${gameState.enemies.length}, Wave In Progress: ${gameState.waveInProgress}, Health: ${gameState.health}`);
+
+            if (gameState.enemies.length === 0 && gameState.waveInProgress) {
+                console.log("[checkWaveCompletion] All enemies cleared and wave was active. Proceeding to clear wave state.");
+                gameState.waveInProgress = false;
+                console.log(`[checkWaveCompletion] gameState.waveInProgress set to false. Current value: ${gameState.waveInProgress}`);
+                
+                gameState.atp += 30;
+                gameState.health = 100; 
+
+                const clearedWaveNum = gameState.wave;
+                
+                gameState.towers = []; // Clear towers after each wave
+
+                if (clearedWaveNum >= MAX_WAVES) { 
+                    gameWon(); 
+                } else {
+                    gameState.wave++; 
+                    setCanvasDimensions(); // Recalculate path for new wave
+                    showMessageModal("Wave Cleared!", `You successfully defended against Wave ${clearedWaveNum}! Click 'Start Next Wave' to continue.`);
+                }
+                updateUI();
+                console.log("[checkWaveCompletion] End of successful wave completion logic.");
+            } else {
+                console.log("[checkWaveCompletion] Conditions not met for wave completion. Skipping state change.");
+            }
+        }
+
+        function spawnEnemy(type) {
+            const enemyData = ENEMY_TYPES[type];
+            // The base speed is now lower, so we can adjust the multiplier if needed
+            let enemySpeedMultiplier = (1 + gameState.wave * 0.05); // Reduced multiplier for slower increase
+
+            if (gameState.wave === 3) {
+                enemySpeedMultiplier = 0.6; // Keep these specific wave adjustments relative to new base speed
+            } else if (gameState.wave === 4) {
+                enemySpeedMultiplier = 1.0;
+            } else if (gameState.wave === 5) {
+                enemySpeedMultiplier = 1.25;
+            }
+
+            const enemy = {
+                type: type,
+                health: enemyData.health * (1 + gameState.wave * 0.15),
+                maxHealth: enemyData.health * (1 + gameState.wave * 0.15),
+                speed: enemyData.speed * enemySpeedMultiplier, // Apply the new base speed and multiplier
+                damage: enemyData.damage,
+                color: enemyData.color,
+                name: enemyData.name,
+                icon: enemyData.icon,
+                
+                currentPathNodeId: currentPathDefinition.startNode,
+                nextPathNodeId: null,
+                progressOnSegment: 0
+            };
+            
+            enemy.x = currentPathDefinition.absolutePoints[enemy.currentPathNodeId].x;
+            enemy.y = currentPathDefinition.absolutePoints[enemy.currentPathNodeId].y;
+
+            gameState.enemies.push(enemy);
+        }
+
+        function updateEnemies() {
+            console.log(`[updateEnemies] Start. Current enemies: ${gameState.enemies.length}, Wave In Progress: ${gameState.waveInProgress}`);
+            for (let i = gameState.enemies.length - 1; i >= 0; i--) {
+                const enemy = gameState.enemies[i];
+
+                if (enemy.health <= 0) {
+                    gameState.atp += 15;
+                    gameState.score += 100 + (gameState.wave * 10);
+                    createExplosion(enemy.x, enemy.y, enemy.color);
+                    gameState.enemies.splice(i, 1);
+                    console.log(`[updateEnemies] Enemy removed (defeated). Remaining enemies: ${gameState.enemies.length}`);
+                    checkWaveCompletion();
+                    continue;
+                }
+                
+                if (enemy.nextPathNodeId === null) {
+                    if (enemy.currentPathNodeId === currentPathDefinition.endNode) {
+                        gameState.health -= enemy.damage;
+                        createDamageText(enemy.x, enemy.y, enemy.damage, '#ff6b6b');
+                        gameState.enemies.splice(i, 1);
+                        console.log(`[updateEnemies] Enemy reached target cell. Remaining enemies: ${gameState.enemies.length}`);
+                        
+                        if (gameState.health <= 0) {
+                            gameOver();
+                        }
+                        checkWaveCompletion();
+                        continue;
+                    }
+
+                    const possibleNextNodes = currentPathDefinition.segments
+                        .filter(s => s.from === enemy.currentPathNodeId)
+                        .map(s => s.to);
+
+                    if (possibleNextNodes.length === 0) {
+                        console.error("Enemy stuck: No next segments from node", enemy.currentPathNodeId);
+                        gameState.enemies.splice(i, 1);
+                        console.log(`[updateEnemies] Enemy stuck and removed. Remaining enemies: ${gameState.enemies.length}`);
+                        checkWaveCompletion();
+                        continue;
+                    }
+
+                    if (currentPathDefinition.junctions[enemy.currentPathNodeId] && currentPathDefinition.junctions[enemy.currentPathNodeId].length > 1) {
+                        enemy.nextPathNodeId = possibleNextNodes[Math.floor(Math.random() * possibleNextNodes.length)];
+                    } else {
+                        enemy.nextPathNodeId = possibleNextNodes[0];
+                    }
+                    enemy.progressOnSegment = 0;
+                }
+
+                const currentPoint = currentPathDefinition.absolutePoints[enemy.currentPathNodeId];
+                const nextPoint = currentPathDefinition.absolutePoints[enemy.nextPathNodeId];
+
+                const dx = nextPoint.x - currentPoint.x;
+                const dy = nextPoint.y - currentPoint.y;
+                const segmentLength = Math.sqrt(dx * dx + dy * dy);
+
+                let progressIncrement = enemy.speed / segmentLength;
+                if (isNaN(progressIncrement) || !isFinite(progressIncrement)) {
+                    progressIncrement = 1;
+                }
+
+                enemy.progressOnSegment += progressIncrement;
+
+                if (enemy.progressOnSegment >= 1) {
+                    enemy.x = nextPoint.x;
+                    enemy.y = nextPoint.y;
+                    enemy.currentPathNodeId = enemy.nextPathNodeId;
+                    enemy.nextPathNodeId = null;
+                    enemy.progressOnSegment = 0;
+                } else {
+                    enemy.x = currentPoint.x + dx * enemy.progressOnSegment;
+                    enemy.y = currentPoint.y + dy * enemy.progressOnSegment;
+                }
+            }
+        }
+
+        function updateTowers() {
+            gameState.towers.forEach(tower => {
+                let closestEnemy = null;
+                let closestDistance = Infinity;
+                
+                gameState.enemies.forEach(enemy => {
+                    const distance = Math.sqrt((tower.x - enemy.x) ** 2 + (tower.y - enemy.y) ** 2);
+                    if (distance <= tower.range && distance < closestDistance) {
+                        closestDistance = distance;
+                        closestEnemy = enemy;
+                    }
+                });
+                
+                tower.target = closestEnemy;
+                
+                if (tower.target && Date.now() - tower.lastShot > tower.fireRate) {
+                    shootProjectile(tower, tower.target);
+                    tower.lastShot = Date.now();
+                }
+            });
+        }
+
+        function shootProjectile(tower, target) {
+            const projectile = {
+                x: tower.x,
+                y: tower.y,
+                targetX: target.x,
+                targetY: target.y,
+                target: target,
+                damage: tower.damage,
+                speed: 8,
+                color: tower.color
+            };
+            
+            gameState.projectiles.push(projectile);
+        }
+
+        function updateProjectiles() {
+            for (let i = gameState.projectiles.length - 1; i >= 0; i--) {
+                const projectile = gameState.projectiles[i];
+                
+                if (!projectile.target || projectile.target.health <= 0) {
+                    gameState.projectiles.splice(i, 1);
+                    continue;
+                }
+
+                const dx = projectile.target.x - projectile.x;
+                const dy = projectile.target.y - projectile.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < projectile.speed) {
+                    projectile.target.health -= projectile.damage;
+                    createDamageText(projectile.target.x, projectile.target.y, projectile.damage, projectile.color);
+                    createExplosion(projectile.target.x, projectile.target.y, projectile.color);
+                    gameState.projectiles.splice(i, 1);
+                } else {
+                    projectile.x += (dx / distance) * projectile.speed;
+                    projectile.y += (dy / distance) * projectile.speed;
+                }
+            }
+        }
+
+        function createExplosion(x, y, color) {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = `${x - 20}px`;
+            explosion.style.top = `${y - 20}px`;
+            explosion.style.background = `radial-gradient(circle, ${color} 0%, transparent 100%)`;
+            document.body.appendChild(explosion);
+            
+            setTimeout(() => {
+                explosion.remove();
+            }, 500);
+        }
+
+        function createDamageText(x, y, damage, color) {
+            const damageText = document.createElement('div');
+            damageText.className = 'damage-text';
+            damageText.textContent = `-${Math.round(damage)}`;
+            damageText.style.left = `${x}px`;
+            damageText.style.top = `${y}px`;
+            damageText.style.color = color;
+            document.body.appendChild(damageText);
+            
+            setTimeout(() => {
+                damageText.remove();
+            }, 1000);
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas for redraw
+            
+            // Draw path background (wider, semi-transparent)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 40; // Increased path width
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            currentPathDefinition.segments.forEach(segment => {
+                const p1 = currentPathDefinition.absolutePoints[segment.from];
+                const p2 = currentPathDefinition.absolutePoints[segment.to];
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+            
+            // Draw path foreground (thinner, dashed)
+            ctx.strokeStyle = 'rgba(100, 200, 255, 0.7)';
+            ctx.lineWidth = 5;
+            ctx.setLineDash([10, 10]);
+
+            currentPathDefinition.segments.forEach(segment => {
+                const p1 = currentPathDefinition.absolutePoints[segment.from];
+                const p2 = currentPathDefinition.absolutePoints[segment.to];
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+            ctx.setLineDash([]); // Reset line dash for other drawings
+
+            // Draw Target Cell
+            ctx.fillStyle = '#2ecc71';
+            ctx.beginPath();
+            ctx.arc(gameState.targetCell.x, gameState.targetCell.y, gameState.targetCell.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(gameState.targetCell.x, gameState.targetCell.y, gameState.targetCell.radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = '#1abc9c';
+            ctx.beginPath();
+            ctx.arc(gameState.targetCell.x, gameState.targetCell.y, gameState.targetCell.radius * 0.4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 18px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('CELL', gameState.targetCell.x, gameState.targetCell.y - 15);
+            ctx.fillText(`${gameState.health}%`, gameState.targetCell.x, gameState.targetCell.y + 10);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('Target Cell', gameState.targetCell.x, gameState.targetCell.y + gameState.targetCell.radius + 5);
+
+
+            // Draw Towers
+            gameState.towers.forEach(tower => {
+                ctx.fillStyle = tower.color;
+                ctx.beginPath();
+                ctx.arc(tower.x, tower.y, 25, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.beginPath();
+                ctx.arc(tower.x, tower.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(tower.level, tower.x, tower.y);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(tower.enzyme, tower.x, tower.y + 30);
+
+                if (gameState.selectedTowerType === tower.type || (gameState.selectedTowerType === 'upgrade' && gameState.placingTower)) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(tower.x, tower.y, tower.range, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            });
+            
+            // Draw Enemies
+            gameState.enemies.forEach(enemy => {
+                ctx.fillStyle = enemy.color;
+                ctx.beginPath();
+                ctx.arc(enemy.x, enemy.y, 18, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(enemy.icon, enemy.x, enemy.y);
+                
+                const barWidth = 35;
+                const barHeight = 6;
+                const healthPercent = enemy.health / enemy.maxHealth;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(enemy.x - barWidth/2, enemy.y - 30, barWidth, barHeight);
+                
+                ctx.fillStyle = healthPercent > 0.6 ? '#2ecc71' : healthPercent > 0.3 ? '#f39c12' : '#e74c3c';
+                ctx.fillRect(enemy.x - barWidth/2, enemy.y - 30, barWidth * healthPercent, barHeight);
+            });
+            
+            // Draw Projectiles
+            gameState.projectiles.forEach(projectile => {
+                ctx.fillStyle = projectile.color;
+                ctx.beginPath();
+                ctx.arc(projectile.x, projectile.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw placement preview
+            if (gameState.placingTower && gameState.selectedTowerType && TOWER_TYPES[gameState.selectedTowerType]) {
+                const towerData = TOWER_TYPES[gameState.selectedTowerType];
+                const isValid = isValidPlacement(mouseX, mouseY);
+                
+                ctx.fillStyle = isValid ? 'rgba(0, 255, 0, 0.4)' : 'rgba(255, 0, 0, 0.4)';
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 25, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = isValid ? 'rgba(0, 255, 0, 0.6)' : 'rgba(255, 0, 0, 0.6)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, towerData.range, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Cost: ${towerData.cost} ATP`, mouseX, mouseY - 40);
+            } else if (gameState.placingTower && gameState.selectedTowerType === 'upgrade') {
+                gameState.towers.forEach(tower => {
+                    const dist = Math.sqrt((mouseX - tower.x)**2 + (mouseY - tower.y)**2);
+                    if (dist < 25) {
+                        ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
+                        ctx.lineWidth = 4;
+                        ctx.beginPath();
+                        ctx.arc(tower.x, tower.y, 28, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                });
+            }
+        }
+
+        function updateUI() {
+            console.log(`[updateUI] Start. Wave In Progress: ${gameState.waveInProgress}, Health: ${gameState.health}`);
+            document.getElementById('health').textContent = gameState.health;
+            document.getElementById('atp').textContent = gameState.atp;
+            
+            document.getElementById('wave').textContent = `${gameState.wave}/${MAX_WAVES}`;
+
+            document.getElementById('score').textContent = gameState.score;
+            
+            document.querySelectorAll('.tower-button').forEach(btn => {
+                const towerType = btn.getAttribute('data-tower');
+                if (towerType && towerType !== 'upgrade') {
+                    const cost = TOWER_TYPES[towerType].cost;
+                    btn.disabled = gameState.atp < cost;
+                } else if (towerType === 'upgrade') {
+                    btn.disabled = gameState.towers.length === 0 || gameState.atp < 80;
+                }
+            });
+
+            if (gameState.wave > MAX_WAVES) {
+                document.getElementById('nextWaveBtn').textContent = 'Game Completed!';
+                document.getElementById('nextWaveBtn').disabled = true;
+            } else {
+                document.getElementById('nextWaveBtn').textContent = gameState.waveInProgress ? 'Wave In Progress...' : 'Start Next Wave';
+                document.getElementById('nextWaveBtn').disabled = gameState.waveInProgress || gameState.health <= 0;
+            }
+            console.log(`[updateUI] End. Button disabled state: ${document.getElementById('nextWaveBtn').disabled}`);
+        }
+
+        function gameOver() {
+            gameState.gameRunning = false;
+            document.getElementById('gameOverTitle').textContent = 'Cell Compromised!';
+            document.getElementById('gameOverMessage').innerHTML = 
+                `The toxic molecules overwhelmed your defenses!<br>You survived <strong>${gameState.wave - 1} waves</strong> and scored <strong>${gameState.score} points</strong>.<br>The cell needs better peroxisome defenses!`;
+            document.getElementById('gameOverModal').style.display = 'block';
+        }
+
+        function gameWon() {
+            gameState.gameRunning = false;
+            document.getElementById('gameWonTitle').textContent = 'Victory!';
+            document.getElementById('gameWonMessage').innerHTML = 
+                `Congratulations, Commander! You have successfully defended the cell against all ${MAX_WAVES} waves of toxins!`;
+            document.getElementById('gameWonModal').style.display = 'block';
+        }
+
+        function resetGame() {
+            gameState = {
+                health: 100,
+                atp: 100,
+                wave: 1,
+                score: 0,
+                towers: [],
+                enemies: [],
+                projectiles: [],
+                selectedTowerType: null,
+                gameRunning: true,
+                waveInProgress: false,
+                tutorialStep: 0,
+                placingTower: false,
+                targetCell: { x: 0, y: 0, radius: 40 }
+            };
+            setCanvasDimensions();
+            
+            document.getElementById('gameOverModal').style.display = 'none';
+            document.getElementById('messageModal').style.display = 'none';
+            document.getElementById('gameWonModal').style.display = 'none';
+            document.getElementById('infoPanel').style.display = 'block';
+            updateUI();
+        }
+
+        function showTutorial() {
+            if (gameState.tutorialStep < TUTORIAL_MESSAGES.length) {
+                const tutorial = TUTORIAL_MESSAGES[gameState.tutorialStep];
+                document.getElementById('tutorialTitle').textContent = tutorial.title;
+                document.getElementById('tutorialContent').textContent = tutorial.content;
+                document.getElementById('tutorialPopup').style.display = 'block';
+            }
+        }
+
+        function closeTutorial() {
+            gameState.tutorialStep++;
+            if (gameState.tutorialStep < TUTORIAL_MESSAGES.length) {
+                showTutorial();
+            } else {
+                document.getElementById('tutorialPopup').style.display = 'none';
+            }
+        }
+
+        function showMessageModal(title, content) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageContent').textContent = content;
+            document.getElementById('messageModal').style.display = 'block';
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').style.display = 'none';
+        }
+
+        function toggleInfoPanel() {
+            const infoPanel = document.getElementById('infoPanel');
+            infoPanel.style.display = infoPanel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function gameLoop() {
+            if (gameState.gameRunning) {
+                updateEnemies();
+                updateTowers();
+                updateProjectiles();
+                render();
+                updateUI();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize the game after all security checks
+        init();
+    </script>
+</body>
+</html>
