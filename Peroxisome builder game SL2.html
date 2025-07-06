@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Peroxisome Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2a4365, #4a7b9d);
+            color: #fff;
+            min-height: 100vh;
+            /* Changed overflow: hidden to overflow-y: auto to allow vertical scrolling */
+            overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .game-container {
+            max-width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            /* Removed fixed height: 95vh; to allow it to grow with flex-grow */
+            flex-grow: 1; /* Allow game-container to take up available space */
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .score-container {
+            background: rgba(0, 50, 100, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .tab {
+            background: rgba(0, 80, 160, 0.7);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .tab.active {
+            background: #ff9900;
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.7);
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 10px;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 10px;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .workspace {
+            background: rgba(10, 40, 70, 0.8);
+            border-radius: 15px;
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .peroxisome {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffcc00, #ff9900); /* Inner matrix color */
+            position: relative;
+            border: 3px solid #ff6600; /* Initial membrane border */
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            transition: all 0.3s ease-in-out; /* Add transition for smooth changes */
+        }
+
+        /* Highlight for peroxisome when membrane component is dragged over */
+        .peroxisome.highlight-membrane {
+            border: 5px solid #3498db; /* Blue border for highlight */
+            box-shadow: 0 0 25px 10px rgba(52, 152, 219, 0.7); /* Blue glow */
+        }
+
+        /* Style when membrane component is successfully placed */
+        .peroxisome.membrane-placed {
+            border: 5px solid #3498db; /* Final membrane border */
+            box-shadow: 0 0 30px rgba(52, 152, 219, 0.9); /* Stronger blue glow */
+        }
+
+        .component-slot {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 100, 200, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+        }
+
+        /* Highlight style for component slots (for non-membrane components) */
+        .component-slot.highlight {
+            border: 2px solid #ffcc00; /* Yellow border */
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.7); /* Yellow glow */
+            transform: scale(1.1);
+        }
+
+        .component {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            font-size: 24px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 10;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .component:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .component.dragging {
+            opacity: 0.8;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+
+        .toolbox {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-item {
+            background: rgba(0, 80, 160, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: grab;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .tool-item:hover {
+            transform: translateY(-3px);
+            background: rgba(0, 100, 200, 0.9);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .tool-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .tool-label {
+            font-size: 0.75rem;
+            text-align: center;
+        }
+
+        .matching-game {
+            background: rgba(10, 40, 70, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .substrates, .enzymes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffcc00;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .substrate, .enzyme {
+            background: rgba(0, 80, 160, 0.8);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .substrate:hover, .enzyme:hover {
+            transform: translateY(-3px);
+            background: rgba(0, 100, 200, 0.9);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .substrate.selected, .enzyme.selected {
+            background: #ff9900;
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.7);
+        }
+
+        .matched {
+            background: #4CAF50 !important;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.7) !important;
+        }
+
+        .quiz-container {
+            background: rgba(10, 40, 70, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #ffcc00;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            background: rgba(0, 80, 160, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: rgba(0, 100, 200, 0.9);
+            transform: translateY(-3px);
+        }
+
+        .quiz-option.selected {
+            background: #ff9900;
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.7);
+        }
+
+        .quiz-option.correct {
+            background: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+        }
+
+        .quiz-option.incorrect {
+            background: #f44336;
+            box-shadow: 0 0 15px rgba(244, 67, 54, 0.7);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            background: linear-gradient(to bottom, #ffcc00, #ff9900);
+            border: none;
+            border-radius: 30px;
+            padding: 12px 25px;
+            color: #1a2a6c;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 40, 80, 0.95);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 250px;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .educational-content {
+            background: rgba(0, 40, 80, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .educational-content h3 {
+            color: #ffcc00;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(0, 50, 100, 0.7);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #00c853, #64dd17);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 40, 80, 0.95);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            max-width: 90%;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .feedback h2 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+
+        .feedback p {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        /* Help Dialog Styles */
+        .help-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .help-dialog-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .help-dialog-content {
+            background: linear-gradient(135deg, #2a4365, #1a2a6c);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .help-dialog-overlay.visible .help-dialog-content {
+            transform: translateY(0);
+        }
+
+        .help-dialog-content h2 {
+            color: #ffcc00;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .help-dialog-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .help-dialog-content ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .help-dialog-content ul li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .help-dialog-content button {
+            margin-top: 10px;
+        }
+
+        .help-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(0, 80, 160, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            z-index: 1; /* Ensure it's above other header elements if needed */
+        }
+
+        .help-button:hover {
+            background: rgba(0, 100, 200, 0.9);
+            transform: scale(1.1);
+        }
+
+        /* Quiz Description Box Styles */
+        .quiz-description-box {
+            background: rgba(0, 50, 100, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            text-align: left;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            color: #e0e0e0;
+        }
+
+        .quiz-indicator {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+        }
+
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 10px;
+            margin-top: auto; /* Pushes footer to the bottom */
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            /* Added padding-top to ensure separation from content above */
+            padding-top: 20px; 
+        }
+
+        footer a {
+            color: #ffcc00; /* Link color */
+            text-decoration: none;
+            margin-top: 5px; /* Spacing between email and link */
+            display: block; /* Make it a block element for spacing */
+            animation: telegramPulse 2s infinite; /* Apply the animation */
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Keyframes for Telegram link animation */
+        @keyframes telegramPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Media Queries for Mobile Optimization */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .game-info {
+                font-size: 1rem;
+            }
+            
+            .toolbox {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                max-height: 120px;
+            }
+            
+            .tool-item {
+                padding: 8px;
+            }
+            
+            .tool-label {
+                font-size: 0.7rem;
+            }
+            
+            .matching-game {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .peroxisome {
+                width: 150px;
+                height: 150px;
+            }
+
+            .help-dialog-content {
+                padding: 20px;
+            }
+
+            .help-dialog-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .help-dialog-content p, .help-dialog-content ul li {
+                font-size: 0.95rem;
+            }
+
+            .quiz-description-box {
+                font-size: 0.85rem;
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            .game-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .toolbox {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .peroxisome {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .component {
+                width: 30px;
+                height: 30px;
+                font-size: 20px;
+            }
+            
+            .substrate, .enzyme {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .tab {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .help-dialog-content {
+                padding: 15px;
+            }
+
+            .help-dialog-content h2 {
+                font-size: 1.3rem;
+            }
+
+            .help-dialog-content p, .help-dialog-content ul li {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>Peroxisome Builder</h1>
+            <div class="game-info">
+                <div class="score-container">Score: <span id="score">0</span></div>
+            </div>
+            <div class="tabs">
+                <div class="tab active" data-tab="assembly">Assembly</div>
+                <div class="tab" data-tab="matching">Matching</div>
+                <div class="tab" data-tab="quiz">Quiz</div>
+            </div>
+            <button class="help-button" id="help-button">?</button>
+        </header>
+        
+        <div class="game-area">
+            <!-- Assembly Screen -->
+            <div class="screen active" id="assembly-screen">
+                <div class="workspace" id="workspace">
+                    <div class="peroxisome" id="peroxisome">
+                        <!-- Component slots will be added here -->
+                    </div>
+                </div>
+                
+                <div class="toolbox" id="toolbox">
+                    <!-- Tool items will be added here -->
+                </div>
+                
+                <div class="controls">
+                    <button id="validate-assembly">Validate</button>
+                    <button id="reset-assembly">Reset</button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="assembly-progress"></div>
+                </div>
+                
+                <div class="educational-content">
+                    <h3>Peroxisome Structure</h3>
+                    <p>Peroxisomes are single-membrane-bound organelles found in eukaryotic cells. They contain enzymes for metabolic processes like β-oxidation of fatty acids and detoxification of hydrogen peroxide.</p>
+                </div>
+            </div>
+            
+            <!-- Matching Screen -->
+            <div class="screen" id="matching-screen">
+                <div class="matching-game">
+                    <div class="substrates" id="substrates-container">
+                        <div class="section-title">Substrates</div>
+                        <!-- Substrates will be dynamically added here -->
+                    </div>
+                    
+                    <div class="enzymes" id="enzymes-container">
+                        <div class="section-title">Enzymes</div>
+                        <!-- Enzymes will be dynamically added here -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="validate-matching">Validate</button>
+                    <button id="reset-matching">Reset</button>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="matching-progress"></div>
+                </div>
+                
+                <div class="educational-content">
+                    <h3>Peroxisome Functions</h3>
+                    <p>Peroxisomes break down fatty acids through β-oxidation, detoxify harmful hydrogen peroxide using catalase, and are involved in the synthesis of bile acids and plasmalogens.</p>
+                </div>
+            </div>
+            
+            <!-- Quiz Screen -->
+            <div class="screen" id="quiz-screen">
+                <div class="quiz-container">
+                    <div id="quiz-indicator" class="quiz-indicator"></div>
+                    <div class="quiz-question" id="quiz-question">
+                        <!-- Question will be loaded here -->
+                    </div>
+                    <div class="quiz-options" id="quiz-options">
+                        <!-- Options will be loaded here -->
+                    </div>
+                    <div class="quiz-description-box" id="quiz-description-box" style="display: none;">
+                        <!-- Description will appear here -->
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="submit-quiz">Submit Answer</button>
+                    <button id="next-quiz">Next Question</button>
+                </div>
+                
+                <div class="educational-content">
+                    <h3>Peroxisome Disorders</h3>
+                    <p>Zellweger syndrome is a genetic disorder caused by defects in peroxisome biogenesis. Patients lack functional peroxisomes, leading to accumulation of very long-chain fatty acids and severe neurological symptoms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Help Dialog HTML -->
+    <div class="help-dialog-overlay" id="help-dialog-overlay">
+        <div class="help-dialog-content">
+            <h2>How to Play: Assembly Section</h2>
+            <p>In the Assembly section, your goal is to build a complete peroxisome by dragging and dropping the correct components into their designated slots.</p>
+            <ul>
+                <li><strong>Drag & Drop:</strong> Select a component from the "Toolbox" at the bottom of the screen. Drag it over to the peroxisome in the "Workspace" and release it over an empty slot.</li>
+                <li><strong>Component Information:</strong> Hover over (or tap and hold on mobile) a component in the toolbox to see its name and a brief description.</li>
+                <li><strong>Validate:</strong> Once you think you have placed all the necessary components, click the "Validate" button to check your assembly.</li>
+                <li><strong>Reset:</strong> If you want to start over, click the "Reset" button to clear all placed components.</li>
+                <li><strong>Score:</strong> You earn points for correctly placing components.</li>
+                <li><strong>Progress:</strong> The progress bar at the bottom indicates how many components you have successfully placed.</li>
+            </ul>
+            <button id="close-help-dialog">Got It!</button>
+        </div>
+    </div>
+
+    <footer>
+        <span id="security-footer">betabiosciences@gmail.com</span>
+        <a href="https://t.me/betascience_csir" target="_blank" rel="noopener noreferrer">Join Our Telegram Channel</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Domain security check
+            const allowedDomain = "https://betabiosciences.github.io";
+            if (window.location.origin !== allowedDomain) {
+                document.body.innerHTML = ''; // Clear all content
+                document.body.style.display = 'none'; // Ensure body is hidden
+                return; // Stop further script execution
+            }
+
+            // Security check for the footer
+            const securityFooter = document.getElementById('security-footer');
+            if (!securityFooter || securityFooter.textContent !== 'betabiosciences@gmail.com') {
+                // If the footer is missing or modified, hide all content and stop execution
+                document.body.innerHTML = ''; // Clear all content
+                document.body.style.display = 'none'; // Ensure body is hidden
+                return; // Stop further script execution
+            }
+
+            // Game elements
+            const workspace = document.getElementById('workspace');
+            const peroxisome = document.getElementById('peroxisome');
+            const toolbox = document.getElementById('toolbox');
+            const scoreElement = document.getElementById('score');
+            const assemblyProgress = document.getElementById('assembly-progress');
+            const matchingProgress = document.getElementById('matching-progress');
+            const validateAssemblyBtn = document.getElementById('validate-assembly');
+            const resetAssemblyBtn = document.getElementById('reset-assembly');
+            const validateMatchingBtn = document.getElementById('validate-matching');
+            const resetMatchingBtn = document.getElementById('reset-matching');
+            const submitQuizBtn = document.getElementById('submit-quiz');
+            const nextQuizBtn = document.getElementById('next-quiz');
+            const tooltip = document.getElementById('tooltip');
+            const tabs = document.querySelectorAll('.tab');
+            const screens = document.querySelectorAll('.screen');
+            
+            // Help Dialog elements
+            const helpButton = document.getElementById('help-button');
+            const helpDialogOverlay = document.getElementById('help-dialog-overlay');
+            const closeHelpDialogBtn = document.getElementById('close-help-dialog');
+
+            // Quiz specific elements
+            const quizDescriptionBox = document.getElementById('quiz-description-box');
+            const quizIndicatorElement = document.getElementById('quiz-indicator');
+
+
+            // Game state
+            let score = 0;
+            let selectedSubstrate = null;
+            let selectedEnzyme = null;
+            let placedComponents = 0; // Number of components placed in slots or membrane
+            let matchedPairs = 0;
+            let currentQuizQuestion = 0;
+            let selectedOption = null;
+            let quizAnswered = false;
+            let gameFinished = false; // New flag to track game completion
+            let quizCompleted = false; // New flag for quiz completion
+            
+            // Global variable to store the ID of the component currently being dragged
+            let draggedComponentId = null;
+
+            // Component data
+            const components = [
+                { id: 'membrane', name: 'Membrane', icon: '🛡️', color: '#3498db', description: 'Single membrane that protects enzymes in the matrix and regulates molecule transport.' },
+                { id: 'catalase', name: 'Catalase', icon: '🧪', color: '#e74c3c', description: 'Converts hydrogen peroxide (H₂O₂) into water and oxygen, preventing cellular damage.' },
+                { id: 'acyl-coa', name: 'Acyl-CoA Oxidase', icon: '🔥', color: '#f39c12', description: 'Initiates the beta-oxidation of very long chain fatty acids.' },
+                { id: 'pex5', name: 'PEX5 Protein', icon: '🚚', color: '#9b59b6', description: 'Transports proteins with a peroxisomal targeting signal (PTS1) into the peroxisome.' }
+            ];
+            
+            // Matching pairs
+            const correctPairs = {
+                'fatty-acid': 'acyl-coa',
+                'h2o2': 'catalase',
+                'amino-acids': 'd-amino',
+                'bile-acids': 'bile-synthase'
+            };
+
+            // Original substrate and enzyme data, now used for shuffling
+            const allSubstrates = [
+                { id: 'fatty-acid', name: 'Fatty Acid' },
+                { id: 'h2o2', name: 'H₂O₂' },
+                { id: 'amino-acids', name: 'D-amino acids' },
+                { id: 'bile-acids', name: 'Bile Acids' } 
+            ];
+
+            const allEnzymes = [
+                { id: 'acyl-coa', name: 'Acyl-CoA oxidase' },
+                { id: 'catalase', name: 'Catalase' },
+                { id: 'd-amino', name: 'D-amino acid oxidase' },
+                { id: 'bile-synthase', name: 'Bile acid synthase' }
+            ];
+            
+            // Quiz questions (updated with 10 questions and descriptions)
+            const quizQuestions = [
+                {
+                    question: "Which severe peroxisomal disorder is characterized by the absence or reduction of peroxisomes, leading to accumulation of very long-chain fatty acids (VLCFAs)?",
+                    options: ["Tay-Sachs Disease", "Zellweger Syndrome", "Cystic Fibrosis", "Phenylketonuria"],
+                    correct: "Zellweger Syndrome",
+                    description: "Zellweger Syndrome is a rare, inherited peroxisomal biogenesis disorder (PBD) where cells fail to form functional peroxisomes. This leads to a systemic accumulation of various metabolic intermediates, particularly VLCFAs, causing severe neurological, liver, and kidney dysfunction, often fatal in infancy."
+                },
+                {
+                    question: "What is X-linked adrenoleukodystrophy (X-ALD) primarily characterized by?",
+                    options: ["Accumulation of glycogen", "Deficiency in mitochondrial enzymes", "Accumulation of very long-chain fatty acids due to impaired peroxisomal beta-oxidation", "Disruption of protein synthesis"],
+                    correct: "Accumulation of very long-chain fatty acids due to impaired peroxisomal beta-oxidation",
+                    description: "X-ALD is a peroxisomal disorder caused by a mutation in the ABCD1 gene, leading to defective transport of VLCFAs into peroxisomes. This results in VLCFA accumulation, primarily affecting the brain (demyelination) and adrenal glands (adrenal insufficiency)."
+                },
+                {
+                    question: "Which peroxisomal disorder involves the accumulation of phytanic acid due to a deficiency in phytanoyl-CoA hydroxylase?",
+                    options: ["Gaucher Disease", "Refsum Disease", "Fabry Disease", "Niemann-Pick Disease"],
+                    correct: "Refsum Disease",
+                    description: "Refsum disease is a rare autosomal recessive peroxisomal disorder caused by a defect in alpha-oxidation, leading to the accumulation of phytanic acid. Symptoms include retinitis pigmentosa, polyneuropathy, ataxia, and skeletal abnormalities."
+                },
+                {
+                    question: "A deficiency in which peroxisomal enzyme leads to impaired beta-oxidation of very long-chain fatty acids and dicarboxylic acids, causing neurological and liver issues?",
+                    options: ["Catalase", "Acyl-CoA Oxidase", "Urate Oxidase", "D-amino Acid Oxidase"],
+                    correct: "Acyl-CoA Oxidase",
+                    description: "Acyl-CoA oxidase (ACOX1) is the first enzyme in the peroxisomal beta-oxidation pathway. Its deficiency leads to a buildup of VLCFAs and branched-chain fatty acids, causing neurological symptoms, hypotonia, and liver dysfunction."
+                },
+                {
+                    question: "Zellweger syndrome, neonatal adrenoleukodystrophy, and infantile Refsum disease are all examples of what broader category of disorders?",
+                    options: ["Lysosomal Storage Disorders", "Mitochondrial Disorders", "Peroxisomal Biogenesis Disorders", "Glycogen Storage Diseases"],
+                    correct: "Peroxisomal Biogenesis Disorders",
+                    description: "Peroxisomal Biogenesis Disorders (PBDs) are a spectrum of genetic conditions characterized by the impaired formation or function of peroxisomes. They result from mutations in PEX genes, which are essential for peroxisome assembly and protein import."
+                },
+                {
+                    question: "Peroxisomes play a crucial role in the synthesis of which essential membrane lipids, particularly abundant in myelin and heart muscle?",
+                    options: ["Cholesterol", "Phospholipids", "Sphingolipids", "Plasmalogens"],
+                    correct: "Plasmalogens",
+                    description: "Plasmalogens are a unique class of phospholipids with an ether bond at the sn-1 position. Peroxisomes are essential for the initial steps of their synthesis. Deficiencies in plasmalogen synthesis, often seen in PBDs, contribute to neurological abnormalities."
+                },
+                {
+                    question: "Besides catalase, which other peroxisomal enzyme is involved in the detoxification of reactive oxygen species, though less directly with H₂O₂?",
+                    options: ["Superoxide Dismutase", "Glutathione Peroxidase", "Urate Oxidase", "All of the above"],
+                    correct: "Glutathione Peroxidase",
+                    description: "While catalase directly breaks down H₂O₂, glutathione peroxidase is another important antioxidant enzyme found in peroxisomes. It reduces hydrogen peroxide by oxidizing glutathione, protecting the cell from oxidative stress."
+                },
+                {
+                    question: "Which nuclear receptors are activated by fatty acids and their derivatives, playing a key role in regulating peroxisome proliferation and lipid metabolism?",
+                    options: ["Estrogen Receptors", "Androgen Receptors", "Peroxisome Proliferator-Activated Receptors (PPARs)", "Thyroid Hormone Receptors"],
+                    correct: "Peroxisome Proliferator-Activated Receptors (PPARs)",
+                    description: "PPARs are a group of nuclear receptor proteins that function as transcription factors, regulating the expression of genes involved in lipid metabolism, glucose homeostasis, and inflammation. PPARα is particularly important for peroxisomal gene expression."
+                },
+                {
+                    question: "Which peroxisomal enzyme is responsible for the oxidative deamination of D-amino acids, producing hydrogen peroxide?",
+                    options: ["L-amino Acid Oxidase", "D-amino Acid Oxidase", "Glycine Oxidase", "Alanine Oxidase"],
+                    correct: "D-amino Acid Oxidase",
+                    description: "D-amino acid oxidase (DAO) is a peroxisomal flavoenzyme that metabolizes D-amino acids, which are not typically found in proteins but can arise from bacterial metabolism or food. This reaction produces hydrogen peroxide, which is then handled by catalase."
+                },
+                {
+                    question: "Peroxisomes can form by budding from which other organelle, and also through growth and division of existing peroxisomes?",
+                    options: ["Mitochondria", "Endoplasmic Reticulum", "Golgi Apparatus", "Lysosomes"],
+                    correct: "Endoplasmic Reticulum",
+                    description: "Peroxisomes are unique in that they can form de novo from the endoplasmic reticulum, as well as by growth and division of pre-existing peroxisomes. This dual biogenesis pathway highlights their dynamic nature within the cell."
+                }
+            ];
+
+            // Utility function to shuffle an array (Fisher-Yates algorithm)
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+                }
+                return array;
+            }
+            
+            // Initialize game
+            function initGame() {
+                createComponentSlots();
+                createToolboxItems();
+                setupMatchingGame(); // Setup matching game with shuffled items
+                setupEventListeners();
+                updateProgress(); // Initial progress update
+                
+                // Setup quiz
+                loadQuizQuestion();
+            }
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.dataset.tab;
+                    
+                    // Update tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Update screens
+                    screens.forEach(screen => {
+                        screen.classList.remove('active');
+                        if (screen.id === `${tabId}-screen`) {
+                            screen.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Create component slots in peroxisome
+            function createComponentSlots() {
+                const positions = [
+                    { top: '20%', left: '50%' },
+                    { top: '50%', left: '20%' },
+                    { top: '50%', left: '80%' },
+                    { top: '80%', left: '50%' }
+                ];
+                
+                // Filter out 'membrane' as it will be placed on the peroxisome itself
+                const componentsForSlots = components.filter(c => c.id !== 'membrane');
+
+                positions.forEach((pos, index) => {
+                    // Only create a slot if there's a component available for it (excluding membrane)
+                    if (index < componentsForSlots.length) {
+                        const slot = document.createElement('div');
+                        slot.className = 'component-slot';
+                        slot.style.top = pos.top;
+                        slot.style.left = pos.left;
+                        slot.dataset.slotId = index;
+                        peroxisome.appendChild(slot);
+
+                        // Add drag and drop event listeners to slots
+                        slot.addEventListener('dragover', (e) => {
+                            e.preventDefault(); // Allow drop
+                        });
+                        slot.addEventListener('dragenter', (e) => {
+                            e.preventDefault();
+                            // Only highlight if the dragged component is NOT 'membrane' and slot is empty
+                            if (draggedComponentId !== 'membrane' && !slot.querySelector('.component')) {
+                                slot.classList.add('highlight');
+                            }
+                        });
+                        slot.addEventListener('dragleave', () => {
+                            slot.classList.remove('highlight');
+                        });
+                    }
+                });
+            }
+            
+            // Create toolbox items
+            function createToolboxItems() {
+                components.forEach(component => {
+                    const toolItem = document.createElement('div');
+                    toolItem.className = 'tool-item';
+                    toolItem.dataset.id = component.id;
+                    toolItem.dataset.name = component.name;
+                    toolItem.dataset.description = component.description;
+                    toolItem.innerHTML = `
+                        <div class="tool-icon">${component.icon}</div>
+                        <div class="tool-label">${component.name}</div>
+                    `;
+                    toolbox.appendChild(toolItem);
+                    
+                    // Add drag functionality
+                    toolItem.addEventListener('mousedown', startDrag);
+                    toolItem.addEventListener('touchstart', startDrag, { passive: false });
+                    
+                    // Add tooltip
+                    toolItem.addEventListener('mouseenter', showTooltip);
+                    toolItem.addEventListener('mouseleave', hideTooltip);
+                    toolItem.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        showTooltip(e);
+                        setTimeout(hideTooltip, 3000);
+                    });
+                });
+            }
+
+            // Setup Matching Game
+            function setupMatchingGame() {
+                const substratesContainer = document.getElementById('substrates-container');
+                const enzymesContainer = document.getElementById('enzymes-container');
+
+                // Clear previous items
+                substratesContainer.innerHTML = '<div class="section-title">Substrates</div>';
+                enzymesContainer.innerHTML = '<div class="section-title">Enzymes</div>';
+
+                // Shuffle substrates and enzymes
+                const shuffledSubstrates = shuffleArray([...allSubstrates]);
+                const shuffledEnzymes = shuffleArray([...allEnzymes]);
+
+                // Add shuffled substrates to the DOM
+                shuffledSubstrates.forEach(substrate => {
+                    const subDiv = document.createElement('div');
+                    subDiv.className = 'substrate';
+                    subDiv.dataset.id = substrate.id;
+                    subDiv.textContent = substrate.name;
+                    substratesContainer.appendChild(subDiv);
+                });
+
+                // Add shuffled enzymes to the DOM
+                shuffledEnzymes.forEach(enzyme => {
+                    const enzDiv = document.createElement('div');
+                    enzDiv.className = 'enzyme';
+                    enzDiv.dataset.id = enzyme.id;
+                    enzDiv.textContent = enzyme.name;
+                    enzymesContainer.appendChild(enzDiv);
+                });
+
+                // Re-attach event listeners for matching game elements
+                document.querySelectorAll('.substrate').forEach(substrate => {
+                    substrate.addEventListener('click', selectSubstrate);
+                });
+                document.querySelectorAll('.enzyme').forEach(enzyme => {
+                    enzyme.addEventListener('click', selectEnzyme);
+                });
+            }
+            
+            // Setup event listeners
+            function setupEventListeners() {
+                // Substrate selection (now handled in setupMatchingGame)
+                // Enzyme selection (now handled in setupMatchingGame)
+                
+                // Buttons
+                validateAssemblyBtn.addEventListener('click', validateAssembly);
+                resetAssemblyBtn.addEventListener('click', resetAssembly);
+                validateMatchingBtn.addEventListener('click', validateMatching);
+                resetMatchingBtn.addEventListener('click', resetMatching);
+                submitQuizBtn.addEventListener('click', submitQuiz);
+                nextQuizBtn.addEventListener('click', nextQuiz);
+                
+                // Help dialog buttons
+                helpButton.addEventListener('click', showHelpDialog);
+                closeHelpDialogBtn.addEventListener('click', hideHelpDialog);
+
+                // Hide tooltip when clicking elsewhere
+                document.addEventListener('click', hideTooltip);
+
+                // Add drag and drop listeners to peroxisome for the 'membrane' component
+                peroxisome.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Allow drop
+                });
+
+                peroxisome.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    if (draggedComponentId === 'membrane' && !peroxisome.classList.contains('membrane-placed')) {
+                        peroxisome.classList.add('highlight-membrane');
+                    }
+                });
+
+                peroxisome.addEventListener('dragleave', () => {
+                    peroxisome.classList.remove('highlight-membrane');
+                });
+            }
+            
+            // Drag functionality
+            function startDrag(e) {
+                e.preventDefault();
+                
+                const toolItem = e.currentTarget;
+                const componentId = toolItem.dataset.id;
+                const component = components.find(c => c.id === componentId);
+                
+                // Set the globally dragged component ID
+                draggedComponentId = componentId;
+
+                // Create a new component to drag (this is the visual representation during drag)
+                const componentElement = document.createElement('div');
+                componentElement.className = 'component';
+                componentElement.innerHTML = component.icon;
+                componentElement.style.backgroundColor = component.color;
+                componentElement.dataset.id = componentId;
+                componentElement.style.position = 'absolute';
+                
+                // Position at cursor
+                let x, y;
+                if (e.type === 'touchstart') {
+                    x = e.touches[0].clientX;
+                    y = e.touches[0].clientY;
+                } else {
+                    x = e.clientX;
+                    y = e.clientY;
+                }
+                
+                componentElement.style.left = `${x - 18}px`;
+                componentElement.style.top = `${y - 18}px`;
+                
+                document.body.appendChild(componentElement);
+                componentElement.classList.add('dragging');
+                
+                // Move event
+                function moveHandler(e) {
+                    let clientX, clientY;
+                    if (e.type === 'touchmove') {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else {
+                        clientX = e.clientX;
+                        clientY = e.clientY;
+                    }
+                    
+                    componentElement.style.left = `${clientX - 18}px`;
+                    componentElement.style.top = `${clientY - 18}px`;
+                }
+                
+                // End event
+                function endHandler(e) {
+                    document.removeEventListener('mousemove', moveHandler);
+                    document.removeEventListener('touchmove', moveHandler);
+                    document.removeEventListener('mouseup', endHandler);
+                    document.removeEventListener('touchend', endHandler);
+                    
+                    componentElement.classList.remove('dragging');
+
+                    // Remove highlight from all slots and peroxisome
+                    document.querySelectorAll('.component-slot').forEach(slot => {
+                        slot.classList.remove('highlight');
+                    });
+                    peroxisome.classList.remove('highlight-membrane'); // Remove peroxisome highlight
+
+                    // Get drop coordinates
+                    let clientX, clientY;
+                    if (e.type === 'touchend') {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    } else {
+                        clientX = e.clientX;
+                        clientY = e.clientY;
+                    }
+                    
+                    // Temporarily hide the dragged element to find the element underneath
+                    componentElement.style.display = 'none';
+                    const targetElement = document.elementFromPoint(clientX, clientY);
+                    componentElement.style.display = ''; // Restore visibility
+
+                    let droppedSuccessfully = false;
+
+                    if (draggedComponentId === 'membrane') {
+                        // If dragging 'membrane', check if dropped on peroxisome
+                        // Ensure targetElement is the peroxisome itself or its child (and not another component already placed)
+                        const isDroppedOnPeroxisome = targetElement && (targetElement === peroxisome || (peroxisome.contains(targetElement) && !targetElement.classList.contains('component')));
+                        
+                        if (isDroppedOnPeroxisome && !peroxisome.classList.contains('membrane-placed')) {
+                            // Membrane successfully placed
+                            peroxisome.classList.add('membrane-placed');
+                            toolItem.style.opacity = '0.5';
+                            toolItem.style.pointerEvents = 'none';
+                            placedComponents++;
+                            updateProgress();
+                            addScore(10);
+                            // No need to append componentElement, its visual role is done.
+                            // The peroxisome's style change signifies the membrane placement.
+                            peroxisome.style.animation = 'pulse 0.5s'; // Animate peroxisome itself
+                            setTimeout(() => {
+                                peroxisome.style.animation = '';
+                            }, 500);
+                            droppedSuccessfully = true;
+                            checkGameCompletion(); // Check if game is complete after placing membrane
+                        }
+                    } else {
+                        // If dragging other components, use existing slot logic
+                        const closestSlot = targetElement ? targetElement.closest('.component-slot') : null;
+                        
+                        if (closestSlot && !closestSlot.querySelector('.component')) {
+                            // Place component in slot
+                            componentElement.style.position = 'absolute';
+                            componentElement.style.top = '50%';
+                            componentElement.style.left = '50%';
+                            componentElement.style.transform = 'translate(-50%, -50%)';
+                            closestSlot.appendChild(componentElement);
+                            
+                            // Remove from toolbox
+                            toolItem.style.opacity = '0.5';
+                            toolItem.style.pointerEvents = 'none';
+                            
+                            // Update game state
+                            placedComponents++;
+                            updateProgress();
+                            addScore(10);
+                            
+                            // Success animation
+                            componentElement.style.animation = 'pulse 0.5s';
+                            setTimeout(() => {
+                                componentElement.style.animation = '';
+                            }, 500);
+                            droppedSuccessfully = true;
+                            checkGameCompletion(); // Check if game is complete after placing other components
+                        }
+                    }
+                    
+                    // Always remove the temporary dragged component from the body after the drag ends.
+                    // If it was successfully dropped into a slot, it's now a child of the slot.
+                    // If it was the membrane, its visual effect is on the peroxisome.
+                    // If it was not successfully dropped anywhere, it should be removed.
+                    // This ensures no lingering dragged elements.
+                    if (componentElement.parentNode === document.body) { 
+                        componentElement.remove();
+                    }
+
+                    // Clear the globally dragged component ID
+                    draggedComponentId = null;
+                }
+                
+                document.addEventListener('mousemove', moveHandler);
+                document.addEventListener('touchmove', moveHandler, { passive: false });
+                document.addEventListener('mouseup', endHandler);
+                document.addEventListener('touchend', endHandler);
+            }
+            
+            // Substrate selection
+            function selectSubstrate(e) {
+                const substrate = e.currentTarget;
+                
+                // Reset previous selection
+                document.querySelectorAll('.substrate').forEach(s => {
+                    if (!s.classList.contains('matched')) {
+                        s.classList.remove('selected');
+                    }
+                });
+                
+                substrate.classList.add('selected');
+                selectedSubstrate = substrate.dataset.id;
+                
+                checkForMatch();
+            }
+            
+            // Enzyme selection
+            function selectEnzyme(e) {
+                const enzyme = e.currentTarget;
+                
+                // Reset previous selection
+                document.querySelectorAll('.enzyme').forEach(e => {
+                    if (!e.classList.contains('matched')) {
+                        e.classList.remove('selected');
+                    }
+                });
+                
+                enzyme.classList.add('selected');
+                selectedEnzyme = enzyme.dataset.id;
+                
+                checkForMatch();
+            }
+            
+            // Check for match
+            function checkForMatch() {
+                if (!selectedSubstrate || !selectedEnzyme) return;
+                
+                if (correctPairs[selectedSubstrate] === selectedEnzyme) {
+                    // Correct match
+                    const substrateElement = document.querySelector(`.substrate[data-id="${selectedSubstrate}"]`);
+                    const enzymeElement = document.querySelector(`.enzyme[data-id="${selectedEnzyme}"]`);
+                    
+                    substrateElement.classList.add('matched');
+                    enzymeElement.classList.add('matched');
+                    substrateElement.classList.remove('selected');
+                    enzymeElement.classList.remove('selected');
+                    
+                    // Update game state
+                    matchedPairs++;
+                    updateProgress();
+                    addScore(20);
+                    
+                    // Success animation
+                    substrateElement.style.animation = 'pulse 0.5s';
+                    enzymeElement.style.animation = 'pulse 0.5s';
+                    setTimeout(() => {
+                        substrateElement.style.animation = '';
+                        enzymeElement.style.animation = '';
+                    }, 500);
+                    
+                    // Reset selection
+                    selectedSubstrate = null;
+                    selectedEnzyme = null;
+                    checkGameCompletion(); // Check if game is complete after matching
+                } else if (selectedSubstrate && selectedEnzyme) {
+                    // Incorrect match
+                    const substrateElement = document.querySelector(`.substrate[data-id="${selectedSubstrate}"]`);
+                    const enzymeElement = document.querySelector(`.enzyme[data-id="${selectedEnzyme}"]`);
+                    
+                    // Shake animation for wrong match
+                    substrateElement.style.animation = 'shake 0.5s';
+                    enzymeElement.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        substrateElement.style.animation = '';
+                        enzymeElement.style.animation = '';
+                    }, 500);
+                    
+                    // Reset selection
+                    setTimeout(() => {
+                        document.querySelectorAll('.substrate.selected, .enzyme.selected').forEach(el => {
+                            el.classList.remove('selected');
+                        });
+                        selectedSubstrate = null;
+                        selectedEnzyme = null;
+                    }, 500);
+                }
+            }
+            
+            // Validate assembly (now primarily for user feedback, game completion handled by checkGameCompletion)
+            function validateAssembly() {
+                const membraneIsPlaced = peroxisome.classList.contains('membrane-placed') ? 1 : 0;
+                const otherComponentsInSlots = document.querySelectorAll('.component-slot > .component').length;
+                const totalPlacedAssemblyComponents = membraneIsPlaced + otherComponentsInSlots; 
+                const totalExpectedAssemblyComponents = components.length; 
+
+                if (totalPlacedAssemblyComponents === totalExpectedAssemblyComponents) {
+                    showFeedback('Peroxisome assembly is complete!', true);
+                } else {
+                    showFeedback('Keep building! Not all components are in place yet.', false);
+                }
+                checkGameCompletion(); // Always check completion after validation
+            }
+            
+            // Reset assembly
+            function resetAssembly() {
+                // Reset components in slots
+                document.querySelectorAll('.component').forEach(c => c.remove());
+                
+                // Reset peroxisome membrane state
+                peroxisome.classList.remove('membrane-placed');
+                peroxisome.style.animation = ''; // Clear any animation
+
+                // Reset toolbox items opacity and pointer events
+                document.querySelectorAll('.tool-item').forEach(t => {
+                    t.style.opacity = '1';
+                    t.style.pointerEvents = 'all';
+                });
+                
+                // Reset game state
+                placedComponents = 0;
+                updateProgress();
+            }
+            
+            // Validate matching (now primarily for user feedback, game completion handled by checkGameCompletion)
+            function validateMatching() {
+                if (matchedPairs === Object.keys(correctPairs).length) {
+                    showFeedback('All metabolic pathways matched!', true);
+                } else {
+                    showFeedback('Not all substrates are matched to their enzymes yet.', false);
+                }
+                checkGameCompletion(); // Always check completion after validation
+            }
+            
+            // Reset matching
+            function resetMatching() {
+                // Reset matching
+                document.querySelectorAll('.substrate, .enzyme').forEach(el => {
+                    el.classList.remove('selected', 'matched');
+                });
+                
+                // Reset selection
+                selectedSubstrate = null;
+                selectedEnzyme = null;
+                
+                // Reset game state
+                matchedPairs = 0;
+                updateProgress();
+                setupMatchingGame(); // Re-shuffle for next attempt
+            }
+            
+            // Load quiz question
+            function loadQuizQuestion() {
+                const question = quizQuestions[currentQuizQuestion];
+                const quizQuestionElement = document.getElementById('quiz-question');
+                const quizOptionsElement = document.getElementById('quiz-options');
+                
+                quizQuestionElement.textContent = question.question;
+                quizOptionsElement.innerHTML = '';
+                
+                // Update the question indicator
+                quizIndicatorElement.textContent = `Question ${currentQuizQuestion + 1} of ${quizQuestions.length}`;
+
+                question.options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.dataset.value = option.toLowerCase().replace(/\s+/g, '-');
+                    quizOptionsElement.appendChild(optionElement);
+                    
+                    optionElement.addEventListener('click', () => {
+                        if (quizAnswered) return;
+                        
+                        document.querySelectorAll('.quiz-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        optionElement.classList.add('selected');
+                        selectedOption = option;
+                    });
+                });
+                
+                // Reset quiz state
+                quizAnswered = false;
+                selectedOption = null;
+                submitQuizBtn.disabled = false;
+                nextQuizBtn.disabled = true;
+                quizDescriptionBox.style.display = 'none'; // Hide description for new question
+                quizDescriptionBox.innerHTML = ''; // Clear description content
+            }
+            
+            // Submit quiz answer
+            function submitQuiz() {
+                console.log('Submit Quiz button clicked!'); // Added for debugging
+                if (!selectedOption) {
+                    showFeedback('Please select an answer!', false);
+                    return;
+                }
+                
+                quizAnswered = true;
+                submitQuizBtn.disabled = true;
+                nextQuizBtn.disabled = false;
+                
+                const question = quizQuestions[currentQuizQuestion];
+                const options = document.querySelectorAll('.quiz-option');
+                
+                options.forEach(option => {
+                    if (option.textContent === selectedOption) {
+                        if (selectedOption === question.correct) {
+                            option.classList.add('correct');
+                            addScore(30);
+                        } else {
+                            option.classList.add('incorrect');
+                        }
+                    }
+                    
+                    if (option.textContent === question.correct) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                // Display the description
+                quizDescriptionBox.innerHTML = `<p>${question.description}</p>`;
+                quizDescriptionBox.style.display = 'block';
+
+                if (selectedOption === question.correct) {
+                    showFeedback('Correct! Well done!', true);
+                } else {
+                    showFeedback(`Incorrect. The correct answer is: ${question.correct}`, false);
+                }
+
+                // If this is the last question, mark quiz as completed
+                if (currentQuizQuestion === quizQuestions.length - 1) {
+                    quizCompleted = true;
+                }
+                checkGameCompletion(); // Always check game completion after a quiz submission
+            }
+            
+            // Next quiz question
+            function nextQuiz() {
+                if (currentQuizQuestion < quizQuestions.length - 1) {
+                    currentQuizQuestion++;
+                    loadQuizQuestion();
+                } else {
+                    // All quiz questions have been attempted, trigger overall game completion check
+                    checkGameCompletion(); 
+                }
+            }
+            
+            // Add to score
+            function addScore(points) {
+                score += points;
+                scoreElement.textContent = score;
+                
+                // Show floating points
+                const pointsDisplay = document.createElement('div');
+                pointsDisplay.textContent = `+${points}`;
+                pointsDisplay.style.position = 'absolute';
+                pointsDisplay.style.color = '#4CAF50';
+                pointsDisplay.style.fontWeight = 'bold';
+                pointsDisplay.style.fontSize = '1.5rem';
+                pointsDisplay.style.animation = 'floatUp 1s forwards';
+                
+                document.body.appendChild(pointsDisplay);
+                
+                setTimeout(() => {
+                    pointsDisplay.remove();
+                }, 1000);
+            }
+            
+            // Update progress
+            function updateProgress() {
+                // Assembly progress: Calculate based on membrane placed + other components in slots
+                const membraneIsPlaced = peroxisome.classList.contains('membrane-placed') ? 1 : 0;
+                const otherComponentsInSlots = document.querySelectorAll('.component-slot > .component').length;
+                const totalPlacedAssemblyComponents = membraneIsPlaced + otherComponentsInSlots; 
+                
+                // Total expected components for assembly, including the membrane
+                const totalExpectedAssemblyComponents = components.length; 
+
+                const assemblyProgressValue = (totalPlacedAssemblyComponents / totalExpectedAssemblyComponents) * 100;
+                assemblyProgress.style.width = `${assemblyProgressValue}%`;
+                
+                // Matching progress
+                const matchingProgressValue = (matchedPairs / Object.keys(correctPairs).length) * 100;
+                matchingProgress.style.width = `${matchingProgressValue}%`;
+            }
+            
+            // Show tooltip
+            function showTooltip(e) {
+                const toolItem = e.currentTarget;
+                const rect = toolItem.getBoundingClientRect();
+                
+                tooltip.textContent = toolItem.dataset.description;
+                tooltip.style.left = `${rect.left}px`;
+                tooltip.style.top = `${rect.bottom + 5}px`;
+                tooltip.style.opacity = '1';
+            }
+            
+            // Hide tooltip
+            function hideTooltip() {
+                tooltip.style.opacity = '0';
+            }
+            
+            // Show feedback message
+            function showFeedback(message, isSuccess, isGameEnd = false) { 
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                
+                const title = document.createElement('h2');
+                title.textContent = isSuccess ? 'Success!' : 'Notice';
+                feedback.appendChild(title);
+
+                const msgParagraph = document.createElement('p'); 
+                msgParagraph.textContent = message;
+
+                // Append msgParagraph first so it's a child when insertBefore is called
+                feedback.appendChild(msgParagraph);
+
+                // Add trophy icon for game completion
+                if (isGameEnd) {
+                    const trophyIcon = document.createElement('i');
+                    trophyIcon.className = 'fas fa-trophy';
+                    trophyIcon.style.fontSize = '3rem';
+                    trophyIcon.style.color = '#FFD700'; /* Gold color for trophy */
+                    trophyIcon.style.marginBottom = '15px';
+                    // Insert trophy icon before the message paragraph
+                    feedback.insertBefore(trophyIcon, msgParagraph); 
+                }
+
+                const continueButton = document.createElement('button');
+                continueButton.textContent = 'Continue';
+                // Ensure the button is clickable
+                continueButton.style.pointerEvents = 'auto'; 
+                continueButton.addEventListener('click', () => {
+                    feedback.remove(); // Remove the feedback dialog when button is clicked
+                });
+                feedback.appendChild(continueButton);
+                
+                document.body.appendChild(feedback);
+            }
+            
+            // Show help dialog
+            function showHelpDialog() {
+                helpDialogOverlay.classList.add('visible');
+            }
+
+            // Hide help dialog
+            function hideHelpDialog() {
+                helpDialogOverlay.classList.remove('visible');
+            }
+
+            // Check if all game conditions for completion are met
+            function checkGameCompletion() {
+                if (gameFinished) return; // Prevent multiple calls
+
+                const membraneIsPlaced = peroxisome.classList.contains('membrane-placed') ? 1 : 0;
+                const otherComponentsInSlots = document.querySelectorAll('.component-slot > .component').length;
+                const totalPlacedAssemblyComponents = membraneIsPlaced + otherComponentsInSlots; 
+
+                const assemblyComplete = (totalPlacedAssemblyComponents === components.length); 
+                const matchingComplete = (matchedPairs === Object.keys(correctPairs).length);
+                // Quiz is considered complete if the last question has been submitted
+                const quizIsComplete = quizCompleted;
+
+                if (assemblyComplete && matchingComplete && quizIsComplete) {
+                    endGame();
+                }
+            }
+
+            // End game
+            function endGame() {
+                if (gameFinished) return; // Ensure it only runs once
+                gameFinished = true;
+                
+                let message = `Congratulations! You completed the game with ${score} points!`;
+                
+                // Call showFeedback with isGameEnd = true
+                showFeedback(message, true, true); 
+                
+                // Disable interactions for main game elements
+                document.querySelectorAll('.tool-item, .substrate, .enzyme, #validate-assembly, #reset-assembly, #validate-matching, #reset-matching, #submit-quiz, #next-quiz')
+                    .forEach(el => el.style.pointerEvents = 'none');
+            }
+            
+            // Initialize the game
+            initGame();
+            
+            // Add keyframes for animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes floatUp {
+                    0% { transform: translateY(0); opacity: 1; }
+                    100% { transform: translateY(-50px); opacity: 0; }
+                }
+                
+                @keyframes fadeIn {
+                    0% { opacity: 0; transform: translate(-50%, -40%); }
+                    100% { opacity: 1; transform: translate(-50%, -50%); }
+                }
+                
+                @keyframes pulse {
+                    0% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0.7); }
+                    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(76, 175, 80, 0.9); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0.7); }
+                }
+                
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    20% { transform: translateX(-10px); }
+                    40% { transform: translateX(10px); }
+                    60% { transform: translateX(-10px); }
+                    80% { transform: translateX(10px); }
+                    100% { transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
