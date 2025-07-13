@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absorption Spectroscopy | Interactive Learning</title>
+    <!-- Updated Plotly.js CDN link to a more recent version -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2a6c;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #0c1a2d;
+            --success: #2ecc71;
+            --purple: #9b59b6;
+            --yellow: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c1a2d, #1a2a6c);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: rgba(12, 26, 45, 0.95);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: #bdc3c7;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            /* Removed max-width to allow full expansion */
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr; /* Changed to single column for full width */
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 1.8rem;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-header {
+            margin-bottom: 1.8rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+            color: var(--secondary);
+            background: rgba(52, 152, 219, 0.15);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            margin-bottom: 1.2rem;
+            color: #00ff00; /* Changed color to vibrant green */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.8rem 0 1.2rem;
+            color: #FFA500; /* Changed color to bright orange */
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.7rem;
+            line-height: 1.7;
+        }
+
+        .chart-container {
+            height: 500px;
+            margin: 1.5rem 0;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            margin: 1.8rem 0;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+            color: #00f2fe;
+            font-size: 1.1rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            -webkit-appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #1a2a6c, #3498db);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--secondary);
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(52, 152, 219, 0.8);
+            border: 2px solid white;
+            transition: transform 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .value-display {
+            font-weight: 600;
+            text-align: center;
+            background: rgba(52, 152, 219, 0.25);
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-top: 0.7rem;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .chromophores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin: 1.8rem 0;
+        }
+
+        .chromo-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chromo-card:hover {
+            transform: translateY(-5px);
+            background: rgba(52, 152, 219, 0.25);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .chromo-card.active {
+            background: rgba(46, 204, 113, 0.3);
+            border: 1px solid var(--success);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .chromo-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .info-panel {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 1.8rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+        }
+
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab:hover {
+            background: rgba(52, 152, 219, 0.3);
+        }
+
+        .tab.active {
+            background: rgba(52, 152, 219, 0.5);
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1.8rem;
+        }
+
+        .app-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-top: 3px solid var(--success);
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .app-card h3 {
+            margin-top: 0;
+            border-left: none;
+            padding-left: 0;
+            color: var(--success);
+        }
+
+        .app-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--success);
+        }
+
+        .molecule {
+            display: flex;
+            justify-content: space-around;
+            margin: 2rem 0;
+            perspective: 1000px;
+        }
+
+        .orbital {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+
+        .pi-lobe {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(231, 76, 60, 0.6);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.8);
+            top: 0;
+            left: 0;
+        }
+
+        .pi-lobe.top {
+            transform: translateZ(40px);
+        }
+
+        .pi-lobe.bottom {
+            transform: translateZ(-40px);
+        }
+
+        .n-orbital {
+            position: relative;
+        }
+
+        .n-cloud {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(52, 152, 219, 0.6);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+            top: 10px;
+            left: 10px;
+        }
+
+        .electron {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #f1c40f;
+            box-shadow: 0 0 10px #f1c40f;
+            animation: orbit 4s infinite linear;
+        }
+
+        .electron.one {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .electron.two {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .transition-arrow {
+            font-size: 3rem;
+            color: var(--light);
+            align-self: center;
+            animation: pulse 2s infinite;
+        }
+
+        .math-panel {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 1.2rem;
+        }
+
+        .math-panel .math {
+            text-align: center;
+            margin: 1rem 0;
+            font-size: 1.4rem;
+            color: #4facfe;
+        }
+
+        /* Styles for MCQ section */
+        .mcq-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .mcq-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #00f2fe; /* Matching header gradient color */
+            font-size: 2.2rem;
+        }
+
+        .question-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-card p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+
+        .question-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .question-card li {
+            background: rgba(52, 152, 219, 0.1);
+            margin-bottom: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .question-card li:hover {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .question-card li.correct-answer {
+            background: rgba(46, 204, 113, 0.3); /* Green for correct answer */
+            border: 1px solid var(--success);
+        }
+
+        .question-card li.incorrect-answer {
+            background: rgba(231, 76, 60, 0.3); /* Red for incorrect answer */
+            border: 1px solid var(--accent);
+        }
+
+        .question-card li.disabled {
+            pointer-events: none; /* Disable further clicks */
+            cursor: default;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            background: rgba(12, 26, 45, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem; /* Adjust spacing between footer elements */
+        }
+
+        .telegram-link {
+            display: inline-block; /* Allows animation and spacing */
+            color: #00f2fe; /* Different font color */
+            text-decoration: none;
+            font-weight: 600;
+            animation: breath 2s infinite ease-in-out; /* Breath animation */
+            padding: 0.5rem 1rem; /* Add some padding for better visual */
+            border-radius: 8px;
+            background: rgba(0, 242, 254, 0.1); /* Light background for the link */
+            transition: background-color 0.3s ease;
+        }
+
+        .telegram-link:hover {
+            background: rgba(0, 242, 254, 0.2);
+        }
+
+        @keyframes breath {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        @keyframes rotate {
+            from { transform: rotateY(0); }
+            to { transform: rotateY(360deg); }
+        }
+
+        @keyframes orbit {
+            from { transform: rotate(0) translateX(45px) rotate(0); }
+            to { transform: rotate(360deg) translateX(45px) rotate(-360deg); }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .chart-container {
+                height: 400px; /* Adjusted for mobile */
+            }
+
+            .molecule {
+                flex-direction: column; /* Stack orbitals vertically */
+                align-items: center;
+                gap: 2rem;
+            }
+
+            .transition-arrow {
+                transform: rotate(90deg); /* Rotate arrow for vertical flow */
+                margin: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Security Check Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const expectedEmail = 'betabiosciences@gmail.com';
+            const expectedDomain = 'https://betabiosciences.github.io';
+            const footerElement = document.querySelector('footer'); // Get the footer element
+
+            // Check if the footer exists, contains the exact email string, AND the domain matches
+            if (!footerElement || !footerElement.innerHTML.includes(expectedEmail) || window.location.origin !== expectedDomain) {
+                // If any condition fails (email not found/modified OR domain is incorrect), clear all content
+                document.body.innerHTML = '';
+            }
+        });
+    </script>
+
+    <header>
+        <h1><i class="fas fa-atom"></i> Absorption Spectroscopy</h1>
+        <p class="subtitle">Electronic Transitions, Spectral Characteristics</p>
+    </header>
+
+    <div id="main-content-wrapper">
+        <div class="container">
+            <!-- Theoretical Principles Section -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-lightbulb"></i>
+                    <h2>Theoretical Principles: Electronic Transitions</h2>
+                </div>
+
+                <h3>Introduction to Electronic Transitions</h3>
+                <p>When molecules absorb electromagnetic radiation in the ultraviolet (200-400 nm) and visible (400-700 nm) ranges, their electrons undergo <strong>electronic transitions</strong>.</p>
+                <p>This process involves the excitation of an electron from a lower-energy molecular orbital to a higher-energy molecular orbital. The energy of the absorbed photon must precisely match the energy difference (\(\Delta E\)) between these orbitals.</p>
+
+                <div class="math-panel">
+                    <p>The energy of the absorbed photon is given by:</p>
+                    <div class="math">\[ E = h\nu = \frac{hc}{\lambda} \]</div>
+                    <p>Where \(h\) is Planck's constant, \(c\) is the speed of light, \(\nu\) is frequency, and \(\lambda\) is wavelength.</p>
+                </div>
+
+                <h3>Primary Electronic Transitions in Proteins</h3>
+
+                <div class="info-panel">
+                    <h3>π→π* Transitions</h3>
+                    <p>Involve excitation of an electron from a bonding pi (\(\pi\)) orbital to an anti-bonding pi-star (\(\pi^*\)) orbital. These transitions:</p>
+                    <ul>
+                        <li>Are strong absorbers with high extinction coefficients</li>
+                        <li>Characterize conjugated systems in aromatic amino acids</li>
+                        <li>Occur at 190-220 nm for peptide bonds</li>
+                        <li>Appear at 250-300 nm for aromatic side chains</li>
+                    </ul>
+                </div>
+
+                <div class="info-panel">
+                    <h3>n→π* Transitions</h3>
+                    <p>Involve excitation from a non-bonding (n) orbital (lone pair electrons) to an anti-bonding pi-star (\(\pi^*\)) orbital. These transitions:</p>
+                    <ul>
+                        <li>Are weaker with lower extinction coefficients</li>
+                        <li>Occur at longer wavelengths than π→π* transitions</li>
+                        <li>Are solvent polarity-dependent</li>
+                        <li>Appear in carbonyl groups of peptide bonds</li>
+                    </ul>
+                </div>
+
+                <div class="info-panel">
+                    <h3>σ→σ* Transitions</h3>
+                    <p>Involve excitation from sigma (\(\sigma\)) bonding to anti-bonding orbitals. These transitions:</p>
+                    <ul>
+                        <li>Require high energy (occur at very short wavelengths ~111 nm)</li>
+                        <li>Are outside detection range of standard UV spectrophotometers</li>
+                        <li>Highlight a fundamental limitation of the technique</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- New section for Molecular Orbital Theory Notes -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-book"></i>
+                    <h2>Molecular Orbital Theory Notes</h2>
+                </div>
+                <h3>Molecular Orbital Theory (HOMO-LUMO concept)</h3>
+                <ul>
+                    <li>Molecular Orbital (MO) theory provides the framework for understanding electronic transitions.</li>
+                    <li>In a molecule's ground state, electrons fill the lowest energy orbitals.</li>
+                    <li>The <strong>Highest Occupied Molecular Orbital (HOMO)</strong> is the highest energy orbital occupied by electrons.</li>
+                    <li>The <strong>Lowest Unoccupied Molecular Orbital (LUMO)</strong> is the lowest energy orbital that is unoccupied by electrons.</li>
+                    <li>When a molecule absorbs a photon, an electron is promoted from the HOMO to the LUMO. The energy gap (\(\Delta E\)) between the HOMO and LUMO precisely dictates the wavelength of light that will be absorbed.</li>
+                    <li>The presence of <strong>conjugated \(\pi\) systems</strong> (alternating single and double bonds) significantly influences the HOMO-LUMO gap, making it smaller for \(\pi \to \pi^*\) transitions, leading to absorption at longer wavelengths. Increased conjugation further narrows this gap, shifting absorption towards longer wavelengths, potentially into the visible region.</li>
+                </ul>
+
+                <h3>Influence of Conjugation on Absorption</h3>
+                <p>The degree of conjugation within a chromophore is a critical determinant of its absorption wavelength (e.g., highly conjugated p-coumaric acid in PYP absorbs blue light at 446 nm).</p>
+                <p>While n→π* transitions generally have a smaller energy gap (longer wavelengths) than \(\pi \to \pi^*\) transitions, they are usually weaker in terms of light absorbed.</p>
+
+                <h3>Electronic transitions as direct probes of the molecular environment:</h3>
+                <p>Any alteration in the local environment surrounding a protein chromophore (e.g., changes in solvent polarity, hydrogen bonding, proximity to charged groups) will perturb its electronic energy levels.</p>
+                <p>This leads to observable shifts (bathochromic/red-shift, hypsochromic/blue-shift) and changes in intensity (hyperchromic/increased intensity, hypochromic/decreased intensity) in the absorption spectrum.</p>
+                <p>Example: The protein environment and aqueous solution cause shifts in the p-coumaric acid chromophore in PYP.</p>
+
+                <h3>Limitations and Emerging Areas:</h3>
+                <p>The inaccessibility of \(\sigma \to \sigma^*\) transitions highlights a fundamental limitation of standard UV-Vis spectroscopy.</p>
+                <p>However, the emergence of "unusual UV-Vis absorption/visible fluorescence beyond 350 nm" from proteins lacking aromatic amino acids (attributed to mechanisms like charge transfer) suggests that even traditionally "optically silent" regions can yield valuable information under specific conditions, fostering an appreciation for the dynamic and evolving nature of biophysical research.</p>
+            </div>
+        </div>
+
+        <!-- MCQ Section -->
+        <div class="container">
+            <div class="mcq-section">
+                <h2>Test Your Knowledge!</h2>
+
+                <div class="question-card" data-correct-answer="B">
+                    <p>1. Which type of electronic transition typically involves excitation from a bonding pi orbital to an anti-bonding pi-star orbital?</p>
+                    <ul>
+                        <li>n→π* Transitions</li>
+                        <li>π→π* Transitions</li>
+                        <li>σ→σ* Transitions</li>
+                        <li>n→σ* Transitions</li>
+                    </ul>
+                </div>
+
+                <div class="question-card" data-correct-answer="C">
+                    <p>2. What does the energy gap (\(\Delta E\)) between the HOMO and LUMO precisely dictate when a molecule absorbs a photon?</p>
+                    <ul>
+                        <li>The intensity of the absorbed light</li>
+                        <li>The speed of light</li>
+                        <li>The wavelength of light that will be absorbed</li>
+                        <li>The frequency of molecular vibration</li>
+                    </ul>
+                </div>
+
+                <div class="question-card" data-correct-answer="C">
+                    <p>3. Which electronic transition requires very high energy and is generally outside the detection range of standard UV spectrophotometers?</p>
+                    <ul>
+                        <li>π→π* Transitions</li>
+                        <li>n→π* Transitions</li>
+                        <li>σ→σ* Transitions</li>
+                        <li>All of the above</li>
+                    </ul>
+                </div>
+
+                <div class="question-card" data-correct-answer="B">
+                    <p>4. What effect does increased conjugation within a chromophore have on its absorption wavelength?</p>
+                    <ul>
+                        <li>It shifts absorption towards shorter wavelengths.</li>
+                        <li>It shifts absorption towards longer wavelengths.</li>
+                        <li>It has no effect on absorption wavelength.</li>
+                        <li>It decreases the intensity of absorption.</li>
+                    </ul>
+                </div>
+
+                <div class="question-card" data-correct-answer="A">
+                    <p>5. What term describes an observable shift in the absorption spectrum towards longer wavelengths?</p>
+                    <ul>
+                        <li>Bathochromic shift (red-shift)</li>
+                        <li>Hypsochromic shift (blue-shift)</li>
+                        <li>Hyperchromic effect</li>
+                        <li>Hypochromic effect</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div> <!-- End of main-content-wrapper -->
+
+    <footer>
+        <p>betabiosciences@gmail.com</p>
+        <p><a href="https://t.me/betascience_csir" target="_blank" class="telegram-link">Join Our Telegram Channel</a></p>
+    </footer>
+
+    <script>
+        // No interactive spectrum, chromophores, environmental effects, or applications sections,
+        // so the corresponding JavaScript for those features is removed.
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const questionCards = document.querySelectorAll('.question-card');
+
+            questionCards.forEach(card => {
+                const options = card.querySelectorAll('li');
+                const correctAnswer = card.dataset.correctAnswer; // Get the correct answer from data attribute
+
+                options.forEach((option, index) => { // Added index to map options to letters
+                    option.addEventListener('click', () => {
+                        // If options are already disabled, do nothing
+                        if (option.classList.contains('disabled')) {
+                            return;
+                        }
+
+                        // Disable all options for this question after a choice is made
+                        options.forEach(opt => opt.classList.add('disabled'));
+
+                        // Determine the letter of the clicked option
+                        const optionLetters = ['A', 'B', 'C', 'D'];
+                        const clickedOptionLetter = optionLetters[index];
+
+                        if (clickedOptionLetter === correctAnswer) {
+                            option.classList.add('correct-answer');
+                        } else {
+                            option.classList.add('incorrect-answer');
+                            // Highlight the correct answer
+                            options.forEach((opt, optIndex) => {
+                                if (optionLetters[optIndex] === correctAnswer) {
+                                    opt.classList.add('correct-answer');
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
