@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amino Acid Classification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* General Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* Changed to Inter for modern look */
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --purple: #9b59b6;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #333;
+            line-height: 1.6;
+            padding-bottom: 50px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            display: none; /* Initially hide the body for security check */
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Section */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent), var(--success));
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Grid Layout for Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted min-width for better mobile fit */
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Ensure hover effects work on touch devices by adding active state */
+        .card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: inline-block;
+        }
+        
+        .card h3 {
+            color: var(--secondary);
+            margin: 20px 0 15px;
+        }
+        
+        .card ul {
+            padding-left: 25px;
+            margin-bottom: 20px;
+            list-style-type: disc;
+        }
+        
+        .card li {
+            margin-bottom: 12px;
+        }
+        
+        /* Image Styles */
+        .amino-structure-img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 10px;
+            margin: 25px auto;
+            display: block;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+        }
+        
+        /* Highlight and Info Box */
+        .highlight {
+            background: linear-gradient(120deg, rgba(52, 152, 219, 0.2), rgba(231, 76, 60, 0.2));
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .info-box {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--success);
+        }
+        
+        /* Table Styles */
+        .amino-table, .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            display: block; /* Make tables scrollable on small screens */
+            overflow-x: auto; /* Enable horizontal scrolling for tables */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        
+        .amino-table th, .property-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            white-space: nowrap; /* Prevent text wrapping in headers */
+        }
+        
+        .amino-table td, .property-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap; /* Prevent text wrapping in cells */
+        }
+        
+        .amino-table tr:nth-child(even), .property-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .amino-table tr:hover, .property-table tr:hover {
+            background-color: #e9f7fe;
+        }
+        
+        /* Classification Section */
+        .classification {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+            justify-content: center; /* Center items on smaller screens */
+        }
+        
+        .class-item {
+            flex: 1;
+            min-width: 150px; /* Adjusted min-width for more items per row on mobile */
+            max-width: 24%; /* Distribute space more evenly on larger screens */
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+
+        .class-item:active { /* Add active state for touch feedback */
+            transform: scale(0.98);
+        }
+        
+        .class-item h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem; /* Slightly smaller font for better fit */
+        }
+        
+        .class-item p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        /* Copyright Notice */
+        .copyright-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            text-align: center;
+        }
+        
+        .footer-logo {
+            height: 60px;
+            width: auto;
+        }
+        
+        .footer-text {
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        .footer-text a {
+            color: #FFD700;
+            text-decoration: none;
+        }
+        
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Amino Grid for Special Classifications */
+        .amino-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjusted min-width */
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .amino-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .amino-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .amino-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .amino-card h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        .feature-list {
+            padding-left: 20px;
+        }
+        
+        .feature-list li {
+            margin-bottom: 10px;
+            list-style-type: disc;
+        }
+        
+        /* Absorbance Chart */
+        .absorbance-chart {
+            width: 100%;
+            height: 350px; /* Increased height to accommodate the note at the very bottom */
+            background: linear-gradient(45deg, #8e44ad, #3498db);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            padding-top: 0px; /* Title is already at the very top */
+            padding-right: 20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            display: flex; /* Use flexbox for chart content */
+            flex-direction: column;
+            justify-content: flex-start; /* Align items to the start (top) */
+            align-items: center;
+        }
+        
+        .chart-title {
+            color: #FFD700;
+            text-align: center;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            margin-top: 0;
+            padding-top: 0;
+            margin-bottom: 25px; /* Increased margin-bottom to create more space below the title */
+        }
+
+        .chart-note {
+            color: rgba(255, 255, 255, 0.8); /* Slightly transparent white */
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%; /* Ensure it spans the width */
+            position: absolute; /* Position absolutely within the chart container */
+            bottom: 10px; /* Distance from the bottom of the chart container */
+            left: 0;
+            padding: 0 10px; /* Small horizontal padding */
+        }
+        
+        .chart-content {
+            display: flex;
+            flex-grow: 1; /* Allows chart content to take available space */
+            align-items: flex-end; /* Align bars to the bottom of their content area */
+            justify-content: space-around;
+            padding: 0 10px; /* Reduced padding for mobile */
+            width: 100%; /* Ensure content takes full width */
+            max-width: 500px; /* Limit chart width on large screens */
+            margin-bottom: 60px; /* Added margin to make space for the note below labels */
+        }
+        
+        .chart-bar {
+            width: 25%; /* Use percentage for responsive bar width */
+            max-width: 60px; /* Max width for bars */
+            background: #FF6347;
+            position: relative;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            transition: height 1s ease-out, background-color 0.3s ease; /* Added ease-out for height animation */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            margin: 0 5px; /* Add some margin between bars */
+            cursor: pointer; /* Indicate interactivity */
+        }
+
+        .chart-bar:hover {
+            background-color: #FF4500; /* Darker on hover */
+        }
+
+        .chart-bar:active {
+            transform: scale(0.98);
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px; /* Adjusted to be closer to the bar, but still below */
+            left: 50%;
+            transform: translateX(-50%); /* Adjust for centering */
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem; /* Smaller font for mobile */
+            white-space: nowrap; /* Prevent wrapping */
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%); /* Adjust for centering */
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.75rem; /* Smaller font for mobile */
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        /* Quiz Section Styles */
+        .quiz-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .quiz-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: inline-block;
+        }
+
+        .question-item {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-item p {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 10px;
+        }
+
+        /* Hide the actual radio button */
+        .options-list input[type="radio"] {
+            display: none; /* Hide the radio button */
+        }
+
+        .options-list label {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .options-list label:hover {
+            background-color: #f0f8ff;
+            border-color: var(--secondary);
+        }
+
+        /* Style for the selected (checked) label */
+        .options-list input[type="radio"]:checked + label {
+            background-color: var(--secondary); /* Highlight selected option */
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .quiz-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .quiz-button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 0 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .quiz-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .quiz-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .quiz-results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e9f7fe;
+            border-radius: 8px;
+            border: 1px solid var(--secondary);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: none; /* Hidden by default */
+        }
+
+        .quiz-results.show {
+            display: block;
+        }
+
+        /* Styles for correct/incorrect feedback after submission */
+        .question-item.correct label {
+            background-color: #d4edda; /* Light green for correct */
+            border-color: var(--success);
+            color: #155724; /* Darker green text */
+        }
+
+        .question-item.incorrect label {
+            background-color: #f8d7da; /* Light red for incorrect */
+            border-color: var(--accent);
+            color: #721c24; /* Darker red text */
+        }
+
+        /* Ensure selected option remains highlighted even if incorrect */
+        .question-item.incorrect input[type="radio"]:checked + label {
+            background-color: #f8d7da; /* Keep red for incorrect selection */
+            border-color: var(--accent);
+            color: #721c24;
+        }
+
+        .question-item .correct-answer-feedback {
+            color: var(--success);
+            font-weight: bold;
+            margin-top: 10px;
+            display: none; /* Hidden by default */
+            font-size: 0.9rem;
+        }
+
+        .question-item.incorrect .correct-answer-feedback {
+            display: block; /* Show feedback for incorrect answers */
+        }
+
+        .explanation-text {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 0.9rem;
+            color: #555;
+            display: none; /* Hidden by default, shown after submission */
+        }
+
+        .question-item .explanation-text.show {
+            display: block;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr; /* Stack cards vertically on smaller screens */
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .chart-title {
+                font-size: 1.3rem;
+                margin-bottom: 20px; /* Increased margin for mobile */
+            }
+            
+            .chart-bar {
+                width: 30%; /* Adjust bar width for smaller screens */
+                max-width: 50px;
+            }
+            
+            .bar-label {
+                font-size: 0.7rem; /* Even smaller font for labels */
+                bottom: -25px; /* Adjust label position */
+            }
+            .chart-content {
+                margin-bottom: 50px; /* Adjusted to give more space for the note */
+            }
+            .absorbance-chart {
+                height: 380px; /* Increased height for mobile to prevent overlap */
+            }
+
+            .copyright-notice {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .footer-logo {
+                height: 50px;
+            }
+
+            .classification {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .class-item {
+                min-width: 80%;
+                max-width: 90%;
+            }
+
+            .quiz-button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card, .quiz-section {
+                padding: 15px;
+            }
+
+            .amino-table th, .property-table th,
+            .amino-table td, .property-table td {
+                padding: 8px;
+                font-size: 0.9rem;
+            }
+
+            .chart-bar {
+                width: 28%;
+                max-width: 40px;
+            }
+            .bar-label {
+                font-size: 0.65rem;
+                bottom: -20px;
+            }
+            .bar-value {
+                font-size: 0.7rem; /* Adjusted for better readability on small screens */
+            }
+            .chart-content {
+                margin-bottom: 40px; /* Further adjusted for very small screens */
+            }
+            .absorbance-chart {
+                height: 400px; /* Further increased height for very small screens */
+            }
+            .chart-note {
+                font-size: 0.75rem; /* Smaller font for the note on very small screens */
+            }
+
+            .question-item p {
+                font-size: 1rem;
+            }
+
+            .options-list label {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+            .explanation-text {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Amino Acid Classification</h1>
+            <div class="classification">
+                <div class="class-item">
+                    <h3>Standard Amino Acids</h3>
+                    <p>20</p>
+                </div>
+                <div class="class-item">
+                    <h3>Essential Amino Acids</h3>
+                    <p>9</p>
+                </div>
+                <div class="class-item">
+                    <h3>Nonpolar Amino Acids</h3>
+                    <p>8</p>
+                </div>
+                <div class="class-item">
+                    <h3>Charged Amino Acids</h3>
+                    <p>5</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="grid">
+            <div class="card">
+                <h2>Structural Classification</h2>
+                
+                <!-- Placeholder image with onerror fallback -->
+                <img src="https://betabiosciences.github.io/Biochemistry-animations/Amino%20acid%20structure.png" 
+                     alt="Amino Acid Molecular Structures"
+                     class="amino-structure-img"
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/e74c3c/ffffff?text=Image+Not+Found';">
+                
+                <h3>Nonpolar Amino Acids</h3>
+                <ul>
+                    <li><strong>Aliphatic:</strong> Glycine (Gly, G), Alanine (Ala, A), Valine (Val, V), Leucine (Leu, L), Isoleucine (Ile, I)</li>
+                    <li><strong>Aromatic:</strong> Phenylalanine (Phe, F), Tryptophan (Trp, W)</li>
+                    <li><strong>Sulfur-containing:</strong> Methionine (Met, M)</li>
+                    <li><strong>Special Case:</strong> Proline (Pro, P) - cyclic structure that disrupts secondary structures</li>
+                </ul>
+                
+                <h3>Polar Amino Acids</h3>
+                <ul>
+                    <li><strong>Uncharged:</strong> Serine (Ser, S), Threonine (Thr, T), Asparagine (Asn, N), Glutamine (Gln, Q), Tyrosine (Tyr, Y), Cysteine (Cys, C)</li>
+                    <li><strong>Acidic:</strong> Aspartate (Asp, D), Glutamate (Glu, E)</li>
+                    <li><strong>Basic:</strong> Lysine (Lys, K), Arginine (Arg, R), Histidine (His, H)</li>
+                </ul>
+                
+                <div class="highlight">
+                    <h3>Key Structural Features</h3>
+                    <ul>
+                        <li>R-group properties determine protein folding and function</li>
+                        <li>Hydrophobic residues typically buried in protein interior</li>
+                        <li>Charged residues often found on protein surfaces</li>
+                        <li>Cysteine forms disulfide bonds critical for tertiary structure</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Nutritional Classification</h2>
+                <table class="amino-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amino Acids</th>
+                            <th>Characteristics</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Essential</strong></td>
+                            <td>His, Ile, Leu, Lys, Met, Phe, Thr, Trp, Val</td>
+                            <td>Cannot be synthesized by humans</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non-essential</strong></td>
+                            <td>Ala, Asn, Asp, Glu, Ser</td>
+                            <td>Synthesized from metabolic intermediates</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Conditionally Essential</strong></td>
+                            <td>Arg, Cys, Gln, Gly, Pro, Tyr</td>
+                            <td>Required during growth, illness or trauma</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="info-box">
+                    <h3>Clinical Significance</h3>
+                    <p>Deficiencies in essential amino acids can lead to conditions like Kwashiorkor. Maple Syrup Urine Disease results from impaired metabolism of branched-chain amino acids (Leu, Ile, Val).</p>
+                </div>
+                
+                <h2>Metabolic Classification</h2>
+                <ul>
+                    <li><strong>Glucogenic:</strong> Converted to glucose via gluconeogenesis (Ala, Arg, Asn, Asp, Cys, Glu, Gln, Gly, His, Met, Pro, Ser, Val)</li>
+                    <li><strong>Ketogenic:</strong> Degraded to acetyl-CoA or acetoacetate (Leu, Lys)</li>
+                    <li><strong>Both:</strong> Can follow both pathways (Ile, Phe, Thr, Trp, Tyr)</li>
+                </ul>
+                
+                <div class="absorbance-chart">
+                    <h3 class="chart-title">Aromatic Amino Acid Absorbance</h3>
+                    <div class="chart-content">
+                        <div class="chart-bar" style="height: 40%;" data-value="200 M⁻¹cm⁻¹">
+                            <div class="bar-value">Phe: 200 M⁻¹cm⁻¹</div>
+                            <div class="bar-label">Phenylalanine</div>
+                        </div>
+                        <div class="chart-bar" style="height: 70%;" data-value="1,400 M⁻¹cm⁻¹">
+                            <div class="bar-value">Tyr: 1,400 M⁻¹cm⁻¹</div>
+                            <div class="bar-label">Tyrosine</div>
+                        </div>
+                        <div class="chart-bar" style="height: 100%;" data-value="5,600 M⁻¹cm⁻¹">
+                            <div class="bar-value">Trp: 5,600 M⁻¹cm⁻¹</div>
+                            <div class="bar-label">Tryptophan</div>
+                        </div>
+                    </div>
+                    <p class="chart-note">* Value shown is the Extinction coefficient which denotes the intrinsic ability of molecules to absorb radiation.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Special Classifications & Biochemical Properties</h2>
+            
+            <div class="amino-grid">
+                <div class="amino-card">
+                    <h4>Structural Features</h4>
+                    <ul class="feature-list">
+                        <li><strong>Glycine (Gly)</strong> is the smallest and most flexible amino acid</li>
+                        <li><strong>Alanine (Ala)</strong> shows the highest propensity for α-helices</li>
+                        <li><strong>Proline (Pro)</strong> has an interlocked pyrrolidine ring structure</li>
+                        <li><strong>Branched-chain amino acids:</strong> Val, Leu, Ile</li>
+                        <li><strong>Gly and Pro</strong> are least common in secondary structures but abundant in turns</li>
+                    </ul>
+                </div>
+                
+                <div class="amino-card">
+                    <h4>Functional Groups</h4>
+                    <ul class="feature-list">
+                        <li><strong>OH group:</strong> Serine (Ser), Threonine (Thr)</li>
+                        <li><strong>SH group:</strong> Cysteine (Cys)</li>
+                        <li><strong>Amide group:</strong> Glutamine (Gln), Asparagine (Asn)</li>
+                        <li><strong>Mercapto group:</strong> Methionine (Met)</li>
+                        <li><strong>Heterocyclic:</strong> His, Trp, Pro</li>
+                    </ul>
+                </div>
+                
+                <div class="amino-card">
+                    <h4>Acid-Base Properties</h4>
+                    <ul class="feature-list">
+                        <li><strong>Most acidic:</strong> Aspartic acid (lowest pI)</li>
+                        <li><strong>Most basic:</strong> Arginine (highest pI)</li>
+                        <li><strong>Buffering capacity::</strong> Histidine at physiological pH</li>
+                        <li><strong>Functional groups:</strong> His (imidazole), Lys (ε-NH₂), Arg (guanidinium)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Oxidation States</h3>
+            <table class="property-table">
+                <thead>
+                    <tr>
+                        <th>Amino Acid</th>
+                        <th>Reduced Form</th>
+                        <th>Oxidized Form</th>
+                        <th>Properties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cysteine</td>
+                        <td>Cys (SH)</td>
+                        <td>Cystine (S-S)</td>
+                        <td>Meso compound, no optical activity</td>
+                    </tr>
+                    <tr>
+                        <td>Methionine</td>
+                        <td>Met</td>
+                        <td>Methionine sulfoxide</td>
+                        <td>Oxidized sulfur group</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="highlight">
+                <h3>Post-translational Modifications</h3>
+                <ul>
+                    <li>Phosphorylation (Ser, Thr, Tyr)</li>
+                    <li>Glycosylation (Asn, Ser, Thr)</li>
+                    <li>Acetylation (Lys)</li>
+                    <li>Methylation (Arg, Lys)</li>
+                    <li>Hydroxylation (Pro, Lys)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Amino Acid Properties Summary</h2>
+            <table class="amino-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Significance</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hydrophobicity</td>
+                            <td>Protein folding, membrane association</td>
+                            <td>Phe, Leu, Ile, Val</td>
+                        </tr>
+                        <tr>
+                            <td>Charge</td>
+                            <td>Enzyme active sites, protein-protein interactions</td>
+                            <td>Asp, Glu, Lys, Arg</td>
+                        </tr>
+                        <tr>
+                            <td>Polarity</td>
+                            <td>Solubility, hydrogen bonding</td>
+                            <td>Ser, Thr, Asn, Gln</td>
+                        </tr>
+                        <tr>
+                            <td>Size/Shape</td>
+                            <td>Steric constraints, packing density</td>
+                            <td>Gly, Pro, Trp</td>
+                        </tr>
+                        <tr>
+                            <td>Aromaticity</td>
+                            <td>UV absorbance, hydrophobic interactions</td>
+                            <td>Phe, Tyr, Trp</td>
+                        </tr>
+                        <tr>
+                            <td>Reactive groups</td>
+                            <td>Post-translational Modifications</td>
+                            <td>Cys (disulfide bonds), Ser/Thr (phosphorylation)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="info-box">
+                    <h3>Key Biochemical Notes</h3>
+                    <ul>
+                        <li>Aromatic amino acids absorb in the near UV range (260-280 nm)</li>
+                        <li>Tryptophan has the highest extinction coefficient (5600 M⁻¹cm⁻¹)</li>
+                        <li>Histidine is the only amino acid with buffering capacity at physiological pH</li>
+                        <li>Glycine and proline are abundant in β-turns due to their flexibility and rigidity respectively</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Review Quiz Section -->
+            <div class="quiz-section">
+                <h2>Review Quiz</h2>
+                <form id="quizForm">
+                    <!-- Quiz questions will be dynamically loaded here -->
+                </form>
+                <div class="quiz-buttons">
+                    <button type="button" id="submitQuiz" class="quiz-button">Submit Quiz</button>
+                    <button type="button" id="retakeQuiz" class="quiz-button" style="display:none;">Retake Quiz</button>
+                </div>
+                <div id="quizResults" class="quiz-results"></div>
+            </div>
+            
+            <div class="copyright-notice">
+                <img src="" 
+                    alt="BETA Biosciences Logo" 
+                    class="footer-logo">
+                <div class="footer-text">
+                    <p>&copy; 2025 BETA Biosciences. All Rights Reserved.</p>
+                    <p>Contact: <a href="mailto:betabiosciences@gmail.com">betabiosciences@gmail.com</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const allowedOrigin = "https://betabiosciences.github.io";
+                const currentOrigin = window.location.origin;
+                const bodyElement = document.body;
+                const footerLogo = document.querySelector('.footer-logo');
+
+                // Security check: Only display content if hosted from the allowed domain
+                if (currentOrigin !== allowedOrigin) {
+                    // If not from the allowed origin, keep the body hidden and do not proceed
+                    console.warn("Access denied: This page can only be loaded from " + allowedOrigin);
+                    return; // Stop script execution
+                }
+
+                // If the origin is allowed, proceed to display content and initialize features
+                bodyElement.style.display = 'block';
+
+                const logoUrl = "https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png";
+                
+                // Create a new Image object for pre-loading and error checking
+                const imgCheck = new Image();
+                imgCheck.src = logoUrl;
+
+                imgCheck.onload = function() {
+                    // Logo loaded successfully, update the footer image
+                    if (footerLogo) {
+                        footerLogo.src = logoUrl;
+                    }
+                };
+
+                imgCheck.onerror = function() {
+                    // Logo failed to load, handle gracefully (e.g., show a placeholder or just log)
+                    console.warn("Logo failed to load. Using empty src for footer logo.");
+                    if (footerLogo) {
+                        footerLogo.src = ''; // Clear src if it failed to load
+                    }
+                };
+                
+                // Initialize other page features only after the DOM is ready
+                initializePageFeatures();
+
+                // Encapsulate the rest of the existing DOMContentLoaded logic
+                function initializePageFeatures() {
+                    // Animate absorbance chart bars with color variations
+                    const chartBars = document.querySelectorAll('.chart-bar');
+                    const barColors = ['#FF6347', '#FF8C00', '#FF4500']; // Tomato, Dark orange, Orange red
+                    
+                    chartBars.forEach((bar, index) => {
+                        const height = bar.style.height;
+                        bar.style.height = '0'; // Start from zero height for animation
+                        setTimeout(() => {
+                            bar.style.height = height; // Animate to original height
+                            bar.style.backgroundColor = barColors[index % barColors.length]; // Cycle through colors
+                        }, 1000 + (index * 200)); // Stagger animation start
+                    });
+                    
+                    // Add interactivity to table rows (hover/active for touch)
+                    const tableRows = document.querySelectorAll('.amino-table tr, .property-table tr');
+                    tableRows.forEach(row => {
+                        // Mouse enter/leave for desktop hover effect
+                        row.addEventListener('mouseenter', () => {
+                            row.style.backgroundColor = '#e9f7fe';
+                        });
+                        
+                        row.addEventListener('mouseleave', () => {
+                            if (row.closest('tbody')) {
+                                const index = Array.from(row.parentNode.children).indexOf(row);
+                                if (index % 2 === 0) {
+                                    row.style.backgroundColor = ''; // Reset to default for even rows
+                                } else {
+                                    row.style.backgroundColor = '#f8f9fa'; // Reset to light gray for odd rows
+                                }
+                            }
+                        });
+
+                        // Touch start/end for mobile active state
+                        row.addEventListener('touchstart', function() {
+                            this.style.backgroundColor = '#d0eeff'; // Lighter blue on touch
+                        }, { passive: true }); // Use passive listener for better scroll performance
+
+                        row.addEventListener('touchend', function() {
+                            if (this.closest('tbody')) {
+                                const index = Array.from(this.parentNode.children).indexOf(this);
+                                if (index % 2 === 0) {
+                                    this.style.backgroundColor = '';
+                                } else {
+                                    this.style.backgroundColor = '#f8f9fa';
+                                }
+                            }
+                        });
+                    });
+                    
+                    // Card hover effects (already present, adding active state for touch)
+                    const cards = document.querySelectorAll('.amino-card, .card'); // Apply to both card types
+                    cards.forEach(card => {
+                        card.addEventListener('mouseenter', () => {
+                            card.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                            card.style.transform = 'translateY(-10px)'; // Apply transform on hover
+                        });
+                        card.addEventListener('mouseleave', () => {
+                            card.style.boxShadow = '0 3px 10px rgba(0,0,0,0.1)';
+                            card.style.transform = 'translateY(0)'; // Reset transform
+                        });
+                        // Touch start/end for mobile active state
+                        card.addEventListener('touchstart', function() {
+                            this.style.transform = 'translateY(-5px)';
+                            this.style.boxShadow = '0 8px 16px rgba(0,0,0,0.12)';
+                        }, { passive: true });
+                        card.addEventListener('touchend', function() {
+                            this.style.transform = 'translateY(0)';
+                            this.style.boxShadow = '0 3px 10px rgba(0,0,0,0.1)';
+                        });
+                    });
+                    
+                    // Fallback for local image (updated to use placeholder.co for better compatibility)
+                    const localImage = document.querySelector('.amino-structure-img');
+                    if(localImage) {
+                        localImage.onerror = function() {
+                            console.error("Failed to load amino structure image.");
+                        };
+                    }
+
+                    // Quiz Logic
+                    const quizQuestions = [
+                        {
+                            question: "Which of the following amino acids is classified as non-polar and aliphatic?",
+                            options: ["Lysine", "Leucine", "Aspartic acid", "Tyrosine"],
+                            answer: "Leucine",
+                            explanation: "Leucine has a non-polar, aliphatic side chain (isobutyl group), making it hydrophobic, unlike lysine (basic), aspartic acid (acidic), or tyrosine (aromatic, polar)."
+                        },
+                        {
+                            question: "Which amino acid is unique due to its side chain forming a cyclic structure with the amino group?",
+                            options: ["Histidine", "Tryptophan", "Proline", "Cysteine"],
+                            answer: "Proline",
+                            explanation: "Proline’s side chain forms a cyclic structure with its amino group, making it an imino acid and restricting its conformational flexibility."
+                        },
+                        {
+                            question: "Which of the following amino acids is most likely to participate in hydrogen bonding within a protein structure?",
+                            options: ["Valine", "Glycine", "Glutamine", "Isoleucine"],
+                            answer: "Glutamine",
+                            explanation: "Glutamine has a polar side chain with an amide group capable of forming hydrogen bonds, unlike valine, glycine, or isoleucine, which are non-polar or lack strong H-bonding groups."
+                        },
+                        {
+                            question: "Which amino acid is classified as basic due to the presence of an imidazole ring in its side chain?",
+                            options: ["Arginine", "Lysine", "Histidine", "Asparagine"],
+                            answer: "Histidine",
+                            explanation: "Histidine’s imidazole ring can accept protons, giving it basic properties, with a pKa near physiological pH, unlike arginine and lysine (guanidinium and amino groups) or asparagine (neutral)."
+                        },
+                        {
+                            question: "Which amino acid is most likely to be found in the hydrophobic core of a globular protein?",
+                            options: ["Phenylalanine", "Glutamic acid", "Serine", "Arginine"],
+                            answer: "Phenylalanine",
+                            explanation: "Phenylalanine, with its aromatic, non-polar side chain, prefers hydrophobic environments, unlike glutamic acid (acidic), serine (polar), or arginine (basic)."
+                        },
+                        {
+                            question: "Which of the following amino acids can form disulfide bonds in proteins?",
+                            options: ["Methionine", "Cysteine", "Threonine", "Tyrosine"],
+                            answer: "Cysteine",
+                            explanation: "Cysteine’s thiol group can form disulfide bonds (S-S) with another cysteine, stabilizing protein structure, unlike methionine, threonine, or tyrosine."
+                        },
+                        {
+                            question: "Which amino acid’s side chain contains an indole ring, classifying it as aromatic?",
+                            options: ["Tyrosine", "Tryptophan", "Histidine", "Phenylalanine"],
+                            answer: "Tryptophan",
+                            explanation: "Tryptophan’s side chain contains an indole ring (a fused benzene and pyrrole ring), making it aromatic, alongside tyrosine and phenylalanine, but distinct from histidine’s imidazole ring."
+                        },
+                        {
+                            question: "Which of the following pairs consists of both glucogenic and ketogenic amino acids?",
+                            options: ["Leucine and Lysine", "Methionine and Valine", "Isoleucine and Phenylalanine", "Glutamate and Glycine"],
+                            answer: "Isoleucine and Phenylalanine",
+                            explanation: "Isoleucine and Phenylalanine are both glucogenic and ketogenic. Leucine and Lysine are purely ketogenic. Methionine and Valine are purely glucogenic. Glutamate and Glycine are purely glucogenic."
+                        },
+                        {
+                            question: "Which structural feature distinguishes proline from other standard amino acids?",
+                            options: ["Aromatic ring", "Secondary amino group (imino acid)", "Amide side chain", "Hydroxyl group"],
+                            answer: "Secondary amino group (imino acid)",
+                            explanation: "Proline is unique among the standard amino acids because its side chain forms a cyclic structure with its alpha-amino group, creating a secondary amino group. This makes it an imino acid and restricts its conformational flexibility."
+                        },
+                        {
+                            question: "Which of the following amino acids is aromatic?",
+                            options: ["Valine", "Phenylalanine", "Serine", "Proline"],
+                            answer: "Phenylalanine",
+                            explanation: "Phenylalanine is an aromatic amino acid due to the presence of a benzene ring in its side chain. Valine, Serine, and Proline are not aromatic."
+                        },
+                        {
+                            question: "Which amino acids have an extra carboxyl group in their side chain?",
+                            options: ["Aspartic acid and Glutamic acid", "Lysine and Arginine", "Glycine and Alanine", "Serine and Threonine"],
+                            answer: "Aspartic acid and Glutamic acid",
+                            explanation: "Aspartic acid and Glutamic acid are acidic amino acids, meaning their side chains contain an extra carboxyl group (-COOH) which can ionize to -COO- at physiological pH."
+                        },
+                        {
+                            question: "Which of the following amino acids contains a thioether linkage in its side chain?",
+                            options: ["Cysteine", "Methionine", "Tryptophan", "Tyrosine"],
+                            answer: "Methionine",
+                            explanation: "Methionine contains a thioether linkage (-S-CH3) in its side chain, where a sulfur atom is bonded to two carbon atoms. Cysteine has a thiol (-SH) group, not a thioether."
+                        },
+                        {
+                            question: "An amino acid with a side chain containing a primary amide group is:",
+                            options: ["Lysine", "Asparagine", "Glutamate", "Arginine"],
+                            answer: "Asparagine",
+                            explanation: "Asparagine features a carboxamide group (-CONH2) in its side chain, which is a primary amide. Glutamine also has a primary amide, but Asparagine is listed as the correct option here."
+                        },
+                        {
+                            question: "Which of the following amino acids is considered a basic amino acid due to the presence of a guanidinium group in its side chain?",
+                            options: ["Arginine", "Histidine", "Asparagine", "Lysine"],
+                            answer: "Arginine",
+                            explanation: "Arginine is a basic amino acid characterized by its guanidinium group in the side chain, which is highly basic and protonated at physiological pH."
+                        },
+                        {
+                            question: "The essential amino acids are those that:",
+                            options: ["Must be obtained from the diet because the human body cannot synthesize them.", "Are only involved in enzymatic catalysis.", "Are synthesized de novo by the human body in sufficient quantities.", "Are only found in animal-based protein sources."],
+                            answer: "Must be obtained from the diet because the human body cannot synthesize them.",
+                            explanation: "Essential amino acids are those that the human body cannot synthesize on its own and therefore must be obtained through dietary intake."
+                        }
+                    ];
+
+                    const quizForm = document.getElementById('quizForm');
+                    const submitQuizBtn = document.getElementById('submitQuiz');
+                    const retakeQuizBtn = document.getElementById('retakeQuiz');
+                    const quizResultsDiv = document.getElementById('quizResults');
+
+                    // Function to load quiz questions
+                    function loadQuiz() {
+                        quizForm.innerHTML = ''; // Clear previous questions
+                        quizResultsDiv.style.display = 'none'; // Hide results
+                        retakeQuizBtn.style.display = 'none'; // Hide retake button
+                        submitQuizBtn.style.display = 'inline-block'; // Show submit button
+
+                        quizQuestions.forEach((q, index) => {
+                            const questionItem = document.createElement('div');
+                            questionItem.classList.add('question-item');
+                            questionItem.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+                            
+                            const optionsList = document.createElement('ul');
+                            optionsList.classList.add('options-list');
+
+                            q.options.forEach((option, optionIndex) => {
+                                const listItem = document.createElement('li');
+                                const inputId = `question${index}-option${optionIndex}`;
+                                listItem.innerHTML = `
+                                    <input type="radio" id="${inputId}" name="question${index}" value="${option}">
+                                    <label for="${inputId}">${option}</label>
+                                `;
+                                optionsList.appendChild(listItem);
+                            });
+                            questionItem.appendChild(optionsList);
+                            quizForm.appendChild(questionItem);
+                        });
+                    }
+
+                    // Function to check quiz answers
+                    function checkQuiz() {
+                        let score = 0;
+                        quizQuestions.forEach((q, index) => {
+                            const questionElement = quizForm.querySelector(`.question-item:nth-child(${index + 1})`);
+                            const selectedOption = quizForm.querySelector(`input[name="question${index}"]:checked`);
+                            
+                            // Reset previous feedback classes and explanations
+                            questionElement.classList.remove('correct', 'incorrect');
+                            let feedbackDiv = questionElement.querySelector('.correct-answer-feedback');
+                            if (feedbackDiv) feedbackDiv.remove();
+                            let explanationDiv = questionElement.querySelector('.explanation-text');
+                            if (explanationDiv) explanationDiv.remove();
+
+                            if (selectedOption) {
+                                if (selectedOption.value === q.answer) {
+                                    score++;
+                                    questionElement.classList.add('correct');
+                                } else {
+                                    questionElement.classList.add('incorrect');
+                                    // Display correct answer feedback
+                                    feedbackDiv = document.createElement('div');
+                                    feedbackDiv.classList.add('correct-answer-feedback');
+                                    feedbackDiv.innerHTML = `Correct Answer: <strong>${q.answer}</strong>`;
+                                    questionElement.appendChild(feedbackDiv);
+                                }
+                            } else {
+                                // If no option selected, mark as incorrect and show correct answer
+                                questionElement.classList.add('incorrect');
+                                feedbackDiv = document.createElement('div');
+                                feedbackDiv.classList.add('correct-answer-feedback');
+                                feedbackDiv.innerHTML = `Correct Answer: <strong>${q.answer}</strong>`;
+                                questionElement.appendChild(feedbackDiv);
+                            }
+
+                            // Always display the explanation after submission
+                            explanationDiv = document.createElement('div');
+                            explanationDiv.classList.add('explanation-text', 'show');
+                            explanationDiv.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+                            questionElement.appendChild(explanationDiv);
+
+                            // Disable all radio buttons after submission
+                            const radios = questionElement.querySelectorAll(`input[name="question${index}"]`);
+                            radios.forEach(radio => radio.disabled = true);
+                        });
+
+                        quizResultsDiv.innerHTML = `You scored ${score} out of ${quizQuestions.length}!`;
+                        quizResultsDiv.style.display = 'block';
+                        submitQuizBtn.style.display = 'none';
+                        retakeQuizBtn.style.display = 'inline-block';
+                    }
+
+                    // Function to reset quiz
+                    function retakeQuiz() {
+                        loadQuiz(); // Reload questions
+                        quizResultsDiv.style.display = 'none'; // Hide results
+                        submitQuizBtn.style.display = 'inline-block'; // Show submit button
+                        retakeQuizBtn.style.display = 'none'; // Hide retake button
+                    }
+
+                    // Event Listeners for quiz buttons
+                    submitQuizBtn.addEventListener('click', checkQuiz);
+                    retakeQuizBtn.addEventListener('click', retakeQuiz);
+
+                    // Initial load of the quiz
+                    loadQuiz();
+                }
+            });
+        </script>
+    </body>
+</html>
