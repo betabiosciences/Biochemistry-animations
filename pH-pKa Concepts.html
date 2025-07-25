@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pH & pKa in Biomolecules | Advanced Biochemistry</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for background and font, not easily replicated by Tailwind gradients */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50, #1a2a6c);
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            line-height: 1.6;
+        }
+        /* Style for the SVG graph container */
+        #ionization-graph {
+            width: 100%;
+            height: 400px; /* Maintain a fixed height, or use responsive h-96 */
+            background-color: transparent; /* Ensure background is transparent for SVG */
+        }
+        #ionization-graph svg {
+            width: 100%;
+            height: 100%;
+            display: block; /* Remove extra space below SVG */
+        }
+
+        /* Custom style for pka markers to ensure visibility */
+        .pka-marker {
+            position: absolute;
+            top: -20px; /* Adjusted position to be closer */
+            transform: translateX(-50%);
+            text-align: center;
+            width: 40px;
+            font-weight: bold;
+            color: #ecf0f1; /* Ensure visibility against background */
+        }
+        .pka-marker::after {
+            content: "";
+            position: absolute;
+            top: 20px; /* Adjusted to align with the bottom of the number */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px; /* Shorter line */
+            background: white;
+        }
+        .pka-label {
+            position: absolute;
+            bottom: -25px; /* Position below the scale */
+            transform: translateX(-50%);
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #ecf0f1;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        /* Updated slider background to match pH scale gradient */
+        input[type="range"] {
+            background: linear-gradient(to right, #ef4444, #22c55e, #3b82f6); /* Red-Green-Blue gradient */
+        }
+
+        /* Quiz specific styles */
+        .quiz-option input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            display: none; /* Hidden by default */
+        }
+        .quiz-feedback.correct {
+            background-color: rgba(34, 197, 94, 0.2); /* Green-500 with opacity */
+            border-left: 4px solid #22c55e;
+            color: #d1fae5; /* Text color for correct feedback */
+        }
+        .quiz-feedback.incorrect {
+            background-color: rgba(239, 68, 68, 0.2); /* Red-500 with opacity */
+            border-left: 4px solid #ef4444;
+            color: #fee2e2; /* Text color for incorrect feedback */
+        }
+    </style>
+</head>
+<body class="text-gray-100 pb-12">
+    <header class="bg-gray-800 bg-opacity-90 py-8 text-center shadow-xl relative overflow-hidden border-b-4 border-red-500 rounded-b-xl">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-4 bg-gradient-to-r from-blue-500 to-emerald-400 text-transparent bg-clip-text drop-shadow-lg">
+                <i class="fas fa-atom mr-3"></i> pH and pKa in Biomolecules
+            </h1>
+            <p class="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto font-light">
+                Understanding acid-base properties and their critical role in amino acids, proteins, and biological systems
+            </p>
+        </div>
+    </header>
+    
+    <div class="container mx-auto px-4 mt-8">
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-vial text-red-500"></i> What is pH?
+            </h2>
+            <p class="mb-4">pH is a measure of the acidity or basicity of a solution. It's defined as the negative logarithm of the hydrogen ion concentration:</p>
+            
+            <div class="definition-box bg-blue-600 bg-opacity-20 border-l-4 border-blue-500 p-5 my-5 rounded-r-lg">
+                <h4 class="text-xl font-semibold mb-3 text-gray-100">pH Definition</h4>
+                <p class="font-mono text-lg"><strong>pH = -log<sub>10</sub>[H<sup>+</sup>]</strong></p>
+                <p class="text-sm mt-2">Where [H<sup>+</sup>] is the concentration of hydrogen ions in moles per liter.</p>
+            </div>
+            
+            <p class="mb-4">The pH scale ranges from 0 to 14:</p>
+            <ul class="list-disc list-inside space-y-2 mb-6">
+                <li><strong class="text-red-400">pH < 7</strong>: Acidic solution (higher H<sup>+</sup> concentration)</li>
+                <li><strong class="text-green-400">pH = 7</strong>: Neutral solution</li>
+                <li><strong class="text-blue-400">pH > 7</strong>: Basic (alkaline) solution</li>
+            </ul>
+            
+            <div class="pka-scale relative h-12 rounded-full my-8 shadow-lg overflow-visible /* changed to visible for labels */
+                        bg-gradient-to-r from-red-600 via-green-500 to-blue-600 /* Corrected color gradient */">
+                <div class="pka-markers flex justify-between absolute inset-0">
+                    <div class="pka-marker" style="left: 0%;">0</div>
+                    <div class="pka-marker" style="left: 16.7%;">2</div>
+                    <div class="pka-marker" style="left: 33.3%;">4</div>
+                    <div class="pka-marker" style="left: 50%;">7</div>
+                    <div class="pka-marker" style="left: 66.7%;">10</div>
+                    <div class="pka-marker" style="left: 83.3%;">12</div>
+                    <div class="pka-marker" style="left: 100%;">14</div>
+                </div>
+                <!-- Added descriptive labels -->
+                <div class="pka-label text-red-300" style="left: 15%;">Acidic</div>
+                <div class="pka-label text-green-300" style="left: 50%;">Neutral</div>
+                <div class="pka-label text-blue-300" style="left: 85%;">Basic</div>
+            </div>
+            
+            <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Biological Significance</h3>
+            <p class="mb-4">Most biological processes occur within a narrow pH range (typically 6.5-7.5). Enzymes, proteins, and cellular structures are highly sensitive to pH changes:</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li>Blood pH is tightly regulated at 7.4</li>
+                <li>Lysosomes function at pH 4.5-5.0</li>
+                <li>Mitochondrial matrix has pH ~7.8</li>
+                <li>pH affects protein structure, enzyme activity, and membrane function</li>
+            </ul>
+        </div>
+        
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-balance-scale text-red-500"></i> What is pKa?
+            </h2>
+            <p class="mb-4">pKa is a measure of acid strength. It indicates how readily a molecule donates a proton (H<sup>+</sup>). pKa is defined as:</p>
+            
+            <div class="definition-box bg-blue-600 bg-opacity-20 border-l-4 border-blue-500 p-5 my-5 rounded-r-lg">
+                <h4 class="text-xl font-semibold mb-3 text-gray-100">pKa Definition</h4>
+                <p class="font-mono text-lg"><strong>pKa = -log<sub>10</sub>K<sub>a</sub></strong></p>
+                <p class="text-sm mt-2">Where K<sub>a</sub> is the acid dissociation constant: K<sub>a</sub> = [H<sup>+</sup>][A<sup>-</sup>]/[HA]</p>
+            </div>
+            
+            <p class="mb-4">Key characteristics of pKa:</p>
+            <ul class="list-disc list-inside space-y-2 mb-6">
+                <li><strong class="text-red-400">Lower pKa</strong> = Stronger acid (more likely to donate proton)</li>
+                <li><strong class="text-green-400">Higher pKa</strong> = Weaker acid (less likely to donate proton)</li>
+                <li>At pH = pKa, 50% of the acid is dissociated</li>
+            </ul>
+            
+            <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">The Henderson-Hasselbalch Equation</h3>
+            <p class="mb-4">This equation relates pH, pKa, and the ratio of conjugate base to acid:</p>
+            <div class="definition-box bg-blue-600 bg-opacity-20 border-l-4 border-blue-500 p-5 my-5 rounded-r-lg">
+                <p class="font-mono text-lg"><strong>pH = pKa + log<sub>10</sub>([A<sup>-</sup>]/[HA])</strong></p>
+                <p class="text-sm mt-2">Here, [A⁻] represents the concentration of the conjugate base (the deprotonated form) and [HA] represents the concentration of the weak acid (the protonated form).</p>
+            </div>
+            
+            <div class="info-box bg-yellow-600 bg-opacity-20 border-l-4 border-yellow-500 p-5 my-5 rounded-r-lg">
+                <h4 class="text-xl font-semibold mb-3 text-gray-100"><i class="fas fa-info-circle mr-2"></i> pH-pKa Relationship Explained</h4>
+                <p class="mb-2">The Henderson-Hasselbalch equation reveals that the ionization state of a molecule depends on the difference between pH and pKa:</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>When <strong class="text-red-400">pH < pKa</strong>, the environment is acidic, and the molecule tends to remain protonated (HA)</li>
+                    <li>When <strong class="text-blue-400">pH > pKa</strong>, the environment is basic, and the molecule tends to lose its proton (A⁻)</li>
+                    <li>At <strong class="text-green-400">pH = pKa</strong>, exactly half of the molecules are protonated and half are deprotonated</li>
+                </ul>
+            </div>
+            
+            <h4 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">pH-pKa Relationship Table</h4>
+            <div class="overflow-x-auto">
+                <table class="relation-table w-full border-collapse my-5 bg-white bg-opacity-10 rounded-lg">
+                    <thead>
+                        <tr>
+                            <th class="bg-blue-600 bg-opacity-30 p-4 text-left rounded-tl-lg">pH vs pKa</th>
+                            <th class="bg-blue-600 bg-opacity-30 p-4 text-left">Ratio [A⁻]/[HA]</th>
+                            <th class="bg-blue-600 bg-opacity-30 p-4 text-left">Protonation State</th>
+                            <th class="bg-blue-600 bg-opacity-30 p-4 text-left rounded-tr-lg">Dominant Form</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="hover:bg-blue-600 hover:bg-opacity-20 transition-colors duration-200">
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">pH &lt; pKa - 1</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">&lt; 0.1</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">Mostly protonated</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">HA</td>
+                        </tr>
+                        <tr class="hover:bg-blue-600 hover:bg-opacity-20 transition-colors duration-200">
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">pH = pKa</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">1.0</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">50% protonated</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">Equal HA and A⁻</td>
+                        </tr>
+                        <tr class="hover:bg-blue-600 hover:bg-opacity-20 transition-colors duration-200">
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">pH &gt; pKa + 1</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">&gt; 10</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">Mostly deprotonated</td>
+                            <td class="p-3 md:p-4 border-b border-white border-opacity-10">A⁻</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h4 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Memory Tricks for Ionization States</h4>
+            <div class="tricks-container grid grid-cols-1 md:grid-cols-3 gap-6 my-5">
+                <div class="trick-card bg-purple-600 bg-opacity-20 rounded-lg p-5 border border-purple-500 border-opacity-40 shadow-md">
+                    <h4 class="text-lg font-semibold mb-3 text-purple-400"><i class="fas fa-lightbulb mr-2"></i> The "1 Unit Rule"</h4>
+                    <p>When pH is one unit below pKa, the ratio is 1:10 (90% protonated). When pH is one unit above pKa, the ratio is 10:1 (90% deprotonated).</p>
+                </div>
+                
+                <div class="trick-card bg-purple-600 bg-opacity-20 rounded-lg p-5 border border-purple-500 border-opacity-40 shadow-md">
+                    <h4 class="text-lg font-semibold mb-3 text-purple-400"><i class="fas fa-lightbulb mr-2"></i> Protonation Mnemonic</h4>
+                    <p>"Low pH, proton high" - At low pH relative to pKa, the protonated form (HA) dominates.</p>
+                    <p>"High pH, proton bye" - At high pH relative to pKa, the deprotonated form (A⁻) dominates.</p>
+                </div>
+                
+                <div class="trick-card bg-purple-600 bg-opacity-20 rounded-lg p-5 border border-purple-500 border-opacity-40 shadow-md">
+                    <h4 class="text-lg font-semibold mb-3 text-purple-400"><i class="fas fa-lightbulb mr-2"></i> Charge Prediction</h4>
+                    <p>For acids: When pH &lt; pKa, the group is protonated and neutral. When pH &gt; pKa, it's deprotonated and negatively charged.</p>
+                    <p>For bases: When pH &lt; pKa, the group is protonated and positively charged. When pH &gt; pKa, it's deprotonated and neutral.</p>
+                </div>
+            </div>
+            
+            <div class="graph-container bg-gray-900 bg-opacity-20 rounded-lg p-5 my-6 shadow-inner" id="ionization-graph">
+                <h4 class="text-xl md:text-2xl font-semibold mb-4 text-yellow-500">Ionization State vs. pH</h4>
+                <svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+                    <rect width="100%" height="100%" fill="rgba(0,0,0,0)"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ef4444"/>
+                            <stop offset="50%" style="stop-color:#22c55e"/>
+                            <stop offset="100%" style="stop-color:#3b82f6"/>
+                        </linearGradient>
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                        </filter>
+                    </defs>
+                    <g transform="translate(80,40)">
+                        <path d="M0,0 L640,0 L640,320 L0,320 Z" fill="none" stroke="#ecf0f1" stroke-width="2"/>
+                        <path d="M0,320 L640,320" stroke="#ecf0f1" stroke-width="2"/>
+                        <path d="M0,0 L0,320" stroke="#ecf0f1" stroke-width="2"/>
+                        <text x="320" y="360" fill="#ecf0f1" text-anchor="middle" font-size="14">pH</text>
+                        <text x="-40" y="160" fill="#ecf0f1" text-anchor="middle" font-size="14" transform="rotate(-90,-40,160)">Percentage (%)</text>
+                        <path d="M0,256 L640,256" stroke="#ecf0f1" stroke-width="1" stroke-dasharray="5,5"/>
+                        <path d="M0,192 L640,192" stroke="#ecf0f1" stroke-width="1" stroke-dasharray="5,5"/>
+                        <path d="M0,128 L640,128" stroke="#ecf0f1" stroke-width="1" stroke-dasharray="5,5"/>
+                        <path d="M0,64 L640,64" stroke="#ecf0f1" stroke-width="1" stroke-dasharray="5,5"/>
+                        <path d="M0,0 L640,0" stroke="#ecf0f1" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="-20" y="320" fill="#ecf0f1" text-anchor="end" font-size="12">0</text>
+                        <text x="-20" y="256" fill="#ecf0f1" text-anchor="end" font-size="12">20</text>
+                        <text x="-20" y="192" fill="#ecf0f1" text-anchor="end" font-size="12">40</text>
+                        <text x="-20" y="128" fill="#ecf0f1" text-anchor="end" font-size="12">60</text>
+                        <text x="-20" y="64" fill="#ecf0f1" text-anchor="end" font-size="12">80</text>
+                        <text x="-20" y="0" fill="#ecf0f1" text-anchor="end" font-size="12">100</text>
+                        <path d="M0,320 L640,320" stroke="url(#gradient)" stroke-width="4"/>
+                        <path d="M64,320 L64,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M128,320 L128,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M192,320 L192,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M256,320 L256,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M320,320 L320,0" stroke="#f39c12" stroke-width="2" stroke-dasharray="5,5"/>
+                        <path d="M384,320 L384,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M448,320 L448,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M512,320 L512,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M576,320 L576,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <path d="M640,320 L640,0" stroke="#ecf0f1" stroke-width="1"/>
+                        <text x="64" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">1</text>
+                        <text x="128" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">3</text>
+                        <text x="192" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">5</text>
+                        <text x="256" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">7</text>
+                        <text x="320" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">9</text>
+                        <text x="384" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">11</text>
+                        <text x="448" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">13</text>
+                        <text x="512" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">15</text>
+                        <text x="576" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">17</text>
+                        <text x="640" y="340" fill="#ecf0f1" text-anchor="middle" font-size="12">19</text>
+                        <path d="M320,0 L320,320" stroke="#f39c12" stroke-width="2" stroke-dasharray="5,5"/>
+                        <path d="M0,320 C80,320 160,300 240,240 C320,160 400,60 480,20 C560,5 640,0 640,0" fill="none" stroke="#3498db" stroke-width="4" filter="url(#shadow)"/>
+                        <path d="M0,0 C80,0 160,20 240,80 C320,160 400,260 480,300 C560,315 640,320 640,320" fill="none" stroke="#e74c3c" stroke-width="4" filter="url(#shadow)"/>
+                        <circle cx="320" cy="160" r="6" fill="#f39c12"/>
+                        <text x="320" y="100" fill="#f39c12" text-anchor="middle" font-size="14" font-weight="bold">pKa = 9.6</text>
+                        <text x="100" y="50" fill="#e74c3c" text-anchor="start" font-size="14" font-weight="bold">Protonated (HA)</text>
+                        <text x="500" y="50" fill="#3498db" text-anchor="end" font-size="14" font-weight="bold">Deprotonated (A⁻)</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Moved "Interpreting the Ionization Graph" to its own card -->
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-chart-line text-red-500"></i> Interpreting the Ionization Graph
+            </h2>
+            <p class="text-sm mt-2 text-white">
+                This graph illustrates the percentage of protonated (HA) and deprotonated (A⁻) forms of a weak acid as a function of pH.
+            </p>
+            <ul class="list-disc list-inside space-y-2 text-sm text-white">
+                <li>When the <strong class="text-yellow-300">pH is significantly lower than the pKa</strong>, the environment is acidic, and the molecule is predominantly in its <strong class="text-yellow-300">protonated (HA) form</strong>. The red curve (Protonated) is high, and the blue curve (Deprotonated) is low.</li>
+                <li>As the <strong class="text-yellow-300">pH increases towards the pKa</strong>, the molecule begins to lose protons. The percentage of the protonated form decreases, and the percentage of the deprotonated form increases.</li>
+                <li>At the <strong class="text-yellow-300">pH equal to the pKa</strong>, the concentrations of the protonated (HA) and deprotonated (A⁻) forms are exactly equal (50% each). This is indicated by the intersection of the two curves and the vertical dashed line.</li>
+                <li>When the <strong class="text-yellow-300">pH is significantly higher than the pKa</strong>, the environment is basic, and the molecule is predominantly in its <strong class="text-yellow-300">deprotonated (A⁻) form</strong>. The blue curve (Deprotonated) is high, and the red curve (Protonated) is low.</li>
+                <li>Conversely, if the <strong class="text-yellow-300">pH decreases from a high value towards the pKa</strong>, the deprotonated form will gain protons, increasing the concentration of the protonated form.</li>
+            </ul>
+        </div>
+        
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-sliders-h text-red-500"></i> Interactive pH-pKa Explorer
+            </h2>
+            <p class="mb-4">Adjust pH to see how it affects the ionization state of an amino acid:</p>
+            
+            <div class="interactive-box bg-red-600 bg-opacity-20 p-6 rounded-xl my-6 shadow-inner">
+                <h3 class="text-xl md:text-2xl font-semibold mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Amino Group (Basic)</h3>
+                <div class="slider-container mb-6">
+                    <label for="ph-slider" class="block mb-2 font-bold text-gray-100 text-lg">pH: <span id="ph-value" class="text-yellow-300">7.0</span></label>
+                    <input type="range" id="ph-slider" min="0" max="14" step="0.1" value="7.0"
+                           class="w-full h-7 appearance-none rounded-full outline-none
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                  [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg">
+                </div>
+                
+                <div class="slider-container mb-6">
+                    <label for="pka-amino-slider" class="block mb-2 font-bold text-gray-100 text-lg">pKa of Amino Group: <span id="pka-amino-value" class="text-yellow-300">9.6</span></label>
+                    <input type="range" id="pka-amino-slider" min="8" max="11" step="0.1" value="9.6"
+                           class="w-full h-7 appearance-none rounded-full outline-none
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                  [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg">
+                </div>
+                
+                <div class="result-display bg-gray-900 bg-opacity-30 p-5 rounded-lg mt-5 text-center text-lg md:text-xl">
+                    <p class="mb-2">Amino Group at pH = <span id="current-ph-amino" class="font-bold text-emerald-300">7.0</span> and pKa = <span id="current-pka-amino" class="font-bold text-emerald-300">9.6</span>:</p>
+                    <p class="mb-1"><strong>Protonated (NH<sub>3</sub><sup>+</sup>): <span id="protonated-amino-percent" class="font-bold text-yellow-300">98.4</span>%</strong></p>
+                    <p class="mb-1"><strong>Deprotonated (NH<sub>2</sub>): <span id="deprotonated-amino-percent" class="font-bold text-yellow-300">1.6</span>%</strong></p>
+                    <p class="mt-3">Charge state: <span id="charge-state-amino" class="font-bold text-purple-300">Positive (+1)</span></p>
+                </div>
+
+                <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Carboxyl Group (Acidic)</h3>
+                <div class="slider-container mb-6">
+                    <label for="ph-carboxyl-slider" class="block mb-2 font-bold text-gray-100 text-lg">pH: <span id="ph-carboxyl-value" class="text-yellow-300">2.0</span></label>
+                    <input type="range" id="ph-carboxyl-slider" min="0" max="14" step="0.1" value="2.0"
+                           class="w-full h-7 appearance-none rounded-full outline-none
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                  [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg">
+                </div>
+                
+                <div class="slider-container mb-6">
+                    <label for="pka-carboxyl-slider" class="block mb-2 font-bold text-gray-100 text-lg">pKa of Carboxyl Group: <span id="pka-carboxyl-value" class="text-yellow-300">2.3</span></label>
+                    <input type="range" id="pka-carboxyl-slider" min="1" max="5" step="0.1" value="2.3"
+                           class="w-full h-7 appearance-none rounded-full outline-none
+                                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg
+                                  [&::-moz-range-thumb]:w-8 [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg">
+                </div>
+
+                <div class="result-display bg-gray-900 bg-opacity-30 p-5 rounded-lg mt-5 text-center text-lg md:text-xl">
+                    <p class="mb-2">Carboxyl Group at pH = <span id="current-ph-carboxyl" class="font-bold text-emerald-300">2.0</span> and pKa = <span id="current-pka-carboxyl" class="font-bold text-emerald-300">2.3</span>:</p>
+                    <p class="mb-1"><strong>Protonated (COOH): <span id="protonated-carboxyl-percent" class="font-bold text-yellow-300">66.5</span>%</strong></p>
+                    <p class="mb-1"><strong>Deprotonated (COO<sup>-</sup>): <span id="deprotonated-carboxyl-percent" class="font-bold text-yellow-300">33.5</span>%</strong></p>
+                    <p class="mt-3">Charge state: <span id="charge-state-carboxyl" class="font-bold text-purple-300">Neutral (0)</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-dna text-red-500"></i> pH and pKa in Amino Acids
+            </h2>
+            <p class="mb-4">Amino acids are amphoteric molecules that contain both acidic (carboxyl) and basic (amino) groups. Their ionization states change with pH:</p>
+            
+            <div class="amino-acid-container grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+                <div class="amino-acid-card bg-green-600 bg-opacity-20 rounded-lg p-6 text-center transition-all duration-300 border-2 border-green-500 border-opacity-30 hover:scale-[1.03] shadow-md">
+                    <h4 class="text-xl font-semibold mb-3 text-green-400">Low pH (Acidic)</h4>
+                    <p class="mb-2">Both groups are protonated:</p>
+                    <p class="font-mono text-lg"><strong>NH<sub>3</sub><sup>+</sup> — CHR — COOH</strong></p>
+                    <p class="text-sm mt-2">Net charge: +1</p>
+                </div>
+                
+                <div class="amino-acid-card bg-green-600 bg-opacity-20 rounded-lg p-6 text-center transition-all duration-300 border-2 border-green-500 border-opacity-30 hover:scale-[1.03] shadow-md">
+                    <h4 class="text-xl font-semibold mb-3 text-green-400">Intermediate pH</h4>
+                    <p class="mb-2">Zwitterion form:</p>
+                    <p class="font-mono text-lg"><strong>NH<sub>3</sub><sup>+</sup> — CHR — COO<sup>-</sup></strong></p>
+                    <p class="text-sm mt-2">Net charge: 0</p>
+                </div>
+                
+                <div class="amino-acid-card bg-green-600 bg-opacity-20 rounded-lg p-6 text-center transition-all duration-300 border-2 border-green-500 border-opacity-30 hover:scale-[1.03] shadow-md">
+                    <h4 class="text-xl font-semibold mb-3 text-green-400">High pH (Basic)</h4>
+                    <p class="mb-2">Both groups deprotonated:</p>
+                    <p class="font-mono text-lg"><strong>NH<sub>2</sub> — CHR — COO<sup>-</sup></strong></p>
+                    <p class="text-sm mt-2">Net charge: -1</p>
+                </div>
+            </div>
+            
+            
+        </div>
+        
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15 transition-all duration-300 hover:scale-[1.01] hover:shadow-3xl">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-microscope text-red-500"></i> Biological Significance
+            </h2>
+            
+            <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Protein Structure and Function</h3>
+            <p class="mb-4">pH and pKa values profoundly impact proteins:</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Enzyme catalysis:</strong> Active sites often contain acidic/basic residues with precisely tuned pKa values</li>
+                <li><strong>Protein folding:</strong> Ionizable groups influence folding and stability</li>
+                <li><strong>Ligand binding:</strong> pH affects binding affinities and specificities</li>
+                <li><strong>Membrane transport:</strong> pH gradients drive transport mechanisms</li>
+            </ul>
+            
+            <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">Buffers in Biological Systems</h3>
+            <p class="mb-4">Biological systems maintain pH using buffer systems:</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>Bicarbonate buffer:</strong> Maintains blood pH (pKa=6.1)</li>
+                <li><strong>Phosphate buffer:</strong> Important in intracellular fluid (pKa=6.8)</li>
+                <li><strong>Protein buffers:</strong> Histidine residues (pKa≈6.0) are particularly important</li>
+            </ul>
+            
+            <h3 class="text-xl md:text-2xl font-semibold mt-8 mb-4 text-yellow-500 border-b-2 border-yellow-500 border-opacity-30 pb-2">pH and Drug Design</h3>
+            <p class="mb-4">Understanding pKa is critical for pharmaceutical development:</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li>Influences drug solubility and absorption</li>
+                <li>Affects drug distribution across membranes</li>
+                <li>Determines binding to target proteins</li>
+                <li>Impacts metabolic stability</li>
+            </ul>
+        </div>
+
+        <!-- Review Concept Quiz Section -->
+        <div class="card bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 md:p-8 my-8 shadow-2xl border border-white border-opacity-15">
+            <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-blue-400 flex items-center gap-3">
+                <i class="fas fa-question-circle text-red-500"></i> Review Concept Quiz
+            </h2>
+            <p class="mb-6 text-gray-200">Test your understanding of pH and pKa concepts with these questions.</p>
+
+            <div id="quiz-container" class="space-y-8">
+                <!-- Questions will be loaded here by JavaScript -->
+            </div>
+        </div>
+
+    </div>
+    
+    <footer class="text-center mt-12 p-6 text-gray-400 text-base">
+        <div class="container mx-auto px-4">
+            <p class="mb-2">Copyright BETA Biosciences 2025</p>
+            <p id="contact-email">betabiosciences@gmail.com</p>
+        </div>
+    </footer>
+    
+    <script>
+        const EXPECTED_EMAIL = "betabiosciences@gmail.com";
+        // Define the allowed origin for hosting
+        const ALLOWED_ORIGIN = "https://betabiosciences.github.io";
+
+        // Function to update all values (graph is now static)
+        function updateAllValues(
+            phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+            phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+        ) {
+            // Amino Group Calculations
+            const phAmino = parseFloat(phSliderAmino.value);
+            const pkaAmino = parseFloat(pkaAminoSlider.value);
+            
+            phValueAmino.textContent = phAmino.toFixed(1);
+            pkaAminoValue.textContent = pkaAmino.toFixed(1);
+            currentPhAmino.textContent = phAmino.toFixed(1);
+            currentPkaAmino.textContent = pkaAmino.toFixed(1);
+            
+            const protonatedAmino = 100 / (1 + Math.pow(10, phAmino - pkaAmino));
+            const deprotonatedAmino = 100 - protonatedAmino;
+            
+            protonatedAminoPercent.textContent = protonatedAmino.toFixed(1);
+            deprotonatedAminoPercent.textContent = deprotonatedAmino.toFixed(1);
+            
+            let chargeTextAmino = "";
+            if (phAmino < pkaAmino - 1) {
+                chargeTextAmino = "Positive (+1)";
+            } else if (phAmino > pkaAmino + 1) {
+                chargeTextAmino = "Neutral (0)";
+            } else if (phAmino === pkaAmino) {
+                     chargeTextAmino = "Equal Protonated/Deprotonated";
+            } else {
+                chargeTextAmino = "Partially protonated/deprotonated";
+            }
+            chargeStateAmino.textContent = chargeTextAmino;
+
+            // Carboxyl Group Calculations
+            const phCarboxyl = parseFloat(phCarboxylSlider.value);
+            const pkaCarboxyl = parseFloat(pkaCarboxylSlider.value);
+
+            phCarboxylValue.textContent = phCarboxyl.toFixed(1);
+            pkaCarboxylValue.textContent = pkaCarboxyl.toFixed(1);
+            currentPhCarboxyl.textContent = phCarboxyl.toFixed(1);
+            currentPkaCarboxyl.textContent = pkaCarboxyl.toFixed(1);
+
+            const protonatedCarboxyl = 100 / (1 + Math.pow(10, phCarboxyl - pkaCarboxyl));
+            const deprotonatedCarboxyl = 100 - protonatedCarboxyl;
+
+            protonatedCarboxylPercent.textContent = protonatedCarboxyl.toFixed(1);
+            deprotonatedCarboxylPercent.textContent = deprotonatedCarboxyl.toFixed(1);
+
+            let chargeTextCarboxyl = "";
+            if (phCarboxyl < pkaCarboxyl - 1) {
+                chargeTextCarboxyl = "Neutral (0)";
+            } else if (phCarboxyl > pkaCarboxyl + 1) {
+                chargeTextCarboxyl = "Negative (-1)";
+            } else if (phCarboxyl === pkaCarboxyl) {
+                chargeTextCarboxyl = "Equal Protonated/Deprotonated";
+            } else {
+                chargeTextCarboxyl = "Partially protonated/deprotonated";
+            }
+            chargeStateCarboxyl.textContent = chargeTextCarboxyl;
+        }
+
+        window.onload = function() {
+            // Security check: Only load content if hosted from the allowed domain
+            if (window.location.origin !== ALLOWED_ORIGIN) {
+                document.body.innerHTML = ''; // Clear all content
+                return; // Stop script execution
+            }
+
+            // Existing email validation (moved after domain check)
+            const contactEmailElement = document.getElementById('contact-email');
+            if (!contactEmailElement || contactEmailElement.textContent !== EXPECTED_EMAIL) {
+                document.body.innerHTML = ''; // Clear all content if email is missing or modified
+                return; // Stop script execution
+            }
+            
+            // Amino Group Sliders
+            const phSliderAmino = document.getElementById('ph-slider');
+            const pkaAminoSlider = document.getElementById('pka-amino-slider');
+            const phValueAmino = document.getElementById('ph-value');
+            const pkaAminoValue = document.getElementById('pka-amino-value');
+            const currentPhAmino = document.getElementById('current-ph-amino');
+            const currentPkaAmino = document.getElementById('current-pka-amino');
+            const protonatedAminoPercent = document.getElementById('protonated-amino-percent');
+            const deprotonatedAminoPercent = document.getElementById('deprotonated-amino-percent');
+            const chargeStateAmino = document.getElementById('charge-state-amino');
+
+            // Carboxyl Group Sliders
+            const phCarboxylSlider = document.getElementById('ph-carboxyl-slider');
+            const pkaCarboxylSlider = document.getElementById('pka-carboxyl-slider');
+            const phCarboxylValue = document.getElementById('pka-carboxyl-value');
+            const pkaCarboxylValue = document.getElementById('pka-carboxyl-value');
+            const currentPhCarboxyl = document.getElementById('current-ph-carboxyl');
+            const currentPkaCarboxyl = document.getElementById('current-pka-carboxyl');
+            const protonatedCarboxylPercent = document.getElementById('protonated-carboxyl-percent');
+            const deprotonatedCarboxylPercent = document.getElementById('deprotonated-carboxyl-percent');
+            const chargeStateCarboxyl = document.getElementById('charge-state-carboxyl');
+            
+            // Add event listeners for both sets of sliders
+            phSliderAmino.addEventListener('input', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            phSliderAmino.addEventListener('change', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            pkaAminoSlider.addEventListener('input', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            pkaAminoSlider.addEventListener('change', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+
+            phCarboxylSlider.addEventListener('input', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            phCarboxylSlider.addEventListener('change', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            pkaCarboxylSlider.addEventListener('input', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            pkaCarboxylSlider.addEventListener('change', () => updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ));
+            
+            updateAllValues(
+                phSliderAmino, pkaAminoSlider, phValueAmino, pkaAminoValue, currentPhAmino, currentPkaAmino, protonatedAminoPercent, deprotonatedAminoPercent, chargeStateAmino,
+                phCarboxylSlider, pkaCarboxylSlider, phCarboxylValue, pkaCarboxylValue, currentPhCarboxyl, currentPkaCarboxyl, protonatedCarboxylPercent, deprotonatedCarboxylPercent, chargeStateCarboxyl
+            ); // Initialize values
+
+            // Quiz Logic
+            const quizQuestions = [
+                {
+                    question: "Which of the following amino acids has a side chain with a pKa closest to physiological pH?",
+                    options: ["Glutamic acid", "Histidine", "Lysine", "Tyrosine"],
+                    answer: "Histidine",
+                    explanation: "Histidine’s imidazole side chain has a pKa ≈ 6.0, making it effective as a buffer near physiological pH (~7.4)."
+                },
+                {
+                    question: "At a pH below its pKa, an amino acid functional group is:",
+                    options: ["Fully deprotonated", "Fully protonated", "Equally protonated and deprotonated", "Unable to ionize"],
+                    answer: "Fully protonated",
+                    explanation: "At pH < pKa, the equilibrium favors the protonated (acidic) form."
+                },
+                {
+                    question: "The side chain of glutamic acid has a pKa ≈ 4.1. At pH 7.4, it is expected to be:",
+                    options: ["Neutral", "Positively charged", "Negatively charged", "Amphipathic"],
+                    answer: "Negatively charged",
+                    explanation: "At pH > pKa, the carboxyl group is deprotonated, carrying a negative charge."
+                },
+                {
+                    question: "Which statement about the Henderson-Hasselbalch equation is FALSE in the context of amino acids?",
+                    options: ["It can estimate the charge state of ionizable side chains.", "It assumes a single ionizable group in a molecule.", "It accurately models polyprotic amino acids without modification.", "It is used to determine buffer regions of amino acids."],
+                    answer: "It accurately models polyprotic amino acids without modification",
+                    explanation: "Polyprotic systems like amino acids require modifications or stepwise applications of the equation."
+                },
+                {
+                    question: "For an amino acid with a pKa of 9.5 for its amino group, what is the ratio of protonated to deprotonated species at pH 8.5?",
+                    options: ["1:10", "10:1", "1:1", "100:1"],
+                    answer: "10:1",
+                    explanation: "Using Henderson-Hasselbalch: pH = pKa + log([A⁻]/[HA]) → 8.5 = 9.5 + log([A⁻]/[HA]) → log([A⁻]/[HA]) = -1 → [A⁻]/[HA] = 0.1 → [HA]/[A⁻] = 10:1"
+                },
+                {
+                    question: "At pH 1, what is the net charge on lysine (pKa₁ = 2.2, pKa₂ = 9.0, pKa₃ = 10.5 for side chain)?",
+                    options: ["+2", "+1", "0", "–1"],
+                    answer: "+2",
+                    explanation: "All ionizable groups (α-amino, α-carboxyl, ε-amino) are protonated; carboxyl is neutral, both amino groups are +1."
+                },
+                {
+                    question: "Which of the following amino acids would have the highest pKa for its side chain?",
+                    options: ["Aspartate", "Arginine", "Histidine", "Glutamate"],
+                    answer: "Arginine",
+                    explanation: "Arginine has a guanidino group with a pKa ~12.5, the highest among common amino acids."
+                },
+                {
+                    question: "At which pH does histidine side chain show 50% protonation?",
+                    options: ["5.0", "6.0", "7.4", "8.5"],
+                    answer: "6.0",
+                    explanation: "50% protonation occurs at its pKₐ ≈6.0"
+                },
+                {
+                    question: "Which statement about the effect of microenvironment on pKa is TRUE?",
+                    options: ["Burial in a hydrophobic core increases the pKa of acidic side chains", "Hydrogen bonding has no effect on pKa", "Basic residues always have a pKa > 10 regardless of environment", "The pKa of amino acids is independent of local electrostatics"],
+                    answer: "Burial in a hydrophobic core increases the pKa of acidic side chains",
+                    explanation: "A buried acidic group resists ionization due to the lack of stabilization by water, shifting its pKa higher."
+                },
+                {
+                    question: "The pKa of the α-carboxyl group of amino acids is usually lower (~2.0) than that of a typical carboxylic acid (~4.8). Why?",
+                    options: ["Intramolecular hydrogen bonding", "Presence of an α-amino group stabilizes the deprotonated form", "Enhanced resonance stabilization", "Reduced solvation by water"],
+                    answer: "Presence of an α-amino group stabilizes the deprotonated form",
+                    explanation: "The nearby positively charged amino group stabilizes the deprotonated (anionic) carboxyl group, lowering its pKa."
+                }
+            ];
+
+            const quizContainer = document.getElementById('quiz-container');
+
+            quizQuestions.forEach((q, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'quiz-question bg-gray-900 bg-opacity-20 p-6 rounded-lg shadow-inner';
+                questionElement.innerHTML = `
+                    <p class="text-lg font-semibold mb-4 text-blue-300">Q${index + 1}: ${q.question}</p>
+                    <div class="options-container space-y-3 mb-4">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="block text-gray-200 cursor-pointer quiz-option">
+                                <input type="radio" name="question${index}" value="${option}" class="mr-2">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="check-answer-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
+                        Check Answer
+                    </button>
+                    <div class="quiz-feedback" id="feedback-${index}">
+                        <p class="font-bold mb-1"></p>
+                        <p class="explanation text-sm"></p>
+                    </div>
+                `;
+                quizContainer.appendChild(questionElement);
+
+                const checkButton = questionElement.querySelector('.check-answer-btn');
+                checkButton.addEventListener('click', () => checkAnswer(index, q.answer, q.explanation));
+            });
+
+            function checkAnswer(questionIndex, correctAnswer, explanation) {
+                const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${questionIndex}`);
+                const feedbackText = feedbackDiv.querySelector('p:first-child');
+                const explanationText = feedbackDiv.querySelector('.explanation');
+
+                feedbackDiv.style.display = 'block'; // Show feedback div
+                feedbackDiv.classList.remove('correct', 'incorrect'); // Reset classes
+
+                if (selectedOption) {
+                    if (selectedOption.value === correctAnswer) {
+                        feedbackDiv.classList.add('correct');
+                        feedbackText.textContent = 'Correct! 🎉';
+                    } else {
+                        feedbackDiv.classList.add('incorrect');
+                        feedbackText.textContent = 'Incorrect. Try again!';
+                    }
+                    explanationText.textContent = `Explanation: ${explanation}`;
+                } else {
+                    feedbackDiv.classList.add('incorrect');
+                    feedbackText.textContent = 'Please select an answer.';
+                    explanationText.textContent = '';
+                }
+            }
+        };
+    </script>
+</body>
+</html>
