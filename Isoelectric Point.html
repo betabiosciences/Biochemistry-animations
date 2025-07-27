@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isoelectric Point: Comprehensive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+        }
+        .equation {
+            overflow-x: auto;
+            padding: 0.5rem;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .tip-card {
+            transition: transform 0.3s ease;
+        }
+        .tip-card:hover {
+            transform: translateY(-5px);
+        }
+        .amino-acid-card {
+            transition: all 0.3s ease;
+        }
+        .amino-acid-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        /* Mobile optimizations */
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        @media (max-width: 640px) {
+            .tab-button {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            .formula {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen">
+    <!-- Security Layer: Check if the page is hosted from the allowed domain -->
+    <script>
+        const allowedOrigin = "https://betabiosciences.github.io";
+        if (window.location.origin !== allowedOrigin) {
+            // If not from the allowed origin, hide the entire body content
+            document.body.style.display = 'none';
+            // Optionally, stop further script execution to prevent any functionality from running
+            // This is done by effectively making the rest of the script unreachable
+        }
+    </script>
+
+    <header class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-8 px-4 shadow-lg">
+        <div class="container mx-auto max-w-6xl">
+            <h1 class="text-3xl md:text-5xl font-bold mb-2">Isoelectric Point</h1>
+            <!-- Subtitle removed as per user request -->
+        </div>
+    </header>
+
+    <nav class="sticky top-0 bg-white shadow-md z-50">
+        <div class="container mx-auto max-w-6xl px-2">
+            <div class="flex overflow-x-auto whitespace-nowrap py-2 scrollbar-hide">
+                <button class="tab-button px-3 py-2 mx-1 text-sm md:text-base font-medium rounded-md focus:outline-none bg-indigo-600 text-white" data-tab="basics">Basics</button>
+                <button class="tab-button px-3 py-2 mx-1 text-sm md:text-base font-medium rounded-md focus:outline-none hover:bg-indigo-100" data-tab="theory">Theory</button>
+                <button class="tab-button px-3 py-2 mx-1 text-sm md:text-base font-medium rounded-md focus:outline-none hover:bg-indigo-100" data-tab="amino-acids">Amino Acids</button>
+                <button class="tab-button px-3 py-2 mx-1 text-sm md:text-base font-medium rounded-md focus:outline-none hover:bg-indigo-100" data-tab="calculations">Calculations</button>
+                <button class="tab-button px-3 py-2 mx-1 text-sm md:text-base font-medium rounded-md focus:outline-none hover:bg-indigo-100" data-tab="applications">Applications</button>
+                <!-- Removed "Tips" tab as per user request -->
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto max-w-6xl px-4 py-6">
+        <!-- Basics Section -->
+        <section id="basics" class="tab-content active mb-8">
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800 mb-4">Fundamentals of Isoelectric Point</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Definition</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        The <span class="highlight">isoelectric point (pI)</span> is the pH at which a molecule carries no net electrical charge. 
+                        At this specific pH, the molecule exists in its zwitterionic form, with a balance of positive and negative charges, 
+                        resulting in a net charge of zero.
+                    </p>
+                    <div class="bg-indigo-50 rounded-lg p-3 mb-4">
+                        <p class="text-indigo-800 font-medium">At pH = pI:</p>
+                        <p class="text-gray-700">• Molecule has zero net charge</p>
+                        <p class="text-gray-700">• Molecule is least soluble in water</p>
+                        <p class="text-gray-700">• Molecule has minimum electrophoretic mobility</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Importance in Biochemistry</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Protein Purification</h4>
+                            <p class="text-gray-700">
+                                At their pI, proteins have minimum solubility, which is exploited in techniques like isoelectric focusing and 
+                                precipitation methods for protein purification.
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-800 mb-2">Protein Stability</h4>
+                            <p class="text-gray-700">
+                                The stability and conformation of proteins are often affected by their charge state, which depends on the 
+                                relationship between the pH of the environment and the protein's pI.
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Enzyme Activity</h4>
+                            <p class="text-gray-700">
+                                Enzyme activity is often pH-dependent, with the optimal pH for activity frequently related to the pI of the enzyme.
+                            </p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">Electrophoretic Techniques</h4>
+                            <p class="text-gray-700">
+                                Understanding pI is crucial for designing and interpreting results from electrophoretic separation techniques.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Charge Behavior Around pI</h3>
+                    <div class="table-container">
+                        <table class="min-w-full bg-white border border-gray-200">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-3 bg-indigo-100 text-left text-indigo-800 text-sm md:text-base">pH Condition</th>
+                                    <th class="py-2 px-3 bg-indigo-100 text-left text-indigo-800 text-sm md:text-base">Net Charge</th>
+                                    <th class="py-2 px-3 bg-indigo-100 text-left text-indigo-800 text-sm md:text-base">Behavior</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">pH < pI</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">Positive (+)</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">Moves toward cathode</td>
+                                </tr>
+                                <tr class="border-t border-gray-200 bg-gray-50">
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">pH = pI</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">Zero (0)</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">No movement</td>
+                                </tr>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">pH > pI</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">Negative (-)</td>
+                                    <td class="py-2 px-3 text-gray-700 text-sm md:text-base">Moves toward anode</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Zwitterions</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        A zwitterion is a molecule with both positive and negative electrical charges. Amino acids at their isoelectric points 
+                        exist as zwitterions, with the amino group protonated (-NH₃⁺) and the carboxyl group deprotonated (-COO⁻).
+                    </p>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-800 mb-2">Key Point</h4>
+                        <p class="text-gray-700">
+                            The zwitterionic form is the predominant form of amino acids in solution at physiological pH. This property 
+                            significantly influences their solubility, reactivity, and biological function.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Theory Section -->
+        <section id="theory" class="tab-content mb-8">
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800 mb-4">Advanced Theory of Isoelectric Point</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Thermodynamic Considerations</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        The isoelectric point represents <strong>a thermodynamic equilibrium state where the free energy of the system is minimized</strong> 
+                        with respect to the protonation state of the molecule. This equilibrium is influenced by:
+                    </p>
+                    <ul class="list-disc pl-6 mb-3 text-gray-700 space-y-1">
+                        <li>Electrostatic interactions between charged groups</li>
+                        <li>Hydrogen bonding networks</li>
+                        <li>Conformational entropy</li>
+                        <li>Solvation effects</li>
+                    </ul>
+                    <div class="bg-indigo-50 rounded-lg p-3 mb-4">
+                        <p class="text-indigo-800 font-medium">The Henderson-Hasselbalch equation forms the basis for understanding the relationship between pH and ionization:</p>
+                        <div class="equation bg-white rounded-md my-2 text-center formula text-base md:text-lg">
+                            pH = pKa + log([A⁻]/[HA])
+                        </div>
+                        <p class="text-gray-700 text-xs md:text-sm">Where [A⁻] is the concentration of the conjugate base and [HA] is the concentration of the acid.</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Factors Affecting pI</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Temperature Effects</h4>
+                            <p class="text-gray-700">
+                                Temperature affects the pKa values of ionizable groups, which in turn affects the pI. Generally, as <strong>temperature increases, the pKa of carboxylic acids decreases while that of amines increases.</strong> 
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-800 mb-2">Ionic Strength</h4>
+                            <p class="text-gray-700">
+                                Higher ionic strength can shield charges and alter the effective pKa values of ionizable groups, 
+                                potentially shifting the pI.
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Protein Conformation</h4>
+                            <p class="text-gray-700">
+                                The three-dimensional structure of proteins can create microenvironments that alter the pKa values of amino acid side chains.
+                            </p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">Post-translational Modifications</h4>
+                            <p class="text-gray-700">
+                                Modifications such as phosphorylation, acetylation, and glycosylation can introduce new charged groups or 
+                                alter existing ones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Microscopic vs. Macroscopic pKa Values</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        In molecules with multiple ionizable groups, the ionization of one group can affect the pKa of neighboring groups, 
+                        leading to a distinction between:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Microscopic pKa</h4>
+                            <p class="text-gray-700">
+                                Refers to the pKa of <strong>a specific ionizable group</strong> in a specific protonation state <strong>of the molecule.</strong> 
+                                These values account for the interactions between different ionizable groups.
+                            </p>
+                        </div>
+                        <div class="bg-teal-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-teal-800 mb-2">Macroscopic pKa</h4>
+                            <p class="text-gray-700">
+                                Refers to the <strong>experimentally observed pKa values</strong> that represent the overall titration behavior of the molecule. 
+                                These are the values typically used in pI calculations.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Polyprotic Systems and pI</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        For polyprotic molecules (those with multiple ionizable groups), the titration curve becomes more complex, 
+                        and the calculation of pI requires consideration of all relevant ionization states.
+                    </p>
+                    <div class="bg-indigo-50 rounded-lg p-3">
+                        <p class="text-indigo-800 font-medium mb-2">For a molecule with n ionizable groups, there are 2ⁿ possible protonation states, each with its own free energy.</p>
+                        <p class="text-gray-700">
+                            The distribution of these states follows Boltzmann statistics, and the net charge is the weighted average of the charges of all states. 
+                            The pI is the pH at which this weighted average equals zero.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Amino Acids Section -->
+        <section id="amino-acids" class="tab-content mb-8">
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800 mb-4">Amino Acid Isoelectric Points</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Structure and Ionizable Groups</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        Amino acids contain at least two ionizable groups: the α-carboxyl group (–COOH) and the α-amino group (–NH₂). 
+                        Many amino acids also have ionizable side chains that contribute to their overall charge behavior.
+                    </p>
+                    <div class="bg-indigo-50 rounded-lg p-3 mb-4">
+                        <p class="text-indigo-800 font-medium mb-2">Standard pKa Values for Common Ionizable Groups:</p>
+                        <ul class="text-gray-700 space-y-1">
+                            <li>• α-Carboxyl group (–COOH): pKa ≈ 2.0</li>
+                            <li>• α-Amino group (–NH₃⁺): pKa ≈ 9.0</li>
+                            <li>• Side chain groups: variable (see table below)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Amino Acid Categories by Side Chain</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="amino-acid-card bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Acidic Side Chains</h4>
+                            <p class="text-gray-700 mb-1">• Aspartic acid (Asp, D)</p>
+                            <p class="text-gray-700 mb-1">• Glutamic acid (Glu, E)</p>
+                            <p class="text-gray-500 text-sm">These have carboxyl groups in their side chains that can lose a proton, giving them a negative charge at physiological pH.</p>
+                        </div>
+                        <div class="amino-acid-card bg-red-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">Basic Side Chains</h4>
+                            <p class="text-gray-700 mb-1">• Lysine (Lys, K)</p>
+                            <p class="text-gray-700 mb-1">• Arginine (Arg, R)</p>
+                            <p class="text-gray-700 mb-1">• Histidine (His, H)</p>
+                            <p class="text-gray-500 text-sm">These have amino groups that can gain a proton, giving them a positive charge at physiological pH.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="amino-acid-card bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Neutral Side Chains</h4>
+                            <p class="text-gray-700 mb-1">• Alanine, Valine, Leucine, etc.</p>
+                            <p class="text-gray-500 text-sm">These have no ionizable groups in their side chains and don't contribute to the net charge beyond the α-amino and α-carboxyl groups.</p>
+                        </div>
+                        <div class="amino-acid-card bg-yellow-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Special Cases</h4>
+                            <p class="text-gray-700 mb-1">• Cysteine (Cys, C)</p>
+                            <p class="text-gray-700 mb-1">• Tyrosine (Tyr, Y)</p>
+                            <p class="text-gray-500 text-sm">These have side chains that can ionize but only at pH values outside the physiological range.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Amino Acid pI and pKa Values</h3>
+                    <div class="table-container">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">Amino Acid</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">3-Letter</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">1-Letter</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">pKa (COOH)</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">pKa (NH₃⁺)</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">pKa (Side)</th>
+                                    <th class="py-2 px-2 bg-indigo-100 text-left text-indigo-800">pI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-2 text-gray-700">Alanine</td>
+                                    <td class="py-2 px-2 text-gray-700">Ala</td>
+                                    <td class="py-2 px-2 text-gray-700">A</td>
+                                    <td class="py-2 px-2 text-gray-700">2.35</td>
+                                    <td class="py-2 px-2 text-gray-700">9.87</td>
+                                    <td class="py-2 px-2 text-gray-700">-</td>
+                                    <td class="py-2 px-2 text-gray-700">6.11</td>
+                                </tr>
+                                <tr class="border-t border-gray-200 bg-gray-50">
+                                    <td class="py-2 px-2 text-gray-700">Arginine</td>
+                                    <td class="py-2 px-2 text-gray-700">Arg</td>
+                                    <td class="py-2 px-2 text-gray-700">R</td>
+                                    <td class="py-2 px-2 text-gray-700">1.82</td>
+                                    <td class="py-2 px-2 text-gray-700">8.99</td>
+                                    <td class="py-2 px-2 text-gray-700">12.48</td>
+                                    <td class="py-2 px-2 text-gray-700">10.76</td>
+                                </tr>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-2 text-gray-700">Aspartic Acid</td>
+                                    <td class="py-2 px-2 text-gray-700">Asp</td>
+                                    <td class="py-2 px-2 text-gray-700">D</td>
+                                    <td class="py-2 px-2 text-gray-700">1.99</td>
+                                    <td class="py-2 px-2 text-gray-700">9.90</td>
+                                    <td class="py-2 px-2 text-gray-700">3.90</td>
+                                    <td class="py-2 px-2 text-gray-700">2.85</td>
+                                </tr>
+                                <tr class="border-t border-gray-200 bg-gray-50">
+                                    <td class="py-2 px-2 text-gray-700">Glutamic Acid</td>
+                                    <td class="py-2 px-2 text-gray-700">Glu</td>
+                                    <td class="py-2 px-2 text-gray-700">E</td>
+                                    <td class="py-2 px-2 text-gray-700">2.10</td>
+                                    <td class="py-2 px-2 text-gray-700">9.47</td>
+                                    <td class="py-2 px-2 text-gray-700">4.07</td>
+                                    <td class="py-2 px-2 text-gray-700">3.15</td>
+                                </tr>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-2 text-gray-700">Histidine</td>
+                                    <td class="py-2 px-2 text-gray-700">His</td>
+                                    <td class="py-2 px-2 text-gray-700">H</td>
+                                    <td class="py-2 px-2 text-gray-700">1.80</td>
+                                    <td class="py-2 px-2 text-gray-700">9.33</td>
+                                    <td class="py-2 px-2 text-gray-700">6.04</td>
+                                    <td class="py-2 px-2 text-gray-700">7.60</td>
+                                </tr>
+                                <tr class="border-t border-gray-200 bg-gray-50">
+                                    <td class="py-2 px-2 text-gray-700">Lysine</td>
+                                    <td class="py-2 px-2 text-gray-700">Lys</td>
+                                    <td class="py-2 px-2 text-gray-700">K</td>
+                                    <td class="py-2 px-2 text-gray-700">2.16</td>
+                                    <td class="py-2 px-2 text-gray-700">9.06</td>
+                                    <td class="py-2 px-2 text-gray-700">10.54</td>
+                                    <td class="py-2 px-2 text-gray-700">9.80</td>
+                                </tr>
+                                <tr class="border-t border-gray-200">
+                                    <td class="py-2 px-2 text-gray-700">Tyrosine</td>
+                                    <td class="py-2 px-2 text-gray-700">Tyr</td>
+                                    <td class="py-2 px-2 text-gray-700">Y</td>
+                                    <td class="py-2 px-2 text-gray-700">2.20</td>
+                                    <td class="py-2 px-2 text-gray-700">9.21</td>
+                                    <td class="py-2 px-2 text-gray-700">10.46</td>
+                                    <td class="py-2 px-2 text-gray-700">5.63</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Removed "Show all amino acids" button as per user request -->
+                    <p class="text-xs text-gray-500 mt-2">Note: Values may vary slightly depending on experimental conditions and literature sources.</p>
+                </div>
+
+                <!-- Removed "Titration Curves of Amino Acids" section as per user request -->
+            </div>
+        </section>
+
+        <!-- Calculations Section -->
+        <section id="calculations" class="tab-content mb-8">
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800 mb-4">Calculating Isoelectric Points</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Basic Principles</h3>
+                    <p class="text-gray-700 leading-relaxed mb-3">
+                        The isoelectric point (pI) is the pH at which a molecule carries no net electrical charge. 
+                        The calculation of pI depends on the pKa values of all ionizable groups in the molecule.
+                    </p>
+                    <div class="bg-indigo-50 rounded-lg p-3 mb-3">
+                        <p class="text-indigo-800 font-medium mb-2">General Approach:</p>
+                        <ol class="list-decimal pl-6 text-gray-700 space-y-1">
+                            <li>Identify all ionizable groups in the molecule</li>
+                            <li>Determine the pKa values for each group</li>
+                            <li>Write the charge equation as a function of pH</li>
+                            <li>Set the net charge to zero and solve for pH</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Formulas for Different Amino Acid Types</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Neutral Amino Acids</h4>
+                            <p class="text-gray-700 mb-2">
+                                For amino acids with two ionizable groups (α-COOH and α-NH2), the pI is the average of their pKa values:
+                            </p>
+                            <div class="bg-white rounded-md p-2 formula text-center">
+                                pI = (pKa₁ + pKa₂) / 2
+                            </div>
+                            <p class="text-gray-600 text-xs mt-1">
+                                Where pKa₁ is the pKa of the α-carboxyl group and pKa₂ is the pKa of the α-amino group.
+                            </p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">Acidic Amino Acids</h4>
+                            <p class="text-gray-700 mb-2">
+                                For amino acids with an acidic side chain (e.g., Aspartic acid), the pI is the average of the two lowest pKa values (α-COOH and side-chain COOH), as these are protonated in the neutral state.
+                            </p>
+                            <div class="bg-white rounded-md p-2 formula text-center">
+                                pI = (pKa₁ + pKa_R) / 2
+                            </div>
+                            <p class="text-gray-600 text-xs mt-1">
+                                Where pKa₁ is the pKa of the α-carboxyl group and pKa_R is the pKa of the side chain carboxyl group.
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Basic Amino Acids</h4>
+                            <p class="text-gray-700 mb-2">
+                                For amino acids with a basic side chain (e.g., Lysine), the pI is the average of the two highest pKa values (α-NH2 and side-chain NH2), as these are deprotonated in the neutral state.
+                            </p>
+                            <div class="bg-white rounded-md p-2 formula text-center">
+                                pI = (pKa₂ + pKa_R) / 2
+                            </div>
+                            <p class="text-gray-600 text-xs mt-1">
+                                Where pKa₂ is the pKa of the α-amino group and pKa_R is the pKa of the basic side chain.
+                            </p>
+                        </div>
+                        <!-- Removed "Special Cases (e.g., Histidine)" section as per user request -->
+                    </div>
+                    <div class="mt-6 bg-indigo-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-indigo-800 mb-2">Key Points:</h4>
+                        <ul class="list-disc pl-6 text-gray-700 space-y-1">
+                            <li>Acidic AA (Asp, Glu): pI will be low (around 3-4).</li>
+                            <li>Neutral AA: pI will be slightly acidic (around 5-6.5).</li>
+                            <li>Basic AA (Lys, Arg, His): pI will be high (7.5-10.5).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Step-by-Step Examples</h3>
+                    
+                    <div class="mb-4">
+                        <h4 class="text-lg font-semibold text-indigo-600 mb-2">Example 1: Glycine (Neutral)</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-gray-700 mb-1 text-sm">Given:</p>
+                            <ul class="list-disc pl-5 text-gray-700 mb-2 text-sm">
+                                <li>pKa₁ (α-COOH) = 2.35</li>
+                                <li>pKa₂ (α-NH₃⁺) = 9.78</li>
+                            </ul>
+                            <p class="text-gray-700 mb-1 text-sm">Calculation:</p>
+                            <div class="bg-white rounded-md p-2 mb-2">
+                                <p class="formula text-sm">pI = (pKa₁ + pKa₂) / 2 = (2.35 + 9.78) / 2 = 6.06</p>
+                            </div>
+                            <p class="text-gray-700 text-sm">Therefore, the isoelectric point of glycine is 6.06.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="text-lg font-semibold text-indigo-600 mb-2">Example 2: Aspartic Acid (Acidic)</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-gray-700 mb-1 text-sm">Given:</p>
+                            <ul class="list-disc pl-5 text-gray-700 mb-2 text-sm">
+                                <li>pKa₁ (α-COOH) = 1.99</li>
+                                <li>pKa₂ (α-NH₃⁺) = 9.90</li>
+                                <li>pKa_R (side chain COOH) = 3.90</li>
+                            </ul>
+                            <p class="text-gray-700 mb-1 text-sm">Calculation:</p>
+                            <div class="bg-white rounded-md p-2 mb-2">
+                                <p class="formula text-sm">pI = (pKa₁ + pKa_R) / 2 = (1.99 + 3.90) / 2 = 2.85</p>
+                            </div>
+                            <p class="text-gray-700 text-sm">Therefore, the isoelectric point of aspartic acid is 2.85.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Removed "Advanced Calculation Methods" section as per user request -->
+
+                <div>
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Interactive pI Calculator</h3>
+                    <p class="text-gray-700 mb-3 text-sm">
+                        Use this calculator to determine the isoelectric point of an amino acid based on its pKa values.
+                    </p>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                            <div>
+                                <label for="pka1" class="block text-sm font-medium text-gray-700 mb-1">pKa₁ (α-COOH)</label>
+                                <input type="number" id="pka1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" step="0.01" value="2.0">
+                            </div>
+                            <div>
+                                <label for="pka2" class="block text-sm font-medium text-gray-700 mb-1">pKa₂ (α-NH₃⁺)</label>
+                                <input type="number" id="pka2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" step="0.01" value="9.0">
+                            </div>
+                            <div>
+                                <label for="pkaR" class="block text-sm font-medium text-gray-700 mb-1">pKa_R (Side Chain)</label>
+                                <input type="number" id="pkaR" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" step="0.01" placeholder="If any">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="amino-type" class="block text-sm font-medium text-gray-700 mb-1">Amino Acid Type</label>
+                            <select id="amino-type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                <option value="neutral">Neutral (No ionizable side chain)</option>
+                                <option value="acidic">Acidic (Side chain with COOH group)</option>
+                                <option value="basic">Basic (Side chain with NH₃⁺ group)</option>
+                                <option value="histidine">Special Case (e.g., Histidine)</option>
+                            </select>
+                        </div>
+                        <button id="calculate-pi" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm">
+                            Calculate pI
+                        </button>
+                        <div id="result" class="mt-3 p-3 bg-white rounded-md hidden">
+                            <p class="text-base font-medium text-indigo-800">Isoelectric Point (pI): <span id="pi-value">0.00</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Applications Section -->
+        <section id="applications" class="tab-content mb-8">
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-indigo-800 mb-4">Applications of Isoelectric Point</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Protein Purification Techniques</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Isoelectric Focusing (IEF)</h4>
+                            <p class="text-gray-700 text-sm">
+                                IEF separates proteins based on their pI values. A pH gradient is established 
+                                in a gel, and proteins migrate until they reach the pH that matches their pI, where they become neutrally charged and stop moving.
+                            </p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-purple-800 mb-2">2D Gel Electrophoresis</h4>
+                            <p class="text-gray-700 text-sm">
+                                This technique combines IEF in the first dimension with SDS-PAGE in the second dimension, separating proteins 
+                                based on both their pI and molecular weight.
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Isoelectric Precipitation</h4>
+                            <p class="text-gray-700 text-sm">
+                                Proteins are least soluble at their pI due to minimized electrostatic repulsion between molecules. 
+                                This property is exploited to selectively precipitate proteins by adjusting the pH to their pI.
+                            </p>
+                        </div>
+                        <div class="bg-red-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-red-800 mb-2">Ion Exchange Chromatography</h4>
+                            <p class="text-gray-700 text-sm">
+                                Knowledge of a protein's pI helps in selecting the appropriate ion exchange resin and buffer pH for optimal separation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Pharmaceutical Applications</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Drug Formulation</h4>
+                            <p class="text-gray-700 text-sm">
+                                The pI of therapeutic proteins affects their solubility, stability, and pharmacokinetics. 
+                                Formulation scientists use this knowledge to develop stable and effective protein-based drugs.
+                            </p>
+                        </div>
+                        <div class="bg-teal-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-teal-800 mb-2">Protein Engineering</h4>
+                            <p class="text-gray-700 text-sm">
+                                Protein engineers can modify the pI of proteins by introducing or removing charged amino acids. 
+                                This can enhance stability, solubility, or binding properties for specific applications.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Clinical Applications</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">Disease Biomarkers</h4>
+                            <p class="text-gray-700 text-sm">
+                                Changes in the pI of certain proteins can serve as biomarkers for diseases. Post-translational 
+                                modifications associated with cancer can alter the pI of proteins, which can be detected using IEF.
+                            </p>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-800 mb-2">Hemoglobinopathies</h4>
+                            <p class="text-gray-700 text-sm">
+                                Variants of hemoglobin with altered pI values can be detected using IEF, aiding in the diagnosis of 
+                                conditions like sickle cell anemia and thalassemia.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl md:text-2xl font-semibold text-indigo-700 mb-3">Research Applications</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-800 mb-2">Proteomics</h4>
+                            <p class="text-gray-700 text-sm">
+                                The pI is a fundamental property used in proteomic analysis for protein identification and characterization. 
+                                Databases of protein pI values aid in the identification of proteins separated by 2D gel electrophoresis.
+                            </p>
+                        </div>
+                        <div class="bg-teal-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-teal-800 mb-2">Structural Biology</h4>
+                            <p class="text-gray-700 text-sm">
+                                The pI affects protein-protein interactions and crystal formation. Knowledge of a protein's pI is useful in 
+                                designing conditions for protein crystallization, which is essential for X-ray crystallography studies.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-indigo-900 text-white py-6 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0 text-center md:text-left flex items-center">
+                    <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="h-8 w-8 mr-2 object-contain">
+                    <div>
+                        <h2 class="text-xl font-bold">BETA Biosciences</h2>
+                        <p class="text-indigo-200 italic text-xs">A resource for Lifescience students</p>
+                    </div>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-indigo-200 text-sm">© 2025 All Rights Reserved</p>
+                    <p id="footer-contact-email" class="text-indigo-300 text-xs mt-1">betabiosciences@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Existing Security Layer: Verify the footer email
+            const expectedEmail = "betabiosciences@gmail.com";
+            const footerEmailElement = document.getElementById('footer-contact-email');
+
+            if (!footerEmailElement || footerEmailElement.textContent !== expectedEmail) {
+                // If the element is missing or content is altered, hide the entire body
+                document.body.style.display = 'none';
+                return; // Stop further script execution
+            }
+
+            // Tab functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    
+                    // Update active tab button
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('bg-indigo-600', 'text-white');
+                        btn.classList.add('hover:bg-indigo-100');
+                    });
+                    button.classList.add('bg-indigo-600', 'text-white');
+                    button.classList.remove('hover:bg-indigo-100');
+                    
+                    // Update active tab content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Scroll to top of the tab content
+                    window.scrollTo({
+                        top: document.getElementById(tabId).offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // pI Calculator functionality
+            const calculateButton = document.getElementById('calculate-pi');
+            calculateButton.addEventListener('click', () => {
+                const pka1 = parseFloat(document.getElementById('pka1').value);
+                const pka2 = parseFloat(document.getElementById('pka2').value);
+                const pkaR = document.getElementById('pkaR').value ? parseFloat(document.getElementById('pkaR').value) : null;
+                const aminoType = document.getElementById('amino-type').value;
+                
+                let pi = 0;
+                
+                if (aminoType === 'neutral' || !pkaR) {
+                    pi = (pka1 + pka2) / 2;
+                } else if (aminoType === 'acidic') {
+                    pi = (pka1 + pkaR) / 2;
+                } else if (aminoType === 'basic') {
+                    pi = (pka2 + pkaR) / 2;
+                } else if (aminoType === 'histidine') {
+                    pi = (pkaR + pka2) / 2;
+                }
+                
+                document.getElementById('pi-value').textContent = pi.toFixed(2);
+                document.getElementById('result').classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
