@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amino Acid Titration Curves</title>
+    <!-- Tailwind CSS CDN for modern styling and responsiveness -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Dark theme base styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Dark slate-900 */
+            color: #e5e7eb; /* Light gray-200 */
+        }
+        .container {
+            max-width: 100%;
+            padding: 1rem;
+        }
+        /* Dark theme canvas styling */
+        canvas {
+            background-color: #1f2937; /* Dark slate-800 */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            touch-action: none;
+        }
+        /* Custom styling for the pH slider thumb - dark theme */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #4b5563; /* slate-600 */
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #3b82f6; /* blue-500 */
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+        /* Dark theme info box */
+        .info-box {
+            background-color: #1e3a8a; /* Dark blue-900 */
+            border-left: 4px solid #3b82f6; /* blue-500 */
+            color: #e5e7eb;
+        }
+        /* Button active/inactive states - dark theme */
+        .button-active {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+        }
+        .button-inactive {
+            background-color: #374151; /* slate-700 */
+            color: #9ca3af; /* slate-400 */
+        }
+        /* Dark theme tooltip */
+        #tooltip {
+            z-index: 10;
+            background-color: #1f2937; /* slate-800 */
+            border: 1px solid #3b82f6; /* blue-500 */
+            color: #e5e7eb;
+        }
+        /* Watermark styling */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+            width: 50%;
+            height: auto;
+            max-width: 200px;
+            filter: invert(1) brightness(1.5);
+        }
+        /* Footer logo */
+        .footer-logo {
+            display: block;
+            margin: 0.5rem auto 0.5rem auto;
+            max-width: 50px;
+            height: auto;
+            opacity: 0.8;
+            filter: invert(1) brightness(1.5);
+        }
+        /* Dark theme quiz styles */
+        .quiz-option-button {
+            /* Basic styling for modern rectangle with rounded edges */
+            @apply w-full py-3 px-4 mb-2 text-left rounded-xl border transition-all duration-300 ease-in-out shadow-lg; /* Increased roundedness and shadow */
+            background: linear-gradient(145deg, #2a3547, #1f2937); /* Base glossy gradient */
+            color: #e5e7eb; /* slate-200 */
+            border-color: #4b5563; /* slate-600 */
+            cursor: pointer; /* Indicate it's clickable */
+            font-weight: 500; /* Medium font weight */
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Vertically center content */
+            gap: 0.75rem; /* Space between radio and text */
+            position: relative; /* Needed for pseudo-elements if any */
+            overflow: hidden; /* Ensures gradient and shadow are contained */
+        }
+
+        /* Glossy overlay effect */
+        .quiz-option-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%; /* Cover top half */
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent); /* Subtle white gradient for gloss */
+            border-radius: 0.75rem; /* Match button roundedness */
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: 1; /* Above background, below content */
+        }
+
+        /* Hover state for unselected options */
+        .quiz-option-button:not(.correct):not(.incorrect):hover {
+            @apply border-blue-300 shadow-xl; /* Stronger shadow on hover */
+            background: linear-gradient(145deg, #263040, #1a222e); /* Slightly darker gradient on hover */
+            transform: translateY(-3px); /* More pronounced lift effect */
+        }
+
+        /* Correct answer state */
+        .quiz-option-button.correct {
+            @apply border-green-500 text-green-100 shadow-xl; /* Stronger shadow */
+            background: linear-gradient(145deg, #0f766e, #047857); /* Dark green gradient */
+            border-color: #10b981;
+            color: #d1fae5;
+            pointer-events: none; /* Disable clicks after selection */
+        }
+        .quiz-option-button.correct::before {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent); /* More pronounced gloss for correct */
+        }
+
+        /* Incorrect answer state */
+        .quiz-option-button.incorrect {
+            @apply border-red-500 text-red-100 shadow-xl; /* Stronger shadow */
+            background: linear-gradient(145deg, #991b1b, #7f1d1d); /* Dark red gradient */
+            border-color: #ef4444;
+            color: #fee2e2;
+            pointer-events: none; /* Disable clicks after selection */
+        }
+        .quiz-option-button.incorrect::before {
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent); /* Subtle gloss for incorrect */
+        }
+
+        /* Disabled state for all buttons after an answer is chosen */
+        .quiz-option-button:disabled {
+            opacity: 0.6; /* Slightly more opaque for disabled */
+            cursor: not-allowed;
+            pointer-events: none; /* Ensure no interaction */
+            transform: none; /* Remove lift effect when disabled */
+            box-shadow: none; /* Remove shadow when disabled */
+        }
+
+        /* Custom radio button styling */
+        .quiz-option-button input[type="radio"] {
+            /* Hide default radio button */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            border-radius: 50%;
+            border: 2px solid #9ca3af; /* slate-400 */
+            background-color: #374151; /* slate-700 */
+            transition: all 0.2s ease-in-out;
+            flex-shrink: 0; /* Prevent shrinking in flex container */
+            position: relative;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Checked state for custom radio button */
+        .quiz-option-button input[type="radio"]:checked {
+            border-color: #3b82f6; /* blue-500 */
+            background-color: #3b82f6; /* blue-500 */
+        }
+
+        /* Inner dot for checked state */
+        .quiz-option-button input[type="radio"]:checked::after {
+            content: '';
+            display: block;
+            width: 0.5rem; /* 8px */
+            height: 0.5rem; /* 8px */
+            border-radius: 50%;
+            background: #e5e7eb; /* light gray-200 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Correct state for custom radio button */
+        .quiz-option-button.correct input[type="radio"] {
+            border-color: #10b981; /* green-400 */
+            background-color: #10b981; /* green-400 */
+        }
+        .quiz-option-button.correct input[type="radio"]:checked::after {
+            background: #d1fae5; /* green-100 */
+        }
+
+        /* Incorrect state for custom radio button */
+        .quiz-option-button.incorrect input[type="radio"] {
+            border-color: #ef4444; /* red-500 */
+            background-color: #ef4444; /* red-500 */
+        }
+        .quiz-option-button.incorrect input[type="radio"]:checked::after {
+            background: #fee2e2; /* red-100 */
+        }
+
+
+        .quiz-feedback-box {
+            @apply p-3 mt-4 rounded-md text-sm;
+        }
+        .quiz-feedback-box.hint {
+            @apply bg-yellow-900 border-l-4 border-yellow-500 text-yellow-100;
+        }
+        .quiz-feedback-box.rationale {
+            @apply bg-blue-900 border-l-4 border-blue-500 text-blue-100;
+        }
+        .quiz-feedback-message {
+            @apply text-center text-lg font-bold mt-4;
+        }
+        .quiz-feedback-correct {
+            color: #34d399 !important; /* green-400 */
+        }
+        .quiz-feedback-incorrect {
+            color: #f87171 !important; /* red-400 */
+        }
+    </style>
+</head>
+<body class="p-4" style="visibility: hidden;">
+    <div class="container mx-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden md:max-w-2xl lg:max-w-4xl">
+        <div class="p-6">
+            <h1 class="text-3xl font-bold text-center text-blue-400 mb-4">Amino Acid Titration Curves</h1>
+
+            <h2 class="text-2xl font-semibold text-blue-400 mb-3">What is an Amino Acid Titration Curve?</h2>
+            <p class="text-gray-300 mb-4 leading-relaxed">
+                A titration curve plots the pH of a solution against the amount of titrant (e.g., strong base like NaOH) added. For amino acids, these curves reveal the ionization states of their ionizable groups (alpha-carboxyl, alpha-amino, and sometimes a side chain group) as pH changes. Each "flat" region of the curve indicates a buffering capacity around a specific pKa value, where the amino acid resists changes in pH.
+            </p>
+
+            <h2 class="text-2xl font-semibold text-blue-400 mb-3">Experimental Setup & Outcomes</h2>
+            <p class="text-gray-300 mb-4 leading-relaxed">
+                Typically, an amino acid solution is prepared at a very low pH (fully protonated state) and then titrated with a strong base. As base is added, the protons are successively removed from the most acidic groups first.
+                <br><br>
+                <strong class="text-blue-300">Key Outcomes:</strong>
+                <ul class="list-disc list-inside text-gray-300 ml-4">
+                    <li><strong class="text-blue-300">pKa Values:</strong> The midpoints of the buffering regions correspond to the pKa values of the ionizable groups. These are the pH values where the concentration of the protonated and deprotonated forms of a group are equal.</li>
+                    <li><strong class="text-blue-300">Isoelectric Point (pI):</strong> The pH at which the net charge of the amino acid is zero. At this pH, the amino acid exists predominantly as a zwitterion and has minimal solubility in water and minimal migration in an electric field.</li>
+                    <li><strong class="text-blue-300">Buffering Regions:</strong> Areas where the amino acid acts as a buffer, resisting pH changes.</li>
+                    <li><strong class="text-blue-300">Dominant Ionic Forms:</strong> Understanding the predominant charge state of the amino acid at different pH values.</li>
+                </ul>
+            </p>
+
+            <h2 class="text-2xl font-semibold text-blue-400 mt-8 mb-4">Interactive Titration</h2>
+
+            <!-- Moved General Features box here -->
+            <div id="generalDescriptionBox" class="info-box p-4 rounded-md text-gray-200 leading-relaxed mb-6 hidden">
+                <p class="font-semibold text-blue-300 mb-2">General Features of the Titration Curve:</p>
+                <p id="generalDescriptionContent"></p>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:space-x-4 mb-6">
+                <div class="flex-1 mb-4 md:mb-0">
+                    <label for="aminoAcidSelect" class="block text-gray-300 text-sm font-bold mb-2">Select Amino Acid Type:</label>
+                    <div class="flex space-x-2">
+                        <button id="btnNeutral" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-colors duration-200 button-inactive" data-aa="Neutral">Neutral</button>
+                        <button id="btnAcidic" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-colors duration-200 button-inactive" data-aa="Acidic">Acidic</button>
+                        <button id="btnBasic" class="flex-1 py-2 px-4 rounded-lg font-semibold transition-colors duration-200 button-inactive" data-aa="Basic">Basic</button>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <label for="pHSlider" class="block text-gray-300 text-sm font-bold mb-2">Adjust pH: <span id="pHValue" class="text-blue-400 font-bold">7.00</span></label>
+                    <input type="range" id="pHSlider" min="0" max="14" value="7" step="0.01" class="w-full">
+                </div>
+            </div>
+
+            <div class="relative mb-6">
+                <canvas id="titrationCanvas" class="w-full h-96"></canvas>
+                <!-- Tooltip for displaying pH and equivalents on hover/touch -->
+                <div id="tooltip" class="absolute text-xs p-2 rounded-md shadow-lg hidden pointer-events-none z-10"></div>
+                <!-- Watermark Logo -->
+                <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="Beta Biosciences Logo" class="watermark">
+            </div>
+
+            <div id="descriptionBox" class="info-box p-4 rounded-md text-gray-200 leading-relaxed mb-8">
+                <p class="font-semibold text-blue-300 mb-2">Analytical Interpretation:</p>
+                <p id="currentDescription">Select an amino acid and adjust the pH to see the detailed analysis of its ionization state and buffering behavior.</p>
+            </div>
+
+            <!-- Quiz Section -->
+            <div id="quizSection" class="p-6 bg-gray-700 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold text-center text-blue-400 mb-6">Amino Acid Titration Quiz</h2>
+                <div id="quizContainer">
+                    <div id="questionDisplay" class="mb-6">
+                        <p id="questionText" class="text-lg font-semibold text-gray-200 mb-4"></p>
+                        <div id="answerOptions" class="grid grid-cols-1 gap-3">
+                            <!-- Answer options will be dynamically loaded here -->
+                        </div>
+                        <div id="feedbackMessage" class="quiz-feedback-message hidden"></div>
+                    </div>
+
+                    <div id="quizControls" class="flex justify-between items-center mt-6">
+                        <button id="showHintBtn" class="py-2 px-4 rounded-lg bg-yellow-600 text-white font-semibold hover:bg-yellow-700 transition-colors duration-200">Show Hint</button>
+                        <button id="nextQuestionBtn" class="py-2 px-4 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors duration-200">Next Question</button>
+                    </div>
+
+                    <div id="hintDisplay" class="quiz-feedback-box hint hidden"></div>
+                    <div id="rationaleDisplay" class="quiz-feedback-box rationale hidden"></div>
+                    <div id="scoreDisplay" class="text-center text-xl font-bold text-blue-400 mt-6">Score: 0 / 0</div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Footer Section -->
+        <footer class="p-6 bg-gray-900 text-gray-400 text-center text-sm rounded-b-xl">
+            <!-- Logo inside Footer Section -->
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="Beta Biosciences Logo" class="footer-logo">
+            <p>&copy; 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: <a href="mailto:betabiosciences@gmail.com" class="text-blue-400 hover:underline">betabiosciences@gmail.com</a></p>
+            <p>Contact: +91 97 47 53 35 97</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- Security Layer ---
+        // This IIFE (Immediately Invoked Function Expression) checks the domain before running any app logic.
+        (function() {
+            const allowedDomain = "betabiosciences.github.io";
+            const currentDomain = window.location.hostname;
+
+            // If the current domain is not the allowed one, the script will stop executing
+            // and the page will remain blank because the body's visibility is hidden by default.
+            if (currentDomain !== allowedDomain) {
+                return; // Stop script execution
+            }
+
+            // If the domain is correct, make the content visible.
+            document.body.style.visibility = 'visible';
+            
+            // --- Main Application Logic (runs only on the allowed domain) ---
+
+            // Data for different amino acid types, including pKa values, pI calculation logic,
+            // and detailed descriptions for various pH ranges.
+            const aminoAcidsData = {
+                'Neutral': {
+                    name: 'Alanine',
+                    pKas: [2.34, 9.69], // pKa1 (alpha-COOH), pKa2 (alpha-NH3+)
+                    piCalculation: (pKas) => (pKas[0] + pKas[1]) / 2, // pI for neutral AAs is average of alpha-COOH and alpha-NH3+ pKas
+                    equivalentsMax: 2, // Max equivalents of base for plotting
+                    generalDescription: `Neutral amino acids like Alanine have two ionizable groups: the alpha-carboxyl and alpha-amino groups. Their titration curves exhibit <strong>two buffering regions</strong>, one around pKa<sub>1</sub> (alpha-COOH) and another around pKa<sub>2</sub> (alpha-NH<sub>3</sub><sup>+</sup>). The <strong>isoelectric point (pI) is typically found in the neutral pH range (around pH 6)</strong>, between pKa<sub>1</sub> and pKa<sub>2</sub>.`,
+                    chargeStates: [
+                        // Descriptions for different pH ranges, explaining dominant ionic forms and net charge
+                        { pHRange: [0, 2.34], charge: '+1', description: (aa) => `At this very acidic pH, ${aa} is fully protonated. The alpha-carboxyl group is protonated (COOH) and the alpha-amino group is protonated (NH<sub>3</sub><sup>+</sup>). The net charge is +1.` },
+                        { pHRange: [2.34, 6.02], charge: '0', description: (aa) => `Between pKa<sub>1</sub> and pI, the alpha-carboxyl group is deprotonated (COO<sup>-</sup>), and the alpha-amino group is protonated (NH<sub>3</sub><sup>+</sup>). This is the zwitterionic form, with a net charge = 0. This region shows the buffering capacity of the alpha-carboxyl group.` },
+                        { pHRange: [6.02, 9.69], charge: '0', description: (aa) => `Between pI and pKa<sub>2</sub>, the alpha-carboxyl group is deprotonated (COO<sup>-</sup>), and the alpha-amino group is protonated (NH<sub>3</sub><sup>+</sup>). This is still the zwitterionic form, with a net charge = 0. The pI is the point where the net charge is exactly zero.` },
+                        { pHRange: [9.69, 14], charge: '-1', description: (aa) => `At this alkaline pH, ${aa} is fully deprotonated. Both the alpha-carboxyl group (COO<sup>-</sup>) and the alpha-amino group (NH<sub>2</sub>) are deprotonated. The net charge is -1. This region shows the buffering capacity of the alpha-amino group.` }
+                    ]
+                },
+                'Acidic': {
+                    name: 'Aspartic Acid',
+                    pKas: [1.88, 3.65, 9.60], // pKa1 (alpha-COOH), pKa2 (side chain COOH), pKa3 (alpha-NH3+)
+                    piCalculation: (pKas) => (pKas[0] + pKas[1]) / 2, // pI for acidic AAs is average of the two acidic pKas
+                    equivalentsMax: 3,
+                    generalDescription: `Acidic amino acids like Aspartic Acid have three ionizable groups: the alpha-carboxyl, alpha-amino, and an acidic side chain (e.g., another carboxyl group). Their titration curves exhibit <strong>three buffering regions</strong>: one around pKa<sub>1</sub> (alpha-COOH), one around pKa<sub>2</sub> (side chain COOH), and one around pKa<sub>3</sub> (alpha-NH<sub>3</sub><sup>+</sup>). The <strong>isoelectric point (pI) is typically found at an acidic pH (below 7)</strong>, usually between the two acidic pKa values (pKa<sub>1</sub> and pKa<sub>2</sub>).`,
+                    chargeStates: [
+                        { pHRange: [0, 1.88], charge: '+1', description: (aa) => `At this very acidic pH, ${aa} is fully protonated. All three ionizable groups (alpha-COOH, side chain COOH, alpha-NH<sub>3</sub><sup>+</sup>) are protonated. The net charge is +1.` },
+                        { pHRange: [1.88, 3.65], charge: '0', description: (aa) => `Between pKa<sub>1</sub> and pKa<sub>2</sub>, the alpha-carboxyl group is deprotonated (COO<sup>-</sup>), while the side chain COOH and alpha-NH<sub>3</sub><sup>+</sup> remain protonated. The net charge is 0. This is the buffering region for the alpha-carboxyl group. The pI is within this range, where the net charge transitions from +1 to 0.` },
+                        { pHRange: [3.65, 9.60], charge: '-1', description: (aa) => `Between pKa<sub>2</sub> and pKa<sub>3</sub>, both the alpha-carboxyl (COO<sup>-</sup>) and the side chain carboxyl (COO<sup>-</sup>) are deprotonated, while the alpha-amino group (NH<sub>3</sub><sup>+</sup>) is still protonated. The net charge is -1. This region shows the buffering capacity of the side chain carboxyl group.` },
+                        { pHRange: [9.60, 14], charge: '-2', description: (aa) => `At this highly alkaline pH, ${aa} is fully deprotonated. All three groups (alpha-COO<sup>-</sup>, side chain COO<sup>-</sup>, alpha-NH<sub>2</sub>) are deprotonated. The net charge is -2. This region shows the buffering capacity of the alpha-amino group.` }
+                    ]
+                },
+                'Basic': {
+                    name: 'Lysine',
+                    pKas: [2.18, 8.95, 10.53], // pKa1 (alpha-COOH), pKa2 (alpha-NH3+), pKa3 (side chain NH3+)
+                    piCalculation: (pKas) => (pKas[1] + pKas[2]) / 2, // pI for basic AAs is average of the two basic pKas
+                    equivalentsMax: 3,
+                    generalDescription: `Basic amino acids like Lysine have three ionizable groups: the alpha-carboxyl, alpha-amino, and a basic side chain (e.g., another amino group). Their titration curves also exhibit <strong>three buffering regions</strong>: one around pKa<sub>1</sub> (alpha-COOH), one around pKa<sub>2</sub> (alpha-NH<sub>3</sub><sup>+</sup>), and one around pKa<sub>3</sub> (side chain NH<sub>3</sub><sup>+</sup>). The <strong>isoelectric point (pI) is typically found at an alkaline pH (above 7)</strong>, usually between the two basic pKa values (pKa<sub>2</sub> and pKa<sub>3</sub>).`,
+                    chargeStates: [
+                        { pHRange: [0, 2.18], charge: '+2', description: (aa) => `At this very acidic pH, ${aa} is fully protonated. All three ionizable groups (alpha-COOH, alpha-NH<sub>3</sub><sup>+</sup>, side chain NH<sub>3</sub><sup>+</sup>) are protonated. The net charge is +2.` },
+                        { pHRange: [2.18, 8.95], charge: '+1', description: (aa) => `Between pKa<sub>1</sub> and pKa<sub>2</sub>, the alpha-carboxyl group is deprotonated (COO<sup>-</sup>), while both amino groups (alpha-NH<sub>3</sub><sup>+</sup>, side chain NH<sub>3</sub><sup>+</sup>) remain protonated. The net charge is +1. This is the buffering region for the alpha-carboxyl group.` },
+                        { pHRange: [8.95, 10.53], charge: '0', description: (aa) => `Between pKa<sub>2</sub> and pKa<sub>3</sub>, the alpha-carboxyl (COO<sup>-</sup>) and alpha-amino (NH<sub>2</sub>) groups are deprotonated, while the side chain amino group (NH<sub>3</sub><sup>+</sup>) is still protonated. The net charge is 0. This is the buffering region for the alpha-amino group. The pI is within this range, where the net charge transitions from +1 to 0.` },
+                        { pHRange: [10.53, 14], charge: '-1', description: (aa) => `At this highly alkaline pH, ${aa} is fully deprotonated. All three groups (alpha-COO<sup>-</sup>, alpha-NH<sub>2</sub>, side chain NH<sub>2</sub>) are deprotonated. The net charge is -1. This region shows the buffering capacity of the alpha-amino group.` }
+                    ]
+                }
+            };
+
+            // Get references to DOM elements
+            const canvas = document.getElementById('titrationCanvas');
+            const ctx = canvas.getContext('2d');
+            const pHSlider = document.getElementById('pHSlider');
+            const pHValueSpan = document.getElementById('pHValue');
+            const descriptionBox = document.getElementById('currentDescription');
+            const tooltip = document.getElementById('tooltip');
+            const generalDescriptionBox = document.getElementById('generalDescriptionBox');
+            const generalDescriptionContent = document.getElementById('generalDescriptionContent');
+
+            // State variables for the current amino acid and pH
+            let currentAminoAcidType = null;
+            let currentAminoAcidData = null;
+            let currentPH = parseFloat(pHSlider.value);
+
+            /**
+             * Resizes the canvas to fit its parent container and redraws the curve.
+             * This ensures responsiveness on different screen sizes.
+             */
+            function resizeCanvas() {
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth;
+                canvas.height = 400; // Fixed height for better control over aspect ratio
+                drawCurve();
+            }
+
+            /**
+             * Generates a series of points (pH vs. equivalents of base) to draw the titration curve.
+             * This function now uses the Henderson-Hasselbalch equation to calculate the
+             * equivalents of base added for each pH, resulting in a smoother and more accurate curve.
+             * @param {number[]} pKas - Array of pKa values for the amino acid.
+             * @returns {Array<{x: number, y: number}>} An array of points for the curve.
+             */
+            function generateTitrationCurvePoints(pKas) {
+                const points = [];
+                const pH_INCREMENT = 0.01; // Small pH increment for smooth curve
+
+                for (let pH = 0.0; pH <= 14.0; pH += pH_INCREMENT) {
+                    let equivalents = 0;
+                    pKas.forEach(pKa => {
+                        equivalents += 1 / (1 + Math.pow(10, pKa - pH));
+                    });
+                    points.push({ x: equivalents, y: pH });
+                }
+                points.sort((a, b) => a.x - b.x);
+                return points;
+            }
+
+            /**
+             * Draws the titration curve, axes, labels, pKa points, pI point, and current pH marker on the canvas.
+             */
+            function drawCurve() {
+                if (!currentAminoAcidData) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = '16px Inter';
+                    ctx.fillStyle = '#9ca3af';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Select an amino acid to begin titration.', canvas.width / 2, canvas.height / 2);
+                    return;
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const pKas = currentAminoAcidData.pKas;
+                const pI = currentAminoAcidData.piCalculation(pKas);
+                const equivalentsMax = pKas.length;
+
+                const padding = 50;
+                const chartWidth = canvas.width - 2 * padding;
+                const chartHeight = canvas.height - 2 * padding;
+                const xScale = chartWidth / equivalentsMax;
+                const yScale = chartHeight / 14;
+
+                ctx.strokeStyle = '#374151';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i <= equivalentsMax; i += 0.5) {
+                    const x = padding + i * xScale;
+                    ctx.beginPath();
+                    ctx.moveTo(x, padding);
+                    ctx.lineTo(x, canvas.height - padding);
+                    ctx.stroke();
+                }
+                for (let i = 0; i <= 14; i += 1) {
+                    const y = canvas.height - padding - i * yScale;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(canvas.width - padding, y);
+                    ctx.stroke();
+                }
+
+                ctx.beginPath();
+                ctx.strokeStyle = '#9ca3af';
+                ctx.lineWidth = 2;
+                ctx.moveTo(padding, padding);
+                ctx.lineTo(padding, canvas.height - padding);
+                ctx.moveTo(padding, canvas.height - padding);
+                ctx.lineTo(canvas.width - padding, canvas.height - padding);
+                ctx.stroke();
+
+                ctx.font = '14px Inter';
+                ctx.fillStyle = '#e5e7eb';
+                ctx.textAlign = 'right';
+                for (let i = 0; i <= 14; i += 2) {
+                    const y = canvas.height - padding - i * yScale;
+                    ctx.fillText(i.toString(), padding - 10, y + 5);
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(padding + 5, y);
+                    ctx.stroke();
+                }
+                ctx.save();
+                ctx.translate(padding / 2, canvas.height / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.textAlign = 'center';
+                ctx.fillText('pH', 0, 0);
+                ctx.restore();
+
+                ctx.textAlign = 'center';
+                for (let i = 0; i <= equivalentsMax; i += 0.5) {
+                    const x = padding + i * xScale;
+                    ctx.fillText(i.toFixed(1), x, canvas.height - padding + 20);
+                    ctx.beginPath();
+                    ctx.moveTo(x, canvas.height - padding);
+                    ctx.lineTo(x, canvas.height - padding - 5);
+                    ctx.stroke();
+                }
+                ctx.fillText('Equivalents of OH- Added', canvas.width / 2, canvas.height - padding + 40);
+
+                const curvePoints = generateTitrationCurvePoints(pKas);
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                gradient.addColorStop(0, '#3b82f6');
+                gradient.addColorStop(1, '#8b5cf6');
+                ctx.beginPath();
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = 4;
+                if (curvePoints.length > 0) {
+                    ctx.moveTo(padding + curvePoints[0].x * xScale, canvas.height - padding - curvePoints[0].y * yScale);
+                    for (let i = 1; i < curvePoints.length; i++) {
+                        ctx.lineTo(padding + curvePoints[i].x * xScale, canvas.height - padding - curvePoints[i].y * yScale);
+                    }
+                }
+                ctx.stroke();
+
+                ctx.font = '12px Inter';
+                ctx.fillStyle = '#ef4444';
+                ctx.textAlign = 'left';
+                pKas.forEach((pKa, index) => {
+                    let pKaXOnCurve = 0;
+                    let minDiff = Infinity;
+                    for (let i = 0; i < curvePoints.length; i++) {
+                        const diff = Math.abs(curvePoints[i].y - pKa);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            pKaXOnCurve = curvePoints[i].x;
+                        }
+                    }
+                    const x = padding + pKaXOnCurve * xScale;
+                    const y = canvas.height - padding - pKa * yScale;
+                    ctx.shadowColor = '#ef4444';
+                    ctx.shadowBlur = 10;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, canvas.height - padding);
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(padding, y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#fca5a5';
+                    ctx.fillText(`pKa${index + 1}: ${pKa.toFixed(2)}`, x + 10, y - 5);
+                });
+
+                ctx.fillStyle = '#10b981';
+                ctx.textAlign = 'right';
+                let piXOnCurve = 0;
+                let minDiffPI = Infinity;
+                for (let i = 0; i < curvePoints.length; i++) {
+                    const diff = Math.abs(curvePoints[i].y - pI);
+                    if (diff < minDiffPI) {
+                        minDiffPI = diff;
+                        piXOnCurve = curvePoints[i].x;
+                    }
+                }
+                const xPI = padding + piXOnCurve * xScale;
+                const yPI = canvas.height - padding - pI * yScale;
+                ctx.shadowColor = '#10b981';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(xPI, yPI, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = '#10b981';
+                ctx.beginPath();
+                ctx.moveTo(xPI, yPI);
+                ctx.lineTo(xPI, canvas.height - padding);
+                ctx.moveTo(xPI, yPI);
+                ctx.lineTo(padding, yPI);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#6ee7b7';
+                ctx.fillText(`pI: ${pI.toFixed(2)}`, xPI - 10, yPI - 5);
+
+                ctx.fillStyle = '#f97316';
+                const currentY = canvas.height - padding - currentPH * yScale;
+                let currentXOnCurve = 0;
+                if (curvePoints.length > 1) {
+                    for (let i = 0; i < curvePoints.length - 1; i++) {
+                        const p1 = curvePoints[i];
+                        const p2 = curvePoints[i + 1];
+                        if ((currentPH >= p1.y && currentPH <= p2.y) || (currentPH <= p1.y && currentPH >= p2.y)) {
+                            currentXOnCurve = p1.x + (currentPH - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+                            break;
+                        }
+                    }
+                }
+                const currentX = padding + currentXOnCurve * xScale;
+                ctx.shadowColor = '#f97316';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.setLineDash([2, 2]);
+                ctx.strokeStyle = '#f97316';
+                ctx.beginPath();
+                ctx.moveTo(currentX, currentY);
+                ctx.lineTo(currentX, canvas.height - padding);
+                ctx.moveTo(currentX, currentY);
+                ctx.lineTo(padding, currentY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#fdba74';
+                ctx.fillText(`Current pH: ${currentPH.toFixed(2)}`, currentX + 10, currentY - 10);
+            }
+
+            /**
+             * Updates the analytical description box based on the current pH and selected amino acid.
+             */
+            function updateDescription() {
+                if (!currentAminoAcidData) {
+                    descriptionBox.innerHTML = '<p class="font-semibold text-blue-300 mb-2">Analytical Interpretation:</p><p>Select an amino acid and adjust the pH to see the detailed analysis of its ionization state and buffering behavior.</p>';
+                    return;
+                }
+                const pKas = currentAminoAcidData.pKas;
+                const pI = currentAminoAcidData.piCalculation(pKas);
+                const aaName = currentAminoAcidData.name;
+                let description = '';
+                let netCharge = 'Varies';
+                for (const state of currentAminoAcidData.chargeStates) {
+                    if (currentPH >= state.pHRange[0] && currentPH <= state.pHRange[1]) {
+                        description = state.description(aaName);
+                        netCharge = state.charge;
+                        break;
+                    }
+                }
+                const tolerance = 0.15;
+                if (Math.abs(currentPH - pI) < tolerance) {
+                    description += `<br><br><strong>At pH ${currentPH.toFixed(2)} (near pI ${pI.toFixed(2)}):</strong> The amino acid exists predominantly as a zwitterion with a net charge of ${netCharge}. It has minimal solubility and will not migrate in an electric field. This is a crucial point for separation techniques like isoelectric focusing.`;
+                }
+                pKas.forEach((pKa, index) => {
+                    if (Math.abs(currentPH - pKa) < tolerance) {
+                        description += `<br><br><strong>At pH ${currentPH.toFixed(2)} (near pKa${index + 1} ${pKa.toFixed(2)}):</strong> This is a buffering region. The concentration of the protonated and deprotonated forms of the group associated with pKa${index + 1} are approximately equal. The solution resists changes in pH.`;
+                    }
+                });
+                descriptionBox.innerHTML = `<p class="font-semibold text-blue-300 mb-2">Analytical Interpretation for ${aaName} at pH ${currentPH.toFixed(2)} (Net Charge: ${netCharge}):</p><p>${description}</p>`;
+            }
+
+            pHSlider.addEventListener('input', (event) => {
+                currentPH = parseFloat(event.target.value);
+                pHValueSpan.textContent = currentPH.toFixed(2);
+                drawCurve();
+                updateDescription();
+            });
+
+            document.getElementById('btnNeutral').addEventListener('click', () => selectAminoAcid('Neutral'));
+            document.getElementById('btnAcidic').addEventListener('click', () => selectAminoAcid('Acidic'));
+            document.getElementById('btnBasic').addEventListener('click', () => selectAminoAcid('Basic'));
+
+            /**
+             * Handles the selection of an amino acid type.
+             */
+            function selectAminoAcid(type) {
+                currentAminoAcidType = type;
+                currentAminoAcidData = aminoAcidsData[type];
+                document.querySelectorAll('.flex-1 button').forEach(button => {
+                    if (button.dataset.aa === type) {
+                        button.classList.remove('button-inactive');
+                        button.classList.add('button-active');
+                    } else {
+                        button.classList.remove('button-active');
+                        button.classList.add('button-inactive');
+                    }
+                });
+                generalDescriptionContent.innerHTML = currentAminoAcidData.generalDescription;
+                generalDescriptionBox.classList.remove('hidden');
+                if (type === 'Neutral') pHSlider.value = '7';
+                else if (type === 'Acidic') pHSlider.value = '3';
+                else if (type === 'Basic') pHSlider.value = '9';
+                currentPH = parseFloat(pHSlider.value);
+                pHValueSpan.textContent = currentPH.toFixed(2);
+                drawCurve();
+                updateDescription();
+            }
+
+            canvas.addEventListener('mousemove', handleCanvasInteraction);
+            canvas.addEventListener('touchmove', handleCanvasInteraction, { passive: true });
+            canvas.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+            canvas.addEventListener('touchend', () => tooltip.style.display = 'none');
+
+            /**
+             * Handles mouse and touch interactions on the canvas to display a tooltip.
+             */
+            function handleCanvasInteraction(event) {
+                if (!currentAminoAcidData) {
+                    tooltip.style.display = 'none';
+                    return;
+                }
+                const rect = canvas.getBoundingClientRect();
+                let clientX, clientY;
+                if (event.touches) {
+                    clientX = event.touches[0].clientX;
+                    clientY = event.touches[0].clientY;
+                } else {
+                    clientX = event.clientX;
+                    clientY = event.clientY;
+                }
+                const mouseX = clientX - rect.left;
+                const mouseY = clientY - rect.top;
+                const padding = 50;
+                const chartWidth = canvas.width - 2 * padding;
+                const chartHeight = canvas.height - 2 * padding;
+                const equivalentsMax = currentAminoAcidData.pKas.length;
+                const xScale = chartWidth / equivalentsMax;
+                const yScale = chartHeight / 14;
+                const hoveredEq = (mouseX - padding) / xScale;
+                const hoveredPH = (canvas.height - padding - mouseY) / yScale;
+                if (hoveredEq >= 0 && hoveredEq <= equivalentsMax && hoveredPH >= 0 && hoveredPH <= 14) {
+                    tooltip.style.display = 'block';
+                    tooltip.style.left = `${mouseX + 10}px`;
+                    tooltip.style.top = `${mouseY + 10}px`;
+                    tooltip.innerHTML = `pH: ${hoveredPH.toFixed(2)}<br>Eq: ${hoveredEq.toFixed(2)}`;
+                } else {
+                    tooltip.style.display = 'none';
+                }
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            window.onload = () => {
+                resizeCanvas();
+                selectAminoAcid('Neutral');
+                initializeQuiz();
+            };
+
+            // --- Quiz Logic ---
+            const quizData = {
+                "questions": [
+                    {
+                        "question": "Which of the following amino acids would exhibit a titration curve with three distinct buffering regions when titrated from a strongly acidic to a strongly basic pH?",
+                        "answerOptions": [
+                            { "text": "Alanine", "isCorrect": false, "rationale": "Alanine is a neutral amino acid and has only two ionizable groups (alpha-carboxyl and alpha-amino), resulting in two buffering regions." },
+                            { "text": "Glycine", "isCorrect": false, "rationale": "Glycine is a neutral amino acid with only two ionizable groups (alpha-carboxyl and alpha-amino), leading to two buffering regions." },
+                            { "text": "Histidine", "isCorrect": true, "rationale": "Histidine has three ionizable groups: the alpha-carboxyl, the alpha-amino, and the imidazole group in its R-chain, each contributing a buffering region." },
+                            { "text": "Leucine", "isCorrect": false, "rationale": "Leucine is a neutral, nonpolar amino acid and possesses only two ionizable groups (alpha-carboxyl and alpha-amino), thus showing two buffering regions." }
+                        ],
+                        "hint": "Consider the number of ionizable groups present in the amino acid structure beyond the standard alpha-carboxyl and alpha-amino groups."
+                    },
+                    {
+                        "question": "For a typical amino acid with an acidic R-group, if the pKa values for the alpha-carboxyl, R-group, and alpha-amino are 2.0, 4.0, and 9.0 respectively, what would be the approximate isoelectric point (pI)?",
+                        "answerOptions": [
+                            { "text": "3.0", "isCorrect": true, "rationale": "For an acidic amino acid, pI is the average of the pKa values of the alpha-carboxyl group and the acidic R-group, so (2.0 + 4.0)/2 = 3.0." },
+                            { "text": "5.5", "isCorrect": false, "rationale": "A pI of 5.5 would be expected for a neutral amino acid, not one with an acidic R-group." },
+                            { "text": "6.5", "isCorrect": false, "rationale": "This value does not correspond to the average of the pKa values for the acidic and neutral forms relevant to the pI calculation for an acidic amino acid." },
+                            { "text": "4.5", "isCorrect": false, "rationale": "This value would be obtained by averaging the R-group pKa and the alpha-amino pKa, which is incorrect for calculating pI of an acidic amino acid." }
+                        ],
+                        "hint": "Remember that the pI for an acidic amino acid is determined by the average of the two most acidic pKa values."
+                    },
+                    {
+                        "question": "At a pH equal to the pKa of its alpha-carboxyl group, what is the predominant charge state of the alpha-amino group of an amino acid like Alanine?",
+                        "answerOptions": [
+                            { "text": "Fully deprotonated (neutral)", "isCorrect": false, "rationale": "At a pH equal to the alpha-carboxyl pKa (typically around 2-3), the alpha-amino group (pKa typically around 9-10) will still be predominantly protonated." },
+                            { "text": "Fully protonated (positive)", "isCorrect": true, "rationale": "At such low pH (e.g., pH 2), the alpha-amino group (pKa ~ 9.0) will be significantly below its pKa, hence predominantly in its protonated, positively charged form." },
+                            { "text": "Half protonated, half deprotonated", "isCorrect": false, "rationale": "This would only occur if the pH was equal to the pKa of the alpha-amino group, which is not the case here." },
+                            { "text": "Negatively charged", "isCorrect": false, "rationale": "The alpha-amino group is positively charged when protonated and neutral when deprotonated; it does not carry a negative charge." }
+                        ],
+                        "hint": "Consider the relationship between pH and pKa for the alpha-amino group and how it influences its protonation state."
+                    },
+                    {
+                        "question": "When titrating a basic amino acid like Lysine from pH 1 to 12, how many equivalents of base would be required to reach the second equivalence point, assuming starting from the fully protonated form?",
+                        "answerOptions": [
+                            { "text": "1 equivalent", "isCorrect": false, "rationale": "1 equivalent would only neutralize one of the three protonated groups." },
+                            { "text": "2 equivalents", "isCorrect": true, "rationale": "Starting from the fully protonated form, two equivalents of base are required to deprotonate the alpha-carboxyl group and the epsilon-amino group of the R-chain, reaching the second equivalence point." },
+                            { "text": "3 equivalents", "isCorrect": false, "rationale": "3 equivalents would be required to fully deprotonate all three ionizable groups (alpha-carboxyl, alpha-amino, and R-group amino) to reach the third equivalence point." },
+                            { "text": "4 equivalents", "isCorrect": false, "rationale": "Lysine only has three ionizable groups, so four equivalents of base are not relevant in its titration." }
+                        ],
+                        "hint": "Think about the order in which the ionizable groups of Lysine lose their protons as base is added, and which groups are deprotonated by the second equivalence point."
+                    },
+                    {
+                        "question": "The region of a titration curve where the pH changes most gradually upon addition of acid or base corresponds to:",
+                        "answerOptions": [
+                            { "text": "Equivalence points", "isCorrect": false, "rationale": "Equivalence points are regions where the pH changes most rapidly due to the complete neutralization of an ionizable group." },
+                            { "text": "Midpoints of buffering regions", "isCorrect": true, "rationale": "At the midpoint of a buffering region (where pH = pKa), the concentration of the protonated and deprotonated forms are equal, providing maximal buffering capacity." },
+                            { "text": "The isoelectric point", "isCorrect": false, "rationale": "The isoelectric point represents the pH at which the net charge is zero, often occurring between buffering regions, not necessarily in a region of gradual pH change." },
+                            { "text": "Points far from any pKa values", "isCorrect": false, "rationale": "Away from pKa values, the buffering capacity is lower, and the pH typically changes more rapidly." }
+                        ],
+                        "hint": "Consider where the buffering capacity of a system is maximized relative to its pKa."
+                    },
+                    {
+                        "question": "Which of the following statements is true regarding the net charge of an amino acid at its isoelectric point (pI)?",
+                        "answerOptions": [
+                            { "text": "The net charge is always positive.", "isCorrect": false, "rationale": "At the pI, the net charge of the amino acid is zero, not positive." },
+                            { "text": "The net charge is always negative.", "isCorrect": false, "rationale": "At the pI, the net charge of the amino acid is zero, not negative." },
+                            { "text": "The net charge is zero.", "isCorrect": true, "rationale": "By definition, the isoelectric point (pI) is the pH at which an amino acid has an overall net charge of zero." },
+                            { "text": "The net charge depends on the R-group.", "isCorrect": false, "rationale": "While the pI value depends on the R-group, the net charge *at* the pI is always zero, regardless of the R-group." }
+                        ],
+                        "hint": "Recall the definition of the isoelectric point for an amino acid."
+                    },
+                    {
+                        "question": "If a dipeptide is formed between the alpha-carboxyl group of Alanine and the alpha-amino group of Glycine, how would its titration curve compare to that of two individual amino acids?",
+                        "answerOptions": [
+                            { "text": "It would have more distinct buffering regions.", "isCorrect": false, "rationale": "Peptide bond formation removes two ionizable groups (the alpha-carboxyl of the first amino acid and the alpha-amino of the second), reducing the number of titratable groups." },
+                            { "text": "It would have fewer ionizable groups contributing to the titration.", "isCorrect": true, "rationale": "The peptide bond formation neutralizes the alpha-carboxyl and alpha-amino groups involved in the bond, reducing the number of groups that can be titrated." },
+                            { "text": "Its pI would be significantly higher than either individual amino acid.", "isCorrect": false, "rationale": "The pI shift would depend on the remaining titratable groups, but 'significantly higher' is not a general rule due to peptide bond formation." },
+                            { "text": "The buffering capacity at physiological pH would be enhanced.", "isCorrect": false, "rationale": "The loss of ionizable groups due to peptide bond formation generally reduces, rather than enhances, buffering capacity unless specific R-groups contribute." }
+                        ],
+                        "hint": "Consider which functional groups are consumed in the formation of a peptide bond and how this affects the overall number of titratable groups."
+                    },
+                    {
+                        "question": "A student performs a titration of an unknown amino acid. They observe a sharp pH change around pH 2.3 and another around pH 9.7. What type of amino acid is most likely being titrated?",
+                        "answerOptions": [
+                            { "text": "An acidic amino acid", "isCorrect": false, "rationale": "An acidic amino acid would typically show a third pKa in the acidic range due to its R-group." },
+                            { "text": "A basic amino acid", "isCorrect": false, "rationale": "A basic amino acid would typically show a third pKa in the basic range due to its R-group." },
+                            { "text": "A neutral amino acid", "isCorrect": true, "rationale": "The pKa values of 2.3 and 9.7 are characteristic of the alpha-carboxyl and alpha-amino groups, respectively, which is typical for a neutral amino acid without an ionizable R-group." },
+                            { "text": "A hydrophobic amino acid", "isCorrect": false, "rationale": "Hydrophobicity refers to the R-group's interaction with water, not directly to the number or position of pKa values on a titration curve." }
+                        ],
+                        "hint": "Relate the observed pKa values to the typical pKa ranges for the alpha-carboxyl and alpha-amino groups of common amino acids."
+                    },
+                    {
+                        "question": "Using the Henderson-Hasselbalch equation, if the pH of a solution containing an amino acid is 1 unit above the pKa of its R-group, what is the approximate ratio of the deprotonated form to the protonated form of that R-group?",
+                        "answerOptions": [
+                            { "text": "1:10", "isCorrect": false, "rationale": "If pH is 1 unit *below* pKa, the ratio of deprotonated to protonated would be 1:10." },
+                            { "text": "10:1", "isCorrect": true, "rationale": "According to the Henderson-Hasselbalch equation, if pH = pKa + 1, then log([A-]/[HA]) = 1, meaning [A-]/[HA] = 10^1 = 10, or a 10:1 ratio of deprotonated to protonated." },
+                            { "text": "1:1", "isCorrect": false, "rationale": "A 1:1 ratio occurs when pH = pKa." },
+                            { "text": "100:1", "isCorrect": false, "rationale": "A 100:1 ratio would occur if pH was 2 units above the pKa." }
+                        ],
+                        "hint": "Recall the logarithmic relationship between pH, pKa, and the ratio of conjugate base to acid in the Henderson-Hasselbalch equation."
+                    },
+                    {
+                        "question": "Which form of an amino acid predominates at a pH well below its lowest pKa value (e.g., pH 1 for an amino acid with alpha-carboxyl pKa ~ 2.3)?",
+                        "answerOptions": [
+                            { "text": "Zwitterionic form", "isCorrect": false, "rationale": "The zwitterionic form is prevalent near the pI, where the net charge is zero, not at very low pH." },
+                            { "text": "Fully deprotonated form", "isCorrect": false, "rationale": "The fully deprotonated form would predominate at very high pH, well above the highest pKa." },
+                            { "text": "Fully protonated form", "isCorrect": true, "rationale": "At a pH significantly lower than all pKa values, all ionizable groups (carboxyl, amino, and any R-group) will be predominantly in their protonated forms, resulting in a net positive charge." },
+                            { "text": "Monomeric form", "isCorrect": false, "rationale": "Monomeric refers to the single amino acid unit, which doesn't describe its ionization state." }
+                        ],
+                        "hint": "Consider how the relative pH to pKa affects the protonation state of all ionizable groups on the amino acid."
+                    }
+                ]
+            };
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let answeredCurrentQuestion = false;
+            const questionText = document.getElementById('questionText');
+            const answerOptionsDiv = document.getElementById('answerOptions');
+            const showHintBtn = document.getElementById('showHintBtn');
+            const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+            const hintDisplay = document.getElementById('hintDisplay');
+            const rationaleDisplay = document.getElementById('rationaleDisplay');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const feedbackMessage = document.getElementById('feedbackMessage');
+
+            function initializeQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                loadQuestion();
+                updateScoreDisplay();
+                showHintBtn.addEventListener('click', showHint);
+                nextQuestionBtn.addEventListener('click', nextQuestion);
+            }
+
+            function loadQuestion() {
+                answeredCurrentQuestion = false;
+                hintDisplay.classList.add('hidden');
+                rationaleDisplay.classList.add('hidden');
+                rationaleDisplay.innerHTML = '';
+                feedbackMessage.classList.add('hidden');
+                feedbackMessage.textContent = '';
+                if (currentQuestionIndex < quizData.questions.length) {
+                    const question = quizData.questions[currentQuestionIndex];
+                    questionText.innerHTML = `${currentQuestionIndex + 1}. ${question.question}`;
+                    answerOptionsDiv.innerHTML = '';
+                    question.answerOptions.forEach((option, index) => {
+                        const button = document.createElement('button');
+                        button.innerHTML = `<input type="radio" name="quizOption" id="option${index}" value="${index}" class="hidden">
+                                            <label for="option${index}" class="flex items-center w-full cursor-pointer">
+                                                <span class="custom-radio-button mr-3"></span>
+                                                <span>${option.text}</span>
+                                            </label>`;
+                        button.classList.add('quiz-option-button');
+                        button.dataset.index = index;
+                        button.addEventListener('click', () => {
+                            const radioButton = button.querySelector('input[type="radio"]');
+                            if (radioButton) {
+                                radioButton.checked = true;
+                            }
+                            checkAnswer(index);
+                        });
+                        answerOptionsDiv.appendChild(button);
+                    });
+                    showHintBtn.classList.remove('hidden');
+                    nextQuestionBtn.textContent = 'Next Question';
+                } else {
+                    questionText.textContent = "Quiz Completed!";
+                    answerOptionsDiv.innerHTML = `<p class="text-center text-lg mt-4">You scored ${score} out of ${quizData.questions.length}!</p>`;
+                    showHintBtn.classList.add('hidden');
+                    nextQuestionBtn.textContent = 'Restart Quiz';
+                }
+            }
+
+            function checkAnswer(selectedIndex) {
+                if (answeredCurrentQuestion) return;
+                answeredCurrentQuestion = true;
+                const question = quizData.questions[currentQuestionIndex];
+                const selectedOption = question.answerOptions[selectedIndex];
+                const optionButtons = answerOptionsDiv.querySelectorAll('.quiz-option-button');
+                optionButtons.forEach((button, index) => {
+                    button.disabled = true;
+                    const radioButton = button.querySelector('input[type="radio"]');
+                    if (question.answerOptions[index].isCorrect) {
+                        button.classList.add('correct');
+                        if (radioButton) radioButton.checked = true;
+                    } else if (index === selectedIndex) {
+                        button.classList.add('incorrect');
+                        if (radioButton) radioButton.checked = true;
+                    }
+                });
+                feedbackMessage.classList.remove('hidden', 'quiz-feedback-correct', 'quiz-feedback-incorrect');
+                if (selectedOption.isCorrect) {
+                    feedbackMessage.textContent = "You're correct!";
+                    feedbackMessage.classList.add('quiz-feedback-correct');
+                    score++;
+                } else {
+                    feedbackMessage.textContent = "You're incorrect.";
+                    feedbackMessage.classList.add('quiz-feedback-incorrect');
+                }
+                updateScoreDisplay();
+                showRationale();
+            }
+
+            function showHint() {
+                const question = quizData.questions[currentQuestionIndex];
+                if (question.hint) {
+                    hintDisplay.innerHTML = `<p class="font-semibold">Hint:</p><p>${question.hint}</p>`;
+                    hintDisplay.classList.remove('hidden');
+                }
+                showHintBtn.classList.add('hidden');
+            }
+
+            function showRationale() {
+                const question = quizData.questions[currentQuestionIndex];
+                let rationaleHtml = '<p class="font-semibold">Explanation:</p>';
+                question.answerOptions.forEach(option => {
+                    rationaleHtml += `<p><strong>${option.text}:</strong> ${option.rationale}</p>`;
+                });
+                rationaleDisplay.innerHTML = rationaleHtml;
+                rationaleDisplay.classList.remove('hidden');
+            }
+
+            function nextQuestion() {
+                if (currentQuestionIndex < quizData.questions.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion();
+                } else {
+                    if (nextQuestionBtn.textContent === 'Restart Quiz') {
+                        initializeQuiz();
+                    } else {
+                        currentQuestionIndex++;
+                        loadQuestion();
+                    }
+                }
+            }
+
+            function updateScoreDisplay() {
+                scoreDisplay.textContent = `Score: ${score} / ${quizData.questions.length}`;
+            }
+        })();
+    </script>
+</body>
+</html>
