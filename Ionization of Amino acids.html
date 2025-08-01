@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amino Acid Ionization States</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Global reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif; /* Changed to Inter for consistency */
+        }
+        
+        /* Body styling for background and text color */
+        body {
+            background: linear-gradient(135deg, #0c0f1d, #12172e);
+            color: #e0e0ff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            line-height: 1.6;
+            touch-action: manipulation; /* Improves touch responsiveness */
+            -webkit-tap-highlight-color: transparent; /* Removes tap highlight on mobile */
+        }
+        
+        /* Container for content, centered and max-width */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+        
+        /* Header styling */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4d5bce;
+        }
+        
+        /* Main title styling with gradient text */
+        h1 {
+            font-size: 4.5rem !important;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #6d83f2, #a3b3ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(109, 131, 242, 0.3);
+        }
+        
+        /* Subtitle styling */
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a3b3ff;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Canvas container styling with glassmorphism effect */
+        .canvas-container {
+            background: rgba(18, 23, 46, 0.7);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(109, 131, 242, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Canvas element styling */
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: rgba(10, 14, 35, 0.7);
+            border-radius: 12px;
+            touch-action: manipulation;
+            max-width: 100%;
+        }
+        
+        /* Controls section styling */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* Control button styling */
+        .control-btn {
+            background: linear-gradient(45deg, #4d5bce, #6d83f2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(77, 91, 206, 0.4);
+            min-width: 140px;
+        }
+        
+        /* Control button hover effect */
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 91, 206, 0.6);
+        }
+        
+        /* Active state for control buttons */
+        .control-btn.active {
+            background: linear-gradient(45deg, #ff7e5f, #ff9a8b);
+            box-shadow: 0 4px 15px rgba(255, 126, 95, 0.4);
+        }
+        
+        /* Slider container styling */
+        .slider-container {
+            padding: 15px;
+            background: rgba(20, 25, 50, 0.8);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        /* Slider label styling */
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #a3b3ff;
+        }
+        
+        /* Slider input styling */
+        .slider {
+            width: 100%;
+            height: 18px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #5e72e4, #ff5733);
+            outline: none;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(109, 131, 242, 0.4);
+        }
+        
+        /* Slider thumb styling */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            border: 4px solid #6d83f2;
+        }
+        
+        /* Explanation section styling */
+        .explanation {
+            background: rgba(20, 25, 50, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #6d83f2;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Explanation heading styling */
+        .explanation h2 {
+            color: #6d83f2;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+        
+        /* State details styling (hidden by default) */
+        .state-details {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Active state details styling */
+        .state-details.active {
+            display: block;
+        }
+        
+        /* State title styling */
+        .state-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #ff9a8b;
+            font-size: 1.3rem;
+        }
+        
+        /* State icon styling */
+        .state-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 126, 95, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* pKa info section styling */
+        .pka-info {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* pKa card styling */
+        .pka-card {
+            background: rgba(30, 35, 70, 0.8);
+            padding: 15px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 200px;
+            border-top: 3px solid #6d83f2;
+        }
+        
+        /* pKa card heading styling */
+        .pka-card h4 {
+            color: #a3b3ff;
+            margin-bottom: 8px;
+        }
+        
+        /* Formula styling */
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: inline-block;
+            border: 1px solid rgba(109, 131, 242, 0.3);
+        }
+        
+        /* Charge styling */
+        .charge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(255, 126, 95, 0.2);
+            border-radius: 20px;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        
+        /* Mobile optimized message (hidden by default, shown on mobile) */
+        .mobile-optimized {
+            text-align: center;
+            color: #6d83f2;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* Keyframe animation for fade-in */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3.8rem !important;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .control-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                min-width: 120px;
+            }
+            
+            .explanation {
+                padding: 20px 15px;
+            }
+            
+            .mobile-optimized {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                gap: 10px;
+            }
+            
+            .control-btn {
+                min-width: 100px;
+                padding: 8px 15px;
+            }
+            
+            .pka-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        /* Quiz specific styles */
+        .quiz-container {
+            background: rgba(20, 25, 50, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #ff9a8b;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #a3b3ff;
+        }
+        .quiz-options div {
+            background: rgba(30, 35, 70, 0.8);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(109, 131, 242, 0.2);
+        }
+        .quiz-options div:hover {
+            background-color: rgba(40, 45, 80, 0.8);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .quiz-options div.selected {
+            border: 2px solid #ff9a8b;
+            box-shadow: 0 0 10px rgba(255, 126, 95, 0.5);
+        }
+        .quiz-options div.correct {
+            background-color: #28a745; /* Green for correct */
+            border-color: #28a745;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
+        }
+        .quiz-options div.incorrect {
+            background-color: #dc3545; /* Red for incorrect */
+            border-color: #dc3545;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
+        }
+        .quiz-explanation {
+            background: rgba(30, 35, 70, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 3px solid #a3b3ff;
+            display: none;
+        }
+        .quiz-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .quiz-score {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #a3b3ff;
+            margin-top: 20px;
+        }
+
+        /* Electrophoresis specific styles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: box-shadow 0.3s ease, background-color 0.5s ease;
+            z-index: 5;
+        }
+        
+        .cation {
+            background-color: #3b82f6;
+            box-shadow: 0 0 15px 5px rgba(59, 130, 246, 0.5);
+        }
+        
+        .anion {
+            background-color: #ef4444;
+            box-shadow: 0 0 15px 5px rgba(239, 68, 68, 0.5);
+        }
+        
+        .zwitterion {
+            background: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+            box-shadow: 0 0 15px 5px rgba(147, 51, 234, 0.5);
+        }
+        
+        .electrode {
+            position: absolute;
+            height: 100%;
+            width: 10px;
+            top: 0;
+            z-index: 2;
+        }
+        
+        .electrode-negative {
+            left: 0;
+            background: linear-gradient(to bottom, #ef4444, #b91c1c);
+            box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.3);
+        }
+        
+        .electrode-positive {
+            right: 0;
+            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+            box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.3);
+        }
+        
+        .slider-track {
+            height: 6px;
+            border-radius: 3px;
+            background: #334155;
+        }
+        
+        .slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+            transition: all 0.2s ease;
+        }
+        
+        .slider-thumb:hover {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.9);
+            transform: scale(1.1);
+        }
+        
+        .slider-thumb:active {
+            transform: scale(0.95);
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: transparent;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.7);
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .amino-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .amino-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+            100% { opacity: 0.2; }
+        }
+        
+        .field-lines {
+            animation: pulse 3s infinite;
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+        }
+        
+        .electrode-charge {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            z-index: 2;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .electrode-charge-negative {
+            color: #ef4444;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.9);
+            box-shadow: 0 0 12px 3px rgba(239, 68, 68, 0.4);
+        }
+        
+        .electrode-charge-positive {
+            color: #3b82f6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.9);
+            box-shadow: 0 0 12px 3px rgba(59, 130, 246, 0.4);
+        }
+        
+        @keyframes chargeGlow {
+            0% { text-shadow: 0 0 8px rgba(239, 68, 68, 0.7); }
+            50% { text-shadow: 0 0 15px rgba(239, 68, 68, 1); }
+            100% { text-shadow: 0 0 8px rgba(239, 68, 68, 0.7); }
+        }
+        
+        @keyframes chargeGlowBlue {
+            0% { text-shadow: 0 0 8px rgba(59, 130, 246, 0.7); }
+            50% { text-shadow: 0 0 15px rgba(59, 130, 246, 1); }
+            100% { text-shadow: 0 0 8px rgba(59, 130, 246, 0.7); }
+        }
+        
+        .electrode-charge-negative {
+            animation: chargeGlow 2s infinite;
+        }
+        
+        .electrode-charge-positive {
+            animation: chargeGlowBlue 2s infinite;
+        }
+        
+        .instruction-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.5rem;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instruction-step {
+            border-left: 2px solid #8b5cf6;
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+        }
+        
+        .instruction-step:last-child {
+            border-left: 2px solid transparent;
+        }
+        
+        .instruction-number {
+            background: #8b5cf6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-left: -1.75rem;
+            margin-bottom: -24px;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+        
+        .ph-input {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 0.25rem;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            width: 4rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        .ph-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+        }
+        
+        .pi-marker {
+            position: absolute;
+            bottom: -20px;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #a78bfa;
+            white-space: nowrap;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+        
+        .pi-marker::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 6px;
+            background-color: #a78bfa;
+        }
+        
+        .highlight-pulse {
+            animation: highlightPulse 2s ease-in-out;
+        }
+        
+        @keyframes highlightPulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+        
+        .center-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(139, 92, 246, 0.2);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+            z-index: 1;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            .pi-marker {
+                font-size: 8px;
+            }
+            
+            .electrode-charge {
+                width: 24px;
+                height: 24px;
+                font-size: 18px;
+            }
+            
+            .center-marker {
+                width: 16px;
+                height: 16px;
+            }
+            
+            .particle {
+                box-shadow: 0 0 20px 8px rgba(139, 92, 246, 0.5);
+            }
+            
+            .instruction-card {
+                max-height: 30vh;
+                overflow-y: auto;
+            }
+        }
+        
+        /* Collapsible instructions for mobile */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 1000px;
+        }
+        
+        /* Touch feedback */
+        .touch-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(139, 92, 246, 0.3);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+            animation: touchRipple 0.8s ease-out forwards;
+        }
+        
+        @keyframes touchRipple {
+            0% { width: 0; height: 0; opacity: 0.5; }
+            100% { width: 100px; height: 100px; opacity: 0; }
+        }
+        
+        /* Improved mobile controls */
+        .mobile-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            z-index: 20;
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 640px) {
+            .mobile-controls {
+                display: flex;
+            }
+            
+            .simulation-container {
+                margin-bottom: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script>
+(function() {
+    const allowedOrigin = "https://betabiosciences.github.io";
+    if (location.origin !== allowedOrigin) {
+        // Remove all content and prevent loading
+        document.documentElement.innerHTML = ""; // Wipe the entire DOM
+        document.write(""); // Prevent further rendering
+        window.stop();      // Halt any script or resource loading
+    }
+})();
+  </script>
+    <div class="container">
+        <header>
+            <h1>Amino Acid Ionization States</h1>
+            <p class="subtitle">Dive into the dynamic world of amino acids! Their charge isn't static; it's a fascinating dance with pH</p>
+        </header>
+        
+        <div class="canvas-container">
+            <canvas id="aminoCanvas" width="700" height="400"></canvas>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn active" data-state="acidic">Acidic State (pH &lt; pKa₁ &amp; pKa₂)</button>
+            <button class="control-btn" data-state="zwitterion">Zwitterion (pKa₁ &lt; pH &lt; pKa₂)</button>
+            <button class="control-btn" data-state="basic">Basic State (pH &gt; pKa₁ &amp; pKa₂)</button>
+        </div>
+        
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>pH Level: <span id="phValue">2.0</span></span>
+                <span>Net Charge: <span id="netCharge">+1</span></span>
+            </div>
+            <input type="range" min="0" max="14" step="0.1" value="2.0" class="slider" id="phSlider">
+        </div>
+        
+        <div class="explanation">
+            <h2>Ionization State Details</h2>
+            <div class="state-details active" id="acidic-details">
+                <div class="state-title">
+                    <div class="state-icon">1</div>
+                    <h3>Fully Protonated (Cationic) State</h3>
+                </div>
+                <p>At low pH (below the pKa of the carboxyl group), both the carboxyl group (-COOH) and the amino group (-NH₃⁺) are protonated.</p>
+                <p>The amino acid carries a <span class="charge">+1</span> net charge in this state.</p>
+                
+                <div class="pka-info">
+                    <div class="pka-card">
+                        <h4>Carboxyl Group</h4>
+                        <p>Protonated: -COOH</p>
+                        <p>pKa ≈ 2.0-2.5</p>
+                        <p>Charge: Neutral</p>
+                    </div>
+                    <div class="pka-card">
+                        <h4>Amino Group</h4>
+                        <p>Protonated: -NH₃⁺</p>
+                        <p>pKa ≈ 9.0-10.0</p>
+                        <p>Charge: Positive</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="state-details" id="zwitterion-details">
+                <div class="state-title">
+                    <div class="state-icon">2</div>
+                    <h3>Zwitterion (Neutral) State</h3>
+                </div>
+                <p>At physiological pH (between pKa₁ and pKa₂), the carboxyl group is deprotonated (-COO⁻) and the amino group remains protonated (-NH₃⁺).</p>
+                <p>This dipolar form has a <span class="charge">0</span> net charge and is the predominant form at neutral pH.</p>
+                
+                <div class="pka-info">
+                    <div class="pka-card">
+                        <h4>Carboxyl Group</h4>
+                        <p>Deprotonated: -COO⁻</p>
+                        <p>Charge: Negative</p>
+                    </div>
+                    <div class="pka-card">
+                        <h4>Amino Group</h4>
+                        <p>Protonated: -NH₃⁺</p>
+                        <p>Charge: Positive</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="state-details" id="basic-details">
+                <div class="state-title">
+                    <div class="state-icon">3</div>
+                    <h3>Fully Deprotonated (Anionic) State</h3>
+                </div>
+                <p>At high pH (above the pKa of the amino group), both the carboxyl group (-COO⁻) and the amino group (-NH₂) are deprotonated.</p>
+                <p>The amino acid carries a <span class="charge">-1</span> net charge in this state.</p>
+                
+                <div class="pka-info">
+                    <div class="pka-card">
+                        <h4>Carboxyl Group</h4>
+                        <p>Deprotonated: -COO⁻</p>
+                        <p>Charge: Negative</p>
+                    </div>
+                    <div class="pka-card">
+                        <h4>Amino Group</h4>
+                        <p>Deprotonated: -NH₂</p>
+                        <p>Charge: Neutral</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <p class="mobile-optimized">Optimized for mobile viewing and interaction</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('aminoCanvas');
+            const ctx = canvas.getContext('2d');
+            const phSlider = document.getElementById('phSlider');
+            const phValue = document.getElementById('phValue');
+            const netCharge = document.getElementById('netCharge');
+            const stateButtons = document.querySelectorAll('.controls .control-btn'); 
+            
+            // Define amino acid properties (Alanine as default)
+            const aminoAcid = {
+                name: "Alanine",
+                symbol: "Ala",
+                pKa1: 2.34,  // pKa for the carboxyl group
+                pKa2: 9.69,  // pKa for the amino group
+                rGroup: "CH₃" // R-group for Alanine
+            };
+            
+            // Define color scheme for drawing elements
+            const colors = {
+                background: "#0a0e23",
+                carbon: "#8c92ac",
+                oxygen: "#ff6b6b",
+                nitrogen: "#4d8be0",
+                hydrogen: "#a3b3ff",
+                rGroup: "#6d83f2",
+                bond: "#5c6bc0",
+                highlight: "#ff9a8b",
+                text: "#e0e0ff",
+                positiveCharge: "#ff6b6b",
+                negativeCharge: "#4d8be0",
+                negativeChargeGreen: "#00ff00" // Added green color for negative charge
+            };
+
+            // Declare atomRadius and bondLength in a higher scope
+            let atomRadius;
+            let bondLength;
+
+            // Function to adjust canvas size based on window width for responsiveness
+            function resizeCanvas() {
+                if (window.innerWidth <= 768) {
+                    canvas.width = window.innerWidth - 40;
+                    canvas.height = Math.min(450, canvas.width * 0.6);
+                } else {
+                    canvas.width = 700;
+                    canvas.height = 450;
+                }
+                atomRadius = Math.min(20, canvas.width * 0.04);
+                bondLength = canvas.width * 0.15;
+
+                drawAminoAcid(parseFloat(phSlider.value));
+            }
+            
+            // Initialize canvas size on load
+            resizeCanvas();
+            // Add event listener for window resize to adjust canvas
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Main function to draw the amino acid structure based on current pH
+            function drawAminoAcid(pH) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = colors.background;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                ctx.font = "bold 18px 'Inter'";
+                ctx.fillStyle = colors.text;
+                ctx.textAlign = "center";
+                ctx.fillText(`${aminoAcid.name} (${aminoAcid.symbol}) Ionization States`, centerX, 30);
+                
+                ctx.font = "16px 'Inter'";
+                ctx.fillStyle = colors.highlight;
+                ctx.fillText(`Current pH: ${pH.toFixed(1)}`, centerX, 60);
+                
+                const carboxylDeprotonated = pH > aminoAcid.pKa1;
+                const aminoDeprotonated = pH > aminoAcid.pKa2;
+                
+                let charge = 0;
+                if (!carboxylDeprotonated) charge += 0;
+                if (carboxylDeprotonated) charge -= 1;
+                if (!aminoDeprotonated) charge += 1;
+                if (aminoDeprotonated) charge += 0;
+                
+                netCharge.textContent = charge > 0 ? `+${charge}` : charge;
+                
+                drawAtom(centerX, centerY, "C", colors.carbon);
+                
+                drawBond(centerX, centerY, centerX + bondLength, centerY);
+                drawBond(centerX, centerY, centerX, centerY - bondLength);
+                drawBond(centerX, centerY, centerX - bondLength, centerY);
+                drawBond(centerX, centerY, centerX, centerY + bondLength);
+                
+                if (carboxylDeprotonated) {
+                    drawAtom(centerX + bondLength, centerY, "C", colors.carbon);
+                    drawAtom(centerX + bondLength * 1.5, centerY - atomRadius, "O", colors.oxygen);
+                    drawAtom(centerX + bondLength * 1.5, centerY + atomRadius, "O", colors.oxygen);
+                    
+                    drawBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY - atomRadius);
+                    drawBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY + atomRadius);
+                    
+                    drawDoubleBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY - atomRadius);
+                    
+                    drawCharge(centerX + bondLength * 1.5 + atomRadius, centerY + atomRadius, "-", colors.negativeChargeGreen);
+                } else {
+                    drawAtom(centerX + bondLength, centerY, "C", colors.carbon);
+                    drawAtom(centerX + bondLength * 1.5, centerY - atomRadius, "O", colors.oxygen);
+                    drawAtom(centerX + bondLength * 1.5, centerY + atomRadius, "O", colors.oxygen);
+                    drawAtom(centerX + bondLength * 1.8, centerY + atomRadius, "H", colors.hydrogen);
+                    
+                    drawBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY - atomRadius);
+                    drawBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY + atomRadius);
+                    drawBond(centerX + bondLength * 1.5, centerY + atomRadius, centerX + bondLength * 1.8, centerY + atomRadius);
+                    
+                    drawDoubleBond(centerX + bondLength, centerY, centerX + bondLength * 1.5, centerY - atomRadius);
+                }
+                
+                if (aminoDeprotonated) {
+                    drawAtom(centerX - bondLength, centerY, "N", colors.nitrogen);
+                    drawAtom(centerX - bondLength * 1.3, centerY - bondLength * 0.3, "H", colors.hydrogen);
+                    drawAtom(centerX - bondLength * 1.3, centerY + bondLength * 0.3, "H", colors.hydrogen);
+                    
+                    drawBond(centerX - bondLength, centerY, centerX - bondLength * 1.3, centerY - bondLength * 0.3);
+                    drawBond(centerX - bondLength, centerY, centerX - bondLength * 1.3, centerY + bondLength * 0.3);
+                } else {
+                    drawAtom(centerX - bondLength, centerY, "N", colors.nitrogen);
+                    drawAtom(centerX - bondLength * 1.3, centerY - bondLength * 0.4, "H", colors.hydrogen);
+                    drawAtom(centerX - bondLength * 1.3, centerY, "H", colors.hydrogen);
+                    drawAtom(centerX - bondLength * 1.3, centerY + bondLength * 0.4, "H", colors.hydrogen);
+                    
+                    drawBond(centerX - bondLength, centerY, centerX - bondLength * 1.3, centerY - bondLength * 0.4);
+                    drawBond(centerX - bondLength, centerY, centerX - bondLength * 1.3, centerY);
+                    drawBond(centerX - bondLength, centerY, centerX - bondLength * 1.3, centerY + bondLength * 0.4);
+                    
+                    drawCharge(centerX - bondLength * 1.3, centerY - bondLength * 0.4 - atomRadius * 0.7, "+", colors.positiveCharge);
+                }
+                
+                drawAtom(centerX, centerY - bondLength, "H", colors.hydrogen);
+                
+                drawAtom(centerX, centerY + bondLength, "C", colors.rGroup);
+                drawAtom(centerX - bondLength * 0.3, centerY + bondLength * 1.3, "H", colors.hydrogen);
+                drawAtom(centerX + bondLength * 0.3, centerY + bondLength * 1.3, "H", colors.hydrogen);
+                drawAtom(centerX, centerY + bondLength * 1.6, "H", colors.hydrogen);
+                
+                drawBond(centerX, centerY + bondLength, centerX - bondLength * 0.3, centerY + bondLength * 1.3);
+                drawBond(centerX, centerY + bondLength, centerX + bondLength * 0.3, centerY + bondLength * 1.3);
+                drawBond(centerX, centerY + bondLength, centerX, centerY + bondLength * 1.6);
+                
+                ctx.font = "14px 'Inter'";
+                ctx.fillStyle = colors.highlight;
+                ctx.textAlign = "center";
+                ctx.fillText(`pKa₁ (COOH) = ${aminoAcid.pKa1}`, centerX + bondLength * 2.4, centerY - 40);
+                ctx.fillText(`pKa₂ (NH₃⁺) = ${aminoAcid.pKa2}`, centerX - bondLength * 2.2, centerY - 5); 
+                
+                let stateText = "";
+                if (pH < aminoAcid.pKa1) {
+                    stateText = "Fully Protonated (Cationic)";
+                } else if (pH < aminoAcid.pKa2) {
+                    stateText = "Zwitterion";
+                } else {
+                    stateText = "Fully Deprotonated (Anionic)";
+                }
+                
+                ctx.font = "bold 20px 'Inter'";
+                ctx.fillStyle = colors.highlight;
+                ctx.fillText(stateText, centerX, canvas.height - 20);
+            }
+            
+            // Helper function to draw an atom (circle with symbol)
+            function drawAtom(x, y, symbol, color) {
+                ctx.beginPath();
+                ctx.arc(x, y, atomRadius, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = colors.bond;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.font = `bold ${Math.max(20, atomRadius * .9)}px 'Inter'`;
+                ctx.fillStyle = "#ffffff";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(symbol, x, y);
+            }
+            
+            // Helper function to draw a single bond
+            function drawBond(x1, y1, x2, y2) {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = colors.bond;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+            
+            // Helper function to draw a double bond indicator (two parallel lines)
+            function drawDoubleBond(x1, y1, x2, y2) {
+                const angle = Math.atan2(y2 - y1, x2 - x1);
+                const offset = 3;
+                
+                ctx.beginPath();
+                ctx.moveTo(
+                    x1 + Math.sin(angle) * offset,
+                    y1 - Math.cos(angle) * offset
+                );
+                ctx.lineTo(
+                    x2 + Math.sin(angle) * offset,
+                    y2 - Math.cos(angle) * offset
+                );
+                ctx.strokeStyle = colors.highlight;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(
+                    x1 - Math.sin(angle) * offset,
+                    y1 + Math.cos(angle) * offset
+                );
+                ctx.lineTo(
+                    x2 - Math.sin(angle) * offset,
+                    y2 + Math.cos(angle) * offset
+                );
+                ctx.stroke();
+            }
+            
+            // Helper function to draw a charge symbol (+ or -)
+            function drawCharge(x, y, symbol, color) {
+                ctx.font = `bold ${Math.max(50, atomRadius * 2.5)}px 'Inter'`; 
+                ctx.fillStyle = color;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(symbol, x, y);
+            }
+            
+            // Event listener for pH slider input changes
+            phSlider.addEventListener('input', function() {
+                const pH = parseFloat(this.value);
+                phValue.textContent = pH.toFixed(1);
+                drawAminoAcid(pH);
+                
+                let state = "";
+                if (pH < aminoAcid.pKa1) {
+                    state = "acidic";
+                } else if (pH < aminoAcid.pKa2) {
+                    state = "zwitterion";
+                } else {
+                    state = "basic";
+                }
+                updateActiveState(state);
+            });
+            
+            // Event listeners for state buttons (Acidic, Zwitterion, Basic)
+            stateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const state = this.getAttribute('data-state');
+                    
+                    if (state === "acidic") {
+                        phSlider.value = aminoAcid.pKa1 - 1;
+                    } else if (state === "zwitterion") {
+                        phSlider.value = (aminoAcid.pKa1 + aminoAcid.pKa2) / 2;
+                    } else {
+                        phSlider.value = aminoAcid.pKa2 + 1;
+                    }
+                    
+                    phValue.textContent = parseFloat(phSlider.value).toFixed(1);
+                    drawAminoAcid(parseFloat(phSlider.value));
+                    updateActiveState(state);
+                });
+            });
+            
+            // Function to update the UI (buttons and explanation) based on the active state
+            function updateActiveState(state) {
+                stateButtons.forEach(button => {
+                    if (button.getAttribute('data-state') === state) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+                
+                document.querySelectorAll('.state-details').forEach(detail => {
+                    detail.classList.remove('active');
+                });
+                const activeDetailElement = document.getElementById(`${state}-details`);
+                if (activeDetailElement) {
+                    activeDetailElement.classList.add('active');
+                } else {
+                    console.error(`Element with ID '${state}-details' not found.`);
+                }
+            }
+            
+            // Initial draw of the amino acid when the page loads
+            drawAminoAcid(parseFloat(phSlider.value));
+            updateActiveState("acidic");
+        });
+    </script>
+
+    <!-- Amino Acid Electrophoresis Section -->
+    <div style="margin-top: 40px; border-top: 2px solid #4d5bce; padding-top: 20px;">
+        <h2 style="text-align: center; font-size: 2rem; margin-bottom: 20px; background: linear-gradient(90deg, #6d83f2, #a3b3ff); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 10px rgba(109, 131, 242, 0.3);">Amino Acid Electrophoresis Simulation</h2>
+        
+        <div class="min-h-screen flex flex-col">
+            <header class="p-3 bg-slate-800 shadow-lg">
+            </header>
+        
+            <main class="flex-1 flex flex-col p-3 sm:p-4 gap-3 sm:gap-4">
+                <!-- Instructions Card (Collapsible on mobile) -->
+                <div class="instruction-card p-3 sm:p-4 mb-1 sm:mb-2">
+                    <div class="flex justify-between items-center" id="instructions-header">
+                        <h2 class="text-lg font-bold text-purple-300">How to Use This Simulation</h2>
+                        <button class="md:hidden text-purple-300 p-1" id="toggle-instructions">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="collapsible-content md:!max-h-none" id="instructions-content">
+                        <div class="space-y-3 sm:space-y-4 mt-3">
+                            <div class="instruction-step pb-3 sm:pb-4">
+                                <div class="instruction-number">1</div>
+                                <h3 class="font-medium text-purple-200 ml-2 mb-1">Add Amino Acids</h3>
+                                <p class="text-sm">Tap any amino acid button to add it to the simulation. Each amino acid has a different isoelectric point (pI).</p>
+                            </div>
+                            
+                            <div class="instruction-step pb-3 sm:pb-4">
+                                <div class="instruction-number">2</div>
+                                <h3 class="font-medium text-purple-200 ml-2 mb-1">Adjust pH Level</h3>
+                                <p class="text-sm">Move the pH slider or use the input field to set the pH with 0.01 precision. Watch how amino acids change color as they become:</p>
+                                <ul class="text-sm mt-1 ml-2 space-y-1">
+                                    <li><span class="text-blue-400">Blue (positive charge)</span>: When pH &lt; pI</li>
+                                    <li><span class="text-red-400">Red (negative charge)</span>: When pH &gt; pI</li>
+                                    <li><span class="text-purple-400">Purple (neutral)</span>: When pH ≈ pI</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="instruction-step">
+                                <div class="instruction-number">3</div>
+                                <h3 class="font-medium text-purple-200 ml-2 mb-1">Control Electric Field</h3>
+                                <p class="text-sm">Adjust the electric field strength to see how charged amino acids move:</p>
+                                <ul class="text-sm mt-1 ml-2 space-y-1">
+                                    <li>Positive amino acids move toward the negative electrode (left)</li>
+                                    <li>Negative amino acids move toward the positive electrode (right)</li>
+                                    <li>Neutral amino acids (at their pI) migrate to the center</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 text-sm text-purple-200">
+                            <strong>Tip:</strong> Try setting the pH to exactly match an amino acid's pI (e.g., 5.97 for Glycine) to see it become neutral and move to the center!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative bg-slate-900 rounded-xl overflow-hidden shadow-xl border border-slate-700 flex-1 min-h-[250px] sm:min-h-[300px] simulation-container" id="simulation-container">
+                    <!-- Field lines SVG -->
+                    <svg class="field-lines" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="field-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M0 20 H40" stroke="#8b5cf6" stroke-width="1" fill="none" />
+                                <path d="M20 0 V40" stroke="#8b5cf6" stroke-width="1" fill="none" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#field-pattern)" />
+                    </svg>
+                    
+                    <!-- Center marker -->
+                    <div class="center-marker"></div>
+                    
+                    <!-- Electrodes -->
+                    <div class="electrode electrode-negative" id="negative-electrode">
+                        <div class="absolute -right-6 top-1/2 transform -translate-y-1/2 text-red-500 font-bold text-lg">-</div>
+                    </div>
+                    <div class="electrode electrode-positive" id="positive-electrode">
+                        <div class="absolute -left-6 top-1/2 transform -translate-y-1/2 text-blue-500 font-bold text-lg">+</div>
+                    </div>
+                    
+                    <!-- pH indicator -->
+                    <div class="absolute top-2 left-1/2 transform -translate-x-1/2 bg-slate-800/80 px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                        pH: <span id="ph-value">7.00</span>
+                    </div>
+                    
+                    <!-- Electrode charges will be added here by JavaScript -->
+                    <div id="electrode-charges"></div>
+                    
+                    <!-- Particles will be added here by JavaScript -->
+                </div>
+                
+                <div class="bg-slate-800 rounded-lg p-3 sm:p-4 shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                        <div class="space-y-3 sm:space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label for="ph-slider" class="text-sm font-medium">pH Level:</label>
+                                    <div class="flex items-center">
+                                        <input type="number" id="ph-input" class="ph-input" min="0" max="14" step="0.01" value="7.00">
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <div class="slider-track absolute inset-0 my-auto"></div>
+                                    <input type="range" id="ph-slider" min="0" max="14" step="0.01" value="7.00" class="relative z-10 w-full bg-transparent">
+                                    
+                                    <!-- pI markers will be added here by JavaScript -->
+                                    <div id="pi-markers" class="relative w-full h-6"></div>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span>0</span>
+                                    <span>7</span>
+                                    <span>14</span>
+                                    </div>
+                            </div>
+                            
+                            <div>
+                                <label for="field-strength" class="block text-sm font-medium mb-2">Electric Field Strength: <span id="field-display">5</span></label>
+                                <div class="relative">
+                                    <div class="slider-track absolute inset-0 my-auto"></div>
+                                    <input type="range" id="field-strength" min="0" max="10" step="1" value="5" class="relative z-10 w-full bg-transparent">
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <span>Off</span>
+                                    <span>Max</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Amino Acids</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="amino-card p-2 rounded-lg text-center btn" data-amino="glycine">
+                                    <div class="text-sm font-medium">Glycine</div>
+                                    <div class="text-xs text-gray-400">pI: 5.97</div>
+                                </button>
+                                <button class="amino-card p-2 rounded-lg text-center btn" data-amino="lysine">
+                                    <div class="text-sm font-medium">Lysine</div>
+                                    <div class="text-xs text-gray-400">pI: 9.74</div>
+                                </button>
+                                <button class="amino-card p-2 rounded-lg text-center btn" data-amino="aspartic">
+                                    <div class="text-sm font-medium">Aspartic Acid</div>
+                                    <div class="text-xs text-gray-400">pI: 2.77</div>
+                                </button>
+                                <button class="amino-card p-2 rounded-lg text-center btn" data-amino="histidine">
+                                    <div class="text-sm font-medium">Histidine</div>
+                                    <div class="text-xs text-gray-400">pI: 7.59</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 sm:mt-4 flex justify-between">
+                        <button id="reset-btn" class="bg-red-600 hover:bg-red-700 text-white px-3 sm:px-4 py-2 rounded-lg shadow btn">
+                            Reset
+                        </button>
+                        <button id="info-btn" class="bg-slate-600 hover:bg-slate-700 text-white px-3 sm:px-4 py-2 rounded-lg shadow btn">
+                            Info
+                        </button>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Mobile Controls (shown only on small screens) -->
+            <div class="mobile-controls">
+                <button id="mobile-add-gly" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-sm btn">
+                    Add Gly
+                </button>
+                <button id="mobile-add-lys" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-sm btn">
+                    Add Lys
+                </button>
+                <button id="mobile-reset" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-sm btn">
+                    Reset
+                </button>
+            </div>
+            
+            <!-- Info Modal -->
+            <div id="info-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+                <div class="bg-slate-800 rounded-xl p-4 sm:p-6 mx-4 max-w-md max-h-[80vh] overflow-y-auto">
+                    <h2 class="text-xl font-bold mb-4 text-purple-300">About Amino Acid Electrophoresis</h2>
+                    <div class="space-y-3 text-sm">
+                        <p>Amino acids can exist in different ionic states depending on the pH of the solution:</p>
+                        <ul class="list-disc pl-5 space-y-2">
+                            <li><span class="text-blue-400 font-medium">Cations (+)</span>: At pH below their isoelectric point (pI), amino acids carry a positive charge and move toward the negative electrode.</li>
+                            <li><span class="text-red-400 font-medium">Anions (-)</span>: At pH above their pI, amino acids carry a negative charge and move toward the positive electrode.</li>
+                            <li><span class="text-purple-400 font-medium">Zwitterions (±)</span>: At pH equal to their pI, amino acids have both positive and negative charges that balance out, resulting in no net movement in an electric field. In this simulation, they migrate to the center.</li>
+                        </ul>
+                        <p>The isoelectric point (pI) is the pH at which an amino acid carries no net electrical charge.</p>
+                        <div class="mt-4">
+                            <h3 class="font-medium mb-2">Amino Acid pI Values:</h3>
+                            <ul class="grid grid-cols-2 gap-2">
+                                <li>Glycine: 5.97</li>
+                                <li>Lysine: 9.74</li>
+                                <li>Aspartic Acid: 2.77</li>
+                                <li>Histidine: 7.59</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4 border-t border-slate-700 pt-4">
+                            <h3 class="font-medium mb-2">Suggested Experiments:</h3>
+                            <ol class="list-decimal pl-5 space-y-2">
+                                <li>Set pH to 7.00 and add all amino acids. Observe which ones move to which electrode.</li>
+                                <li>Set pH to 3.00 and observe how most amino acids become positively charged.</li>
+                                <li>Set pH to 11.00 and observe how most amino acids become negatively charged.</li>
+                                <li>Try to find the exact pH where a specific amino acid stops moving toward electrodes and starts moving to the center (its pI).</li>
+                                <li>Set pH to exactly 5.97 and add glycine to see it remain neutral at the center.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <button id="close-modal" class="mt-4 sm:mt-6 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow w-full btn">
+                        Close
+                    </button>
+                </div>
+            </div>
+        
+            <script>
+                // Constants and variables
+                const container = document.getElementById('simulation-container');
+                const phSliderElectrophoresis = document.getElementById('ph-slider'); // Renamed to avoid conflict
+                const phInputElectrophoresis = document.getElementById('ph-input'); // Renamed to avoid conflict
+                const phValueElectrophoresis = document.getElementById('ph-value'); // Renamed to avoid conflict
+                const fieldStrength = document.getElementById('field-strength');
+                const fieldDisplay = document.getElementById('field-display');
+                const resetBtn = document.getElementById('reset-btn');
+                const infoBtn = document.getElementById('info-btn');
+                const closeModal = document.getElementById('close-modal');
+                const infoModal = document.getElementById('info-modal');
+                const electrodeChargesContainer = document.getElementById('electrode-charges');
+                const piMarkersContainer = document.getElementById('pi-markers');
+                const instructionsHeader = document.getElementById('instructions-header');
+                const instructionsContent = document.getElementById('instructions-content');
+                const toggleInstructions = document.getElementById('toggle-instructions');
+                
+                // Mobile controls
+                const mobileAddGly = document.getElementById('mobile-add-gly');
+                const mobileAddLys = document.getElementById('mobile-add-lys');
+                const mobileReset = document.getElementById('mobile-reset');
+                
+                let particles = [];
+                let electrodeCharges = [];
+                let animationId;
+                let currentPhElectrophoresis = 7.00; // Renamed to avoid conflict
+                let currentFieldStrength = 5;
+                let containerCenter = { x: 0, y: 0 };
+                let isMobile = window.innerWidth < 640;
+                let touchStartTime = 0;
+                let isTooltipVisible = false;
+                
+                // Amino acid data with pI values
+                const aminoAcids = {
+                    glycine: { name: "Glycine", pI: 5.97, symbol: "Gly" },
+                    lysine: { name: "Lysine", pI: 9.74, symbol: "Lys" },
+                    aspartic: { name: "Aspartic Acid", pI: 2.77, symbol: "Asp" },
+                    histidine: { name: "Histidine", pI: 7.59, symbol: "His" }
+                };
+                
+                // Initialize the simulation
+                function init() {
+                    updateContainerCenter();
+                    
+                    phSliderElectrophoresis.addEventListener('input', updatePhFromSliderElectrophoresis);
+                    phInputElectrophoresis.addEventListener('input', updatePhFromInputElectrophoresis);
+                    phInputElectrophoresis.addEventListener('blur', validatePhInputElectrophoresis);
+                    fieldStrength.addEventListener('input', updateFieldStrength);
+                    resetBtn.addEventListener('click', resetSimulation);
+                    infoBtn.addEventListener('click', () => infoModal.classList.remove('hidden'));
+                    closeModal.addEventListener('click', () => infoModal.classList.add('hidden'));
+                    
+                    toggleInstructions.addEventListener('click', toggleInstructionsPanel);
+                    mobileAddGly.addEventListener('click', () => addParticle('glycine'));
+                    mobileAddLys.addEventListener('click', () => addParticle('lysine'));
+                    mobileReset.addEventListener('click', resetSimulation);
+                    
+                    document.querySelectorAll('[data-amino]').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const aminoType = button.getAttribute('data-amino');
+                            addParticle(aminoType);
+                            button.classList.add('highlight-pulse');
+                            setTimeout(() => {
+                                button.classList.remove('highlight-pulse');
+                            }, 2000);
+                        });
+                    });
+                    
+                    createPiMarkers();
+                    createElectrodeCharges();
+                    animate();
+                    setupTooltipAndTouchHandlers();
+                    
+                    if (isMobile) {
+                        instructionsContent.classList.remove('expanded');
+                    } else {
+                        instructionsContent.classList.add('expanded');
+                    }
+                }
+                
+                // Toggle instructions panel for mobile
+                function toggleInstructionsPanel() {
+                    instructionsContent.classList.toggle('expanded');
+                    
+                    const svg = toggleInstructions.querySelector('svg');
+                    if (instructionsContent.classList.contains('expanded')) {
+                        svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7-7" />';
+                    } else {
+                        svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />';
+                    }
+                }
+                
+                // Setup tooltip and touch handlers
+                function setupTooltipAndTouchHandlers() {
+                    container.addEventListener('mousemove', handleTooltip);
+                    container.addEventListener('mouseleave', hideTooltip);
+                    
+                    container.addEventListener('touchstart', handleTouchStart);
+                    container.addEventListener('touchmove', handleTouchMove);
+                    container.addEventListener('touchend', handleTouchEnd);
+                    
+                    container.addEventListener('touchmove', function(e) {
+                        if (e.target.closest('#simulation-container')) {
+                            e.preventDefault();
+                        }
+                    }, { passive: false });
+                }
+                
+                // Handle touch start
+                function handleTouchStart(e) {
+                    touchStartTime = Date.now();
+                    
+                    const touch = e.touches[0];
+                    const ripple = document.createElement('div');
+                    ripple.className = 'touch-ripple';
+                    ripple.style.left = `${touch.clientX}px`;
+                    ripple.style.top = `${touch.clientY}px`;
+                    document.body.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        if (ripple.parentNode) {
+                            ripple.parentNode.removeChild(ripple);
+                        }
+                    }, 800);
+                    
+                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (element && element.classList.contains('particle')) {
+                        showTooltip(element, touch.clientX, touch.clientY);
+                        isTooltipVisible = true;
+                    }
+                }
+                
+                // Handle touch move
+                function handleTouchMove(e) {
+                    if (e.touches && e.touches[0]) {
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        
+                        if (element && element.classList.contains('particle')) {
+                            showTooltip(element, touch.clientX, touch.clientY);
+                            isTooltipVisible = true;
+                        } else if (isTooltipVisible) {
+                            hideTooltip();
+                            isTooltipVisible = false;
+                        }
+                    }
+                }
+                
+                // Handle touch end
+                function handleTouchEnd(e) {
+                    if (Date.now() - touchStartTime < 300 && !isTooltipVisible) {
+                        if (e.changedTouches && e.changedTouches[0]) {
+                            const touch = e.changedTouches[0];
+                            const containerRect = container.getBoundingClientRect();
+                            
+                            if (
+                                touch.clientX >= containerRect.left && 
+                                touch.clientX <= containerRect.right &&
+                                touch.clientY >= containerRect.top && 
+                                touch.clientY <= containerRect.bottom
+                            ) {
+                                const aminoTypes = Object.keys(aminoAcids);
+                                const randomType = aminoTypes[Math.floor(Math.random() * aminoTypes.length)];
+                                addParticleAtPosition(randomType, 
+                                    touch.clientX - containerRect.left, 
+                                    touch.clientY - containerRect.top);
+                            }
+                        }
+                    }
+                    
+                    setTimeout(() => {
+                        hideTooltip();
+                        isTooltipVisible = false;
+                    }, 1500);
+                }
+                
+                // Update container center coordinates
+                function updateContainerCenter() {
+                    const containerRect = container.getBoundingClientRect();
+                    containerCenter = {
+                        x: containerRect.width / 2,
+                        y: containerRect.height / 2
+                    };
+                }
+                
+                // Create pI markers on the slider
+                function createPiMarkers() {
+                    piMarkersContainer.innerHTML = '';
+                    
+                    for (const [key, amino] of Object.entries(aminoAcids)) {
+                        const percentage = (amino.pI / 14) * 100;
+                        const marker = document.createElement('div');
+                        marker.className = 'pi-marker';
+                        marker.style.left = `${percentage}%`;
+                        
+                        if (isMobile) {
+                            marker.textContent = amino.symbol;
+                        } else {
+                            marker.textContent = `${amino.symbol}: ${amino.pI}`;
+                        }
+                        
+                        piMarkersContainer.appendChild(marker);
+                    }
+                }
+                
+                // Create charges along the electrodes
+                function createElectrodeCharges() {
+                    const containerRect = container.getBoundingClientRect();
+                    const height = containerRect.height;
+                    const numCharges = isMobile ? Math.floor(height / 80) : Math.floor(height / 60);
+                    
+                    while (electrodeChargesContainer.firstChild) {
+                        electrodeChargesContainer.removeChild(electrodeChargesContainer.firstChild);
+                    }
+                    electrodeCharges = [];
+                    
+                    for (let i = 0; i < numCharges; i++) {
+                        const y = (i + 0.5) * (height / numCharges);
+                        const charge = document.createElement('div');
+                        charge.className = 'electrode-charge electrode-charge-negative';
+                        charge.style.left = '25px';
+                        charge.style.top = `${y}px`;
+                        charge.textContent = '-';
+                        
+                        electrodeChargesContainer.appendChild(charge);
+                        electrodeCharges.push({
+                            element: charge,
+                            type: 'negative',
+                            x: 25,
+                            y: y
+                        });
+                    }
+                    
+                    for (let i = 0; i < numCharges; i++) {
+                        const y = (i + 0.5) * (height / numCharges);
+                        const charge = document.createElement('div');
+                        charge.className = 'electrode-charge electrode-charge-positive';
+                        charge.style.right = '25px';
+                        charge.style.top = `${y}px`;
+                        charge.textContent = '+';
+                        
+                        electrodeChargesContainer.appendChild(charge);
+                        electrodeCharges.push({
+                            element: charge,
+                            type: 'positive',
+                            x: containerRect.width - 25,
+                            y: y
+
+                        });
+                    }
+                    
+                    updateElectrodeCharges();
+                }
+                
+                // Update electrode charges visibility based on field strength
+                function updateElectrodeCharges() {
+                    const opacity = currentFieldStrength / 10;
+                    electrodeCharges.forEach(charge => {
+                        charge.element.style.opacity = opacity;
+                    });
+                }
+                
+                // Update pH value from slider
+                function updatePhFromSliderElectrophoresis() {
+                    currentPhElectrophoresis = parseFloat(phSliderElectrophoresis.value);
+                    updatePhDisplayElectrophoresis();
+                    updateParticleCharges();
+                }
+                
+                // Update pH value from input field
+                function updatePhFromInputElectrophoresis() {
+                    let value = parseFloat(phInputElectrophoresis.value);
+                    
+                    if (isNaN(value)) {
+                        return;
+                    }
+                    
+                    value = Math.max(0, Math.min(14, value));
+                    
+                    currentPhElectrophoresis = value;
+                    phSliderElectrophoresis.value = value;
+                    updatePhDisplayElectrophoresis();
+                    updateParticleCharges();
+                }
+                
+                // Validate pH input when focus is lost
+                function validatePhInputElectrophoresis() {
+                    let value = parseFloat(phInputElectrophoresis.value);
+                    
+                    if (isNaN(value)) {
+                        phInputElectrophoresis.value = currentPhElectrophoresis.toFixed(2);
+                        return;
+                    }
+                    
+                    value = Math.max(0, Math.min(14, value));
+                    phInputElectrophoresis.value = value.toFixed(2);
+                    
+                    currentPhElectrophoresis = value;
+                    phSliderElectrophoresis.value = value;
+                    updatePhDisplayElectrophoresis();
+                    updateParticleCharges();
+                }
+                
+                // Update pH display
+                function updatePhDisplayElectrophoresis() {
+                    phValueElectrophoresis.textContent = currentPhElectrophoresis.toFixed(2);
+                    phInputElectrophoresis.value = currentPhElectrophoresis.toFixed(2);
+                }
+                
+                // Update field strength
+                function updateFieldStrength() {
+                    currentFieldStrength = parseInt(fieldStrength.value);
+                    fieldDisplay.textContent = currentFieldStrength;
+                    updateElectrodeCharges();
+                }
+                
+                // Add a new particle
+                function addParticle(aminoType) {
+                    const amino = aminoAcids[aminoType];
+                    if (!amino) return;
+                    
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    const baseSize = isMobile ? 12 : 15;
+                    const randomSize = Math.floor(Math.random() * 8) + baseSize;
+                    
+                    const particle = {
+                        x: containerRect.width / 2,
+                        y: containerRect.height / 2,
+                        size: randomSize,
+                        type: aminoType,
+                        pI: amino.pI,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        element: document.createElement('div'),
+                        previousCharge: null,
+                        charge: 0
+                    };
+                    
+                    particle.element.className = 'particle';
+                    particle.element.style.width = `${randomSize}px`;
+                    particle.element.style.height = `${randomSize}px`;
+                    particle.element.setAttribute('data-amino', aminoType);
+                    particle.element.setAttribute('data-pi', amino.pI);
+                    particle.element.setAttribute('data-name', amino.name);
+                    
+                    const symbolText = document.createElement('div');
+                    symbolText.className = 'absolute inset-0 flex items-center justify-center text-white font-bold text-xs';
+                    symbolText.textContent = amino.symbol;
+                    particle.element.appendChild(symbolText);
+                    
+                    updateParticleCharge(particle);
+                    
+                    container.appendChild(particle.element);
+                    particles.push(particle);
+                }
+                
+                // Add a particle at a specific position
+                function addParticleAtPosition(aminoType, x, y) {
+                    const amino = aminoAcids[aminoType];
+                    if (!amino) return;
+                    
+                    const baseSize = isMobile ? 12 : 15;
+                    const randomSize = Math.floor(Math.random() * 8) + baseSize;
+                    
+                    const particle = {
+                        x: x,
+                        y: y,
+                        size: randomSize,
+                        type: aminoType,
+                        pI: amino.pI,
+                        vx: (Math.random() - 0.5) * 2,
+                        vy: (Math.random() - 0.5) * 2,
+                        element: document.createElement('div'),
+                        previousCharge: null,
+                        charge: 0
+                    };
+                    
+                    particle.element.className = 'particle';
+                    particle.element.style.width = `${randomSize}px`;
+                    particle.element.style.height = `${randomSize}px`;
+                    particle.element.setAttribute('data-amino', aminoType);
+                    particle.element.setAttribute('data-pi', amino.pI);
+                    particle.element.setAttribute('data-name', amino.name);
+                    
+                    const symbolText = document.createElement('div');
+                    symbolText.className = 'absolute inset-0 flex items-center justify-center text-white font-bold text-xs';
+                    symbolText.textContent = amino.symbol;
+                    particle.element.appendChild(symbolText);
+                    
+                    updateParticleCharge(particle);
+                    
+                    container.appendChild(particle.element);
+                    particles.push(particle);
+                }
+                
+                // Update charges of all particles based on pH
+                function updateParticleCharges() {
+                    particles.forEach(updateParticleCharge);
+                }
+                
+                // Update a single particle's charge
+                function updateParticleCharge(particle) {
+                    particle.previousCharge = particle.charge;
+                    
+                    particle.element.classList.remove('cation', 'anion', 'zwitterion');
+                    
+                    const pHDiff = currentPhElectrophoresis - particle.pI;
+                    
+                    if (Math.abs(pHDiff) < 0.1) {
+                        particle.element.classList.add('zwitterion');
+                        particle.charge = 0;
+                    } else if (pHDiff < 0) {
+                        particle.element.classList.add('cation');
+                        particle.charge = -1;
+                    } else {
+                        particle.element.classList.add('anion');
+                        particle.charge = 1;
+                    }
+                    
+                    if (particle.previousCharge !== null && particle.previousCharge !== particle.charge) {
+                        particle.vx += (Math.random() - 0.5) * 2;
+                        particle.vy += (Math.random() - 0.5) * 2;
+                    }
+                }
+                
+                // Animation loop
+                function animate() {
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    particles.forEach(particle => {
+                        if (currentFieldStrength > 0) {
+                            if (particle.charge === 0) {
+                                const dx = containerCenter.x - particle.x;
+                                const dy = containerCenter.y - particle.y;
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance > 5) {
+                                    const centerForce = 0.03 * currentFieldStrength;
+                                    particle.vx += (dx / distance) * centerForce;
+                                    particle.vy += (dy / distance) * centerForce;
+                                }
+                             } else {
+                // Corrected this line - removed the inversion by removing the multiplication by particle.charge
+                const fieldForce = 0.05 * currentFieldStrength;
+                // Now apply the force in the correct direction based on charge
+                particle.vx += fieldForce * particle.charge; // Negative charge moves right, positive moves left
+                            }
+                        }
+                        
+                        particle.vx *= 0.98;
+                        particle.vy *= 0.98;
+                        
+                        particle.x += particle.vx;
+                        particle.y += particle.vy;
+                        
+                        const radius = particle.size / 2;
+                        
+                        if (particle.x - radius < 10) {
+                            particle.x = 10 + radius;
+                            particle.vx *= -0.8;
+                        } else if (particle.x + radius > containerRect.width - 10) {
+                            particle.x = containerRect.width - 10 - radius;
+                            particle.vx *= -0.8;
+                        }
+                        
+                        if (particle.y - radius < 0) {
+                            particle.y = radius;
+                            particle.vy *= -0.8;
+                        } else if (particle.y + radius > containerRect.height) {
+                            particle.y = containerRect.height - radius;
+                            particle.vy *= -0.8;
+                        }
+                        
+                        particle.element.style.left = `${particle.x}px`;
+                        particle.element.style.top = `${particle.y}px`;
+                    });
+                    
+                    if (currentFieldStrength > 0) {
+                        electrodeCharges.forEach(charge => {
+                            const scale = 1 + 0.1 * Math.sin(Date.now() / 500 + charge.y);
+                            charge.element.style.transform = `translateY(-50%) scale(${scale})`;
+                        });
+                    }
+                    
+                    animationId = requestAnimationFrame(animate);
+                }
+                
+                // Reset simulation
+                function resetSimulation() {
+                    particles.forEach(particle => {
+                        if (particle.element && particle.element.parentNode) {
+                            particle.element.parentNode.removeChild(particle.element);
+                        }
+                    });
+                    particles = [];
+                    
+                    hideTooltip();
+                    
+                    updateContainerCenter();
+                    createElectrodeCharges();
+                    updateElectrodeCharges();
+                }
+                
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    isMobile = window.innerWidth < 640;
+                    updateContainerCenter();
+                    createElectrodeCharges();
+                    updateElectrodeCharges();
+                    createPiMarkers();
+                    
+                    if (isMobile && instructionsContent.classList.contains('expanded')) {
+                        instructionsContent.classList.remove('expanded');
+                    } else if (!isMobile && !instructionsContent.classList.contains('expanded')) {
+                        instructionsContent.classList.add('expanded');
+                    }
+                });
+                
+                // Tooltip handling
+                let tooltip = null;
+                
+                function createTooltip() {
+                    if (!tooltip) {
+                        tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip opacity-0';
+                        document.body.appendChild(tooltip);
+                    }
+                    return tooltip;
+                }
+                
+                function showTooltip(particle, clientX, clientY) {
+                    const tooltip = createTooltip();
+                    const amino = aminoAcids[particle.getAttribute('data-amino')];
+                    const pI = parseFloat(particle.getAttribute('data-pi'));
+                    const name = particle.getAttribute('data-name');
+                    
+                    let chargeState = "Neutral (Zwitterion)";
+                    let chargeValue = "0";
+                    
+                    if (currentPhElectrophoresis < pI - 0.1) {
+                        chargeState = "Positive (Cation)";
+                        chargeValue = "+1";
+                    }
+                    if (currentPhElectrophoresis > pI + 0.1) {
+                        chargeState = "Negative (Anion)";
+                        chargeValue = "-1";
+                    }
+                    
+                    tooltip.innerHTML = `
+                        <div class="font-medium">${name}</div>
+                        <div>pI: ${pI}</div>
+                        <div>Charge: ${chargeState} (${chargeValue})</div>
+                        <div>Current pH: ${currentPhElectrophoresis.toFixed(2)}</div>
+                        <div class="text-xs mt-1 text-gray-300">pH - pI = ${(currentPhElectrophoresis - pI).toFixed(2)}</div>
+                    `;
+                    
+                    if (isMobile) {
+                        tooltip.style.left = '50%';
+                        tooltip.style.bottom = '80px';
+                        tooltip.style.top = 'auto';
+                    } else {
+                        const rect = tooltip.getBoundingClientRect();
+                        tooltip.style.left = `${clientX - rect.width / 2}px`;
+                        tooltip.style.top = `${clientY - rect.height - 10}px`;
+                        tooltip.style.bottom = 'auto';
+                    }
+                    
+                    tooltip.style.opacity = '1';
+                }
+                
+                function hideTooltip() {
+                    if (tooltip) {
+                        tooltip.style.opacity = '0';
+                    }
+                }
+                
+                function handleTooltip(e) {
+                    const element = document.elementFromPoint(e.clientX, e.clientY);
+                    if (element && element.classList.contains('particle')) {
+                        showTooltip(element, e.clientX, e.clientY);
+                    } else {
+                        hideTooltip();
+                    }
+                }
+                
+                // Initialize when DOM is loaded
+                document.addEventListener('DOMContentLoaded', init);
+            </script>
+        </div>
+    </div>
+
+    <!-- Review Quiz Section -->
+    <div class="container quiz-container">
+        <h2 style="text-align: center; font-size: 2rem; margin-bottom: 20px; background: linear-gradient(90deg, #ff7e5f, #ff9a8b); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 10px rgba(255, 126, 95, 0.3);">Review Quiz</h2>
+        <div id="quiz-content">
+            <div class="quiz-question" id="question-text"></div>
+            <div class="quiz-options" id="options-container"></div>
+            <div class="quiz-explanation" id="explanation-text"></div>
+            <div class="quiz-buttons">
+                <button class="control-btn" id="check-answer-btn">Check Answer</button>
+                <button class="control-btn" id="next-question-btn">Next Question</button>
+            </div>
+            <div class="quiz-score" id="score-display">Score: 0 / 0</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = [
+                {
+                    question: "Which of the following amino acids is most likely to migrate toward the cathode during electrophoresis at pH 11?",
+                    options: ["Glutamate", "Serine", "Lysine", "Alanine"],
+                    answer: "C. Lysine",
+                    explanation: "At pH 11, Lysine (basic side chain) retains positive charge and will migrate toward the cathode (negative electrode)."
+                },
+                {
+                    question: "At its isoelectric point (pI), an amino acid:",
+                    options: ["Is fully ionized and positively charged", "Does not migrate in an electric field", "Migrates toward the anode", "Is in its fully protonated form"],
+                    answer: "B. Does not migrate in an electric field",
+                    explanation: "At pI, the net charge is zero; no migration occurs in an electric field."
+                },
+                {
+                    question: "Which amino acid would migrate toward the anode at pH 5?",
+                    options: ["Arginine", "Aspartic acid", "Glutamic acid", "Histidine"],
+                    answer: "B. Aspartic acid",
+                    explanation: "At pH 5, Aspartic acid is negatively charged and moves toward the anode (positive electrode)."
+                },
+                {
+                    question: "At pH 1, the predominant form of glutamic acid is:",
+                    options: ["Zwitterionic", "Fully deprotonated", "Neutral", "Fully protonated and positively charged"],
+                    answer: "D. Fully protonated and positively charged",
+                    explanation: "At very low pH, all ionizable groups are protonated, giving Glu a net positive charge."
+                },
+                {
+                    question: "In electrophoresis at pH 7, a mixture of amino acids is run. Which one remains closest to the origin?",
+                    options: ["Glutamate", "Lysine", "Valine", "Aspartate"],
+                    answer: "C. Valine",
+                    explanation: "Valine has a pI near 6.0, close to neutral pH. It carries little to no net charge and hence shows minimal migration."
+                },
+                {
+                    question: "A protein rich in lysine and arginine residues will likely have:",
+                    options: ["A low pI and migrate toward the cathode at pH 7", "A high pI and migrate toward the anode at pH 7", "A high pI and migrate toward the cathode at pH 7", "A neutral pI and not migrate at pH 7"],
+                    answer: "C. A high pI and migrate toward the cathode at pH 7",
+                    explanation: "Basic residues give high pI; at pH 7, such a protein is positively charged."
+                },
+                {
+                    question: "At a pH below its isoelectric point, an amino acid will:",
+                    options: ["Migrate towards the anode", "Migrate towards the cathode", "Not migrate", "Decompose"],
+                    answer: "b) Migrate towards the cathode",
+                    explanation: "At a pH below its isoelectric point (pI), an amino acid has a net positive charge and migrates towards the cathode (negative electrode) in an electric field."
+                },
+                {
+                    question: "The isoelectric point (pI) of an amino acid is the pH at which:",
+                    options: ["The amino acid is fully protonated", "The amino acid is fully deprotonated", "The amino acid has no net charge", "The amino acid denatures"],
+                    answer: "c) The amino acid has no net charge",
+                    explanation: "The pI is the pH where the amino acid exists as a zwitterion with no net charge."
+                },
+                {
+                    question: "At its isoelectric point, an amino acid in an electric field will:",
+                    options: ["Migrate towards the anode", "Migrate towards the cathode", "Not migrate", "Migrate randomly"],
+                    answer: "c) Not migrate",
+                    explanation: "At its pI, an amino acid has no net charge and thus does not move in an electric field."
+                },
+                {
+                    question: "An amino acid with an ionizable side chain that is negatively charged at neutral pH will have its pI:",
+                    options: ["Less than 7", "Equal to 7", "Greater than 7", "Cannot be determined"],
+                    answer: "a) Less than 7",
+                    explanation: "Amino acids with negatively charged side chains at pH 7 (e.g., aspartic acid) are acidic, and their pI is below 7."
+                },
+                {
+                    question: "At a pH much lower than the pKa of the carboxylic acid group, the predominant form of an amino acid is:",
+                    options: ["Cation", "Anion", "Zwitterion", "Neutral molecule"],
+                    answer: "a) Cation",
+                    explanation: "At a very low pH, both the carboxylic acid (COOH) and amino group (NH3+) are protonated, giving a net positive charge."
+                },
+                {
+                    question: "In a solution where the pH is between the pKa of the carboxylic acid and the pKa of the amino group, the amino acid exists primarily as:",
+                    options: ["Cation", "Anion", "Zwitterion", "Neutral molecule"],
+                    answer: "c) Zwitterion",
+                    explanation: "In this pH range, the carboxylic acid is deprotonated (COO-) and the amino group is protonated (NH3+), forming a zwitterion."
+                },
+                {
+                    question: "At its isoelectric point, an amino acid:",
+                    options: ["Has maximum solubility", "Has minimum solubility", "Is highly reactive", "Decomposes"],
+                    answer: "b) Has minimum solubility",
+                    explanation: "At its pI, an amino acid has no net charge, reducing its solubility in water and causing it to precipitate."
+                },
+                {
+                    question: "At a pH below its isoelectric point (pI), an amino acid will carry a net ______ charge and migrate towards the ______ in an electric field.",
+                    options: ["A. negative, anode", "B. positive, anode", "C. negative, cathode", "D. positive, cathode"],
+                    answer: "D. positive, cathode",
+                    explanation: "When the pH is below the pI, the amino acid will have a net positive charge due to protonation, causing it to migrate towards the negative electrode (cathode)."
+                },
+                {
+                    question: "An amino acid is placed in a buffer at a pH significantly higher than its pI. Which statement best describes its behavior in an electric field?",
+                    options: ["A. It will have no net charge and remain stationary.", "B. It will have a net negative charge and move towards the anode.", "C. Its migration direction cannot be predicted without knowing its specific pKa values.", "D. It will have a net positive charge and move towards the cathode."],
+                    answer: "B. It will have a net negative charge and move towards the anode.",
+                    explanation: "When the pH is significantly above the pI, the amino acid will lose protons, resulting in a net negative charge, and thus migrate towards the positive electrode (anode)."
+                }
+            ];
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let selectedOption = null;
+            let quizActive = true;
+
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const explanationText = document.getElementById('explanation-text');
+            const checkAnswerBtn = document.getElementById('check-answer-btn');
+            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const scoreDisplay = document.getElementById('score-display');
+
+            // Helper function to clean option text by removing common prefixes
+            function cleanOptionText(text) {
+                // This regex matches "A. ", "B. ", "C. ", "D. ", "a) ", "b) " at the start of the string
+                return text.replace(/^[A-D]\.\s|^[a-d]\)\s/, '').trim();
+            }
+
+            function displayQuestion() {
+                if (currentQuestionIndex < questions.length) {
+                    const q = questions[currentQuestionIndex];
+                    questionText.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+                    optionsContainer.innerHTML = '';
+                    explanationText.style.display = 'none';
+                    explanationText.textContent = '';
+                    checkAnswerBtn.style.display = 'inline-block';
+                    nextQuestionBtn.style.display = 'none';
+                    selectedOption = null;
+
+                    q.options.forEach((option, index) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.textContent = option;
+                        optionDiv.classList.add('option');
+                        optionDiv.addEventListener('click', () => selectOption(optionDiv, option));
+                        optionsContainer.appendChild(optionDiv);
+                    });
+                    updateScoreDisplay();
+                } else {
+                    endQuiz();
+                }
+            }
+
+            function selectOption(optionDiv, optionValue) {
+                if (!quizActive) return;
+
+                if (selectedOption) {
+                    selectedOption.classList.remove('selected');
+                }
+                optionDiv.classList.add('selected');
+                selectedOption = optionDiv;
+            }
+
+            function checkAnswer() {
+                if (!selectedOption || !quizActive) return;
+
+                const q = questions[currentQuestionIndex];
+                // Clean the correct answer from the questions array
+                const correctAnswerText = cleanOptionText(q.answer);
+                // Clean the selected option's text content
+                const selectedAnswerText = cleanOptionText(selectedOption.textContent);
+
+                optionsContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('correct', 'incorrect');
+                });
+
+                if (selectedAnswerText === correctAnswerText) {
+                    selectedOption.classList.add('correct');
+                    score++;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    optionsContainer.querySelectorAll('.option').forEach(opt => {
+                        // Clean each option's text content to find the correct one
+                        const optTextCleaned = cleanOptionText(opt.textContent);
+                        if (optTextCleaned === correctAnswerText) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
+
+                explanationText.textContent = `Explanation: ${q.explanation}`;
+                explanationText.style.display = 'block';
+                checkAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'inline-block';
+                updateScoreDisplay();
+            }
+
+            function nextQuestion() {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+
+            function endQuiz() {
+                quizActive = false;
+                questionText.textContent = "Quiz Completed!";
+                optionsContainer.innerHTML = '';
+                explanationText.style.display = 'none';
+                checkAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'none';
+                scoreDisplay.textContent = `Final Score: ${score} / ${questions.length}`;
+            }
+
+            function updateScoreDisplay() {
+                scoreDisplay.textContent = `Score: ${score} / ${currentQuestionIndex}`;
+            }
+
+            checkAnswerBtn.addEventListener('click', checkAnswer);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+
+            displayQuestion();
+        });
+    </script>
+
+    <!-- Footer Section -->
+    <footer class="text-center text-gray-400 text-sm mt-10 py-5 border-t border-slate-700">
+        <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="mx-auto mb-2 w-10 h-auto rounded-lg">
+        <p>&copy; 2025 BETA Biosciences. All rights reserved.</p>
+        <p>Email: <a href="mailto:betabiosciences@gmail.com" class="text-blue-400 hover:underline">betabiosciences@gmail.com</a></p>
+        <p>Contact: +91 97 47 53 35 97</p>
+    </footer>
+</body>
+</html>
