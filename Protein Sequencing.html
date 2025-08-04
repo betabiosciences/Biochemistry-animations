@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Sequencing: A Postgraduate Guide</title>
+    
+    <!-- SECURITY CHECK - MUST BE FIRST -->
+    <script>
+        // Only allow content from betabiosciences.github.io
+        (function() {
+            const allowedDomains = [
+                "https://betabiosciences.github.io",
+                "http://localhost:8000"  // Optional: For local testing
+            ];
+            
+            if (!allowedDomains.includes(window.location.origin)) {
+                // Completely wipe the document
+                document.documentElement.innerHTML = '';
+                // Prevent rendering
+                document.documentElement.style.display = 'none';
+                // Stop all script execution
+                throw new Error("Unauthorized domain");
+            }
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        /* Custom styles for dark theme and fonts */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Very Dark Blue-Gray */
+            color: #c9d1d9; /* Light Gray for general text */
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            color: #58a6ff; /* Vibrant Blue for headings */
+        }
+        .section-title {
+            color: #7ee787; /* Vibrant Green for section titles */
+        }
+        .interactive-element {
+            background-color: #161b22; /* Slightly lighter dark for interactive areas */
+            border-left: 4px solid #f0b347; /* Vibrant Orange border for emphasis */
+        }
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .accordion-header:hover {
+            background-color: #21262d;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .accordion-content.active {
+            max-height: 1000px; /* Adjust as needed for content height */
+            transition: max-height 0.7s ease-in;
+        }
+        .btn-primary {
+            background-color: #6e5494; /* Deep Purple button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #8b6cb6;
+        }
+        .code-block {
+            background-color: #161b22;
+            color: #f0b347; /* Vibrant Orange for code text */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .highlight-text {
+            color: #f0b347; /* Vibrant Orange for highlighted text */
+            font-weight: 600;
+        }
+        .terminal-output {
+            background-color: #0d1117;
+            color: #7ee787; /* Vibrant Green for terminal output */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        /* New style for the Edman Degradation principle headings */
+        .edman-principle-heading {
+            color: #58a6ff; /* Vibrant Blue for the principle headings */
+            font-weight: 600;
+        }
+        /* Quiz specific styles */
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #21262d;
+            border-radius: 0.5rem;
+        }
+        .quiz-question p {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #c9d1d9;
+        }
+        .quiz-options label {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            color: #c9d1d9;
+        }
+        .quiz-options input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .quiz-result {
+            margin-top: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .quiz-result.correct {
+            color: #7ee787; /* Green */
+        }
+        .quiz-result.incorrect {
+            color: #ff7b72; /* Red */
+        }
+        .quiz-feedback {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #6a737d; /* Light gray */
+        }
+        .quiz-feedback.correct {
+            color: #7ee787;
+        }
+        .quiz-feedback.incorrect {
+            color: #ff7b72;
+        }
+        .hidden-section {
+            display: none;
+        }
+        .active-section {
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-[#161b22] p-6 md:p-10 rounded-xl shadow-lg">
+        <h1 class="text-4xl md:text-5xl text-center mb-8" style="color: #f0b347;">Protein Sequencing: A Deep Dive</h1>
+
+        <section class="mb-10 p-6 rounded-lg bg-[#21262d]">
+            <h2 class="text-3xl section-title mb-4">Introduction to Protein Sequencing</h2>
+            <p class="mb-4">
+                Protein sequencing is the process of determining the amino acid sequence of a protein, also known as its primary structure. This information is crucial for understanding protein function, structure, evolution, and for identifying post-translational modifications. Historically, this involved laborious chemical and enzymatic methods, but modern techniques, particularly mass spectrometry, have revolutionized the field.
+            </p>
+        </section>
+
+        <div id="content-container">
+
+            <section id="section-1" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">1. Protein Purification and Quantification</h2>
+                <p class="mb-4">
+                    Before any sequencing can commence, the protein of interest must be isolated and purified from a complex biological mixture. The level of purity required depends on the sequencing method, but generally, high purity is essential to avoid ambiguous results.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">1.1. Protein Purification</h3>
+                <p class="mb-4">
+                    Techniques include chromatography (ion-exchange, size-exclusion, affinity), electrophoresis (SDS-PAGE, 2D-PAGE), and precipitation methods. The goal is to obtain a single protein species, free from contaminating proteins and other macromolecules.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">1.2. Amino Acid Quantification</h3>
+                <p class="mb-4">
+                    Accurate quantification of the purified protein is critical for downstream applications, especially for methods requiring stoichiometric amounts of reagents.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Interactive: Methods of Protein Quantification</h4>
+                    <p class="mb-3">Explore common methods used for protein quantification:</p>
+                    <select id="quantMethod" class="p-2 rounded bg-[#0d1117] text-[#c9d1d9] border border-[#30363d] w-full md:w-auto mb-3">
+                        <option value="bradford">Bradford Assay</option>
+                        <option value="lowry">Lowry Assay</option>
+                        <option value="uv">UV Absorbance (A280)</option>
+                    </select>
+                    <div id="quantDetails" class="mt-3 text-[#c9d1d9]">
+                        <p>Select a method to see details.</p>
+                    </div>
+                </div>
+                <p class="mb-2"><span class="highlight-text">Bradford Assay:</span> A colorimetric protein assay based on the absorbance shift of Coomassie Brilliant Blue G-250 dye upon binding to protein. It's fast and sensitive but can be affected by detergents.</p>
+                <p class="mb-2"><span class="highlight-text">Lowry Assay:</span> A two-step process. First, protein reacts with copper ions in alkaline solution. Second, the copper-protein complex reduces Folin-Ciocalteu reagent (phosphomolybdic-phosphotungstic acid) to produce a blue color. It's highly sensitive but time-consuming and prone to interference from various chemicals (e.g., reducing agents, detergents).</p>
+                <p class="mb-2"><span class="highlight-text">UV Absorbance (A280):</span> Proteins absorb UV light at 280 nm due to the presence of aromatic amino acids (Tryptophan, Tyrosine, and Phenylalanine). This method is rapid and non-destructive but less sensitive and requires a pure protein with known extinction coefficient.</p>
+            </section>
+
+            <section id="section-2" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">2. Amino Acid Composition Analysis</h2>
+                <p class="mb-4">
+                    Before determining the sequence, it's often useful to know the amino acid composition. This involves complete hydrolysis of the protein into its constituent amino acids, followed by their separation and quantification.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">2.1. Hydrolysis</h3>
+                <p class="mb-4">
+                    The most common method is acid hydrolysis using 6M HCl at 110°C for 24-72 hours. This breaks all peptide bonds. However, Tryptophan is destroyed, and Serine, Threonine, and Tyrosine are partially degraded. Cysteine and Cystine are also destroyed and require performic acid oxidation prior to hydrolysis to convert them to stable cysteic acid.
+                </p>
+                <p class="mb-4">
+                    Alkaline hydrolysis can be used for Tryptophan, but it degrades other amino acids. Enzymatic hydrolysis (e.g., using pronase) is milder but often incomplete.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">2.2. Derivatization and Separation</h3>
+                <p class="mb-4">
+                    After hydrolysis, the free amino acids are typically derivatized to make them more volatile or detectable. Common derivatizing agents include:
+                </p>
+                <ul class="list-disc list-inside mb-4 pl-4">
+                    <li class="mb-2"><span class="highlight-text">Phenylisothiocyanate (PITC):</span> Forms Phenylthiocarbamyl (PTC) amino acids, which are stable and can be separated by Reverse-Phase HPLC.</li>
+                    <li class="mb-2"><span class="highlight-text">o-Phthalaldehyde (OPA):</span> Reacts with primary amines to form highly fluorescent derivatives, detected by HPLC with fluorescence detection. Proline (a secondary amine) does not react and requires pre-column derivatization with another reagent or post-column derivatization.</li>
+                </ul>
+                <p class="mb-4">
+                    The derivatized amino acids are then separated using techniques like High-Performance Liquid Chromatography (HPLC) or Gas Chromatography (GC), and quantified based on their peak areas compared to known standards.
+                </p>
+            </section>
+
+            <section id="section-3" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">3. N-terminal and C-terminal Determination</h2>
+                <p class="mb-4">
+                    Identifying the N-terminal (amino-terminal) and C-terminal (carboxyl-terminal) amino acids provides crucial information, especially for proteins with multiple subunits or for confirming protein integrity.
+                </p>
+
+                <h3 class="text-2xl text-[#58a6ff] mb-3">3.1. N-terminal Determination: Sanger Method</h3>
+                <p class="mb-4">
+                    Developed by Frederick Sanger, this was one of the earliest methods for N-terminal analysis.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Sanger Method Principle:</h4>
+                    <p class="mb-3">
+                        The N-terminal amino acid reacts with 2,4-dinitrofluorobenzene (DNFB), also known as Sanger's reagent, under mild alkaline conditions. This forms a dinitrophenyl (DNP) derivative of the N-terminal amino acid.
+                    </p>
+                    <p class="mb-3">
+                        <span class="highlight-text">Reaction:</span> DNFB + N-terminal Amino Acid $\rightarrow$ DNP-Amino Acid
+                    </p>
+                    <p class="mb-3">
+                        After the reaction, the protein is completely hydrolyzed with 6M HCl. Only the N-terminal DNP-amino acid remains stable during hydrolysis, while all other peptide bonds are cleaved. The DNP-amino acid is then extracted with an organic solvent and identified by chromatography (e.g., paper chromatography) and comparison with known standards.
+                    </p>
+                    <p class="mb-3">
+                        <span class="highlight-text">Limitations:</span> This method is destructive to the rest of the protein and can only identify one N-terminal amino acid per protein chain. It is not suitable for sequencing beyond the first residue.
+                    </p>
+                </div>
+
+                <h3 class="text-2xl text-[#58a6ff] mb-3">3.2. N-terminal Determination: Edman Degradation</h3>
+                <p class="mb-4">
+                    Developed by Pehr Edman, this is a more powerful and widely used method because it allows for sequential removal and identification of amino acids from the N-terminus, enabling sequencing of up to 50-60 residues from a single protein.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Interactive: Edman Degradation Steps</h4>
+                    <p class="mb-3">Click through the steps of Edman Degradation:</p>
+                    <div id="edmanSteps" class="mb-4">
+                        <p id="edmanText" class="terminal-output text-base mb-3">Click 'Next Step' to start.</p>
+                        <button id="edmanNextBtn" class="btn-primary">Next Step</button>
+                    </div>
+                    <div class="code-block text-sm">
+                        <p class="mb-2"><span class="edman-principle-heading">Principle:</span> The N-terminal amino acid reacts with Phenylisothiocyanate (PITC) under mild alkaline conditions to form a phenylthiocarbamyl (PTC) adduct of the N-terminal amino acid. This reaction is specific for the free $\alpha$-amino group.</p>
+                        <p class="mb-2"><span class="edman-principle-heading">Cyclization:</span> The PTC-peptide is then treated with anhydrous trifluoroacetic acid (TFA), which cleaves the N-terminal amino acid as an anilinothiazolinone (ATZ) derivative, without hydrolyzing the other peptide bonds. This is the crucial step for sequential degradation.</p>
+                        <p class="mb-2"><span class="edman-principle-heading">Conversion:</span> The unstable ATZ-amino acid is extracted and then converted to a more stable phenylthiohydantoin (PTH) amino acid by treatment with aqueous acid. This PTH-amino acid is the final identifiable product.</p>
+                        <p class="mb-2"><span class="edman-principle-heading">Repetition:</span> The remaining peptide, now shortened by one amino acid, is ready for the next cycle of degradation, allowing for sequential identification of amino acids.</p>
+                        <p class="mb-2"><span class="edman-principle-heading">Automation:</span> Edman degradation is typically performed using an automated instrument called a protein sequenator, which precisely controls reagent delivery, reaction conditions, and sample handling.</p>
+                    </div>
+                </div>
+
+                <p class="mb-4">
+                    Below is a summary diagram illustrating the steps of Edman Degradation:
+                </p>
+                <div class="flex justify-center items-center mb-6">
+                    <svg width="600" height="450" viewBox="0 0 600 450" class="bg-[#0d1117] rounded-lg p-4">
+                        <text x="10" y="20" fill="#c9d1d9" font-size="14">1. Peptide Chain</text>
+                        <rect x="50" y="40" width="300" height="30" fill="#58a6ff" rx="5" ry="5"/>
+                        <text x="60" y="60" fill="white" font-size="12">N-Terminus - AA1 - AA2 - AA3 - ... - C-Terminus</text>
+                        <text x="360" y="60" fill="#c9d1d9" font-size="12">Intact peptide with free N-terminus</text>
+
+                        <line x1="300" y1="80" x2="300" y2="100" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="310" y="95" fill="#7ee787" font-size="12">Coupling (PITC)</text>
+                        <text x="310" y="110" fill="#c9d1d9" font-size="10">PITC reacts with N-terminal amino group</text>
+
+                        <text x="10" y="140" fill="#c9d1d9" font-size="14">2. PTC-Peptide</text>
+                        <rect x="50" y="150" width="300" height="30" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="60" y="170" fill="white" font-size="12">PTC-AA1 - AA2 - AA3 - ... - C-Terminus</text>
+                        <text x="360" y="170" fill="#c9d1d9" font-size="12">N-terminal amino acid derivatized</text>
+
+                        <line x1="300" y1="190" x2="300" y2="210" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="310" y="205" fill="#7ee787" font-size="12">Cleavage (TFA)</text>
+                        <text x="310" y="220" fill="#c9d1d9" font-size="10">N-terminal residue cleaved as ATZ derivative</text>
+
+                        <text x="10" y="250" fill="#c9d1d9" font-size="14">3. ATZ-Amino Acid + Shortened Peptide</text>
+                        <rect x="50" y="260" width="100" height="30" fill="#f0b347" rx="5" ry="5"/>
+                        <text x="60" y="280" fill="white" font-size="12">ATZ-AA1</text>
+                        <rect x="200" y="260" width="200" height="30" fill="#58a6ff" rx="5" ry="5"/>
+                        <text x="210" y="280" fill="white" font-size="12">N-Terminus - AA2 - AA3 - ...</text>
+                        <text x="410" y="275" fill="#c9d1d9" font-size="12">Separated N-terminal and remaining peptide</text>
+
+                        <line x1="100" y1="300" x2="100" y2="320" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="110" y="315" fill="#7ee787" font-size="12">Conversion (Aqueous Acid)</text>
+                        <text x="110" y="330" fill="#c9d1d9" font-size="10">ATZ-AA1 converted to stable PTH-AA1</text>
+
+                        <text x="10" y="360" fill="#c9d1d9" font-size="14">4. PTH-Amino Acid</text>
+                        <rect x="50" y="370" width="100" height="30" fill="#7ee787" rx="5" ry="5"/>
+                        <text x="60" y="390" fill="white" font-size="12">PTH-AA1</text>
+                        <text x="160" y="385" fill="#c9d1d9" font-size="12">Identifiable product for HPLC</text>
+
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                                    refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#7ee787" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3 class="text-2xl text-[#58a6ff] mb-3">3.3. C-terminal Determination</h3>
+                <p class="mb-4">
+                    Determining the C-terminal amino acid is generally more challenging than N-terminal analysis.
+                </p>
+                <ul class="list-disc list-inside mb-4 pl-4">
+                    <li class="mb-2"><span class="highlight-text">Carboxypeptidases:</span> These enzymes cleave amino acids sequentially from the C-terminus. Different carboxypeptidases (e.g., Carboxypeptidase A, B, Y) have different specificities, allowing for the identification of various C-terminal residues. The rate of release of each amino acid is monitored.</li>
+                    <li class="mb-2"><span class="highlight-text">Hydrazinolysis:</span> Treatment with anhydrous hydrazine cleaves all peptide bonds, converting all amino acid residues into amino acid hydrazides, except for the C-terminal amino acid, which remains as a free amino acid. This free amino acid can then be identified. However, this method is harsh and can lead to side reactions.</li>
+                </ul>
+            </section>
+
+            <section id="section-4" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">4. Cleavage into Smaller Peptides</h2>
+                <p class="mb-4">
+                    Most proteins are too large for direct sequencing by Edman degradation (limited to ~50-60 residues). Therefore, larger proteins must be cleaved into smaller, overlapping peptides.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">4.1. Chemical Cleavage</h3>
+                <ul class="list-disc list-inside mb-4 pl-4">
+                    <li class="mb-2"><span class="highlight-text">Cyanogen Bromide (CNBr):</span> Specifically cleaves peptide bonds on the C-terminal side of Methionine residues. This is a highly specific and reliable cleavage method.</li>
+                    <li class="mb-2"><span class="highlight-text">Hydroxylamine:</span> Cleaves Asparagine-Glycine (Asn-Gly) bonds.</li>
+                    <li class="mb-2"><span class="highlight-text">Acid Hydrolysis (partial):</span> Can be used to generate random fragments, but specificity is low.</li>
+                </ul>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">4.2. Enzymatic Cleavage (Proteases)</h3>
+                <p class="mb-4">
+                    Proteases are enzymes that hydrolyze peptide bonds at specific sites. Using different proteases generates distinct sets of peptides, which is crucial for obtaining overlapping sequences.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Interactive: Target Specificity</h4>
+                    <p class="mb-3">Enter a short peptide sequence (e.g., ALARGYLPMK) and select a protease to see where it would cleave:</p>
+                    <input type="text" id="peptideInput" placeholder="Enter peptide sequence (e.g., ALARGYLPMK)" class="p-2 rounded bg-[#0d1117] text-[#c9d1d9] border border-[#30363d] w-full mb-3">
+                    <select id="proteaseSelect" class="p-2 rounded bg-[#0d1117] text-[#c9d1d9] border border-[#30363d] w-full md:w-auto mb-3">
+                        <option value="trypsin">Trypsin</option>
+                        <option value="chymotrypsin">Chymotrypsin</option>
+                        <option value="v8">V8 Protease</option>
+                        <option value="cnbr">Cyanogen Bromide (CNBr)</option>
+                        <option value="pepsin">Pepsin</option>
+                    </select>
+                    <button id="cleaveBtn" class="btn-primary">Cleave Peptide</button>
+                    <div id="cleavedPeptides" class="mt-3 terminal-output">
+                        <p>Cleaved peptides will appear here.</p>
+                    </div>
+                </div>
+                <ul class="list-disc list-inside mb-4 pl-4">
+                    <li class="mb-2"><span class="highlight-text">Trypsin:</span> Cleaves on the C-terminal side of Lysine (K) and Arginine (R), unless followed by Proline (P) (\(R_{n+1} \neq Pro\)), where \(R_{n}\) is the Position of Lysine and Arginine.</li>
+                    <li class="mb-2"><span class="highlight-text">Chymotrypsin:</span> Cleaves on the C-terminal side of large hydrophobic amino acids like Phenylalanine (F), Tryptophan (W), and Tyrosine (Y) (\(R_n = F, W, Y\)), unless followed by Proline (P) (\(R_{n+1} \neq Pro\)), where \(R_n\) is the position of Phenylalanine, Tryptophan, or Tyrosine.</li>
+                    <li class="mb-2"><span class="highlight-text">V8 Protease (Staphylococcus aureus protease):</span> Cleaves on the C-terminal side of Aspartate (D) and Glutamate (E) (in ammonium bicarbonate buffer) or only Glutamate (in phosphate buffer) (\(R_n = D, E\)), unless followed by Proline (P) (\(R_{n+1} \neq Pro\)), where \(R_n\) is the position of Aspartate or Glutamate.</li>
+                    <li class="mb-2"><span class="highlight-text">Pepsin:</span> Cleaves on the N-terminal side of large hydrophobic amino acids such as Phenylalanine (F), Tryptophan (W), and Tyrosine (Y), unless the amino acid N-terminal to the cleavage site is Proline (P) (\(R_{n-1} \neq Pro\)), where \(R_{n-1}\) is the position of the amino acid N-terminal to the cleavage site.</li>
+                </ul>
+                <p class="mb-4">
+                    After cleavage, the resulting peptide fragments are separated (e.g., by HPLC) and individually sequenced.
+                </p>
+            </section>
+
+            <section id="section-5" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">5. Sequencing of Peptides</h2>
+                <p class="mb-4">
+                    Once the protein has been cleaved into manageable peptides, each individual peptide fragment is subjected to Edman degradation (as described in Section 3.2) to determine its unique amino acid sequence. This process is repeated for all isolated peptide fragments.
+                </p>
+                <p class="mb-4">
+                    The efficiency and accuracy of modern automated protein sequenators allow for reliable sequencing of these smaller peptides, generating a collection of short amino acid sequences.
+                </p>
+            </section>
+
+            <section id="section-6" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">6. Disulfide Bond Pattern Determination</h2>
+                <p class="mb-4">
+                    Disulfide bonds (formed between two Cysteine residues) are crucial for the tertiary and quaternary structure of many proteins. Determining their connectivity is vital for understanding protein folding and function.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Interactive: Disulfide Bond Cleavage</h4>
+                    <p class="mb-3">Imagine a protein with a disulfide bond between two Cysteine residues (Cys-1 and Cys-2). Click the button to simulate reduction:</p>
+                    <div class="flex items-center justify-center mb-4">
+                        <span id="cys1" class="text-3xl text-[#7ee787] mr-4">Cys-1</span>
+                        <span id="disulfideLink" class="text-4xl text-[#f0b347]">&#x2014;S&#x2014;S&#x2014;</span>
+                        <span id="cys2" class="text-3xl text-[#7ee787] ml-4">Cys-2</span>
+                    </div>
+                    <button id="reduceDisulfideBtn" class="btn-primary">Reduce Disulfide Bond</button>
+                    <p id="disulfideStatus" class="mt-3 text-[#c9d1d9] text-center">Disulfide bond is intact.</p>
+                </div>
+
+                <p class="mb-4">
+                    Below is a summary diagram illustrating the process of determining disulfide bond patterns:
+                </p>
+                <div class="flex justify-center items-center mb-6">
+                    <svg width="600" height="450" viewBox="0 0 600 450" class="bg-[#0d1117] rounded-lg p-4">
+                        <text x="10" y="20" fill="#c9d1d9" font-size="14">1. Intact Protein (Non-reducing conditions)</text>
+                        <rect x="50" y="40" width="150" height="30" fill="#58a6ff" rx="5" ry="5"/>
+                        <text x="70" y="60" fill="white" font-size="12">Peptide Chain A</text>
+                        <rect x="250" y="40" width="150" height="30" fill="#58a6ff" rx="5" ry="5"/>
+                        <text x="270" y="60" fill="white" font-size="12">Peptide Chain B</text>
+                        <line x1="125" y1="70" x2="325" y2="40" stroke="#f0b347" stroke-width="2"/>
+                        <text x="220" y="55" fill="#f0b347" font-size="12">S-S</text>
+                        <text x="410" y="55" fill="#c9d1d9" font-size="12">Protein with disulfide bond</text>
+
+                        <line x1="300" y1="80" x2="300" y2="100" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="310" y="95" fill="#7ee787" font-size="12">Cleavage (e.g., Trypsin)</text>
+                        <text x="310" y="110" fill="#c9d1d9" font-size="10">Breaks peptide bonds, disulfide intact</text>
+
+
+                        <text x="10" y="140" fill="#c9d1d9" font-size="14">2. Cleaved Peptides (Non-reducing)</text>
+                        <rect x="50" y="150" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="60" y="168" fill="white" font-size="10">P1</text>
+                        <rect x="150" y="150" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="160" y="168" fill="white" font-size="10">P2</text>
+                        <rect x="250" y="150" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="260" y="168" fill="white" font-size="10">P3</text>
+                        <rect x="350" y="150" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="360" y="168" fill="white" font-size="10">P4</text>
+                        <line x1="190" y1="175" x2="290" y2="150" stroke="#f0b347" stroke-width="2"/>
+                        <text x="230" y="165" fill="#f0b347" font-size="10">S-S</text>
+                        <text x="410" y="165" fill="#c9d1d9" font-size="12">Peptides still linked by disulfide</text>
+
+                        <line x1="300" y1="190" x2="300" y2="210" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="310" y="205" fill="#7ee787" font-size="12">Reduction & Alkylation</text>
+                        <text x="310" y="220" fill="#c9d1d9" font-size="10">Breaks disulfide bonds</text>
+
+
+                        <text x="10" y="240" fill="#c9d1d9" font-size="14">3. Reduced Peptides (Separated)</text>
+                        <rect x="50" y="250" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="60" y="268" fill="white" font-size="10">P1-SH</text>
+                        <rect x="150" y="250" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="160" y="268" fill="white" font-size="10">P2</text>
+                        <rect x="250" y="250" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="260" y="268" fill="white" font-size="10">P3-SH</text>
+                        <rect x="350" y="250" width="80" height="25" fill="#6e5494" rx="5" ry="5"/>
+                        <text x="360" y="268" fill="white" font-size="10">P4</text>
+                        <text x="410" y="265" fill="#c9d1d9" font-size="12">Individual peptides with free thiols</text>
+
+                        <line x1="300" y1="285" x2="300" y2="305" stroke="#7ee787" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <text x="310" y="300" fill="#7ee787" font-size="12">Sequence & Identify</text>
+                        <text x="310" y="315" fill="#c9d1d9" font-size="10">Determine sequence of each peptide</text>
+
+
+                        <text x="10" y="340" fill="#c9d1d9" font-size="14">4. Sequence & Linkage Determination</text>
+                        <text x="50" y="360" fill="#f0b347" font-size="12">By comparing the sequences of the now separated peptides (e.g., P1-SH and P3-SH),</text>
+                        <text x="50" y="375" fill="#f0b347" font-size="12">we can identify which Cysteine residues were originally connected by the disulfide bond.</text>
+                        <text x="50" y="390" fill="#f0b347" font-size="12">This reveals the specific disulfide linkage pattern within the protein.</text>
+
+
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                                    refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#7ee787" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <p class="mb-4">
+                    The strategy involves sequencing the protein *without* breaking the disulfide bonds first, then breaking them and sequencing again, and finally identifying which cysteine residues were linked.
+                </p>
+                <ul class="list-disc list-inside mb-4 pl-4">
+                    <li class="mb-2"><span class="highlight-text">1. Non-reducing Cleavage:</span> The protein is first cleaved into peptides using an enzyme (e.g., trypsin) under non-reducing conditions, so disulfide bonds remain intact.</li>
+                    <li class="mb-2"><span class="highlight-text">2. Separation:</span> The resulting peptides, including those containing disulfide bonds, are separated (e.g., by HPLC).</li>
+                    <li class="mb-2"><span class="highlight-text">3. Reduction and Alkylation:</span> Each disulfide-linked peptide is then isolated, reduced (e.g., with DTT or $\beta$-mercaptoethanol) to break the S-S bond into two -SH groups, and alkylated (e.g., with iodoacetamide) to prevent re-formation of the disulfide bond.</li>
+                    <li class="mb-2"><span class="highlight-text">4. Re-separation and Sequencing:</span> The now separated peptides (which were previously linked by a disulfide bond) are re-separated and individually sequenced. By identifying the sequences of the two peptides that were originally linked, the disulfide bond connectivity is established.</li>
+                    <li class="mb-2"><span class="highlight-text">Diagonal Electrophoresis:</span> An older, but conceptually important, method for identifying disulfide-linked peptides. Peptides are separated by electrophoresis in one dimension, then reduced, and separated again in a second dimension. Peptides that were originally linked by a disulfide bond will move off the diagonal.</li>
+                    <li class="mb-2"><span class="highlight-text">Mass Spectrometry:</span> Modern approaches heavily rely on mass spectrometry. Intact disulfide-linked peptides can be identified by their mass. Upon reduction, the mass of the individual peptides will be observed, confirming the linkage. MS/MS can provide sequence information for these peptides.</li>
+                </ul>
+            </section>
+
+            <section id="section-7" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">7. Overlapping Peptides and Sequence Assembly</h2>
+                <p class="mb-4">
+                    The key to reconstructing the full protein sequence from its fragments lies in generating overlapping peptides. This is achieved by using at least two different cleavage methods (e.g., trypsin and CNBr) to produce different sets of fragments.
+                </p>
+                <div class="interactive-element p-4 rounded-lg mb-4">
+                    <h4 class="text-xl text-[#f0b347] mb-2">Interactive: Sequence Assembly</h4>
+                    <p class="mb-3">
+                        These peptide fragments are typically obtained by cleaving a larger protein using different enzymes or chemical reagents (e.g., Trypsin and Cyanogen Bromide) to create overlapping sequences. Drag and drop the fragments below to assemble the correct full sequence:
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-2 mb-4" id="peptidePool">
+                        <div class="draggable-peptide bg-[#6e5494] text-white p-2 rounded-md cursor-grab" draggable="true" data-sequence="ALAMET">ALAMET</div>
+                        <div class="draggable-peptide bg-[#6e5494] text-white p-2 rounded-md cursor-grab" draggable="true" data-sequence="METGLY">METGLY</div>
+                        <div class="draggable-peptide bg-[#6e5494] text-white p-2 rounded-md cursor-grab" draggable="true" data-sequence="GLYLYS">GLYLYS</div>
+                        <div class="draggable-peptide bg-[#6e5494] text-white p-2 rounded-md cursor-grab" draggable="true" data-sequence="LYSARG">LYSARG</div>
+                        <div class="draggable-peptide bg-[#6e5494] text-white p-2 rounded-md cursor-grab" draggable="true" data-sequence="ARGTYR">ARGTYR</div>
+                    </div>
+                    <div class="border-2 border-dashed border-[#30363d] p-4 rounded-md min-h-[100px] flex flex-wrap gap-2 items-center justify-center" id="sequenceDropArea">
+                        <p class="text-[#6a737d] assembly-placeholder">Drag peptides here to assemble.</p>
+                    </div>
+                    <p id="assemblyStatus" class="mt-3 text-center text-[#c9d1d9]"></p>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <button id="checkAssemblyBtn" class="btn-primary">Check Assembly</button>
+                        <button id="resetAssemblyBtn" class="btn-primary bg-gray-600 hover:bg-gray-700">Reset</button>
+                    </div>
+                </div>
+                <p class="mb-4">
+                    By comparing the sequences of different sets of peptides, overlapping regions can be identified, allowing the entire protein sequence to be pieced together like a jigsaw puzzle. For example, if one cleavage yields peptides A-B-C and D-E-F, and another yields B-C-D and E-F-G, then the overlap of B-C indicates the order.
+                </p>
+                <p class="mb-4">
+                    Modern bioinformatics tools are indispensable for this assembly process, especially for large proteins and complex datasets generated by mass spectrometry.
+                </p>
+            </section>
+
+            <section id="section-8" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">8. Ladder Sequencing (Historical Context)</h2>
+                <p class="mb-4">
+                    While not a primary method for full protein sequencing today, the concept of "ladder sequencing" is rooted in early approaches to peptide analysis and finds parallels in modern mass spectrometry.
+                </p>
+                <p class="mb-4">
+                    Historically, this referred to methods that generated a series of fragments differing by one amino acid in length, similar to a DNA sequencing ladder. For example, partial Edman degradation or specific chemical cleavages could produce such ladders.
+                </p>
+                <p class="mb-4">
+                    In modern proteomics, the concept of a "ladder" is more directly observed in <span class="highlight-text">tandem mass spectrometry (MS/MS)</span>. When a peptide is fragmented in the gas phase (e.g., by collision-induced dissociation, CID), it typically breaks along the peptide backbone, generating a series of product ions (b-ions and y-ions) that differ by the mass of a single amino acid residue. This creates a "mass ladder" from which the amino acid sequence can be deduced.
+                </p>
+                <div class="code-block text-sm">
+                    <p class="mb-2">Example of a simplified MS/MS fragmentation ladder for peptide Ala-Gly-Ser:</p>
+                    <pre class="terminal-output">
+Peptide: A-G-S
+b1 ion: A (m/z 71)
+b2 ion: A-G (m/z 128)
+b3 ion: A-G-S (m/z 215)
+
+y1 ion: S (m/z 87)
+y2 ion: G-S (m/z 144)
+y3 ion: A-G-S (m/z 215)
+                    </pre>
+                    <p class="mb-2">By analyzing the mass differences between consecutive peaks in the MS/MS spectrum, the sequence of the peptide can be determined.</p>
+                </div>
+            </section>
+
+            <section id="section-9" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">9. Mass Spectrometry in Modern Protein Sequencing</h2>
+                <p class="mb-4">
+                    Mass spectrometry (MS) has become the dominant technology for protein sequencing due to its high sensitivity, speed, and ability to identify post-translational modifications.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">9.1. Peptide Mass Fingerprinting (PMF)</h3>
+                <p class="mb-4">
+                    Involves cleaving the protein into peptides (e.g., with trypsin), then analyzing the masses of these peptides using MALDI-TOF MS. The resulting "fingerprint" of peptide masses is compared against theoretical peptide masses from protein databases to identify the protein. This method identifies known proteins but doesn't directly sequence them.
+                </p>
+                <h3 class="text-2xl text-[#58a6ff] mb-3">9.2. Tandem Mass Spectrometry (MS/MS)</h3>
+                <p class="mb-4">
+                    This is the core of modern de novo protein sequencing.
+                    MS/MS is the core technique. It involves two stages of mass analysis:
+                    </p><ul class="list-disc list-inside mb-4 pl-4">
+                        <li><span class="highlight-text">Stage 1 (MS1):</span> A mass analyzer selects a peptide ion (the "precursor ion") of a specific mass-to-charge ratio ($m/z$).</li>
+                        <li><span class="highlight-text">Stage 2 (MS2):</span> The selected precursor ion is fragmented in a collision cell. This fragmentation typically breaks the peptide bonds, generating a series of smaller "fragment ions" (e.g., b-ions and y-ions).</li>
+                        <li><span class="highlight-text">Detection:</span> The fragment ions are then analyzed by a second mass analyzer, producing a mass spectrum of the fragments. By analyzing the mass differences between the fragment ions, the amino acid sequence can be deduced.</li>
+                    </ul>
+            </section>
+
+            <section id="section-10" class="hidden-section p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">Conclusion</h2>
+                <p class="mb-4">
+                    Protein sequencing has evolved significantly from classical chemical methods to sophisticated mass spectrometry-based approaches. While Edman degradation remains valuable for N-terminal sequencing and confirming sequences, tandem mass spectrometry is now the primary tool for high-throughput, sensitive, and comprehensive protein sequence analysis, including the identification of complex modifications.
+                </p>
+            </section>
+
+            <section id="section-11" class="hidden-section mb-10 p-6 rounded-lg bg-[#21262d]">
+                <h2 class="text-3xl section-title mb-4">Review Quiz</h2>
+                <form id="quizForm">
+                    <div class="quiz-question" id="q1">
+                        <p>1. Which method is primarily used for N-terminal determination and sequential amino acid removal?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q1" value="a"> Sanger Method</label>
+                            <label><input type="radio" name="q1" value="b"> Edman Degradation</label>
+                            <label><input type="radio" name="q1" value="c"> Hydrazinolysis</label>
+                            <label><input type="radio" name="q1" value="d"> Bradford Assay</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q2">
+                        <p>2. What is the primary limitation of the Sanger Method for N-terminal sequencing?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q2" value="a"> It is too slow.</label>
+                            <label><input type="radio" name="q2" value="b"> It destroys the rest of the protein.</label>
+                            <label><input type="radio" name="q2" value="c"> It requires very large amounts of protein.</label>
+                            <label><input type="radio" name="q2" value="d"> It cannot identify aromatic amino acids.</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q3">
+                        <p>3. Which protease cleaves on the C-terminal side of Lysine (K) and Arginine (R) residues?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q3" value="a"> Chymotrypsin</label>
+                            <label><input type="radio" name="q3" value="b"> Pepsin</label>
+                            <label><input type="radio" name="q3" value="c"> Trypsin</label>
+                            <label><input type="radio" name="q3" value="d"> V8 Protease</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q4">
+                        <p>4. Cyanogen Bromide (CNBr) specifically cleaves peptide bonds at which amino acid's C-terminal side?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q4" value="a"> Lysine</label>
+                            <label><input type="radio" name="q4" value="b"> Tryptophan</label>
+                            <label><input type="radio" name="q4" value="c"> Methionine</label>
+                            <label><input type="radio" name="q4" value="d"> Cysteine</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q5">
+                        <p>5. Which technique is most commonly used for protein quantification based on the absorbance shift of Coomassie Brilliant Blue dye?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q5" value="a"> Lowry Assay</label>
+                            <label><input type="radio" name="q5" value="b"> UV Absorbance (A280)</label>
+                            <label><input type="radio" name="q5" value="c"> Bradford Assay</label>
+                            <label><input type="radio" name="q5" value="d"> HPLC</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q6">
+                        <p>6. What type of bond is formed between two Cysteine residues that is crucial for protein structure?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q6" value="a"> Peptide bond</label>
+                            <label><input type="radio" name="q6" value="b"> Hydrogen bond</label>
+                            <label><input type="radio" name="q6" value="c"> Disulfide bond</label>
+                            <label><input type="radio" name="q6" value="d"> Ionic bond</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q7">
+                        <p>7. Why is it necessary to cleave large proteins into smaller peptides before Edman degradation?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q7" value="a"> Edman degradation is too slow for large proteins.</label>
+                            <label><input type="radio" name="q7" value="b"> Large proteins interfere with reagent binding.</label>
+                            <label><input type="radio" name="q7" value="c"> Edman degradation is limited to sequencing about 50-60 residues.</label>
+                            <label><input type="radio" name="q7" value="d"> Smaller peptides are easier to purify.</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q8">
+                        <p>8. What is the purpose of generating overlapping peptides in protein sequencing?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q8" value="a"> To increase the yield of each peptide.</label>
+                            <label><input type="radio" name="q8" value="b"> To confirm the purity of the protein.</label>
+                            <label><input type="radio" name="q8" value="c"> To reconstruct the full protein sequence.</label>
+                            <label><input type="radio" name="q8" value="d"> To identify post-translational modifications.</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q9">
+                        <p>9. Which type of mass spectrometry is primarily used for de novo protein sequencing by analyzing fragment ions (b-ions and y-ions)?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q9" value="a"> MALDI-TOF MS</label>
+                            <label><input type="radio" name="q9" value="b"> Tandem Mass Spectrometry (MS/MS)</label>
+                            <label><input type="radio" name="q9" value="c"> Electrospray Ionization (ESI)</label>
+                            <label><input type="radio" name="q9" value="d"> Gas Chromatography-Mass Spectrometry (GC-MS)</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <div class="quiz-question" id="q10">
+                        <p>10. What is the main advantage of Mass Spectrometry (MS) over traditional methods in modern protein sequencing?</p>
+                        <div class="quiz-options">
+                            <label><input type="radio" name="q10" value="a"> It is less expensive.</label>
+                            <label><input type="radio" name="q10" value="b"> It is less sensitive.</label>
+                            <label><input type="radio" name="q10" value="c"> High sensitivity, speed, and ability to identify PTMs.</label>
+                            <label><input type="radio" name="q10" value="d"> It requires less sample preparation.</label>
+                        </div>
+                        <div class="quiz-feedback"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary mt-6">Submit Quiz</button>
+                    <button type="button" id="resetQuizBtn" class="btn-primary bg-gray-600 hover:bg-gray-700 mt-6 ml-4">Reset Quiz</button>
+                </form>
+                <div id="quizResultSummary" class="quiz-result mt-6"></div>
+            </section>
+        </div>
+
+        <div id="navigation-controls" class="flex justify-center mt-8">
+            <button id="nextSectionBtn" class="btn-primary">Next Section</button>
+        </div>
+
+    </div>
+
+    <footer class="text-center mt-10 p-6 border-t border-[#30363d] bg-[#161b22] rounded-xl">
+        <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="mx-auto w-10 mb-4">
+        <p class="text-sm text-[#c9d1d9]">&copy; 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="text-sm text-[#c9d1d9]">Email: <a href="mailto:betabiosciences@gmail.com" class="text-[#58a6ff] hover:underline">betabiosciences@gmail.com</a></p>
+        <p class="text-sm text-[#c9d1d9]">Contact: +91 97 47 53 35 97</p>
+    </footer>
+
+    <script>
+        // JavaScript for interactive elements
+
+        // Section navigation logic
+        const sections = document.querySelectorAll('#content-container section');
+        const nextSectionBtn = document.getElementById('nextSectionBtn');
+        let currentSectionIndex = -1; // -1 to start before the first section
+
+        function showNextSection() {
+            if (currentSectionIndex >= 0) {
+                sections[currentSectionIndex].classList.remove('active-section');
+                sections[currentSectionIndex].classList.add('hidden-section');
+            }
+            currentSectionIndex++;
+            if (currentSectionIndex < sections.length) {
+                sections[currentSectionIndex].classList.remove('hidden-section');
+                sections[currentSectionIndex].classList.add('active-section');
+            }
+
+            if (currentSectionIndex >= sections.length - 1) {
+                nextSectionBtn.textContent = 'End of Document';
+                nextSectionBtn.disabled = true;
+                // Add a final message or prompt
+                const finalMessage = document.createElement('p');
+                finalMessage.textContent = "You have reached the end of the document. You can now reset the page or scroll up to review.";
+                finalMessage.className = "text-center text-[#c9d1d9] mt-4";
+                document.getElementById('navigation-controls').prepend(finalMessage);
+            }
+        }
+
+        nextSectionBtn.addEventListener('click', showNextSection);
+
+        // 1. Protein Quantification Details Toggle
+        const quantMethod = document.getElementById('quantMethod');
+        const quantDetails = document.getElementById('quantDetails');
+
+        const quantDescriptions = {
+            bradford: `
+                <p class="mb-2"><span class="highlight-text">Bradford Assay:</span> Uses Coomassie Brilliant Blue G-250 dye. The dye binds to basic and aromatic amino acid residues, causing a shift in its absorbance maximum from 465 nm (red) to 595 nm (blue). The intensity of the blue color is proportional to the protein concentration. It's rapid and sensitive, but can be interfered with by detergents and has variable response to different proteins.</p>
+            `,
+            lowry: `
+                <p class="mb-2"><span class="highlight-text">Lowry Assay:</span> A two-step process. First, protein reacts with copper ions in alkaline solution. Second, the copper-protein complex reduces Folin-Ciocalteu reagent (phosphomolybdic-phosphotungstic acid) to produce a blue color. It's highly sensitive but time-consuming and prone to interference from various chemicals (e.g., reducing agents, detergents).</p>
+            `,
+            uv: `
+                <p class="mb-2"><span class="highlight-text">UV Absorbance (A280):</span> Based on the intrinsic absorbance of aromatic amino acids (Tryptophan, Tyrosine, and to a lesser extent, Phenylalanine) at 280 nm. Protein concentration can be estimated using the Beer-Lambert law ($$A = \\epsilon cl$$), where A is absorbance, $$\\epsilon$$ is the extinction coefficient, c is concentration, and l is path length. Non-destructive.</p>
+            `
+        };
+
+        quantMethod.addEventListener('change', (event) => {
+            quantDetails.innerHTML = quantDescriptions[event.target.value];
+        });
+        // Set initial description
+        quantDetails.innerHTML = quantDescriptions[quantMethod.value];
+
+
+        // 2. Edman Degradation Steps
+        const edmanNextBtn = document.getElementById('edmanNextBtn');
+        const edmanText = document.getElementById('edmanText');
+        let edmanStep = 0;
+        const edmanStepsContent = [
+            "Step 1: <span class='highlight-text'>Coupling.</span> The free N-terminal amino group of the peptide reacts with Phenylisothiocyanate (PITC) under mild alkaline conditions (pH 9.0) to form a phenylthiocarbamyl (PTC) peptide.",
+            "Step 2: <span class='highlight-text'>Cyclization/Cleavage.</span> The PTC-peptide is treated with anhydrous trifluoroacetic acid (TFA). This acid catalyzes the cyclization and cleavage of the N-terminal amino acid as an anilinothiazolinone (ATZ) derivative. The rest of the peptide remains intact.",
+            "Step 3: <span class='highlight-text'>Extraction.</span> The ATZ-amino acid is extracted into an organic solvent.",
+            "Step 4: <span class='highlight-text'>Conversion.</span> The unstable ATZ-amino acid is converted to a more stable phenylthiohydantoin (PTH) amino acid by treatment with aqueous acid. This PTH-amino acid is the final identifiable product.",
+            "Step 5: <span class='highlight-text'>Identification.</span> The PTH-amino acid is identified by High-Performance Liquid Chromatography (HPLC) by comparing its retention time with known PTH-amino acid standards. The remaining shortened peptide is ready for the next cycle.",
+            "Edman Degradation complete for one residue. Click 'Next Step' to restart or review."
+        ];
+
+        edmanNextBtn.addEventListener('click', () => {
+            edmanText.innerHTML = edmanStepsContent[edmanStep];
+            edmanStep = (edmanStep + 1) % edmanStepsContent.length;
+            if (edmanStep === 0) { // Reset button text if cycle completed
+                edmanNextBtn.textContent = 'Restart';
+            } else {
+                edmanNextBtn.textContent = 'Next Step';
+            }
+        });
+
+
+        // 3. Protease Cleavage Simulation
+        const peptideInput = document.getElementById('peptideInput');
+        const proteaseSelect = document.getElementById('proteaseSelect');
+        const cleaveBtn = document.getElementById('cleaveBtn');
+        const cleavedPeptides = document.getElementById('cleavedPeptides');
+
+        cleaveBtn.addEventListener('click', () => {
+            const peptide = peptideInput.value.toUpperCase().trim();
+            const protease = proteaseSelect.value;
+            let result = '';
+
+            if (!peptide) {
+                cleavedPeptides.textContent = "Please enter a peptide sequence.";
+                return;
+            }
+
+            // Simple validation for amino acid letters
+            if (!/^[ACDEFGHIKLMNPQRSTVWXY]+$/.test(peptide)) {
+                cleavedPeptides.textContent = "Invalid peptide sequence. Please use standard amino acid single-letter codes.";
+                return;
+            }
+
+            let fragments = [];
+            let lastCleavageIndex = 0;
+
+            for (let i = 0; i < peptide.length; i++) { // Corrected loop condition
+                const aa = peptide[i];
+                const nextAa = peptide[i + 1];
+                let shouldCleave = false;
+
+                switch (protease) {
+                    case 'trypsin':
+                        // Cleaves after K or R, unless followed by P
+                        if ((aa === 'K' || aa === 'R') && nextAa !== 'P') {
+                            shouldCleave = true;
+                        }
+                        break;
+                    case 'chymotrypsin':
+                        // Cleaves after F, W, Y, unless followed by P
+                        if ((aa === 'F' || aa === 'W' || aa === 'Y') && nextAa !== 'P') {
+                            shouldCleave = true;
+                        }
+                        break;
+                    case 'v8':
+                        // Cleaves after D or E (assuming general conditions), unless followed by P
+                        if ((aa === 'D' || aa === 'E') && nextAa !== 'P') {
+                            shouldCleave = true;
+                        }
+                        break;
+                    case 'cnbr':
+                        // Cleaves after M
+                        if (aa === 'M') {
+                            shouldCleave = true;
+                        }
+                        break;
+                    case 'pepsin':
+                        // Cleaves on the N-terminal side of F, W, Y, unless the preceding amino acid is P
+                        // Removed L, I, A, V from the list as per user request
+                        if (nextAa && ['F', 'W', 'Y'].includes(nextAa) && aa !== 'P') {
+                            shouldCleave = true;
+                        }
+                        break;
+                }
+
+                if (shouldCleave) {
+                    fragments.push(peptide.substring(lastCleavageIndex, i + 1));
+                    lastCleavageIndex = i + 1;
+                }
+            }
+            fragments.push(peptide.substring(lastCleavageIndex)); // Add the last fragment
+
+            if (fragments.length === 1 && fragments[0] === peptide) {
+                result = `No cleavage sites found for ${protease} in "${peptide}".`;
+            } else {
+                result = `Cleaved by ${protease}:\n`;
+                fragments.forEach((frag, index) => {
+                    result += `Fragment ${index + 1}: ${frag}\n`;
+                });
+            }
+            cleavedPeptides.textContent = result;
+        });
+
+        // 4. Disulfide Bond Cleavage
+        const reduceDisulfideBtn = document.getElementById('reduceDisulfideBtn');
+        const disulfideLink = document.getElementById('disulfideLink');
+        const disulfideStatus = document.getElementById('disulfideStatus');
+
+        reduceDisulfideBtn.addEventListener('click', () => {
+            if (disulfideLink.textContent.includes('S—S')) {
+                disulfideLink.innerHTML = '&#x2014;SH&nbsp;&nbsp;HS&#x2014;'; // Representing two free thiols
+                disulfideLink.classList.add('text-red-400');
+                disulfideLink.classList.remove('text-yellow-300');
+                disulfideStatus.textContent = 'Disulfide bond reduced! Two free thiol groups.';
+                reduceDisulfideBtn.textContent = 'Reset Bond';
+            } else {
+                disulfideLink.innerHTML = '&#x2014;S&#x2014;S&#x2014;';
+                disulfideLink.classList.remove('text-red-400');
+                disulfideLink.classList.add('text-yellow-300');
+                disulfideStatus.textContent = 'Disulfide bond is intact.';
+                reduceDisulfideBtn.textContent = 'Reduce Disulfide Bond';
+            }
+        });
+
+        // 5. Sequence Assembly Drag and Drop
+        const peptidePool = document.getElementById('peptidePool');
+        const sequenceDropArea = document.getElementById('sequenceDropArea');
+        const assemblyStatus = document.getElementById('assemblyStatus');
+        const checkAssemblyBtn = document.getElementById('checkAssemblyBtn');
+        // Updated correct sequence to match the full concatenation of the provided fragments
+        const correctSequence = "ALAMETMETGLYGLYLYSLYSARGARGTYR";
+
+        // New: Reset button
+        const resetAssemblyBtn = document.getElementById('resetAssemblyBtn');
+
+        let draggedElement = null;
+
+        // Function to reset the assembly area
+        function resetAssembly() {
+            // Clear the drop area and add back the placeholder
+            sequenceDropArea.innerHTML = '<p class="text-[#6a737d] assembly-placeholder">Drag peptides here to assemble.</p>';
+            assemblyStatus.textContent = '';
+            assemblyStatus.classList.remove('text-green-400', 'text-red-400');
+
+            // Define the new set of peptides for the pool
+            const newPeptides = [
+                { sequence: "ALAMET", text: "ALAMET" },
+                { sequence: "METGLY", text: "METGLY" },
+                { sequence: "GLYLYS", text: "GLYLYS" },
+                { sequence: "LYSARG", text: "LYSARG" },
+                { sequence: "ARGTYR", text: "ARGTYR" }
+            ];
+
+            // Clear existing peptides from the pool
+            peptidePool.innerHTML = '';
+
+            // Create and append new peptide elements to the pool
+            newPeptides.forEach(data => {
+                const peptideEl = document.createElement('div');
+                peptideEl.classList.add('draggable-peptide', 'bg-[#6e5494]', 'text-white', 'p-2', 'rounded-md', 'cursor-grab');
+                peptideEl.setAttribute('draggable', 'true');
+                peptideEl.dataset.sequence = data.sequence;
+                peptideEl.textContent = data.text;
+                peptidePool.appendChild(peptideEl);
+            });
+
+            // Re-shuffle the peptides in the pool
+            const peptidesInPool = Array.from(peptidePool.children);
+            peptidesInPool.sort(() => Math.random() - 0.5);
+            peptidesInPool.forEach(peptide => peptidePool.appendChild(peptide));
+        }
+
+
+        peptidePool.addEventListener('dragstart', (e) => {
+            draggedElement = e.target;
+            e.dataTransfer.setData('text/plain', e.target.dataset.sequence);
+            setTimeout(() => {
+                e.target.classList.add('opacity-50');
+            }, 0);
+        });
+
+        peptidePool.addEventListener('dragend', (e) => {
+            e.target.classList.remove('opacity-50');
+        });
+
+        sequenceDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Allow drop
+        });
+
+        sequenceDropArea.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            sequenceDropArea.classList.add('border-teal-400');
+        });
+
+        sequenceDropArea.addEventListener('dragleave', () => {
+            sequenceDropArea.classList.remove('border-teal-400');
+        });
+
+        sequenceDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            sequenceDropArea.classList.remove('border-teal-400');
+            if (draggedElement) {
+                // Remove initial instruction text if present
+                const placeholder = sequenceDropArea.querySelector('.assembly-placeholder');
+                if (placeholder) {
+                    placeholder.remove();
+                }
+                sequenceDropArea.appendChild(draggedElement);
+                draggedElement.classList.remove('cursor-grab');
+                draggedElement.classList.add('cursor-default');
+                draggedElement = null;
+            }
+        });
+
+        checkAssemblyBtn.addEventListener('click', () => {
+            let assembledSequence = '';
+            const peptidesInDropArea = Array.from(sequenceDropArea.children).filter(el => el.classList.contains('draggable-peptide'));
+
+            // Get sequences in the order they appear in the drop area
+            peptidesInDropArea.forEach(peptideEl => {
+                assembledSequence += peptideEl.dataset.sequence;
+            });
+
+            if (assembledSequence === correctSequence) {
+                assemblyStatus.textContent = "Correct! You've successfully assembled the sequence.";
+                assemblyStatus.classList.remove('text-red-400');
+                assemblyStatus.classList.add('text-green-400');
+            } else {
+                assemblyStatus.textContent = "Incorrect. Keep trying! The current assembly is: " + assembledSequence;
+                assemblyStatus.classList.remove('text-green-400');
+                assemblyStatus.classList.add('text-red-400');
+            }
+        });
+
+        // Add event listener for the new reset button
+        resetAssemblyBtn.addEventListener('click', resetAssembly);
+
+        // Shuffle peptides in the pool on load for a fresh challenge (initial setup)
+        window.addEventListener('load', () => {
+            resetAssembly(); // Use reset function for initial setup
+        });
+
+        // Quiz Logic
+        const quizForm = document.getElementById('quizForm');
+        const quizResultSummary = document.getElementById('quizResultSummary');
+        const resetQuizBtn = document.getElementById('resetQuizBtn');
+
+        const correctAnswers = {
+            q1: 'b',
+            q2: 'b',
+            q3: 'c',
+            q4: 'c',
+            q5: 'c',
+            q6: 'c',
+            q7: 'c',
+            q8: 'c',
+            q9: 'b',
+            q10: 'c'
+        };
+        const answerText = {
+            q1: {a: 'Sanger Method', b: 'Edman Degradation', c: 'Hydrazinolysis', d: 'Bradford Assay'},
+            q2: {a: 'It is too slow.', b: 'It destroys the rest of the protein.', c: 'It requires very large amounts of protein.', d: 'It cannot identify aromatic amino acids.'},
+            q3: {a: 'Chymotrypsin', b: 'Pepsin', c: 'Trypsin', d: 'V8 Protease'},
+            q4: {a: 'Lysine', b: 'Tryptophan', c: 'Methionine', d: 'Cysteine'},
+            q5: {a: 'Lowry Assay', b: 'UV Absorbance (A280)', c: 'Bradford Assay', d: 'HPLC'},
+            q6: {a: 'Peptide bond', b: 'Hydrogen bond', c: 'Disulfide bond', d: 'Ionic bond'},
+            q7: {a: 'Edman degradation is too slow for large proteins.', b: 'Large proteins interfere with reagent binding.', c: 'Edman degradation is limited to sequencing about 50-60 residues.', d: 'Smaller peptides are easier to purify.'},
+            q8: {a: 'To increase the yield of each peptide.', b: 'To confirm the purity of the protein.', c: 'To reconstruct the full protein sequence.', d: 'To identify post-translational modifications.'},
+            q9: {a: 'MALDI-TOF MS', b: 'Tandem Mass Spectrometry (MS/MS)', c: 'Electrospray Ionization (ESI)', d: 'Gas Chromatography-Mass Spectrometry (GC-MS)'},
+            q10: {a: 'It is less expensive.', b: 'It is less sensitive.', c: 'High sensitivity, speed, and ability to identify PTMs.', d: 'It requires less sample preparation.'},
+        };
+
+        quizForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let score = 0;
+            const totalQuestions = Object.keys(correctAnswers).length;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionName = `q${i}`;
+                const selectedOption = quizForm.elements[questionName].value;
+                const feedbackElement = document.querySelector(`#q${i} .quiz-feedback`);
+
+                feedbackElement.classList.remove('correct', 'incorrect');
+                feedbackElement.textContent = ''; // Clear previous feedback
+
+                if (selectedOption === correctAnswers[questionName]) {
+                    score++;
+                    feedbackElement.textContent = 'Correct!';
+                    feedbackElement.classList.add('correct');
+                } else {
+                    const correctOptionText = answerText[questionName][correctAnswers[questionName]];
+                    feedbackElement.textContent = `Incorrect. The correct answer is: ${correctOptionText}`;
+                    feedbackElement.classList.add('incorrect');
+                }
+            }
+
+            quizResultSummary.textContent = `You scored ${score} out of ${totalQuestions}!`;
+            if (score === totalQuestions) {
+                quizResultSummary.classList.remove('incorrect');
+                quizResultSummary.classList.add('correct');
+            } else {
+                quizResultSummary.classList.remove('correct');
+                quizResultSummary.classList.add('incorrect');
+            }
+        });
+
+        resetQuizBtn.addEventListener('click', () => {
+            quizForm.reset(); // Resets all form elements
+            quizResultSummary.textContent = '';
+            quizResultSummary.classList.remove('correct', 'incorrect');
+
+            // Clear individual question feedback
+            const feedbackElements = document.querySelectorAll('.quiz-feedback');
+            feedbackElements.forEach(el => {
+                el.textContent = '';
+                el.classList.remove('correct', 'incorrect');
+            });
+        });
+    </script>
+</body>
+</html>
