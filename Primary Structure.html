@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Primary Structure - Interactive Guide</title>
+    <script>
+        // Security check - must be first thing in the document
+        (function() {
+            const allowedDomain = "https://betabiosciences.github.io";
+            if (window.location.origin !== allowedDomain) {
+                // Stop all rendering immediately
+                document.write('');
+                document.close();
+                window.stop();
+                throw new Error("Unauthorized domain");
+            }
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .interactive-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .interactive-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .peptide-bond {
+            stroke-dasharray: 5,5;
+            animation: dash 2s linear infinite;
+        }
+        
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+        
+        /* Modified fade-in to be initially hidden */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            display: none; /* Hide all sections initially */
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+            display: block; /* Show the active section */
+        }
+        
+        .dipole-arrow {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Updated watermark to be more visible and in the top-right corner */
+        .watermark {
+            position: fixed;
+            top: 15px; 
+            right: 15px; 
+            opacity: 0.2; /* Increased opacity for better visibility */
+            z-index: 1000;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .watermark:hover {
+            opacity: 0.3; /* Subtle reveal on hover */
+        }
+        
+        @media (max-width: 768px) {
+            .watermark {
+                top: 10px;
+                right: 10px;
+            }
+            .watermark img {
+                width: 32px !important;
+                height: 32px !important;
+            }
+            .watermark .text-xs {
+                font-size: 0.6rem;
+            }
+        }
+        
+        /* Enhanced mobile optimizations */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+            
+            .text-4xl {
+                font-size: 2rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+            
+            .md\:grid-cols-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .p-6 {
+                padding: 1rem;
+            }
+            
+            .p-8 {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-center mb-4">🧪 Proteins: Primary Structure</h1>
+        </div>
+    </header>
+
+    <!-- Navigation Button -->
+    <div class="flex justify-center my-6">
+        <button id="nextBtn" onclick="showNextSection()" class="interactive-btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg">
+            Start Guide
+        </button>
+        <button id="prevBtn" onclick="showPreviousSection()" class="interactive-btn bg-gray-300 text-gray-700 px-8 py-3 rounded-full font-semibold shadow-lg text-lg ml-4 hidden">
+            Previous
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- Introduction Section -->
+        <section class="mb-12 fade-in" id="section-0">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-2xl md:text-3xl font-bold text-purple-700 mb-6 text-center">
+                    🏗️ Four Levels of Protein Structure
+                </h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="text-center p-4 bg-gradient-to-br from-red-100 to-red-200 rounded-xl">
+                        <div class="text-2xl mb-2">1️⃣</div>
+                        <div class="font-semibold text-red-700">Primary</div>
+                        <div class="text-sm text-red-600 mt-1">Configuration</div>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl">
+                        <div class="text-2xl mb-2">2️⃣</div>
+                        <div class="font-semibold text-blue-700">Secondary</div>
+                        <div class="text-sm text-blue-600 mt-1">Conformation</div>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-green-100 to-green-200 rounded-xl">
+                        <div class="text-2xl mb-2">3️⃣</div>
+                        <div class="font-semibold text-green-700">Tertiary</div>
+                        <div class="text-sm text-green-600 mt-1">Conformation</div>
+                    </div>
+                    <div class="text-center p-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-xl">
+                        <div class="text-2xl mb-2">4️⃣</div>
+                        <div class="font-semibold text-yellow-700">Quaternary</div>
+                        <div class="text-sm text-yellow-600 mt-1">Conformation</div>
+                    </div>
+                </div>
+
+                <!-- Configuration vs Conformation -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-indigo-700 mb-4">📚 Key Concepts</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-bold text-indigo-600 mb-2">🔗 Configuration</h4>
+                            <p class="text-sm">The fixed arrangement of atoms that can only be changed by breaking and reforming covalent bonds. Represents the permanent structural framework.</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-bold text-purple-600 mb-2">🌀 Conformation</h4>
+                            <p class="text-sm">The spatial arrangement of atoms that can be changed by rotation around single bonds without breaking covalent bonds. Represents flexible 3D shapes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Primary Structure Definition -->
+        <section class="mb-12 fade-in" id="section-1">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-2xl md:text-3xl font-bold text-red-700 mb-6">
+                    🧪 Primary Structure Definition
+                </h2>
+                
+                <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 mb-6">
+                    <p class="text-lg leading-relaxed">
+                        <strong>Primary structure</strong> is the linear sequence of amino acids in a polypeptide chain, connected by peptide bonds. It represents the <em>configuration</em> of the protein - the fundamental blueprint that determines all higher levels of structure.
+                    </p>
+                </div>
+
+                <h3 class="text-xl font-bold text-red-600 mb-4">🔍 Key Features</h3>
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-700 mb-2">📝 Sequence Specificity</h4>
+                        <p class="text-sm">Each protein has a unique amino acid sequence determined by genetic code</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-700 mb-2">🔗 Covalent Bonds</h4>
+                        <p class="text-sm">Amino acids linked by strong peptide bonds (amide bonds)</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-700 mb-2">➡️ Directionality</h4>
+                        <p class="text-sm">Written from N-terminus (amino end) to C-terminus (carboxyl end)</p>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-red-700 mb-2">🧬 Information Content</h4>
+                        <p class="text-sm">Contains all information needed for protein folding and function</p>
+                    </div>
+                </div>
+
+                <!-- Amino Acid Sequence Illustration -->
+                <h3 class="text-xl font-bold text-red-600 mb-4">🧬 Example Amino Acid Sequence</h3>
+                <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 mb-6">
+                    <div class="overflow-x-auto pb-4">
+                        <div class="flex items-center justify-center min-w-max space-x-1 md:space-x-2 py-4">
+                            <!-- N-Terminal Label -->
+                            <div class="text-center mr-4">
+                                <div class="bg-green-500 text-white px-3 py-2 rounded-lg font-bold text-sm shadow-lg">
+                                    N-Terminal
+                                </div>
+                                <div class="text-xs text-green-600 mt-1 font-semibold">NH₃⁺ (Start)</div>
+                                <div class="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-green-500 mx-auto mt-1"></div>
+                            </div>
+
+                            <!-- Amino Acid Sequence -->
+                            <div class="bg-blue-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Met</div>
+                            <div class="text-red-500 font-bold text-sm md:text-base">—</div>
+                            <div class="bg-purple-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Ala</div>
+                            <div class="text-red-500 font-bold text-sm md:text-base">—</div>
+                            <div class="bg-indigo-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Gly</div>
+                            <div class="text-red-500 font-bold text-sm md:text-base">—</div>
+                            <div class="bg-pink-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Leu</div>
+                            <div class="text-red-500 font-bold text-sm md:text-base">—</div>
+                            <div class="bg-teal-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Ser</div>
+                            <div class="text-red-500 font-bold text-sm md:text-base">—</div>
+                            <div class="bg-orange-500 text-white px-2 md:px-3 py-1 md:py-2 rounded-lg font-bold text-xs md:text-sm shadow-md">Phe</div>
+
+                            <!-- C-Terminal Label -->
+                            <div class="text-center ml-4">
+                                <div class="w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-orange-500 mx-auto mb-1"></div>
+                                <div class="bg-orange-500 text-white px-3 py-2 rounded-lg font-bold text-sm shadow-lg">
+                                    C-Terminal
+                                </div>
+                                <div class="text-xs text-orange-600 mt-1 font-semibold">COO⁻ (End)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sequence Information -->
+                    <div class="mt-6 bg-white rounded-lg p-4 shadow-sm">
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <h4 class="font-semibold text-red-700 mb-2">📝 Sequence Notation</h4>
+                                <p class="font-mono bg-gray-100 p-2 rounded">NH₃⁺-Met-Ala-Gly-Leu-Ser-Phe-COO⁻</p>
+                                <p class="text-xs text-gray-600 mt-1">Full chemical notation</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-red-700 mb-2">🔤 Single Letter Code</h4>
+                                <p class="font-mono bg-gray-100 p-2 rounded text-lg tracking-wider">MAGLSF</p>
+                                <p class="text-xs text-gray-600 mt-1">Compact representation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Direction Arrow -->
+                    <div class="flex justify-center mt-4">
+                        <div class="flex items-center space-x-2 bg-white rounded-full px-4 py-2 shadow-sm">
+                            <span class="text-sm font-semibold text-gray-700">Reading Direction</span>
+                            <svg width="60" height="20" viewBox="0 0 60 20">
+                                <defs>
+                                    <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                        <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+                                    </marker>
+                                </defs>
+                                <line x1="5" y1="10" x2="50" y2="10" stroke="#ef4444" stroke-width="3" marker-end="url(#arrowhead2)"/>
+                            </svg>
+                            <span class="text-xs text-gray-600">N → C</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-red-600 mb-4">⚡ Stabilizing Interactions</h3>
+                <div class="bg-gradient-to-r from-red-100 to-pink-100 rounded-xl p-6">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">🔗</div>
+                            <h4 class="font-semibold text-red-700">Peptide Bonds</h4>
+                            <p class="text-sm text-red-600">Primary covalent linkages</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">🌉</div>
+                            <h4 class="font-semibold text-red-700">Disulfide Bridges</h4>
+                            <p class="text-sm text-red-600">Between cysteine residues</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">⚡</div>
+                            <h4 class="font-semibold text-red-700">Resonance</h4>
+                            <p class="text-sm text-red-600">Peptide bond stabilization</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Peptide Bond Features -->
+        <section class="mb-12 fade-in" id="section-2">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6">
+                    🔗 Peptide Bond Features
+                </h2>
+
+                <!-- Peptide Bond Illustration -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-blue-600 mb-4 text-center">Peptide Bond Structure</h3>
+                    <div class="flex justify-center mb-4">
+                        <svg width="480" height="280" viewBox="0 0 480 280" class="max-w-full h-auto w-full md:w-auto">
+                            <!-- Amino acid 1 -->
+                            <circle cx="80" cy="140" r="20" fill="#ff6b6b" stroke="#d63031" stroke-width="3"/>
+                            <text x="80" y="147" text-anchor="middle" class="text-sm font-bold fill-white">R₁</text>
+                            <text x="80" y="175" text-anchor="middle" class="text-sm font-semibold">AA₁</text>
+                            
+                            <!-- Carbon -->
+                            <circle cx="140" cy="140" r="12" fill="#2d3436"/>
+                            <text x="140" y="147" text-anchor="middle" class="text-sm font-bold fill-white">C</text>
+                            <text x="140" y="125" text-anchor="middle" class="text-sm font-bold fill-blue-600">δ⁺</text>
+                            
+                            <!-- Oxygen (double bond) -->
+                            <circle cx="140" cy="90" r="10" fill="#e17055"/>
+                            <text x="140" y="97" text-anchor="middle" class="text-sm font-bold fill-white">O</text>
+                            <text x="140" y="75" text-anchor="middle" class="text-sm font-bold fill-red-600">δ⁻</text>
+                            <!-- Double bond lines -->
+                            <line x1="140" y1="128" x2="140" y2="100" stroke="#2d3436" stroke-width="4"/>
+                            <line x1="135" y1="125" x2="135" y2="103" stroke="#2d3436" stroke-width="3"/>
+                            
+                            <!-- Nitrogen -->
+                            <circle cx="200" cy="140" r="12" fill="#0984e3"/>
+                            <text x="200" y="147" text-anchor="middle" class="text-sm font-bold fill-white">N</text>
+                            <text x="220" y="130" text-anchor="middle" class="text-sm font-bold fill-red-600">δ⁻</text>
+                            
+                            <!-- Hydrogen on N -->
+                            <circle cx="200" cy="190" r="8" fill="#636e72"/>
+                            <text x="200" y="197" text-anchor="middle" class="text-sm font-bold fill-white">H</text>
+                            <text x="200" y="210" text-anchor="middle" class="text-sm font-bold fill-blue-600">δ⁺</text>
+                            <line x1="200" y1="152" x2="200" y2="182" stroke="#2d3436" stroke-width="3"/>
+                            
+                            <!-- Peptide bond -->
+                            <line x1="152" y1="140" x2="188" y2="140" stroke="#e84393" stroke-width="6" class="peptide-bond"/>
+                            <text x="170" y="125" text-anchor="middle" class="text-base font-bold fill-purple-600">Peptide Bond</text>
+                            
+                            <!-- Amino acid 2 -->
+                            <circle cx="260" cy="140" r="12" fill="#2d3436"/>
+                            <text x="260" y="147" text-anchor="middle" class="text-sm font-bold fill-white">C</text>
+                            
+                            <circle cx="320" cy="140" r="20" fill="#00b894" stroke="#00a085" stroke-width="3"/>
+                            <text x="320" y="147" text-anchor="middle" class="text-sm font-bold fill-white">R₂</text>
+                            <text x="320" y="175" text-anchor="middle" class="text-sm font-semibold">AA₂</text>
+                            
+                            <!-- Bonds -->
+                            <line x1="100" y1="140" x2="128" y2="140" stroke="#2d3436" stroke-width="3"/>
+                            <line x1="212" y1="140" x2="248" y2="140" stroke="#2d3436" stroke-width="3"/>
+                            <line x1="272" y1="140" x2="300" y2="140" stroke="#2d3436" stroke-width="3"/>
+                            
+                            <!-- Dipole arrows -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="12" markerHeight="9" refX="11" refY="4.5" orient="auto">
+                                    <polygon points="0 0, 12 4.5, 0 9" fill="#e84393"/>
+                                </marker>
+                            </defs>
+                            <line x1="160" y1="165" x2="190" y2="165" stroke="#e84393" stroke-width="3" marker-end="url(#arrowhead)" class="dipole-arrow"/>
+                            <text x="175" y="185" text-anchor="middle" class="text-sm font-bold fill-purple-600">Dipole Direction</text>
+                            
+
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-blue-700 mb-4">🔋 Polarity & Dipole</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>Polar covalent bond due to electronegativity difference</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>Oxygen is more electronegative (δ⁻)</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>Nitrogen is less electronegative than oxygen but still carries δ⁻</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2">•</span>Creates permanent dipole moment</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-indigo-50 rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-indigo-700 mb-4">⚡ Resonance Stabilization</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start"><span class="text-indigo-500 mr-2">•</span>Partial double bond character (40%)</li>
+                            <li class="flex items-start"><span class="text-indigo-500 mr-2">•</span>Planar geometry around peptide bond</li>
+                            <li class="flex items-start"><span class="text-indigo-500 mr-2">•</span>Restricted rotation (trans configuration)</li>
+                            <li class="flex items-start"><span class="text-indigo-500 mr-2">•</span>Increased stability (~88 kJ/mol)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Interactive Resonance Button -->
+                <div class="text-center">
+                    <button onclick="toggleResonance()" class="interactive-btn bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 md:px-6 py-3 rounded-full font-semibold shadow-lg text-sm md:text-base">
+                        🔄 Know More About Resonance
+                    </button>
+                </div>
+
+                <!-- Resonance Structures (Hidden by default) -->
+                <div id="resonanceStructures" class="hidden mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6">
+                    <h4 class="text-lg font-bold text-indigo-700 mb-4 text-center">🔬 The Atomic Dance of Resonance</h4>
+                    
+                    <!-- Introduction -->
+                    <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                        <p class="text-sm leading-relaxed mb-4">
+                            Imagine you're zooming into a protein at the atomic level — so close that you can see carbon, oxygen, nitrogen, and hydrogen atoms dancing in place. As you watch, something curious happens at each peptide bond — the invisible glue linking amino acids together.
+                        </p>
+                        <p class="text-sm leading-relaxed">
+                            You expect this bond — formed between a carbonyl group (C=O) and an amine group (NH₂) — to behave like a simple single bond. But this bond is no ordinary connection. It's part of a resonance effect that locks it into a unique shape.
+                        </p>
+                    </div>
+
+                    <!-- Resonance Structures -->
+                    <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                        <h5 class="font-bold text-indigo-700 mb-4">⚡ The Electron Dance</h5>
+                        
+                        <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm leading-relaxed">
+                                Deep in the electron clouds, the nitrogen's lone pair isn't content to sit still. It's drawn toward the neighboring carbonyl carbon — which is slightly desperate, burdened with a δ+ charge because its oxygen neighbor hogs electrons. So the nitrogen donates its lone pair into the carbonyl system, creating resonance.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <p class="text-sm mb-3">At first glance, the peptide bond looks like this:</p>
+                                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                                    <p class="font-mono text-lg font-bold">O=C–N–H</p>
+                                    <p class="text-xs text-gray-600 mt-2">Initial Structure</p>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-sm mb-3">But the nitrogen's lone pair creates:</p>
+                                <div class="bg-gray-100 rounded-lg p-4 text-center">
+                                    <p class="font-mono text-lg font-bold">⁻O–C=N⁺–H</p>
+                                    <p class="text-xs text-gray-600 mt-2">Resonance Structure</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <div class="inline-flex items-center space-x-3 bg-purple-100 rounded-full px-4 py-2">
+                                <span class="text-sm font-semibold">Neither form fully takes over</span>
+                                <span class="text-2xl">↔</span>
+                                <span class="text-sm font-semibold">Resonance Hybrid</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-center mt-4 text-gray-700">
+                            The real structure is a mix of both, making the peptide bond stronger, flatter, and more rigid than expected.
+                        </p>
+                    </div>
+
+                    <!-- What Resonance Does -->
+                    <div class="bg-white rounded-lg p-6 shadow-sm mb-6">
+                        <h5 class="font-bold text-indigo-700 mb-4">🎭 What Resonance Does to the Peptide Bond</h5>
+                        
+                        <div class="space-y-4">
+                            <!-- Rigid and Planar -->
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h6 class="font-semibold text-blue-700 mb-2">1. 🔒 Rigid and Planar</h6>
+                                <p class="text-sm mb-2">The C–N bond now has partial double bond character. This locks the atoms (C, O, N, H) into a flat, planar configuration — like dancers moving in unison on a molecular stage.</p>
+                                <div class="bg-white rounded p-2 text-xs">
+                                    <strong>📏 Bond length:</strong> C–N ≈ 1.32 Å (between typical single and double bond lengths)
+                                </div>
+                            </div>
+
+                            <!-- No Twisting -->
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h6 class="font-semibold text-green-700 mb-2">2. 🚫 No Twisting Allowed</h6>
+                                <p class="text-sm mb-2">Most single bonds twist and rotate like swivels. But not this one. The peptide bond becomes stubbornly rigid, resisting rotation — which is crucial in how proteins fold.</p>
+                                <div class="bg-white rounded p-2 text-xs">
+                                    <strong>💡 Key Point:</strong> This rigidity is why proteins only bend at specific points (φ and ψ angles).
+                                </div>
+                            </div>
+
+                            <!-- Built-in Dipole -->
+                            <div class="bg-purple-50 rounded-lg p-4">
+                                <h6 class="font-semibold text-purple-700 mb-2">3. ⚡ Built-in Dipole</h6>
+                                <p class="text-sm mb-2">The resonance creates a strong dipole moment:</p>
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white rounded p-2">The oxygen becomes electron-rich (δ–)</div>
+                                    <div class="bg-white rounded p-2">The amide hydrogen becomes electron-poor (δ+)</div>
+                                </div>
+                                <p class="text-sm mt-2">This makes peptide bonds attractive — literally. They form hydrogen bonds that drive the helices and sheets in protein structures.</p>
+                            </div>
+
+                            <!-- Stability -->
+                            <div class="bg-orange-50 rounded-lg p-4">
+                                <h6 class="font-semibold text-orange-700 mb-2">4. 🛡️ Enhanced Stability</h6>
+                                <p class="text-sm">Thanks to this electron delocalization, the peptide bond is surprisingly resistant to hydrolysis. It takes strong enzymes — like proteases — or extreme conditions to break it.</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Molecular Weight Calculator -->
+        <section class="mb-12 fade-in" id="section-3">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-2xl md:text-3xl font-bold text-green-700 mb-6">
+                    ⚖️ Polypeptide Weight Calculator
+                </h2>
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">📊 Calculation Formula</h3>
+                    <div class="bg-white rounded-lg p-4 shadow-sm mb-4">
+                        <p class="text-center text-lg font-mono bg-gray-100 rounded p-3">
+                            <strong>MW = (n × 128) - ((n-1) × 18)</strong>
+                        </p>
+                        <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm">
+                            <div class="text-center">
+                                <div class="font-semibold text-green-700">n</div>
+                                <div class="text-green-600">Number of amino acids</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-semibold text-green-700">128</div>
+                                <div class="text-green-600">Average AA weight (Da)</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-semibold text-green-700">18</div>
+                                <div class="text-green-600">Water lost per bond (Da)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Calculator -->
+                <div class="bg-gradient-to-r from-emerald-100 to-green-100 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-green-700 mb-4 text-center">🧮 Interactive Calculator</h3>
+                    <div class="max-w-md mx-auto">
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-green-700 mb-2">Number of Amino Acids:</label>
+                            <input type="number" id="aminoAcids" value="100" min="2" max="10000" 
+                                   class="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none text-center text-lg">
+                        </div>
+                        <button onclick="calculateWeight()" 
+                                class="w-full interactive-btn bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg font-semibold shadow-lg mb-4 text-sm md:text-base">
+                            Calculate Molecular Weight
+                        </button>
+                        <div id="result" class="bg-white rounded-lg p-4 shadow-sm text-center hidden">
+                            <div class="text-2xl font-bold text-green-700" id="molecularWeight">11,018 Da</div>
+                            <div class="text-sm text-green-600 mt-2">
+                                <div>Total AA weight: <span id="totalAAWeight">12,800 Da</span></div>
+                                <div>Water lost: <span id="waterLost">1,782 Da</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section class="mb-12 fade-in" id="section-4">
+            <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center">
+                    🎯 Key Takeaways
+                </h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white bg-opacity-20 rounded-xl p-4">
+                        <h3 class="font-bold mb-3">🧬 Primary Structure</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Linear amino acid sequence</li>
+                            <li>• Represents protein configuration</li>
+                            <li>• Stabilized by peptide bonds</li>
+                            <li>• Written N-terminus to C-terminus</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-xl p-4">
+                        <h3 class="font-bold mb-3">🔗 Peptide Bonds</h3>
+                        <ul class="text-sm space-y-1">
+                            <li>• Polar covalent bonds with dipole</li>
+                            <li>• Resonance stabilization (40%)</li>
+                            <li>• Planar, trans configuration</li>
+                            <li>• Critical for protein stability</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="mb-12 fade-in" id="section-5">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 card-hover">
+                <h2 class="text-2xl md:text-3xl font-bold text-teal-700 mb-6 text-center">
+                    🧠 Review Quiz
+                </h2>
+                
+                <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-6">
+                    <div id="quiz-container">
+                        <!-- Quiz questions will be dynamically inserted here -->
+                    </div>
+                    <div id="quiz-feedback" class="mt-4 text-center hidden"></div>
+                    <div id="quiz-score" class="mt-6 text-2xl font-bold text-teal-700 text-center hidden"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Watermark -->
+    <div class="watermark text-center">
+        <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences" 
+             class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-1"
+             onerror="this.style.display='none';">
+        <div class="text-xs font-semibold text-gray-600">BETA Biosciences</div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center mb-4">
+                <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" 
+                     alt="BETA Biosciences Logo" 
+                     class="h-16 w-auto"
+                     onerror="this.style.display='none'; this.alt='Logo failed to load';">
+            </div>
+            <div class="text-sm opacity-90 space-y-1">
+                <p>© 2025 BETA Biosciences. All rights reserved.</p>
+                <p>Email: betabiosciences@gmail.com</p>
+                <p>Contact: +91 97 47 53 35 97</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentSectionIndex = -1;
+        const sections = document.querySelectorAll('main section.fade-in');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+
+        // Quiz variables
+        let currentQuizQuestionIndex = 0;
+        let score = 0;
+        const quizQuestions = [
+            {
+                question: "What defines a protein's primary structure?",
+                options: ["The 3D shape of the protein", "The sequence of amino acids", "The interaction between two polypeptide chains", "The folding of the polypeptide chain"],
+                answer: "The sequence of amino acids",
+                explanation: "The primary structure is the linear sequence of amino acids, which is the foundational blueprint for all higher-level structures."
+            },
+            {
+                question: "Which type of bond links amino acids together in the primary structure?",
+                options: ["Hydrogen bonds", "Ionic bonds", "Peptide bonds", "Disulfide bridges"],
+                answer: "Peptide bonds",
+                explanation: "Peptide bonds are the covalent bonds that connect the carboxyl group of one amino acid to the amino group of the next."
+            },
+            {
+                question: "The directionality of a polypeptide chain is from...",
+                options: ["C-terminus to N-terminus", "N-terminus to C-terminus", "The center outwards", "Alpha-carbon to alpha-carbon"],
+                answer: "N-terminus to C-terminus",
+                explanation: "By convention, protein sequences are written starting from the N-terminus (amino end) and ending at the C-terminus (carboxyl end)."
+            },
+            {
+                question: "What is the key feature of a peptide bond that restricts rotation?",
+                options: ["The presence of a lone pair on nitrogen", "The partial double bond character due to resonance", "Its location on the backbone", "The interaction with R-groups"],
+                answer: "The partial double bond character due to resonance",
+                explanation: "Resonance causes the peptide bond to have about 40% double-bond character, making it rigid and planar, and restricting rotation."
+            },
+            {
+                question: "What is the average molecular weight of an amino acid residue in a protein?",
+                options: ["110 Da", "128 Da", "18 Da", "150 Da"],
+                answer: "128 Da",
+                explanation: "While individual amino acids vary, 128 Da is used as a standard average molecular weight for an amino acid residue."
+            },
+            {
+                question: "Which of the following is NOT a characteristic of a peptide bond?",
+                options: ["Planar", "Polar", "Resistant to hydrolysis", "Freely rotating"],
+                answer: "Freely rotating",
+                explanation: "The peptide bond is not freely rotating due to its partial double bond character. Rotation is restricted, which is a critical feature for protein folding."
+            },
+            {
+                question: "A protein's 'configuration' refers to:",
+                options: ["The flexible 3D shape that can change", "The fixed arrangement of atoms requiring bond breakage to change", "The linear sequence of amino acids", "The interaction of multiple polypeptide chains"],
+                answer: "The fixed arrangement of atoms requiring bond breakage to change",
+                explanation: "Configuration is the fixed arrangement of atoms. Primary structure is a configuration because the sequence of amino acids is fixed by covalent bonds."
+            },
+            {
+                question: "What is the total mass lost as water when forming 10 peptide bonds?",
+                options: ["18 Da", "180 Da", "162 Da", "90 Da"],
+                answer: "180 Da",
+                explanation: "One water molecule (18 Da) is lost for each peptide bond formed. For 10 bonds, 10 × 18 = 180 Da."
+            },
+            {
+                question: "The N-terminus of a polypeptide chain contains which functional group?",
+                options: ["A carboxyl group (COO⁻)", "A hydroxyl group (OH)", "An amino group (NH₃⁺)", "A methyl group (CH₃)"],
+                answer: "An amino group (NH₃⁺)",
+                explanation: "The N-terminus is the amino end of the polypeptide chain, which contains a free amino group."
+            },
+            {
+                question: "The primary structure of a protein is the blueprint for:",
+                options: ["Its function and all higher-level structures", "Only its stability", "Its ability to bind to DNA", "Its enzymatic activity"],
+                answer: "Its function and all higher-level structures",
+                explanation: "The primary sequence contains all the information necessary for the protein to fold into its correct 3D shape and perform its function."
+            }
+        ];
+
+
+        // Initial setup on window load
+        window.onload = function() {
+            // Show the first section automatically on page load
+            showNextSection();
+        };
+
+        function showNextSection() {
+            // Hide the current section if one is visible
+            if (currentSectionIndex >= 0) {
+                sections[currentSectionIndex].classList.remove('visible');
+            }
+
+            // Increment index and check if there's a next section
+            currentSectionIndex++;
+            if (currentSectionIndex < sections.length) {
+                // Show the next section
+                sections[currentSectionIndex].classList.add('visible');
+
+                // Special handling for the quiz section
+                if (sections[currentSectionIndex].id === 'section-5') {
+                    renderQuizQuestion();
+                    nextBtn.classList.add('hidden'); // Hide main nav buttons for quiz
+                    prevBtn.classList.add('hidden'); // Hide main nav buttons for quiz
+                } else {
+                    nextBtn.classList.remove('hidden'); // Show main nav buttons
+                    prevBtn.classList.remove('hidden'); // Show main nav buttons
+                    if (currentSectionIndex === sections.length - 1) {
+                        nextBtn.textContent = 'Restart';
+                    } else if(currentSectionIndex === sections.length - 2) {
+                        nextBtn.textContent = 'Go to Quiz';
+                    } else if (currentSectionIndex === 0) {
+                        nextBtn.textContent = 'Next Section';
+                        prevBtn.classList.add('hidden');
+                    }
+                    else {
+                        nextBtn.textContent = 'Next Section';
+                    }
+                }
+
+                // Update previous button visibility
+                if (currentSectionIndex > 0 && sections[currentSectionIndex].id !== 'section-5') {
+                    prevBtn.classList.remove('hidden');
+                } else {
+                    prevBtn.classList.add('hidden');
+                }
+            } else {
+                // We've reached the end, loop back to the start
+                currentSectionIndex = -1;
+                score = 0; // Reset score for new quiz
+                currentQuizQuestionIndex = 0; // Reset quiz question index
+                showNextSection(); // Start over
+            }
+        }
+
+        function showPreviousSection() {
+             // Hide the current section
+            if (currentSectionIndex >= 0) {
+                sections[currentSectionIndex].classList.remove('visible');
+            }
+
+            // Decrement index
+            currentSectionIndex--;
+
+            // If we're at the beginning, hide the previous button
+            if (currentSectionIndex === 0) {
+                prevBtn.classList.add('hidden');
+                nextBtn.textContent = 'Next Section';
+            } else if (currentSectionIndex < 0) {
+                // Don't do anything if we are at the very beginning
+                currentSectionIndex = 0;
+                sections[currentSectionIndex].classList.add('visible');
+                return;
+            } else {
+                nextBtn.textContent = 'Next Section';
+                prevBtn.classList.remove('hidden');
+            }
+
+            // Show the previous section
+            sections[currentSectionIndex].classList.add('visible');
+        }
+
+        // Toggle resonance structures
+        function toggleResonance() {
+            const structures = document.getElementById('resonanceStructures');
+            const button = event.target;
+            
+            if (structures.classList.contains('hidden')) {
+                structures.classList.remove('hidden');
+                button.textContent = '🔄 Hide Resonance Details';
+                button.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-pink-600');
+                button.classList.remove('from-blue-500', 'to-indigo-600');
+            } else {
+                structures.classList.add('hidden');
+                button.textContent = '🔄 Know More About Resonance';
+                button.classList.remove('from-purple-500', 'to-pink-600');
+                button.classList.add('from-blue-500', 'to-indigo-600');
+            }
+        }
+
+        // Calculate molecular weight
+        function calculateWeight() {
+            const n = parseInt(document.getElementById('aminoAcids').value);
+            
+            // Replaced alert() with a custom message box for user experience.
+            if (n < 2 || isNaN(n)) {
+                showMessageBox('Please enter a number of at least 2 amino acids for a peptide!', 'error');
+                return;
+            }
+            
+            const totalAAWeight = n * 128;
+            const waterLost = (n - 1) * 18;
+            const molecularWeight = totalAAWeight - waterLost;
+            
+            document.getElementById('molecularWeight').textContent = `${molecularWeight.toLocaleString()} Da`;
+            document.getElementById('totalAAWeight').textContent = `${totalAAWeight.toLocaleString()} Da`;
+            document.getElementById('waterLost').textContent = `${waterLost.toLocaleString()} Da`;
+            
+            // Show result and add animation effect
+            const result = document.getElementById('result');
+            result.classList.remove('hidden');
+            result.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                result.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Custom message box function to replace alert()
+        function showMessageBox(message, type) {
+            let messageBox = document.getElementById('custom-message-box');
+            if (!messageBox) {
+                messageBox = document.createElement('div');
+                messageBox.id = 'custom-message-box';
+                messageBox.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-2xl z-50 transition-all duration-300 transform scale-0';
+                messageBox.style.maxWidth = '300px';
+                document.body.appendChild(messageBox);
+            }
+            
+            const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+            const icon = type === 'error' ? '❌' : '✅';
+            
+            messageBox.innerHTML = `
+                <div class="flex items-center space-x-4 ${bgColor} text-white p-4 rounded-lg">
+                    <span class="text-3xl">${icon}</span>
+                    <p class="text-sm font-semibold">${message}</p>
+                </div>
+            `;
+            
+            messageBox.classList.remove('scale-0');
+            messageBox.classList.add('scale-100');
+            
+            setTimeout(() => {
+                messageBox.classList.remove('scale-100');
+                messageBox.classList.add('scale-0');
+            }, 3000);
+        }
+
+        // Quiz Functions
+        function renderQuizQuestion() {
+            const quizContainer = document.getElementById('quiz-container');
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const quizScore = document.getElementById('quiz-score');
+
+            // Reset feedback and score display
+            quizFeedback.classList.add('hidden');
+            quizScore.classList.add('hidden');
+            
+            if (currentQuizQuestionIndex < quizQuestions.length) {
+                const questionData = quizQuestions[currentQuizQuestionIndex];
+                
+                let optionsHtml = '';
+                questionData.options.forEach((option, index) => {
+                    optionsHtml += `
+                        <label class="flex items-center bg-white p-4 rounded-lg shadow-md hover:bg-gray-100 cursor-pointer mb-3">
+                            <input type="radio" name="quiz-q-${currentQuizQuestionIndex}" value="${option}" class="form-radio h-5 w-5 text-teal-600 focus:ring-teal-500">
+                            <span class="ml-3 text-gray-800 text-sm font-medium">${option}</span>
+                        </label>
+                    `;
+                });
+
+                quizContainer.innerHTML = `
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-teal-600 mb-4">Question ${currentQuizQuestionIndex + 1} of ${quizQuestions.length}</h3>
+                        <p class="text-lg font-medium text-gray-700">${questionData.question}</p>
+                    </div>
+                    <div class="flex flex-col space-y-3">
+                        ${optionsHtml}
+                    </div>
+                    <div class="mt-6 flex justify-center">
+                        <button id="quizSubmitBtn" onclick="checkAnswer()" class="interactive-btn bg-gradient-to-r from-teal-500 to-cyan-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-sm md:text-base">
+                            Submit Answer
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Quiz finished
+                quizContainer.innerHTML = `
+                    <h3 class="text-xl font-bold text-teal-600 mb-4 text-center">Quiz Completed! 🎉</h3>
+                    <p class="text-lg text-center font-medium text-gray-700 mb-4">You have completed the review quiz.</p>
+                    <div class="flex justify-center">
+                        <button onclick="restartQuiz()" class="interactive-btn bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg text-lg">
+                            Restart Quiz
+                        </button>
+                    </div>
+                `;
+                document.getElementById('quiz-score').textContent = `Your Score: ${score} / ${quizQuestions.length}`;
+                document.getElementById('quiz-score').classList.remove('hidden');
+            }
+        }
+
+        function checkAnswer() {
+            const questionData = quizQuestions[currentQuizQuestionIndex];
+            const selectedOption = document.querySelector(`input[name="quiz-q-${currentQuizQuestionIndex}"]:checked`);
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const quizSubmitBtn = document.getElementById('quizSubmitBtn');
+            
+            if (!selectedOption) {
+                showMessageBox('Please select an answer!', 'error');
+                return;
+            }
+
+            const isCorrect = selectedOption.value === questionData.answer;
+            let feedbackHtml = '';
+
+            if (isCorrect) {
+                score++;
+                feedbackHtml = `
+                    <div class="bg-green-100 text-green-700 p-4 rounded-xl shadow-md">
+                        <p class="font-bold text-lg">✅ Correct!</p>
+                        <p class="text-sm mt-2">${questionData.explanation}</p>
+                    </div>
+                `;
+            } else {
+                feedbackHtml = `
+                    <div class="bg-red-100 text-red-700 p-4 rounded-xl shadow-md">
+                        <p class="font-bold text-lg">❌ Incorrect!</p>
+                        <p class="text-sm mt-2">The correct answer was: <strong>${questionData.answer}</strong></p>
+                        <p class="text-sm mt-2">${questionData.explanation}</p>
+                    </div>
+                `;
+            }
+            
+            quizFeedback.innerHTML = feedbackHtml;
+            quizFeedback.classList.remove('hidden');
+
+            // Disable all radio buttons after submission
+            document.querySelectorAll(`input[name="quiz-q-${currentQuizQuestionIndex}"]`).forEach(input => {
+                input.disabled = true;
+            });
+
+            // Change button to next question
+            quizSubmitBtn.textContent = (currentQuizQuestionIndex < quizQuestions.length - 1) ? 'Next Question' : 'Finish Quiz';
+            quizSubmitBtn.onclick = handleQuizNavigation;
+        }
+
+        function handleQuizNavigation() {
+            const quizFeedback = document.getElementById('quiz-feedback');
+            quizFeedback.classList.add('hidden');
+            currentQuizQuestionIndex++;
+            renderQuizQuestion();
+        }
+
+        function restartQuiz() {
+            currentSectionIndex = -1;
+            score = 0;
+            currentQuizQuestionIndex = 0;
+            showNextSection();
+        }
+
+        // Add touch feedback for mobile
+        document.querySelectorAll('.interactive-btn').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            btn.addEventListener('touchend', function() {
+                this.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
