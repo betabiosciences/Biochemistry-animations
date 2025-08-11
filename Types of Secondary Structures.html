@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Protein Secondary Structures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Subtle animated gradient for header background */
+    .animated-gradient {
+      background: linear-gradient(120deg, #0f172a, #1e293b, #0ea5e9, #7c3aed);
+      background-size: 300% 300%;
+      animation: gradientMove 18s ease infinite;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* Simple focus ring for better accessibility */
+    .focus-ring:focus-visible {
+      outline: 3px solid rgba(14,165,233,0.75);
+      outline-offset: 2px;
+    }
+    .watermark {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.05;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100 selection:bg-cyan-400 selection:text-slate-900">
+  <!-- Watermark -->
+  <div class="watermark">
+    <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="h-32 w-32 object-contain" />
+    <span class="mt-4 text-4xl font-bold text-slate-300">BETA Biosciences</span>
+  </div>
+
+  <!-- Header -->
+  <header class="animated-gradient text-white">
+    <div class="max-w-6xl mx-auto px-4 py-8 sm:py-10">
+      <div class="flex items-start justify-between gap-4">
+        <div class="w-full text-center">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            Protein Secondary Structures
+          </h1>
+          <p class="mt-2 text-sm sm:text-base text-slate-100/90 max-w-2xl mx-auto">
+            Explore key features, dimensions, hydrogen bonds, and dipoles.
+          </p>
+        </div>
+      </div>
+      <!-- Structure Tabs -->
+      <div id="structureTabs" class="mt-6 flex gap-2 overflow-x-auto pb-1">
+        <!-- Tabs will be injected here -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 pt-6 pb-24">
+    <div class="grid lg:grid-cols-1 gap-6 lg:gap-8">
+      <!-- Details Card -->
+      <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-6 backdrop-blur">
+        <h2 class="text-lg sm:text-xl font-semibold text-slate-100 flex items-center gap-2">
+          <span id="detailTitle">α-Helix</span>
+          <span class="text-xs px-2 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Selected</span>
+        </h2>
+
+        <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <!-- Quick facts -->
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">Residues/turn</p>
+            <p id="statRPT" class="text-lg font-semibold">~3.6</p>
+          </div>
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">Pitch</p>
+            <p id="statPitch" class="text-lg font-semibold">~5.4 Å</p>
+          </div>
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">Rise/residue</p>
+            <p id="statRise" class="text-lg font-semibold">~1.5 Å</p>
+          </div>
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">H-bond pattern</p>
+            <p id="statHBond" class="text-sm font-medium mt-1">i → i+4 (C=O of i to N–H of i+4)</p>
+          </div>
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">Dipole</p>
+            <p id="statDipole" class="text-sm font-medium mt-1">Macrodipole: N-terminus δ+; C-terminus δ−</p>
+          </div>
+          <div class="rounded-xl bg-slate-800/60 p-3 border border-slate-700">
+            <p class="text-[11px] uppercase tracking-wide text-slate-400">Handedness</p>
+            <p id="statHanded" class="text-sm font-medium mt-1">Right-handed</p>
+          </div>
+        </div>
+
+        <div class="mt-5 grid lg:grid-cols-2 gap-6 items-center">
+            <!-- Salient features section -->
+            <div class="order-last lg:order-first">
+              <h3 class="text-sm font-semibold text-slate-200">Salient features</h3>
+              <ul id="featureList" class="mt-2 space-y-2 text-sm text-slate-300">
+                <!-- Features will populate -->
+              </ul>
+            </div>
+            
+            <!-- Image for alpha helix -->
+            <div id="imageContainer" class="order-first lg:order-last flex justify-center">
+                <!-- Image will be injected here -->
+            </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Self-Learning: Quiz -->
+    <section class="mt-8">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-6">
+        <h2 class="text-lg sm:text-xl font-semibold text-slate-100">Quick Quiz</h2>
+        <p id="quizPrompt" class="mt-2 text-sm text-slate-300">
+          For an α-helix, what is the typical hydrogen bond pattern?
+        </p>
+        <div id="quizOptions" class="mt-3 grid gap-2">
+          <!-- Options will populate -->
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button id="checkAnswer" class="focus-ring px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-sm">
+            Check answer
+          </button>
+          <button id="nextQuestion" class="focus-ring px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-100 text-sm">
+            Next
+          </button>
+          <span id="quizFeedback" class="text-sm"></span>
+        </div>
+        <p id="quizScore" class="mt-2 text-xs text-slate-400">Score: 0/0</p>
+      </div>
+    </section>
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-slate-900/60 border-t border-slate-800 mt-8 py-8">
+    <div class="max-w-6xl mx-auto px-4 text-center text-sm text-slate-400 space-y-2">
+        <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="h-16 w-16 mx-auto object-contain" />
+        <p>© 2025 BETA Biosciences. All rights reserved.</p>
+        <p>Email: betabiosciences@gmail.com</p>
+        <p>Contact: +91 97 47 53 35 97</p>
+    </div>
+  </footer>
+
+  <script>
+    // SECURITY CHECK: This must be the first script to run.
+    // It verifies that the document is being loaded from the intended domain.
+    // If not, it clears the entire page body to prevent unauthorized use.
+    if (window.location.hostname !== "betabiosciences.github.io") {
+      document.body.innerHTML = '';
+      throw new Error("Unauthorized domain access.");
+    }
+
+    // Data for structures (typical approximations)
+    const structures = [
+      {
+        key: 'alpha',
+        name: 'α-Helix',
+        residuesPerTurn: '~3.6',
+        pitch: '≈ 5.4 Å',
+        rise: '≈ 1.5 Å',
+        hbond: 'i → i+4 (C=O of i to N–H of i+4)',
+        dipole: 'Macrodipole: N-terminus δ+; C-terminus δ−',
+        handedness: 'Right-handed',
+        features: [
+          'Side chains point outward',
+          'Stable and common in soluble proteins',
+          'Often disrupted by Pro/Gly at ends',
+          'Dihedral angles (φ, ψ) are typically around (-57°, -47°), placing it in the bottom-left quadrant of the Ramachandran plot.'
+        ],
+        quiz: {
+          prompt: 'For an α-helix, what is the typical hydrogen bond pattern?',
+          options: ['i → i+3', 'i → i+4', 'i → i+5', 'Inter-strand only'],
+          answerIndex: 1
+        }
+      },
+      {
+        key: '310',
+        name: '3₁₀ Helix',
+        residuesPerTurn: '~3.0',
+        pitch: '≈ 6.0 Å',
+        rise: '≈ 2.0 Å',
+        hbond: 'i → i+3',
+        dipole: 'Small macrodipole',
+        handedness: 'Right-handed',
+        features: [
+          'Usually short and found at the ends of α-helices',
+          'More tightly wound than α-helix',
+          'Dihedral angles (φ, ψ) are typically around (-49°, -26°), also in the bottom-left quadrant.'
+        ],
+        quiz: {
+          prompt: 'The 3₁₀ helix is generally shorter than an α-helix and has a hydrogen bond pattern of...',
+          options: ['i → i+4', 'i → i+3', 'i → i+5', 'Inter-strand'],
+          answerIndex: 1
+        }
+      },
+      {
+        key: 'parallel',
+        name: 'β-Sheet (Parallel)',
+        residuesPerTurn: '2',
+        pitch: '≈ 7 Å',
+        rise: '≈ 3.5 Å / residue',
+        hbond: 'Inter-strand, non-parallel bonds',
+        dipole: 'No net dipole',
+        handedness: 'N/A',
+        features: [
+          'Adjacent strands run in the same direction',
+          'Weaker, angled H-bonds',
+          'Less stable than anti-parallel sheets',
+          'Dihedral angles (φ, ψ) are typically around (-119°, +113°), placing it in the top-left quadrant of the Ramachandran plot.',
+          'Hydrogen bonding is said to be 1:1.5 because one amino acid in a beta strand forms hydrogen bonding with alternate amino acids in the adjacent strand.'
+        ],
+        quiz: {
+          prompt: 'In a parallel β-sheet, what is the orientation of adjacent polypeptide strands?',
+          options: ['Same direction', 'Opposite direction', 'Random', 'Perpendicular'],
+          answerIndex: 0
+        }
+      },
+      {
+        key: 'antiparallel',
+        name: 'β-Sheet (Antiparallel)',
+        residuesPerTurn: '2',
+        pitch: '≈ 7 Å',
+        rise: '≈ 3.5 Å / residue',
+        hbond: 'Inter-strand, parallel bonds',
+        dipole: 'No net dipole',
+        handedness: 'N/A',
+        features: [
+          'Adjacent strands run in opposite directions',
+          'Stronger, linear H-bonds',
+          'More stable than parallel sheets',
+          'Dihedral angles (φ, ψ) are typically around (-139°, +135°), also in the top-left quadrant of the Ramachandran plot.',
+          'Hydrogen bonding is said to be 1:1, meaning one amino acid in a strand forms a complete hydrogen bond with an amino acid in the adjacent strand.'
+        ],
+        quiz: {
+          prompt: 'Which type of β-sheet is generally considered more stable due to linear hydrogen bonds?',
+          options: ['Parallel', 'Antiparallel', 'Mixed'],
+          answerIndex: 1
+        }
+      },
+      {
+        key: 'turn',
+        name: 'β-Turn (Type I)',
+        residuesPerTurn: 'N/A',
+        pitch: 'N/A',
+        rise: 'N/A',
+        hbond: 'i → i+3',
+        dipole: 'N/A',
+        handedness: 'N/A',
+        features: [
+          'Causes a sharp 180° turn in the polypeptide chain',
+          'Often contains Glycine (flexibility) and Proline (kink)',
+          'Requires 4 residues to complete the turn',
+          'The dihedral angles occupy a specific region of the Ramachandran plot that allows for a sharp turn.'
+        ],
+        quiz: {
+          prompt: 'A β-turn often includes which amino acids to facilitate the sharp change in direction?',
+          options: ['Alanine and Leucine', 'Glycine and Proline', 'Valine and Isoleucine'],
+          answerIndex: 1
+        }
+      },
+      {
+        key: 'collagen',
+        name: 'Type II Polyproline Helix',
+        residuesPerTurn: '3 residues/turn',
+        pitch: '≈ 9.3 Å',
+        rise: '≈ 3.1 Å / residue',
+        hbond: 'N/A (stabilized by water bridges)',
+        dipole: 'N/A',
+        handedness: 'Left-handed',
+        features: [
+          'Located in the upper-left quadrant of the Ramachandran plot.',
+          'Collagen is made of Type II polyproline helices.',
+          'Formed by prolines in trans-peptide bonds.',
+          'Stabilized by hydrogen bonding from surrounding water molecules, known as water bridges.',
+          'Recognized by protein domains called SH3 domains.'
+        ],
+        quiz: {
+          prompt: 'What is a key feature that stabilizes the Type II Polyproline Helix?',
+          options: ['Inter-chain hydrogen bonds', 'Intra-chain hydrogen bonds', 'Hydrogen bonds from surrounding water molecules', 'Disulfide bonds'],
+          answerIndex: 2
+        }
+      },
+      {
+        key: 'pi',
+        name: 'π-Helix',
+        residuesPerTurn: '~4.4',
+        pitch: '≈ 5.3 Å',
+        rise: '≈ 1.2 Å',
+        hbond: 'i → i+5',
+        dipole: 'Macrodipole',
+        handedness: 'Right-handed',
+        features: [
+          'Less common than α-helices',
+          'Shorter and wider than α-helices',
+          'Often found as a single turn at the ends of α-helices',
+          'More distorted backbone dihedral angles compared to α-helices.',
+          'Dihedral angles place it in the bottom-left quadrant of the Ramachandran plot.'
+        ],
+        quiz: {
+          prompt: 'A π-helix is characterized by which hydrogen bond pattern?',
+          options: ['i → i+3', 'i → i+4', 'i → i+5', 'i → i+6'],
+          answerIndex: 2
+        }
+      }
+    ];
+
+    let currentStructureKey = 'alpha';
+    let currentQuiz = {};
+    let quizScore = { correct: 0, total: 0 };
+    
+    const structureTabs = document.getElementById('structureTabs');
+
+    const detailTitle = document.getElementById('detailTitle');
+    const statRPT = document.getElementById('statRPT');
+    const statPitch = document.getElementById('statPitch');
+    const statRise = document.getElementById('statRise');
+    const statHBond = document.getElementById('statHBond');
+    const statDipole = document.getElementById('statDipole');
+    const statHanded = document.getElementById('statHanded');
+    const featureList = document.getElementById('featureList');
+    const imageContainer = document.getElementById('imageContainer');
+
+
+    const quizPromptEl = document.getElementById('quizPrompt');
+    const quizOptionsEl = document.getElementById('quizOptions');
+    const checkAnswerBtn = document.getElementById('checkAnswer');
+    const nextQuestionBtn = document.getElementById('nextQuestion');
+    const quizFeedbackEl = document.getElementById('quizFeedback');
+    const quizScoreEl = document.getElementById('quizScore');
+
+    /**
+     * Finds the structure object by its key.
+     * @param {string} key - The key of the structure.
+     * @returns {object|undefined} The structure object.
+     */
+    const findStructure = (key) => structures.find(s => s.key === key);
+
+    /**
+     * Renders the structure tabs at the top of the page.
+     */
+    const buildTabs = () => {
+      structureTabs.innerHTML = '';
+      structures.forEach(structure => {
+        const button = document.createElement('button');
+        button.className = `focus-ring px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${currentStructureKey === structure.key ? 'bg-cyan-500 text-slate-900 shadow-lg' : 'bg-slate-800 text-slate-200 hover:bg-slate-700'}`;
+        button.textContent = structure.name;
+        button.addEventListener('click', () => {
+          currentStructureKey = structure.key;
+          updateView();
+        });
+        structureTabs.appendChild(button);
+      });
+    };
+
+    /**
+     * Updates the detailed view based on the selected structure.
+     */
+    const updateView = () => {
+      const selected = findStructure(currentStructureKey);
+      if (!selected) return;
+
+      // Update header tabs
+      buildTabs();
+
+      // Update details card
+      detailTitle.textContent = selected.name;
+      statRPT.textContent = selected.residuesPerTurn;
+      statPitch.textContent = selected.pitch;
+      statRise.textContent = selected.rise;
+      statHBond.textContent = selected.hbond;
+      statDipole.textContent = selected.dipole;
+      statHanded.textContent = selected.handedness;
+
+      // Update features list
+      featureList.innerHTML = '';
+      selected.features.forEach(feature => {
+        const li = document.createElement('li');
+        li.className = 'flex items-start gap-2';
+        li.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 mt-1 text-cyan-400"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.88"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+                      <span>${feature}</span>`;
+        featureList.appendChild(li);
+      });
+
+      // Update image
+      imageContainer.innerHTML = '';
+      if (currentStructureKey === 'alpha') {
+        const img = document.createElement('img');
+        img.src = "https://betabiosciences.github.io/Biochemistry-animations/h%20bonding%20alpha%20helix.png";
+        img.alt = "Illustration of hydrogen bonding in an alpha helix";
+        img.className = "h-auto max-w-sm rounded-xl shadow-lg";
+        imageContainer.appendChild(img);
+      } else if (currentStructureKey === 'collagen') {
+        const img = document.createElement('img');
+        img.src = "https://betabiosciences.github.io/Biochemistry-animations/Polyproline%20helix.png";
+        img.alt = "Illustration of a Type II Polyproline Helix";
+        img.className = "h-48 w-48 object-contain rounded-xl shadow-lg";
+        imageContainer.appendChild(img);
+      } else if (currentStructureKey === 'parallel') {
+        const img = document.createElement('img');
+        img.src = "https://betabiosciences.github.io/Biochemistry-animations/parallel%20beta%20sheet.png";
+        img.alt = "Illustration of a parallel beta sheet";
+        img.className = "h-auto max-w-sm rounded-xl shadow-lg";
+        imageContainer.appendChild(img);
+      } else if (currentStructureKey === 'antiparallel') {
+        const img = document.createElement('img');
+        img.src = "https://betabiosciences.github.io/Biochemistry-animations/antiparallel%20beta%20sheet.png";
+        img.alt = "Illustration of an antiparallel beta sheet";
+        img.className = "h-auto max-w-sm rounded-xl shadow-lg";
+        imageContainer.appendChild(img);
+      }
+      
+      // Update quiz
+      buildQuizForSelected();
+    };
+    
+    /**
+     * Builds and displays the quiz for the current structure.
+     */
+    const buildQuizForSelected = () => {
+      const selected = findStructure(currentStructureKey);
+      if (!selected || !selected.quiz) return;
+
+      currentQuiz = selected.quiz;
+      quizPromptEl.textContent = currentQuiz.prompt;
+      quizOptionsEl.innerHTML = '';
+      quizFeedbackEl.textContent = '';
+      checkAnswerBtn.disabled = false;
+      nextQuestionBtn.disabled = true;
+
+      currentQuiz.options.forEach((option, index) => {
+        const optionBtn = document.createElement('button');
+        optionBtn.className = 'focus-ring px-4 py-3 text-left rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm';
+        optionBtn.textContent = option;
+        optionBtn.dataset.index = index;
+        optionBtn.addEventListener('click', (e) => {
+          document.querySelectorAll('#quizOptions button').forEach(btn => {
+            btn.classList.remove('border-2', 'border-cyan-400');
+          });
+          e.currentTarget.classList.add('border-2', 'border-cyan-400');
+        });
+        quizOptionsEl.appendChild(optionBtn);
+      });
+    };
+
+    /**
+     * Checks the user's quiz answer.
+     */
+    const checkAnswer = () => {
+      const selectedOption = document.querySelector('#quizOptions button.border-cyan-400');
+      if (!selectedOption) {
+        quizFeedbackEl.textContent = 'Please select an answer.';
+        return;
+      }
+      checkAnswerBtn.disabled = true;
+      nextQuestionBtn.disabled = false;
+      quizScore.total++;
+
+      const selectedIndex = parseInt(selectedOption.dataset.index);
+      if (selectedIndex === currentQuiz.answerIndex) {
+        quizFeedbackEl.textContent = 'Correct! ✅';
+        quizFeedbackEl.className = 'text-sm text-emerald-400';
+        selectedOption.classList.add('bg-emerald-700/50', 'border-emerald-400');
+        quizScore.correct++;
+      } else {
+        quizFeedbackEl.textContent = 'Incorrect. ❌';
+        quizFeedbackEl.className = 'text-sm text-red-400';
+        selectedOption.classList.add('bg-red-700/50', 'border-red-400');
+        // Highlight correct answer
+        document.querySelector(`#quizOptions button[data-index='${currentQuiz.answerIndex}']`).classList.add('bg-emerald-700/50', 'border-emerald-400');
+      }
+      quizScoreEl.textContent = `Score: ${quizScore.correct}/${quizScore.total}`;
+    };
+
+    /**
+     * Advances to the next question for the current structure.
+     */
+    const nextQuestion = () => {
+      const currentIndex = structures.findIndex(s => s.key === currentStructureKey);
+      const nextIndex = (currentIndex + 1) % structures.length;
+      currentStructureKey = structures[nextIndex].key;
+      updateView();
+      buildQuizForSelected();
+    };
+
+    // Event listeners for controls
+    checkAnswerBtn.addEventListener('click', checkAnswer);
+    nextQuestionBtn.addEventListener('click', nextQuestion);
+
+    /**
+     * A security function to check for the watermark element.
+     * If the watermark is removed, it clears the body, making the page blank.
+     */
+    const checkWatermark = () => {
+      const watermarkEl = document.querySelector('.watermark');
+      if (!watermarkEl) {
+        // Watermark is gone, clear the body
+        document.body.innerHTML = '';
+        // Stop the periodic check
+        clearInterval(watermarkInterval);
+      }
+    };
+    
+    // Initialize the periodic check for the watermark
+    let watermarkInterval;
+
+    // Initialize the app on window load
+    window.onload = function() {
+      // Start the watermark check
+      watermarkInterval = setInterval(checkWatermark, 1000); // Check every 1 second
+      
+      // Initialize the main app functionality
+      buildTabs();
+      updateView();
+    };
+  </script>
+</body>
+</html>
