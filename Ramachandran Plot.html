@@ -1,0 +1,819 @@
+<script>
+(function() {
+  const allowedDomain = "https://betabiosciences.github.io/";
+  if (!location.href.startsWith(allowedDomain)) {
+    document.documentElement.innerHTML = "";
+    document.documentElement.style.backgroundColor = "white";
+    window.stop();
+  }
+})();
+</script>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Interactive Ramachandran Plot — Canva Code</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    /* Smooth point pop-in */
+    @keyframes popIn {
+      0% { transform: scale(0.2); opacity: 0; }
+      60% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    /* Gentle pulse */
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.35); }
+      70% { box-shadow: 0 0 0 12px rgba(59,130,246,0); }
+      100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+    }
+    /* Toast slide */
+    @keyframes toastIn {
+      0% { transform: translateY(-8px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+      backdrop-filter: blur(10px);
+    }
+    .btn {
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+    .point {
+      transform-origin: center center;
+      animation: popIn 300ms ease-out both;
+    }
+    .toast-show {
+      animation: toastIn 200ms ease-out both;
+    }
+    /* Hide default number input spinners for a cleaner look where used */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Custom styles for the table */
+    .glass table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .glass th, .glass td {
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px;
+      text-align: left;
+    }
+    .glass th {
+      background-color: rgba(255,255,255,0.05);
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-fuchsia-900 text-white">
+<div class="max-w-7xl mx-auto px-6 py-10">
+<!-- Header -->
+<div class="mb-12">
+<h1 class="text-center text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight">
+        Ramachandran Plot
+      </h1>
+</div>
+<!-- Dynamic Sections Container -->
+<div id="contentSections" class="space-y-8">
+<!-- Section 1 -->
+<div id="section-1" class="glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">What is a Ramachandran Plot?</h2>
+<p>The Ramachandran plot, developed by G.N. Ramachandran, is a fundamental tool in structural biology. It's a specific type of <strong>scatter plot</strong> used to visualize the energetically allowed and disallowed regions for the backbone dihedral angles, phi (φ) and psi (ψ), of amino acid residues in a protein structure. By analyzing these angles, scientists can assess the quality of a protein model and understand its secondary structure.</p>
+<p>The plot's foundation is the <strong>hard-sphere model</strong>. This model treats atoms as solid spheres with defined van der Waals radii. The "allowed" regions in the plot correspond to φ/ψ angle combinations where atoms do not clash or overlap, while "forbidden" regions represent combinations that would cause steric hindrance, which is energetically unfavorable.</p>
+</div>
+<!-- Section 2 -->
+<div id="section-2" class="hidden glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">Allowed vs. Forbidden Regions</h2>
+<p>The Ramachandran plot is typically divided into three main areas based on steric feasibility:</p>
+<ul>
+<li><strong style="color: #9333ea;">Core (Most Favored) Regions:</strong> These are the vibrant purple areas on the plot. They represent φ/ψ combinations with no steric clashes, corresponding to the most stable and common secondary structures.</li>
+<li><strong style="color: #3b82f6;">Allowed (Generously Allowed) Regions:</strong> The bright blue areas. Here, atoms are slightly closer than the sum of their van der Waals radii, creating minor steric strain. These conformations are less common but still possible.</li>
+<li><strong style="color: #484F58;">Disallowed Regions:</strong> The dark, uncolored areas. In these conformations, atoms are too close, leading to significant steric clashes. Amino acid residues (except Glycine) are very rarely found in these regions.</li>
+</ul>
+<p>75% of the total area in a Ramachandran Plot is forbidden. All the regular Secondary structures in proteins exist in the remaining 25%</p>
+</div>
+<!-- Section 3 - The Interactive Plot -->
+<div id="section-3" class="hidden">
+<div class="grid lg:grid-cols-12 gap-6 mt-8">
+<!-- Plot Card -->
+<div class="lg:col-span-8">
+<div class="glass rounded-2xl p-4 md:p-6 ring-1 ring-white/10">
+<!-- Toolbar -->
+<div class="flex items-center justify-between mb-5">
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="text-sm text-indigo-200/80">Overlay:</span>
+<select class="bg-indigo-900/60 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" id="residueSelect">
+<option selected="">General</option>
+<option>Glycine</option>
+<option>Proline</option>
+<option>Right-handed alpha-helix</option>
+<option>Left-handed alpha-helix</option>
+<option>Beta sheet</option>
+<option>Polyproline helices</option>
+<option>Collagen</option>
+<option>Type 1 beta turns</option>
+<option>Type 2 beta turns</option>
+</select>
+</div>
+</div>
+<button class="bg-red-500/60 hover:bg-red-500/80 transition-colors border border-white/10 rounded-lg px-3 py-2 text-sm" id="clearPointsBtn">Clear points</button>
+</div>
+<!-- Plot Wrapper -->
+<div class="relative w-full aspect-square rounded-xl overflow-hidden ring-1 ring-white/10 bg-indigo-950">
+<!-- Live HUD -->
+<div class="absolute top-3 left-3 z-20 rounded-lg px-3 py-2 bg-indigo-900/60 border border-white/10 text-indigo-100 text-sm">
+<div class="flex items-center gap-2">
+<span class="opacity-80">φ:</span>
+<span class="font-semibold" id="phiReadout">—</span>
+<span class="opacity-40">|</span>
+<span class="opacity-80">ψ:</span>
+<span class="font-semibold" id="psiReadout">—</span>
+</div>
+<div class="mt-1 text-xs inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-400/30" id="allowedBadge">
+                Outside allowed
+              </div>
+</div>
+<!-- Tooltip -->
+<div class="hidden absolute z-30 pointer-events-none bg-slate-900/90 border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-100 shadow-lg" id="tooltip"></div>
+<!-- SVG Plot -->
+<svg class="w-full h-full block" id="plot" viewbox="0 0 800 800">
+<defs>
+<lineargradient id="gridLine" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(255,255,255,0.05)"></stop>
+<stop offset="100%" stop-color="rgba(255,255,255,0.03)"></stop>
+</lineargradient>
+<filter height="200%" id="softGlow" width="200%" x="-50%" y="-50%">
+<fegaussianblur result="blur" stddeviation="6"></fegaussianblur>
+<femerge>
+<femergenode in="blur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+</defs>
+<!-- Watermark -->
+<image href="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" x="200" y="250" width="400" height="300" opacity="0.08" pointer-events="none"></image>
+<text fill="white" font-family="Inter, sans-serif" font-size="24" font-weight="bold" opacity="0.08" pointer-events="none" text-anchor="middle" x="400" y="560">BETA Biosciences</text>
+<!-- Grid + Axes -->
+<g id="grid"></g>
+<g id="axes"></g>
+<!-- Regions -->
+<g id="regions" opacity="1"></g>
+<!-- Region Labels -->
+<g id="labels"></g>
+<!-- Points -->
+<g id="points"></g>
+<!-- Crosshair -->
+<g id="crosshair" opacity="0.9">
+<line id="crossX" stroke="rgba(99,102,241,0.35)" stroke-dasharray="4 6" stroke-width="1" x1="0" x2="0" y1="0" y2="800"></line>
+<line id="crossY" stroke="rgba(99,102,241,0.35)" stroke-dasharray="4 6" stroke-width="1" x1="0" x2="800" y1="0" y2="0"></line>
+</g>
+<!-- Event capture layer -->
+<rect fill="transparent" height="800" id="eventCapture" style="cursor: crosshair;" width="800" x="0" y="0"></rect>
+</svg>
+</div>
+<!-- Legend -->
+<div class="mt-4 flex items-center gap-6 text-sm text-indigo-100/90">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-purple-700"></div>
+<span>Core Region</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-blue-600"></div>
+<span>Allowed Region</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-indigo-950 border border-white/20"></div>
+<span>Forbidden Region</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Panel -->
+<div class="lg:col-span-4">
+<div class="glass rounded-2xl p-6 ring-1 ring-white/10 h-full">
+<h2 class="text-xl font-semibold">How to use</h2>
+<ul class="mt-3 space-y-2 text-indigo-100/90 text-sm">
+<li>• Move your mouse over the plot to see live φ/ψ values.</li>
+<li>• Click anywhere to drop a point with a gentle pop.</li>
+<li>• Toggle overlays to compare residue preferences.</li>
+</ul>
+<div class="mt-6">
+<h3 class="text-sm uppercase tracking-wider text-indigo-200/70 mb-2">Quick info</h3>
+<p class="text-indigo-100/80 text-sm">
+              Common regions include β-sheets (upper-left), right-handed α-helix (lower-left), and left-handed α (upper-right). Glycine often has broader allowance; proline tends to be more restricted.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 4 -->
+<div id="section-4" class="hidden glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">Dihedral Angles of Secondary Structures</h2>
+<div class="overflow-x-auto">
+<table>
+<thead>
+<tr>
+<th>Secondary Structure</th>
+<th>Approximate φ (phi)</th>
+<th>Approximate ψ (psi)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Right-handed α-helix</td>
+<td>-57°</td>
+<td>-47°</td>
+</tr>
+<tr>
+<td>Parallel β-sheet</td>
+<td>-119°</td>
+<td>+113°</td>
+</tr>
+<tr>
+<td>Antiparallel β-sheet</td>
+<td>-139°</td>
+<td>+135°</td>
+</tr>
+<tr>
+<td>Left-handed α-helix</td>
+<td>+57°</td>
+<td>+47°</td>
+</tr>
+<tr>
+<td>3<sub>10</sub> helix</td>
+<td>-49°</td>
+<td>-26°</td>
+</tr>
+<tr>
+<td>Collagen triple helix</td>
+<td>-51°</td>
+<td>+153°</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Section 5 -->
+<div id="section-5" class="hidden glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">Exceptions: Glycine and Proline</h2>
+<h3 class="text-2xl font-bold mt-6 mb-2 text-fuchsia-400">Glycine</h3>
+<p>Glycine lacks a side chain (its R-group is just a hydrogen atom). This absence of a bulky side chain removes many steric constraints, giving it far greater conformational freedom. Its Ramachandran plot shows allowed regions that are symmetric about the origin (0°, 0°), including areas that are forbidden for all other amino acids.</p>
+<h3 class="text-2xl font-bold mt-6 mb-2 text-fuchsia-400">Proline</h3>
+<p>Proline's side chain is unique because it loops back and bonds to its own backbone nitrogen atom, forming a rigid five-membered ring. This ring structure severely restricts rotation around the φ angle, locking it at approximately <strong>-65°</strong>. Consequently, its Ramachandran plot shows only a very narrow, vertically-oriented allowed region.</p>
+</div>
+<!-- Section 6 -->
+<div id="section-6" class="hidden glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">The Proteomic Ramachandran Plot</h2>
+<p>A Proteomic Ramachandran plot aggregates the (φ, ψ) angles from a massive database of high-resolution protein structures (e.g., from the Protein Data Bank). Instead of just showing theoretical allowed/disallowed regions, it displays the actual observed distribution of residues as a density map. These plots provide a more nuanced, data-driven view of protein conformations and are invaluable for validating new structures against the known universe of protein folds.</p>
+<div class="flex justify-center mt-4">
+<img alt="A Proteomic Ramachandran plot showing density of points" class="rounded-lg shadow-lg border border-gray-600" src="https://betabiosciences.github.io/Biochemistry-animations/PR%20plot.png"/>
+</div>
+</div>
+<!-- Section 7 -->
+<div id="section-7" class="hidden glass rounded-2xl p-6 ring-1 ring-white/10 text-indigo-100/90">
+<h2 class="text-3xl font-bold text-fuchsia-400">Applications of the Ramachandran Plot</h2>
+<ul>
+<li><strong>Structure Validation:</strong> Its primary use is to check the quality of experimentally determined or computationally predicted protein structures.</li>
+<li><strong>Model Refinement:</strong> During the process of solving a protein structure, the plot helps scientists identify and correct regions with unlikely backbone conformations.</li>
+<li><strong>Understanding Protein Dynamics:</strong> By identifying residues in less common "allowed" regions, researchers can gain insights into flexible or functionally important parts of a protein.</li>
+<li><strong>Protein Design:</strong> When designing new proteins, the plot serves as a guide to ensure that the designed sequence can fold into a stable, sterically valid conformation.</li>
+</ul>
+</div>
+</div>
+<!-- Navigation Buttons -->
+<div class="flex justify-center gap-4 mt-8">
+<button id="prevBtn" class="glass btn px-6 py-2 rounded-full ring-1 ring-white/20 text-indigo-100/90 font-medium">Previous</button>
+<button id="nextBtn" class="glass btn px-6 py-2 rounded-full ring-1 ring-white/20 text-indigo-100/90 font-medium">Next</button>
+</div>
+<!-- Footer -->
+<footer class="mt-12 py-8 text-center text-indigo-200/70">
+<img alt="BETA Biosciences Logo" class="h-16 mx-auto mb-4" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png"/>
+<p>© 2025 BETA Biosciences. All rights reserved.</p>
+<p>Email: betabiosciences@gmail.com</p>
+<p>Contact: +91 97 47 53 35 97</p>
+</footer>
+<script>
+    // Core state
+    const state = {
+      phiMin: -180, phiMax: 180,
+      psiMin: -180, psiMax: 180,
+      padding: 64,
+      residueType: 'General', // Default is now 'General'
+      showRegions: true, // This is now hardcoded to true
+      animate: true,      // This is now hardcoded to true
+      points: [], // {id, phi, psi, source: 'user'|'random'}
+      idSeq: 0
+    };
+
+    // Elements
+    const svg = document.getElementById('plot');
+    const gGrid = document.getElementById('grid');
+    const gAxes = document.getElementById('axes');
+    const gRegions = document.getElementById('regions');
+    const gLabels = document.getElementById('labels');
+    const gPoints = document.getElementById('points');
+    const capture = document.getElementById('eventCapture');
+    const crossX = document.getElementById('crossX');
+    const crossY = document.getElementById('crossY');
+    const phiReadout = document.getElementById('phiReadout');
+    const psiReadout = document.getElementById('psiReadout');
+    const allowedBadge = document.getElementById('allowedBadge');
+    const tooltip = document.getElementById('tooltip');
+
+    // Controls
+    const residueSelect = document.getElementById('residueSelect');
+    const clearPointsBtn = document.getElementById('clearPointsBtn');
+    
+    // Navigation
+    const sections = document.querySelectorAll('#contentSections > div');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentSectionIndex = 0;
+
+    // Dimensions (SVG viewBox is fixed at 800)
+    const VB = 800;
+
+    // Mapping functions
+    const xScale = phi => {
+      const {phiMin, phiMax, padding} = state;
+      return padding + ( (phi - phiMin) / (phiMax - phiMin) ) * (VB - 2*padding);
+    };
+    const yScale = psi => {
+      const {psiMin, psiMax, padding} = state;
+      // y increases downward in SVG, invert for standard plot
+      return VB - padding - ( (psi - psiMin) / (psiMax - psiMin) ) * (VB - 2*padding);
+    };
+    const invX = x => {
+      const {phiMin, phiMax, padding} = state;
+      return phiMin + ((x - padding) / (VB - 2*padding)) * (phiMax - phiMin);
+    };
+    const invY = y => {
+      const {psiMin, psiMax, padding} = state;
+      return psiMin + ((VB - padding - y) / (VB - 2*padding)) * (psiMax - psiMin);
+    };
+
+    // Allowed region shapes (illustrative)
+    function getAllowedRegions(kind) {
+      // Each region: {cx, cy, rx, ry, rot, color, label}
+      // For 'General', we now have distinct core and allowed regions with different colors
+      if (kind === 'General') {
+        return {
+          core: [
+            {cx:-135, cy:135, rx:34, ry:26, rot:0,   color:'rgba(102, 0, 153, 0.25)', label: 'β-sheet'},  // Deeper purple
+            {cx:-60,  cy:-45, rx:38, ry:26, rot:-10, color:'rgba(102, 0, 153, 0.25)', label: 'αR-helix'},  // Deeper purple
+            {cx:60,   cy:45,  rx:26, ry:20, rot:8,   color:'rgba(102, 0, 153, 0.25)', label: 'αL-helix'}   // Deeper purple
+          ],
+          allowed: [
+            {cx:-135, cy:135, rx:40, ry:30, rot:0,   color:'rgba(0, 102, 255, 0.25)', label: 'β-sheet'},  // More bluish
+            {cx:-60,  cy:-45, rx:45, ry:28, rot:-10, color:'rgba(0, 102, 255, 0.25)', label: 'αR-helix'},  // More bluish
+            {cx:60,   cy:45,  rx:30, ry:24, rot:8,   color:'rgba(0, 102, 255, 0.25)', label: 'αL-helix'}   // More bluish
+          ]
+        };
+      }
+      // Other kinds will still return a single array of regions
+      if (kind === 'Glycine') {
+        return [
+          {cx:-135, cy:135, rx:40, ry:32, rot:0,   color:'rgba(163, 230, 53, 0.25)', label: 'β-sheet'},
+          {cx:-60,  cy:-45, rx:45, ry:28, rot:-10, color:'rgba(163, 230, 53, 0.25)', label: 'α-helix'},
+          {cx:70,   cy:40,  rx:45, ry:35, rot:8,   color:'rgba(163, 230, 53, 0.25)', label: 'αL-helix'},
+          {cx:75,   cy:0,   rx:55, ry:38, rot:0,   color:'rgba(163, 230, 53, 0.25)', label: 'Polyproline II'},
+        ];
+      }
+      if (kind === 'Proline') {
+        return [
+          {cx:-75,  cy:150, rx:26, ry:18, rot:0,   color:'rgba(251, 191, 36, 0.25)', label: 'PPII helix'},
+          {cx:-60,  cy:-40, rx:26, ry:18, rot:-5,  color:'rgba(251, 191, 36, 0.25)', label: 'αR-helix'}
+        ];
+      }
+      if (kind === 'Right-handed alpha-helix') {
+        return [
+          {cx: -60, cy: -45, rx: 40, ry: 28, rot: -12, color: 'rgba(34,197,94,0.25)', label: 'Right-handed α-helix'}
+        ];
+      }
+      if (kind === 'Left-handed alpha-helix') {
+        return [
+          {cx: 60, cy: 45, rx: 30, ry: 24, rot: 8, color: 'rgba(255, 102, 255, 0.25)', label: 'Left-handed α-helix'}
+        ];
+      }
+      if (kind === 'Beta sheet') {
+        return [
+          {cx:-135, cy:135, rx:40, ry:30, rot:0, color:'rgba(59,130,246,0.25)', label: 'β-sheet'}
+        ];
+      }
+      if (kind === 'Polyproline helices') {
+        return [
+          {cx:-75, cy:150, rx:28, ry:20, rot:0, color:'rgba(244,114,182,0.25)', label: 'PPII helix'},
+          {cx:155, cy:155, rx:18, ry:14, rot:0, color:'rgba(244,114,182,0.25)', label: 'PPI helix'}
+        ];
+      }
+      if (kind === 'Collagen') {
+        return [
+          {cx:-75, cy:150, rx:26, ry:18, rot:0, color:'rgba(251,146,60,0.25)', label: 'Collagen'}
+        ];
+      }
+      if (kind === 'Type 1 beta turns') {
+        return [
+          {cx:-60, cy:-30, rx:20, ry:20, rot:0, color:'rgba(255, 159, 28, 0.25)', label: 'Type I Beta Turn'}
+        ];
+      }
+      if (kind === 'Type 2 beta turns') {
+        return [
+          {cx:-60, cy:120, rx:20, ry:20, rot:0, color:'rgba(255, 203, 5, 0.25)', label: 'Type II Beta Turn'}
+        ];
+      }
+      return [];
+    }
+
+    function drawEllipse(region) {
+      const x = xScale(region.cx);
+      const y = yScale(region.cy);
+      return `<ellipse cx="${x}" cy="${y}" rx="${region.rx * (VB - 2*state.padding) / (state.phiMax - state.phiMin)}"
+                ry="${region.ry * (VB - 2*state.padding) / (state.psiMax - state.psiMin)}"
+                transform="rotate(${region.rot}, ${x}, ${y})"
+                fill="${region.color}" stroke="rgba(255,255,255,0.22)" stroke-dasharray="3 6" stroke-width="1.2" filter="url(#softGlow)"></ellipse>`;
+    }
+    
+    // Check if a point is inside any of the defined regions
+    function pointInsideRegions(phi, psi) {
+      const regions = getAllowedRegions(state.residueType);
+      
+      // If the regions are structured with 'core' and 'allowed' keys (for 'General' overlay)
+      if (regions.core && regions.allowed) {
+        // Check both core and allowed regions for inclusion
+        for (const r of regions.core) {
+          if (insideEllipseRotated(phi, psi, r)) return true;
+        }
+        for (const r of regions.allowed) {
+          if (insideEllipseRotated(phi, psi, r)) return true;
+        }
+        return false;
+      }
+      // If regions are a simple array (for other overlays)
+      for (const r of regions) {
+        if (insideEllipseRotated(phi, psi, r)) return true;
+      }
+      return regions.length > 0 ? false : false;
+    }
+
+    // Ellipse inclusion with rotation
+    function insideEllipseRotated(px, py, r) {
+      const dx = px - r.cx;
+      const dy = py - r.cy;
+      const theta = (r.rot || 0) * Math.PI/180;
+      const cos = Math.cos(-theta), sin = Math.sin(-theta);
+      const rx = dx * cos - dy * sin;
+      const ry = dx * sin + dy * cos;
+      const val = (rx*rx)/(r.rx*r.rx) + (ry*ry)/(r.ry*r.ry);
+      return val <= 1;
+    }
+
+    // Init grid and axes
+    function drawGrid() {
+      const ticks = [];
+      for (let v = -180; v <= 180; v += 60) ticks.push(v);
+
+      let gridHtml = '';
+      let axesHtml = '';
+
+      const p = state.padding;
+      gridHtml += `<rect x="${p}" y="${p}" width="${VB-2*p}" height="${VB-2*p}" fill="url(#gridLine)" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" />`;
+
+      ticks.forEach(t => {
+        const x = xScale(t);
+        const y = yScale(t);
+        gridHtml += `<line x1="${x}" y1="${p}" x2="${x}" y2="${VB-p}" stroke="rgba(255,255,255,0.09)" stroke-width="1" />`;
+        axesHtml += `<text x="${x}" y="${VB - p + 24}" fill="rgba(255,255,255,0.85)" font-size="12" text-anchor="middle">${t}°</text>`;
+        gridHtml += `<line x1="${p}" y1="${y}" x2="${VB-p}" y2="${y}" stroke="rgba(255,255,255,0.09)" stroke-width="1" />`;
+        axesHtml += `<text x="${p - 28}" y="${y + 4}" fill="rgba(255,255,255,0.85)" font-size="12" text-anchor="end">${t}°</text>`;
+      });
+
+      const xZero = xScale(0);
+      const yZero = yScale(0);
+      gridHtml += `<line x1="${xZero}" y1="${p}" x2="${xZero}" y2="${VB-p}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="8 4" />`;
+      gridHtml += `<line x1="${p}" y1="${yZero}" x2="${VB-p}" y2="${yZero}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-dasharray="8 4" />`;
+
+      axesHtml += `<text x="${VB/2}" y="${VB - p + 48}" fill="rgba(255,255,255,0.9)" font-size="14" text-anchor="middle">φ (phi)</text>`;
+      axesHtml += `<text transform="translate(${p - 48}, ${VB/2}) rotate(-90)" fill="rgba(255,255,255,0.9)" font-size="14" text-anchor="middle">ψ (psi)</text>`;
+
+      gGrid.innerHTML = gridHtml;
+      gAxes.innerHTML = axesHtml;
+    }
+
+    function updateCrosshair(x, y) {
+      const p = state.padding;
+      crossX.setAttribute('x1', x); crossX.setAttribute('x2', x);
+      crossY.setAttribute('y1', y); crossY.setAttribute('y2', y);
+    }
+
+    function updateHUD(phi, psi) {
+      phiReadout.textContent = phi.toFixed(1) + '°';
+      psiReadout.textContent = psi.toFixed(1) + '°';
+
+      const isAllowed = pointInsideRegions(phi, psi);
+      allowedBadge.textContent = isAllowed ? 'Allowed' : 'Forbidden';
+      
+      // Update badge color based on whether the point is allowed
+      if (isAllowed) {
+        allowedBadge.classList.remove('bg-red-500/20', 'text-red-200', 'border-red-400/30');
+        allowedBadge.classList.add('bg-emerald-500/20', 'text-emerald-200', 'border-emerald-400/30');
+      } else {
+        allowedBadge.classList.remove('bg-emerald-500/20', 'text-emerald-200', 'border-emerald-400/30');
+        allowedBadge.classList.add('bg-red-500/20', 'text-red-200', 'border-red-400/30');
+      }
+    }
+
+    function drawLabels(regions) {
+      gLabels.innerHTML = ''; // Clear existing labels at the start
+
+      // Only draw labels if regions are visible AND the selection is not 'General'
+      if (!state.showRegions || state.residueType === 'General') {
+        return;
+      }
+      
+      const labelsHtml = regions.map(r => {
+        const x = xScale(r.cx);
+        const y = yScale(r.cy);
+        return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="white" class="font-bold opacity-80 pointer-events-none">${r.label}</text>`;
+      }).join('');
+      gLabels.innerHTML = labelsHtml;
+    }
+
+    function renderRegions() {
+      gRegions.innerHTML = '';
+      if (!state.showRegions) { 
+        gRegions.setAttribute('opacity', '0'); 
+        gLabels.innerHTML = ''; // Ensure labels are also cleared when regions are off
+        return; 
+      }
+      
+      const regions = getAllowedRegions(state.residueType);
+      let html = '';
+
+      // If the regions are structured with 'core' and 'allowed' keys (for 'General' overlay)
+      if (regions.core && regions.allowed) {
+        // Draw the allowed regions first (larger, in blue)
+        html += regions.allowed.map(r => drawEllipse(r)).join('');
+        // Then draw the core regions on top (smaller, in purple)
+        html += regions.core.map(r => drawEllipse(r)).join('');
+        // Draw labels for the core regions
+        drawLabels(regions.core);
+      } else {
+        // For other overlays, draw the single set of regions and their labels
+        html = regions.map(r => drawEllipse(r)).join('');
+        drawLabels(regions);
+      }
+      
+      gRegions.innerHTML = html;
+      
+      if (state.animate) {
+        gRegions.style.transition = 'opacity 250ms ease, transform 250ms ease';
+        gRegions.style.transformOrigin = 'center center';
+        gRegions.style.opacity = '0';
+        gRegions.style.transform = 'scale(0.98)';
+        requestAnimationFrame(() => {
+          gRegions.style.opacity = '1';
+          gRegions.style.transform = 'scale(1)';
+        });
+      } else {
+        gRegions.style.transition = 'none';
+        gRegions.style.opacity = '1';
+        gRegions.style.transform = 'none';
+      }
+    }
+    
+    function makePointEl(pt) {
+      const color = '#22d3ee'; // User points are the only ones now
+      const cx = xScale(pt.phi);
+      const cy = yScale(pt.psi);
+      const r = 4;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('data-id', pt.id);
+
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('class', 'point');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', r);
+      circle.setAttribute('fill', color);
+      circle.setAttribute('stroke', 'rgba(255,255,255,0.8)');
+      circle.setAttribute('stroke-width', '0.8');
+      circle.setAttribute('filter', 'url(#softGlow)');
+
+      // tooltip interactions
+      circle.addEventListener('mouseenter', (e) => {
+        tooltip.classList.remove('hidden');
+        tooltip.innerHTML = `<div><span class="opacity-70">φ:</span> <b>${pt.phi.toFixed(1)}°</b></div>
+                             <div><span class="opacity-70">ψ:</span> <b>${pt.psi.toFixed(1)}°</b></div>`;
+      });
+      circle.addEventListener('mouseleave', () => {
+        tooltip.classList.add('hidden');
+      });
+      circle.addEventListener('mousemove', (e) => {
+        const bounds = svg.getBoundingClientRect();
+        const tx = e.clientX - bounds.left + 12;
+        const ty = e.clientY - bounds.top + 12;
+        tooltip.style.transform = `translate(${tx}px, ${ty}px)`;
+      });
+
+      // hover grow
+      circle.addEventListener('mouseenter', () => {
+        circle.style.transition = 'transform 120ms ease';
+        circle.style.transform = 'scale(1.25)';
+      });
+      circle.addEventListener('mouseleave', () => {
+        circle.style.transform = 'scale(1)';
+      });
+
+      g.appendChild(circle);
+      return g;
+    }
+
+    function renderPoints() {
+      gPoints.innerHTML = '';
+      state.points.forEach(pt => {
+        const el = makePointEl(pt);
+        gPoints.appendChild(el);
+      });
+    }
+
+    function addPoint(phi, psi, source='user', animateFrom=null) {
+      const pt = { id: ++state.idSeq, phi, psi, source };
+      state.points.push(pt);
+      const el = makePointEl(pt);
+      gPoints.appendChild(el);
+
+      // small ripple glow using a temporary HTML element overlay (pulse)
+      if (state.animate) {
+        // Animate position from a source point if given
+        if (animateFrom) {
+          const circle = el.querySelector('circle');
+          const start = { x: xScale(animateFrom.phi), y: yScale(animateFrom.psi) };
+          const end = { x: xScale(phi), y: yScale(psi) };
+          const steps = 18;
+          let t = 0;
+          const tick = () => {
+            t++;
+            const k = t/steps;
+            const ease = k<0.5 ? 2*k*k : -1+(4-2*k)*k; // easeInOutQuad
+            const cx = start.x + (end.x - start.x) * ease;
+            const cy = start.y + (end.y - start.y) * ease;
+            circle.setAttribute('cx', cx);
+            circle.setAttribute('cy', cy);
+            if (t < steps) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+
+        // Subtle pulse on the plot container
+        const wrapper = svg.parentElement;
+        wrapper.style.animation = 'pulseGlow 800ms ease-out 1';
+        setTimeout(() => wrapper.style.animation = 'none', 820);
+      }
+      return pt;
+    }
+
+    function clearPoints() {
+      if (state.animate) {
+        // Fade-out before clearing
+        gPoints.style.transition = 'opacity 200ms ease';
+        gPoints.style.opacity = '0';
+        setTimeout(() => {
+          state.points = [];
+          gPoints.innerHTML = '';
+          gPoints.style.opacity = '1';
+        }, 210);
+      } else {
+        state.points = [];
+        gPoints.innerHTML = '';
+      }
+    }
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+    
+    // Navigation Functions
+    function showSection(index) {
+        sections.forEach(section => section.classList.add('hidden'));
+        sections[index].classList.remove('hidden');
+        currentSectionIndex = index;
+        updateNavButtons();
+
+        // Special case for the plot section to ensure it renders correctly
+        if (sections[index].id === 'section-3' && svg) {
+          // This ensures the SVG is redrawn when it becomes visible
+          drawGrid();
+          renderRegions();
+        }
+    }
+
+    function updateNavButtons() {
+        prevBtn.disabled = (currentSectionIndex === 0);
+        nextBtn.disabled = (currentSectionIndex === sections.length - 1);
+        
+        if (prevBtn.disabled) {
+            prevBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            prevBtn.classList.remove('hover:bg-white/10');
+        } else {
+            prevBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            prevBtn.classList.add('hover:bg-white/10');
+        }
+        
+        if (nextBtn.disabled) {
+            nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            nextBtn.classList.remove('hover:bg-white/10');
+        } else {
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            nextBtn.classList.add('hover:bg-white/10');
+        }
+    }
+    
+    // Event handlers
+    capture.addEventListener('mousemove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const phi = clamp(invX(x), -180, 180);
+      const psi = clamp(invY(y), -180, 180);
+      updateCrosshair(x, y);
+      updateHUD(phi, psi);
+
+      if (!tooltip.classList.contains('hidden')) {
+        tooltip.style.transform = `translate(${x + 12}px, ${y + 12}px)`;
+      }
+    });
+
+    capture.addEventListener('mouseleave', () => {
+      phiReadout.textContent = '—';
+      psiReadout.textContent = '—';
+    });
+
+    capture.addEventListener('click', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const phi = clamp(invX(x), -180, 180);
+      const psi = clamp(invY(y), -180, 180);
+      addPoint(phi, psi, 'user');
+      updateHUD(phi, psi); // Explicitly update HUD for the new point
+    });
+
+    residueSelect.addEventListener('change', () => {
+      state.residueType = residueSelect.value;
+      renderRegions();
+      const cx = VB/2, cy = VB/2;
+      updateHUD(invX(cx), invY(cy));
+    });
+
+    clearPointsBtn.addEventListener('click', () => {
+      clearPoints();
+    });
+
+    // Navigation button handlers
+    nextBtn.addEventListener('click', () => {
+        if (currentSectionIndex < sections.length - 1) {
+            showSection(currentSectionIndex + 1);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentSectionIndex > 0) {
+            showSection(currentSectionIndex - 1);
+        }
+    });
+
+    // Security check: If footer is not present, don't load the page content.
+    window.onload = function() {
+      const footer = document.querySelector('footer');
+      if (!footer) {
+        document.body.innerHTML = ''; // Clear the page content
+        document.body.style.backgroundColor = 'white'; // Make it a blank white page
+      } else {
+        showSection(0); // Show the first section on load
+      }
+    };
+    
+    // Accessibility: keyboard add point at center
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (sections[currentSectionIndex].id === 'section-3') {
+           addPoint(0, 0, 'user');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
