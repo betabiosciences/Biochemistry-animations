@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Supersecondary Structures</title>
+    <script>
+        // Start with a self-executing function for immediate and robust protection
+        (function() {
+            // Define the allowed domain
+            const allowedDomain = "https://betabiosciences.github.io/";
+
+            // Check if the current location's href starts with the allowed domain
+            // The check is a startsWith to account for potential paths after the domain
+            if (!window.location.href.startsWith(allowedDomain)) {
+                // If it's not the allowed domain, clear the body content to show a blank page
+                // document.body might not be fully loaded yet, so this check is important
+                if (document.body) {
+                    document.body.innerHTML = '';
+                } else {
+                    // If the body isn't ready yet, use a DOMContentLoaded listener
+                    // This ensures the body is cleared as soon as it's available
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.body.innerHTML = '';
+                    });
+                }
+            }
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d1b69 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative; /* Needed for watermark positioning */
+            min-height: 100vh;
+        }
+        
+        /* Watermark Styles */
+        body::after {
+            content: "BETA Biosciences";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            color: rgba(255, 255, 255, 0.05);
+            font-size: 2vw;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: -1;
+            text-align: center;
+            line-height: 1.2;
+            
+            background-image: url('https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 7%;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Styles for the section wrapper and individual sections */
+        #section-wrapper {
+            position: relative;
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .section-item {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            box-sizing: border-box;
+            display: none; /* Initially hide all sections */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+        }
+
+        .section-item.active {
+            display: block; /* Show the active section */
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            margin: 0; /* Remove old margin */
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .definition-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .definition-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .definition-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .structure-section {
+            padding: 0;
+        }
+
+        .structure-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .structure-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-content {
+            padding: 35px;
+        }
+
+        .structure-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #e8f4f8;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1rem;
+            color: #b8e6ff;
+        }
+
+        .feature-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #4ecdc4;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .visual-element {
+            width: 100%;
+            height: auto;
+            background: transparent;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visual-element img {
+            width: 50%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .visual-element img:hover {
+            transform: scale(1.02);
+        }
+
+        /* New styles for navigation controls */
+        .navigation-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .navigation-controls button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation-controls button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .navigation-controls button:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        /* Updated styles for navigation dots */
+        .navigation-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #4ecdc4;
+            transform: scale(1.3);
+        }
+
+        /* Updated styles for back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            opacity: 1; /* Always visible in this new layout */
+            pointer-events: all;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        /* New quiz specific styles */
+        .quiz-section {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quiz-question {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quiz-question p {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .quiz-options label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .quiz-options label:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        #submit-btn, #restart-btn {
+            background: linear-gradient(45deg, #4ecdc4, #96ceb4);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0f0f23;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            margin-top: 20px;
+        }
+        
+        #submit-btn:hover, #restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: none; /* Hide initially */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .correct-answer {
+            color: #4ecdc4;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        .incorrect-answer {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+
+        .footer-logo {
+            width: 60px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .hero {
+                padding: 40px 15px;
+            }
+            
+            .definition-section {
+                padding: 30px 20px;
+            }
+            
+            .card-header {
+                padding: 25px 20px;
+            }
+            
+            .card-content {
+                padding: 25px 20px;
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .navigation-dots {
+                display: flex;
+            }
+
+            .quiz-question {
+                padding: 20px;
+            }
+
+            #submit-btn, #restart-btn {
+                width: 100%;
+            }
+        }
+
+        .interactive-highlight {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-highlight:hover {
+            color: #4ecdc4;
+            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+        }
+
+        h2, h3 {
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- New wrapper for the individual sections -->
+        <div id="section-wrapper">
+            <div class="hero section-item active" id="section-0">
+                <div class="hero-content">
+                    <h1>Protein Supersecondary Structures</h1>
+                    <p class="subtitle">Explore the intricate world of protein folding patterns and structural motifs that define biological function</p>
+                </div>
+            </div>
+
+            <div class="definition-section section-item" id="section-1">
+                <div class="definition-content">
+                    <h2>Understanding Supersecondary Structures</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 30px; line-height: 1.8;">
+                        A <strong style="font-weight: bold;">supersecondary structure</strong>, also known as a <span class="interactive-highlight">protein motif</span>, is a recognizable folding pattern involving two or more elements of secondary structure (alpha helices and beta sheets) and the connections between them. These motifs are stable and often serve a specific function. Supersecondary structures are an intermediate level of organization between secondary and tertiary structure, serving as the fundamental building blocks for more complex protein architectures like domains.
+                    </p>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <h3>Supersecondary Structure</h3>
+                            <ul class="feature-list">
+                                <li><strong>Intermediate level:</strong> Combines multiple secondary structures</li>
+                                <li><strong>Examples:</strong> Helix-turn-helix, Zinc finger</li>
+                                <li><strong>Function:</strong> Often serves a specific role, e.g., DNA binding</li>
+                                <li><strong>Size:</strong> Typically small, stable folding patterns</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-card">
+                            <h3>Protein Domain</h3>
+                            <ul class="feature-list">
+                                <li><strong>Larger unit:</strong> Independently folding part of a polypeptide chain</li>
+                                <li><strong>Examples:</strong> Immunoglobulin domain, kinase domain</li>
+                                <li><strong>Function:</strong> Can perform complex functions independently</li>
+                                <li><strong>Size:</strong> Larger, may contain multiple supersecondary structures</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Supersecondary Structure Sections -->
+            <div class="structure-section section-item" id="section-2">
+                <div class="structure-card">
+                    <div class="card-header">
+                        <h2 class="card-title">1. Helix-Turn-Helix (HTH)</h2>
+                    </div>
+                    <div class="card-content">
+                        <!-- User-provided image -->
+                        <div class="visual-element">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/HTH.png" alt="Diagram of a Helix-Turn-Helix motif." onerror="this.style.display='none'">
+                        </div>
+                        <p class="structure-description">
+                            The <strong style="font-weight: bold;">helix-turn-helix (HTH)</strong> motif is one of the most common DNA-binding motifs found in prokaryotic transcription factors. It consists of two α-helices connected by a short turn, with the second helix (recognition helix) fitting into the major groove of DNA.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Two α-helices at ~120° angle</li>
+                            <li>Recognition helix makes sequence-specific contacts with DNA bases</li>
+                            <li>First helix provides structural stability through protein-protein interactions</li>
+                            <li>Turn region is typically 3-5 amino acids long</li>
+                            <li>Found in repressors like LacI, TrpR, and CAP proteins</li>
+                            <li>Highly conserved geometry allows predictable DNA binding</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="structure-section section-item" id="section-3">
+                <div class="structure-card">
+                    <div class="card-header">
+                        <h2 class="card-title">2. Zinc Finger</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="visual-element">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/Zif.png" alt="Diagram of a Zinc Finger motif." onerror="this.style.display='none'">
+                        </div>
+                        <p class="structure-description">
+                            They are one of the most common DNA-binding motifs found in eukaryotic transcription factors. <strong style="font-weight: bold;">Zinc fingers</strong> are small protein motifs stabilized by zinc ions, commonly found in DNA-binding proteins. The classic Cys₂His₂ zinc finger consists of a β-sheet followed by an α-helix, with zinc coordinated by two cysteine and two histidine residues.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Zinc ion provides crucial structural stability</li>
+                            <li>α-helix inserts into DNA major groove for sequence recognition</li>
+                            <li>Multiple zinc fingers often work together for specificity</li>
+                            <li>Variations include Cys₄, Cys₆, and other coordination patterns</li>
+                            <li>Essential for transcription factors and chromatin remodeling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="structure-section section-item" id="section-4">
+                <div class="structure-card">
+                    <div class="card-header">
+                        <h2 class="card-title">3. Leucine Zipper</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="visual-element">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/Leu%20Zip.png" alt="Diagram of a Leucine Zipper motif." onerror="this.style.display='none'">
+                        </div>
+                        <p class="structure-description">
+                            A <strong style="font-weight: bold;">leucine zipper</strong> is a dimerization domain found in many DNA-binding proteins. It consists of two α-helices that form a coiled-coil structure. The name comes from the repeating pattern of leucine residues every seventh amino acid, which interlock like teeth of a zipper to stabilize the dimerization.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Two α-helices form a coiled-coil</li>
+                            <li>Leucine residues every 7th position form a hydrophobic interface</li>
+                            <li>Can form homodimers or heterodimers</li>
+                            <li>Often preceded by a basic region for DNA binding (bZIP proteins)</li>
+                            <li>Examples include c-Jun, c-Fos, and CREB transcription factors</li>
+                            <li>Critical for gene regulation and cellular signaling</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="structure-section section-item" id="section-5">
+                <div class="structure-card">
+                    <div class="card-header">
+                        <h2 class="card-title">4. Helix-Loop-Helix</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="visual-element">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/HLH.png" alt="Diagram of a Helix-Loop-Helix motif." onerror="this.style.display='none'">
+                        </div>
+                        <p class="structure-description">
+                            <strong style="font-weight: bold;">Helix-loop-helix (HLH)</strong> motifs consist of two amphipathic α-helices connected by a loop region. This structure enables protein dimerization through helix-helix interactions and is commonly found in transcription factors involved in development.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Loop region allows flexibility for optimal helix positioning</li>
+                            <li>Basic HLH (bHLH) proteins have additional DNA-binding domain</li>
+                            <li>Can form homodimers or heterodimers with other HLH proteins</li>
+                            <li>Examples include MyoD, E2A, and Twist proteins</li>
+                            <li>Essential for muscle development and neurogenesis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="structure-section section-item" id="section-6">
+                <div class="structure-card">
+                    <div class="card-header">
+                        <h2 class="card-title">5. β-Barrel</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="visual-element">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/beta%20barrel.png" alt="Diagram of a Beta-Barrel protein structure." onerror="this.style.display='none'">
+                        </div>
+                        <p class="structure-description">
+                            The <strong style="font-weight: bold;">beta barrel</strong> is a large, supersecondary structure formed by a number of beta sheets arranged in a barrel-like shape. The beta sheets are twisted to form a closed, hollow cylinder. Beta barrels are commonly found in membrane proteins, where they can form pores or channels that allow molecules to pass through the cell membrane. The structure is stabilized by hydrogen bonds between the beta strands.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Consists of multiple β-sheets forming a barrel shape</li>
+                            <li>Found in membrane proteins, particularly in bacteria and mitochondria</li>
+                            <li>Often function as pores, channels, or enzyme active sites</li>
+                            <li>Hydrophobic residues face outwards to interact with the membrane lipids</li>
+                            <li>Hydrophilic residues face inwards to line the central channel</li>
+                            <li>Examples include porins and some toxins</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-section section-item" id="section-7">
+                <div class="definition-content">
+                    <h2>Quiz: Test Your Knowledge</h2>
+                    <form id="quiz-form">
+                        <div class="quiz-question">
+                            <p>1. Which supersecondary structure is a common DNA-binding motif in prokaryotic transcription factors?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="question1" value="A"> A) Leucine Zipper</label>
+                                <label><input type="radio" name="question1" value="B"> B) Zinc Finger</label>
+                                <label><input type="radio" name="question1" value="C"> C) Helix-Turn-Helix</label>
+                                <label><input type="radio" name="question1" value="D"> D) Beta-Barrel</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. What type of protein structure is characterized by a dimerization domain formed by two α-helices with a repeating pattern of leucine residues?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="question2" value="A"> A) Helix-Loop-Helix</label>
+                                <label><input type="radio" name="question2" value="B"> B) Leucine Zipper</label>
+                                <label><input type="radio" name="question2" value="C"> C) Beta-Barrel</label>
+                                <label><input type="radio" name="question2" value="D"> D) Zinc Finger</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. Which structural motif is stabilized by a coordinated zinc ion?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="question3" value="A"> A) Helix-Turn-Helix</label>
+                                <label><input type="radio" name="question3" value="B"> B) Beta-Barrel</label>
+                                <label><input type="radio" name="question3" value="C"> C) Zinc Finger</label>
+                                <label><input type="radio" name="question3" value="D"> D) Leucine Zipper</label>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-question">
+                            <p>4. The Beta-Barrel motif is primarily found in what type of proteins?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="question4" value="A"> A) Cytoplasmic proteins</label>
+                                <label><input type="radio" name="question4" value="B"> B) Nuclear proteins</label>
+                                <label><input type="radio" name="question4" value="C"> C) Membrane proteins</label>
+                                <label><input type="radio" name="question4" value="D"> D) Ribosomal proteins</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. The <span class="interactive-highlight">Helix-Loop-Helix</span> motif is often associated with proteins involved in which cellular process?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="question5" value="A"> A) Cellular respiration</label>
+                                <label><input type="radio" name="question5" value="B"> B) Protein synthesis</label>
+                                <label><input type="radio" name="question5" value="C"> C) DNA replication</label>
+                                <label><input type="radio" name="question5" value="D"> D) Development and gene regulation</label>
+                            </div>
+                        </div>
+
+                        <div id="results">
+                            <h3>Quiz Results</h3>
+                            <p id="score"></p>
+                            <div id="answers-container"></div>
+                        </div>
+
+                        <button type="button" id="submit-btn">Submit Quiz</button>
+                        <button type="button" id="restart-btn" style="display: none;">Restart Quiz</button>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="navigation-dots">
+            <span class="nav-dot active" data-target-section="0"></span>
+            <span class="nav-dot" data-target-section="1"></span>
+            <span class="nav-dot" data-target-section="2"></span>
+            <span class="nav-dot" data-target-section="3"></span>
+            <span class="nav-dot" data-target-section="4"></span>
+            <span class="nav-dot" data-target-section="5"></span>
+            <span class="nav-dot" data-target-section="6"></span>
+            <span class="nav-dot" data-target-section="7"></span>
+        </div>
+        
+        <!-- Navigation Controls -->
+        <div class="navigation-controls">
+            <button id="prev-btn" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Previous
+            </button>
+            <button id="next-btn">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+        </div>
+
+    </div>
+    
+    <!-- Updated Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 BETA Biosciences. All Rights Reserved.</p>
+        <p>A web publication dedicated to bringing high-quality biochemistry animations and content to students and enthusiasts worldwide.</p>
+    </footer>
+
+    <script>
+        const sections = document.querySelectorAll('.section-item');
+        const dots = document.querySelectorAll('.nav-dot');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        const quizForm = document.getElementById('quiz-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const resultsDiv = document.getElementById('results');
+        const scoreText = document.getElementById('score');
+        const answersContainer = document.getElementById('answers-container');
+
+        let currentSectionIndex = 0;
+
+        // Correct answers for the quiz
+        const correctAnswers = {
+            question1: 'C',
+            question2: 'B',
+            question3: 'C',
+            question4: 'C',
+            question5: 'D',
+        };
+
+        function showSection(index) {
+            sections.forEach((section, i) => {
+                if (i === index) {
+                    section.classList.add('active');
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === sections.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSectionIndex > 0) {
+                currentSectionIndex--;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSectionIndex < sections.length - 1) {
+                currentSectionIndex++;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', (event) => {
+                const targetIndex = parseInt(event.target.dataset.targetSection);
+                if (!isNaN(targetIndex)) {
+                    currentSectionIndex = targetIndex;
+                    showSection(currentSectionIndex);
+                }
+            });
+        });
+        
+        // Initial call to show the first section
+        showSection(currentSectionIndex);
+
+        submitBtn.addEventListener('click', () => {
+            let score = 0;
+            answersContainer.innerHTML = '';
+
+            Object.keys(correctAnswers).forEach(questionName => {
+                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+                const correctAnswer = correctAnswers[questionName];
+                
+                const answerResultDiv = document.createElement('div');
+                answerResultDiv.classList.add('answer-result');
+
+                const questionElement = document.querySelector(`input[name="${questionName}"]`).closest('.quiz-question').querySelector('p').textContent;
+                answerResultDiv.innerHTML = `<p>${questionElement}</p>`;
+
+                if (selectedAnswer) {
+                    const userAnswer = selectedAnswer.value;
+                    const correctAnswerLabel = document.querySelector(`input[name="${questionName}"][value="${correctAnswer}"]`).nextElementSibling;
+
+                    if (userAnswer === correctAnswer) {
+                        score++;
+                        answerResultDiv.innerHTML += `<p class="correct-answer">Your Answer: ${correctAnswerLabel.textContent.trim()}</p>`;
+                    } else {
+                        const userAnswerLabel = selectedAnswer.nextElementSibling;
+                        answerResultDiv.innerHTML += `<p class="incorrect-answer">Your Answer: ${userAnswerLabel.textContent.trim()}</p>`;
+                        if (correctAnswerLabel) {
+                            answerResultDiv.innerHTML += `<p class="correct-answer">Correct Answer: ${correctAnswerLabel.textContent.trim()}</p>`;
+                        }
+                    }
+                } else {
+                    answerResultDiv.innerHTML += `<p class="incorrect-answer">Your Answer: Unanswered</p>`;
+                    const correctAnswerLabel = document.querySelector(`input[name="${questionName}"][value="${correctAnswer}"]`).nextElementSibling;
+                    if (correctAnswerLabel) {
+                        answerResultDiv.innerHTML += `<p class="correct-answer">Correct Answer: ${correctAnswerLabel.textContent.trim()}</p>`;
+                    }
+                }
+                
+                answersContainer.appendChild(answerResultDiv);
+            });
+
+            scoreText.textContent = `You scored ${score} out of ${Object.keys(correctAnswers).length}!`;
+            resultsDiv.style.display = 'block';
+            submitBtn.style.display = 'none';
+            restartBtn.style.display = 'inline-block';
+            
+            // Disable all radio buttons
+            quizForm.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.disabled = true;
+            });
+        });
+
+        restartBtn.addEventListener('click', () => {
+            quizForm.reset();
+            resultsDiv.style.display = 'none';
+            submitBtn.style.display = 'inline-block';
+            restartBtn.style.display = 'none';
+            
+            // Enable all radio buttons again
+            quizForm.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.disabled = false;
+            });
+        });
+        
+    </script>
+</body>
+</html>
