@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Analysis Techniques</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Class to hide content until watermark is verified */
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            color: #f7fafc;
+            margin-bottom: 40px;
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            color: #cbd5e0;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab-button {
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            backdrop-filter: blur(15px);
+            font-size: 1rem;
+        }
+
+        .tab-button:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-color: #8b5cf6;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            backdrop-filter: blur(20px);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #f7fafc;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 15px;
+            text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subsection {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+            border-radius: 20px;
+            border-left: 5px solid #06b6d4;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .subsection h3 {
+            color: #f1f5f9;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+        }
+
+        .graph-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            text-align: center;
+            color: #e2e8f0;
+        }
+        
+        .spectrum-graph, .hydropathy-plot-svg {
+            position: relative;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 10px;
+        }
+
+        .spectrum-graph {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .spectrum-svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hydropathy-plot-svg {
+            width: 100%;
+            height: 250px;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            margin: 25px 0;
+        }
+
+        .helical-wheel {
+            width: 280px;
+            height: 280px;
+            border: 3px solid #06b6d4;
+            border-radius: 50%;
+            margin: 25px auto;
+            position: relative;
+            background: radial-gradient(circle, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
+        }
+        
+        /* Watermark for helical wheel */
+        .helical-wheel::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-image: url('https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+
+        .amino-acid {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hydrophobic { 
+            background: linear-gradient(135deg, #f59e0b, #f97316); 
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        .hydrophilic { 
+            background: linear-gradient(135deg, #06b6d4, #0891b2); 
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+        .charged { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .interactive-button {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 15px 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            font-size: 1rem;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .interactive-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.6);
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(245, 101, 101, 0.2) 100%);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            border-left: 5px solid #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            backdrop-filter: blur(10px);
+            color: #f1f5f9;
+        }
+
+        .key-points {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            color: #e2e8f0;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .key-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #06b6d4;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+        }
+        
+        .bold-text {
+            font-weight: bold;
+        }
+
+        .spectrum-label {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 12px;
+            fill: #e2e8f0;
+            text-anchor: middle;
+        }
+        
+        .spectrum-curve-blue {
+            stroke: #6366f1;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        .spectrum-curve-red {
+            stroke: #ef4444;
+            stroke-width: 3;
+            fill: none;
+        }
+        
+        .axis-label {
+            font-size: 14px;
+            fill: #cbd5e0;
+        }
+        
+        .tick-label {
+            font-size: 10px;
+            fill: #cbd5e0;
+        }
+        
+        .tm-helix-label {
+            font-size: 10px;
+            fill: #f1f5f9;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        
+        /* Updated CSS for the helical wheel legend */
+        .helical-wheel-legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .helical-wheel-legend-item span {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 40px;
+            background: rgba(15, 15, 35, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .footer img {
+            height: 50px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        .footer p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab-button {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .helical-wheel {
+                width: 200px;
+                height: 200px;
+            }
+
+            .spectrum-graph {
+                height: 200px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main content wrapper is initially hidden -->
+    <div id="content-wrapper" class="hidden">
+        <div class="container">
+            <div class="header">
+                <h1>🧬 Protein Analysis Techniques</h1>
+                <p>Interactive Guide to Spectroscopy, Hydropathy, and Structural Analysis</p>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="tab-button active">Emission Spectroscopy</button>
+                <button class="tab-button">Hydropathy Plots</button>
+                <button class="tab-button">Helical Wheel</button>
+            </div>
+
+            <!-- Emission Spectroscopy Section -->
+            <div id="spectroscopy" class="content-section active">
+                <h2 class="section-title">🌟 Emission Spectroscopy in Proteins</h2>
+                
+                <div class="subsection">
+                    <p>Emission spectroscopy, specifically fluorescence spectroscopy, is a powerful technique used to study the structure and dynamics of proteins. It relies on the ability of certain amino acids to absorb light at a specific wavelength and emit light at a longer wavelength. This phenomenon is highly sensitive to the local environment of the amino acid.</p>
+                    
+                    <h3>Tryptophan Fluorescence</h3>
+                    <p>Of the three aromatic amino acids (tryptophan, tyrosine, and phenylalanine), tryptophan (Trp) is the most commonly used probe in fluorescence spectroscopy due to its high quantum yield and its emission spectrum's sensitivity to the polarity of its surroundings. The fluorescence originates from the indole ring in its side chain. The typical excitation wavelength for tryptophan is around 280-295 nm.</p>
+                    <p>The quantum yield of fluorescence, which is a measure of the efficiency of the fluorescence process, is significantly higher for tryptophan than for the other aromatic residues, making it an excellent intrinsic fluorescent probe for protein studies.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3>Redshift and Blueshift: Probing Protein Structure</h3>
+                    <p>The emission maximum ($\lambda_{max}$) of tryptophan fluorescence changes depending on the polarity of its environment. This shift in the emission spectrum provides a direct signal about the location and folding state of a protein. This is due to the phenomenon of solvatochromism, where the solvent's polarity affects the energy gap between the ground and excited states of the fluorescent molecule.</p>
+                    
+                    <div class="graph-container">
+                        <h4>Tryptophan Fluorescence Emission Spectra</h4>
+                        <div class="spectrum-graph">
+                            <svg class="spectrum-svg" viewBox="0 0 600 300" preserveAspectRatio="xMidYMid meet">
+                                <!-- Watermark -->
+                                <image href="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" x="150" y="75" height="150" width="300" opacity="0.1"/>
+
+                                <!-- SVG Grid -->
+                                <line x1="50" y1="250" x2="550" y2="250" stroke="#cbd5e0" stroke-width="1.5" />
+                                <line x1="50" y1="250" x2="50" y2="50" stroke="#cbd5e0" stroke-width="1.5" />
+                                
+                                <!-- X-axis Ticks -->
+                                <text class="tick-label" x="50" y="265">300</text>
+                                <text class="tick-label" x="150" y="265">325</text>
+                                <text class="tick-label" x="250" y="265">350</text>
+                                <text class="tick-label" x="350" y="265">375</text>
+                                <text class="tick-label" x="450" y="265">400</text>
+                                <text class="tick-label" x="550" y="265">425</text>
+
+                                <!-- Y-axis Ticks -->
+                                <text class="tick-label" x="40" y="250" text-anchor="end">0</text>
+                                <text class="tick-label" x="40" y="150" text-anchor="end">0.5</text>
+                                <text class="tick-label" x="40" y="50" text-anchor="end">1.0</text>
+                                
+                                <!-- X-axis Label -->
+                                <text class="axis-label" x="300" y="285">Wavelength ($\lambda$) [nm]</text>
+                                
+                                <!-- Y-axis Label -->
+                                <text class="axis-label" x="20" y="150" transform="rotate(-90 20,150)">Relative Fluorescence Intensity</text>
+
+                                <!-- Blue Shifted Curve (Folded Protein) -->
+                                <path d="M 50 250 C 80 250, 100 50, 150 50 C 200 50, 220 250, 250 250" class="spectrum-curve-blue" />
+                                <circle cx="150" cy="50" r="5" fill="#6366f1" />
+                                <text class="spectrum-label" x="150" y="40">Blue Shift (Folded)</text>
+
+                                <!-- Red Shifted Curve (Unfolded Protein) -->
+                                <path d="M 150 250 C 180 250, 200 50, 250 50 C 300 50, 320 250, 350 250" class="spectrum-curve-red" />
+                                <circle cx="250" cy="50" r="5" fill="#ef4444" />
+                                <text class="spectrum-label" x="290" y="40">Red Shift (Unfolded)</text>
+                                
+                                <!-- Unfolding arrow -->
+                                <polyline points="150,20 250,20" stroke="#f1f5f9" stroke-width="2" marker-end="url(#arrowhead)" />
+                                <text class="spectrum-label" x="200" y="15" fill="#f1f5f9">Unfolding</text>
+                                <defs>
+                                    <marker id="arrowhead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f1f5f9" />
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>🔵 Blue Shift (Hypsochromic)</h4>
+                        <p>When a tryptophan residue is buried in the hydrophobic core of a folded protein, it is shielded from the polar solvent. The non-polar environment stabilizes the excited state of the tryptophan molecule less efficiently than a polar environment, resulting in a higher energy emission and a shift to a shorter wavelength (e.g., ~330 nm).</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>🔴 Red Shift (Bathochromic)</h4>
+                        <p>When a protein unfolds or denatures, the tryptophan residue becomes exposed to the polar solvent (e.g., water). This polar environment stabilizes the excited state through dipole-dipole interactions, lowering the energy of emission and leading to a shift in the emission maximum to a longer wavelength (e.g., ~350 nm).</p>
+                    </div>
+                    
+                    <p>The significance of this is profound: by simply measuring the fluorescence spectrum, we can monitor the folding and unfolding of a protein in real-time, track conformational changes, and assess its stability.</p>
+                </div>
+            </div>
+
+            <!-- Hydropathy Plot Section -->
+            <div id="hydropathy" class="content-section">
+                <h2 class="section-title">📊 Hydropathy Plots</h2>
+                <div class="subsection">
+                    <p>A hydropathy plot is a graphical representation of the distribution of hydrophilic and hydrophobic regions along the amino acid sequence of a protein. It is a key tool in bioinformatics for predicting the secondary structure and potential location of a protein within a cell.</p>
+                    
+                    <h3>Basic Features, Construction and Significance</h3>
+                    <p>The plot is typically generated by moving a window of amino acids (e.g., 9-20 residues) along the sequence and calculating the average hydropathy value for each window. The hydropathy value for each amino acid is based on a scale, most commonly the Kyte-Doolittle scale, where a positive value indicates a propensity toward non polar environment and a negative value indicates propensity towards polar environment. The average hydropathy value is then plotted against the residue number.</p>
+                    
+                    <div class="graph-container">
+                        <h4>Hydropathy Plot of a G-protein Coupled Receptor (GPCR)</h4>
+                        <svg class="hydropathy-plot-svg" viewBox="0 0 600 250" preserveAspectRatio="xMidYMid meet">
+                            <!-- Watermark -->
+                            <image href="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" x="150" y="50" height="150" width="300" opacity="0.1"/>
+
+                            <!-- Y-axis (Hydropathy Index) -->
+                            <line x1="50" y1="50" x2="50" y2="200" stroke="#cbd5e0" stroke-width="1" />
+                            <text x="45" y="55" text-anchor="end" class="tick-label">High (+)</text>
+                            <text x="45" y="105" text-anchor="end" class="tick-label">0</text>
+                            <text x="45" y="195" text-anchor="end" class="tick-label">Low (-)</text>
+                            <text x="15" y="125" transform="rotate(-90 15,125)" class="axis-label">Hydropathy Index</text>
+                            
+                            <!-- X-axis (Amino Acid Position) -->
+                            <line x1="50" y1="125" x2="550" y2="125" stroke="#cbd5e0" stroke-width="1" />
+                            <text x="50" y="220" class="tick-label">1</text>
+                            <text x="550" y="220" class="tick-label">End</text>
+                            <text x="300" y="240" class="axis-label">Amino Acid Position</text>
+
+                            <!-- Plot Line Path with dips for loops and high peaks for helices -->
+                            <path d="M 50 125 
+                                    C 65 125, 75 75, 90 75 C 105 75, 115 125, 120 125 C 122 125, 125 135, 130 135 C 135 135, 138 125, 140 125 
+                                    C 155 125, 165 75, 180 75 C 195 75, 205 125, 210 125 C 212 125, 215 135, 220 135 C 225 135, 228 125, 230 125 
+                                    C 245 125, 255 75, 270 75 C 285 75, 295 125, 300 125 C 302 125, 305 135, 310 135 C 315 135, 318 125, 320 125
+                                    C 335 125, 345 75, 360 75 C 375 75, 385 125, 390 125 C 392 125, 395 135, 400 135 C 405 135, 408 125, 410 125
+                                    C 425 125, 435 75, 450 75 C 465 75, 475 125, 480 125 C 482 125, 485 135, 490 135 C 495 135, 498 125, 500 125
+                                    C 515 125, 525 75, 540 75 C 555 75, 565 125, 570 125 C 572 125, 575 135, 580 135 C 585 135, 588 125, 590 125
+                                    C 605 125, 615 75, 630 75 C 645 75, 655 125, 660 125"
+                                  stroke="#f59e0b" stroke-width="2" fill="none" />
+                            
+                            <!-- Transmembrane Helix Labels -->
+                            <text x="90" y="65" class="tm-helix-label">TM1</text>
+                            <text x="180" y="65" class="tm-helix-label">TM2</text>
+                            <text x="270" y="65" class="tm-helix-label">TM3</text>
+                            <text x="360" y="65" class="tm-helix-label">TM4</text>
+                            <text x="450" y="65" class="tm-helix-label">TM5</text>
+                            <text x="540" y="65" class="tm-helix-label">TM6</text>
+                            <text x="630" y="65" class="tm-helix-label">TM7</text>
+
+                        </svg>
+                        <p><strong>Y-axis:</strong> Hydropathy Index (positive = hydrophobic, negative = hydrophilic)</p>
+                        <p><strong>X-axis:</strong> Amino Acid Position</p>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>Understanding the Plot:</h4>
+                        <p>The plot above is a classic representation of a G-protein coupled receptor (GPCR). The seven prominent peaks above the central line correspond to the <span class="bold-text">seven transmembrane alpha-helices</span> (TM1-TM7). These regions are highly hydrophobic and are embedded within the lipid bilayer of the cell membrane. The dips below the line represent the hydrophilic loops and termini of the protein that are exposed to the aqueous environments both inside and outside the cell.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Predicting Transmembrane Domains</h3>
+                    <div class="highlight-box">
+                        <h4>Membrane-Spanning Regions</h4>
+                        <p>A continuous sequence of approximately 20-25 amino acids with a consistently high positive hydropathy index is a strong indicator of a <span class="bold-text">transmembrane domain</span>. These regions are long enough to span the lipid bilayer of a cell membrane. The plot provides visual evidence for these hydrophobic segments, which are crucial for the function of many membrane proteins, such as receptors and channels.</p>
+                    </div>
+                    <div class="highlight-box">
+                        <h4>Topology and Orientation</h4>
+                        <p>By analyzing the pattern of transmembrane domains and hydrophilic loops, hydropathy plots can help predict the <span class="bold-text">topology</span> of a membrane protein—which parts are inside the cell, which are outside, and how many times the protein crosses the membrane. For example, a plot showing a single long hydrophobic peak followed by a long hydrophilic region suggests a type I membrane protein with one transmembrane helix. In contrast, multiple peaks indicate a multi-pass protein. The presence of charged residues at the boundary between hydrophobic and hydrophilic regions can often be used to predict the orientation of the protein within the membrane, as these residues tend to interact with the polar head groups of lipids.</p>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Limitations and Considerations</h3>
+                    <div class="key-points">
+                        <ul>
+                            <li>Does not account for 3D structure or protein folding</li>
+                            <li>Prone to false positives and negatives</li>
+                            <li>Depends heavily on the chosen hydropathy scale</li>
+                            <li>Provides only a prediction, not definitive proof</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Helical Wheel Section -->
+            <div id="helical" class="content-section">
+                <h2 class="section-title">🌀 Helical Wheel Analysis</h2>
+                <div class="subsection">
+                    <h3>Visualizing Amphipathicity</h3>
+                    <p>A helical wheel is a two-dimensional projection of an alpha helix, used to visualize the distribution of amino acids and predict amphipathic helices.</p>
+                    
+                    <div class="highlight-box">
+                        <p><strong>Amphipathic Helix:</strong> A protein helix that contains both hydrophobic and hydrophilic residues, with the hydrophobic residues clustered on one side and the hydrophilic residues on the other. This spatial arrangement is crucial for protein-protein interactions, membrane binding, and the formation of coiled coils.</p>
+                    </div>
+
+                    <div class="graph-container">
+                        <h4>Example Amphipathic Helical Wheel</h4>
+                        <div class="helical-wheel" id="helical-wheel">
+                            <!-- Amino acid divs will be generated by JavaScript -->
+                        </div>
+                        <div id="helical-wheel-legend" style="margin-top: 20px; text-align: left; display: inline-block;">
+                            <p class="helical-wheel-legend-item"><span class="hydrophobic"></span> Hydrophobic</p>
+                            <p class="helical-wheel-legend-item"><span class="hydrophilic"></span> Hydrophilic</p>
+                            <p class="helical-wheel-legend-item"><span class="charged"></span> Charged</p>
+                        </div>
+                        <div id="helical-wheel-comparison" style="display: block; margin-top: 20px;">
+                            <p style="font-style: italic;">This pattern of hydrophobic (orange) and hydrophilic/charged (green/blue) residues on opposite faces of the helix is a clear example of amphipathicity. The hydrophobic face could interact with a lipid membrane or another protein, while the hydrophilic face would be exposed to the aqueous environment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subsection">
+                    <h3>Interpretation and Application</h3>
+                    <div class="key-points">
+                        <h4>How to Interpret a Helical Wheel:</h4>
+                        <p>The "wheel" shows the residues as they would appear if viewed down the axis of the helix. The spacing between residues is determined by the pitch of the alpha helix (3.6 residues per turn, approximately 100° rotation between residues). If the hydrophobic residues are clumped together on one half of the wheel and the hydrophilic/charged residues are on the other, the helix is considered <span class="bold-text">amphipathic</span>. This arrangement is particularly important for proteins that interact with lipid membranes or form protein-protein interfaces, as the hydrophobic face can interact with the non-polar environment while the hydrophilic face interacts with the aqueous environment. A helix with a non-amphipathic pattern, where residues are scattered randomly, is more likely to be a soluble domain.
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>Biological Significance:</h4>
+                        <p>Helical wheels are vital for identifying potential <span class="bold-text">membrane-spanning helices</span> and <span class="bold-text">protein-protein interaction sites</span>. Amphipathic helices can insert into lipid bilayers with their hydrophobic face contacting the fatty acid tails and their hydrophilic face oriented toward the aqueous pore. They can also mediate the formation of <span class="bold-text">coiled-coils</span>, where the hydrophobic faces of two or more helices pack together to form a stable interface. The analysis is a rapid and visual way to predict the functional role and location of an alpha-helical segment within a protein.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" alt="BETA Biosciences Logo">
+            <p>© 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: betabiosciences@gmail.com</p>
+            <p>Contact: +91 97 47 53 35 97</p>
+        </footer>
+    </div>
+
+    <script>
+        // Self-executing anonymous function to encapsulate the entire script.
+        (function() {
+            // --- Domain Protection ---
+            // This script ensures the webpage only runs on the specified domain.
+            // If the hostname does not match, the script will exit immediately,
+            // leaving the page blank as the content is hidden by default.
+            const allowedHostname = 'betabiosciences.github.io';
+            if (window.location.hostname !== allowedHostname) {
+                return; // Stop script execution if the domain is not allowed.
+            }
+
+            // --- Page Logic (executes only if domain check passes) ---
+
+            /**
+             * Switches the visible content section based on the clicked tab.
+             * @param {string} sectionId - The ID of the content section to show.
+             */
+            function showSection(sectionId) {
+                const sections = document.querySelectorAll('.content-section');
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                const activeSection = document.getElementById(sectionId);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+
+                const buttons = document.querySelectorAll('.nav-tabs .tab-button');
+                buttons.forEach(button => {
+                    // Match button text content to the sectionId to set active state
+                    const buttonText = button.textContent.toLowerCase().replace(/ /g, '');
+                    const targetId = sectionId.replace(/ /g, '');
+                    
+                    if (buttonText.includes(targetId) || targetId.includes(buttonText)) {
+                         button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+            }
+
+            /**
+             * Generates and displays the amino acids on the helical wheel.
+             */
+            function initializeHelicalWheel() {
+                const helicalWheel = document.getElementById('helical-wheel');
+                if (!helicalWheel) return;
+                helicalWheel.innerHTML = '';
+                
+                const residues = [
+                    { aa: 'L', type: 'hydrophobic' }, { aa: 'V', type: 'hydrophobic' },
+                    { aa: 'I', type: 'hydrophobic' }, { aa: 'A', type: 'hydrophobic' },
+                    { aa: 'E', type: 'charged' },     { aa: 'K', type: 'charged' },
+                    { aa: 'S', type: 'hydrophilic' }, { aa: 'R', type: 'charged' },
+                    { aa: 'D', type: 'charged' },     { aa: 'H', type: 'charged' },
+                    { aa: 'T', type: 'hydrophilic' }, { aa: 'Q', type: 'hydrophilic' },
+                    { aa: 'L', type: 'hydrophobic' }, { aa: 'M', type: 'hydrophobic' },
+                    { aa: 'W', type: 'hydrophobic' }, { aa: 'Y', type: 'hydrophobic' },
+                    { aa: 'F', type: 'hydrophobic' }, { aa: 'G', type: 'hydrophilic' },
+                ];
+
+                const centerX = 140;
+                const centerY = 140;
+                const radius = 110;
+                const rotationAngle = 100 * (Math.PI / 180);
+
+                residues.forEach((residue, index) => {
+                    const angle = index * rotationAngle;
+                    const x = centerX + radius * Math.cos(angle);
+                    const y = centerY + radius * Math.sin(angle);
+
+                    const aaDiv = document.createElement('div');
+                    aaDiv.textContent = residue.aa;
+                    aaDiv.classList.add('amino-acid', residue.type);
+                    aaDiv.style.left = `${x}px`;
+                    aaDiv.style.top = `${y}px`;
+                    aaDiv.style.transform = `translate(-50%, -50%)`;
+                    helicalWheel.appendChild(aaDiv);
+                });
+            }
+
+            /**
+             * Verifies a watermark image can be loaded, then reveals and initializes the page content.
+             */
+            function verifyAndLoadContent() {
+                const watermarkUrl = 'https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png';
+                const img = new Image();
+                
+                img.onload = function() {
+                    const contentWrapper = document.getElementById('content-wrapper');
+                    if (contentWrapper) {
+                        contentWrapper.classList.remove('hidden');
+                    }
+                    initializePage();
+                };
+                
+                img.onerror = function() {
+                    // Fails silently, page remains blank.
+                };
+                
+                img.src = watermarkUrl;
+            }
+
+            /**
+             * Sets up the initial state of the page.
+             */
+            function initializePage() {
+                initializeHelicalWheel();
+                showSection('spectroscopy');
+            }
+
+            // --- Event Listeners ---
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add event listeners to tab buttons
+                const tabButtons = document.querySelectorAll('.nav-tabs .tab-button');
+                const sections = {
+                    'emissionspectroscopy': 'spectroscopy',
+                    'hydropathyplots': 'hydropathy',
+                    'helicalwheel': 'helical'
+                };
+                
+                tabButtons.forEach(button => {
+                    const key = button.textContent.toLowerCase().replace(/ /g, '');
+                    const sectionId = sections[key];
+                    if(sectionId) {
+                        button.addEventListener('click', () => showSection(sectionId));
+                    }
+                });
+
+                // Start the content loading process.
+                verifyAndLoadContent();
+            });
+
+        })();
+    </script>
+</body>
+</html>
