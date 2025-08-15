@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Quaternary Structure - Interactive Guide</title>
+    <script>
+        // --- Domain Security Layer ---
+        // This script ensures that the content of this webpage is only displayed
+        // when it is loaded from the specified domain. If accessed from any other
+        // location (including a local file), it will render a blank page.
+        (function() {
+            // The only domain from which this page is allowed to be served.
+            const allowedDomain = "https://betabiosciences.github.io/";
+
+            // Check if the current URL starts with the allowed domain string.
+            if (!window.location.href.startsWith(allowedDomain)) {
+                // If the domain does not match, immediately hide the entire HTML document
+                // to prevent any content from flashing or being accessible.
+                document.documentElement.style.display = 'none';
+                
+                // As an extra measure, clear the document content.
+                document.open();
+                document.write('');
+                document.close();
+            }
+        })();
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: #fff;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            color: #4ecdc4;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card h3 {
+            color: #ff6b6b;
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            margin: 25px 0 15px 0;
+        }
+
+        .protein-model {
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle, #2c3e50 0%, #34495e 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .subunit {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: absolute;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .subunit:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .subunit-a {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            top: 50px;
+            left: 50px;
+            animation-delay: 0s;
+        }
+
+        .subunit-b {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            top: 50px;
+            right: 50px;
+            animation-delay: 0.5s;
+        }
+
+        .subunit-c {
+            background: linear-gradient(135deg, #45b7d1, #2980b9);
+            bottom: 50px;
+            left: 50px;
+            animation-delay: 1s;
+        }
+
+        .subunit-d {
+            background: linear-gradient(135deg, #96ceb4, #27ae60);
+            bottom: 50px;
+            right: 50px;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .interaction-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .line-1 {
+            width: 120px;
+            top: 80px;
+            left: 130px;
+            transform: rotate(0deg);
+        }
+
+        .line-2 {
+            width: 120px;
+            bottom: 80px;
+            left: 130px;
+            transform: rotate(0deg);
+        }
+
+        .line-3 {
+            width: 120px;
+            top: 130px;
+            left: 80px;
+            transform: rotate(90deg);
+        }
+
+        .line-4 {
+            width: 120px;
+            top: 130px;
+            right: 80px;
+            transform: rotate(90deg);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            border-left: 4px solid #4ecdc4;
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            transform: translateX(10px);
+        }
+
+        .interaction-demo {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .interaction-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .interaction-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .significance-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .significance-list li {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+            transition: all 0.3s ease;
+        }
+
+        .significance-list li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #4ecdc4;
+            text-decoration: underline;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 10px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .hero {
+                padding: 40px 15px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .protein-model {
+                height: 250px;
+            }
+            
+            .subunit {
+                width: 60px;
+                height: 60px;
+                font-size: 14px;
+            }
+            
+            .subunit-a, .subunit-b {
+                top: 30px;
+            }
+            
+            .subunit-c, .subunit-d {
+                bottom: 30px;
+            }
+            
+            .subunit-a, .subunit-c {
+                left: 30px;
+            }
+            
+            .subunit-b, .subunit-d {
+                right: 30px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .symmetry-section {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            border-left: 4px solid #4ecdc4;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .symmetry-section:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2));
+            transform: translateX(10px);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .protected-content {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .protected-content.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .footer-text {
+            color: #e0e6ed;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .footer-text a {
+            color: #4ecdc4;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-text a:hover {
+            color: #ff6b6b;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.03;
+            background-image: url('https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png');
+            background-repeat: repeat;
+            background-size: 150px 150px;
+            background-position: 0 0;
+            animation: watermarkFloat 20s linear infinite;
+        }
+
+        @keyframes watermarkFloat {
+            0% { background-position: 0 0; }
+            100% { background-position: 300px 300px; }
+        }
+
+        .watermark-single {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            width: 200px;
+            height: 200px;
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 2;
+            background-image: url('https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.02; transform: translate(-50%, -50%) rotate(-15deg) scale(1); }
+            50% { opacity: 0.05; transform: translate(-50%, -50%) rotate(-15deg) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark"></div>
+    <div class="watermark-single"></div>
+    <div class="container protected-content" id="mainContent">
+        <div class="hero">
+            <h1>Protein Quaternary Structure</h1>
+
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab('overview')">📋 Overview</button>
+            <button class="tab-btn" onclick="showTab('features')">⚡ Features</button>
+            <button class="tab-btn" onclick="showTab('interactions')">🔗 Interactions</button>
+            <button class="tab-btn" onclick="showTab('significance')">🎯 Significance</button>
+            <button class="tab-btn" onclick="showTab('examples')">🧪 Examples</button>
+        </div>
+
+        <div id="overview" class="content-section active">
+            <div class="card">
+                <h2>What is Quaternary Structure?</h2>
+                <p>Quaternary structure refers to the arrangement and interaction of multiple polypeptide chains (subunits) in a protein complex. Unlike primary, secondary, and tertiary structures that describe individual polypeptide chains, quaternary structure describes how separate protein subunits come together to form a functional protein complex.</p>
+
+
+                <h3>Key Characteristics</h3>
+                <ul class="significance-list">
+                    <li><strong>Multi-subunit Assembly:</strong> Composed of two or more separate polypeptide chains</li>
+                    <li><strong>Non-covalent Interactions:</strong> Subunits are typically held together by weak interactions</li>
+                    <li><strong>Functional Significance:</strong> Often essential for protein activity and regulation</li>
+                    <li><strong>Dynamic Nature:</strong> Can undergo conformational changes and subunit exchange</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="features" class="content-section">
+            <div class="card">
+                <h2><span class="icon">⚡</span>Distinctive Features</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h3>🔄 Subunit Composition</h3>
+                        <p><strong>Homomers:</strong> Identical subunits (e.g., hemoglobin α₂β₂)</p>
+                        <p><strong>Heteromers:</strong> Different subunits working together</p>
+                        <p><strong>Oligomers:</strong> Small number of subunits (2-10)</p>
+                        <p><strong>Polymers:</strong> Large assemblies with many subunits</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🔧 Assembly Mechanisms</h3>
+                        <p><strong>Cooperative:</strong> Binding of one subunit facilitates others</p>
+                        <p><strong>Sequential:</strong> Step-by-step assembly process</p>
+                        <p><strong>Concerted:</strong> Simultaneous subunit association</p>
+                        <p><strong>Chaperone-assisted:</strong> Requires helper proteins</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>📏 Size Variations</h3>
+                        <p><strong>Dimers:</strong> Two subunits (simplest quaternary structure)</p>
+                        <p><strong>Tetramers:</strong> Four subunits (common in enzymes)</p>
+                        <p><strong>Hexamers:</strong> Six subunits (metabolic enzymes)</p>
+                        <p><strong>Large Complexes:</strong> Hundreds of subunits (ribosomes)</p>
+                    </div>
+                </div>
+                
+                <div class="symmetry-section">
+                    <h3>🎭 Symmetry Types</h3>
+                    <p><strong>Cyclic (Cn):</strong> Subunits are arranged in a circular pattern around a central axis. The number 'n' indicates how many identical subunits are present. For example, C3 symmetry means three subunits arranged 120° apart. This symmetry is common in trimeric enzymes and allows for cooperative interactions between adjacent subunits. Examples include triose phosphate isomerase (C3) and aspartate transcarbamoylase regulatory subunits.</p>
+                    
+                    <p><strong>Dihedral (Dn):</strong> This symmetry combines cyclic symmetry with additional perpendicular two-fold rotation axes. It's essentially two cyclic arrangements stacked on top of each other. D2 symmetry (found in hemoglobin) has four subunits arranged as two dimers, while D3 symmetry has six subunits. This arrangement provides high stability and is often seen in metabolic enzymes that need to maintain activity under varying conditions.</p>
+                    
+                    <p><strong>Icosahedral:</strong> The most complex symmetry with 20 triangular faces, 12 vertices, and 30 edges. This arrangement provides maximum internal volume with minimum surface area, making it ideal for viral capsids. The symmetry allows for quasi-equivalent environments where subunits occupy slightly different positions but maintain similar interactions. Examples include many virus particles and some large enzyme complexes.</p>
+                    
+                    <p><strong>Helical:</strong> Subunits are arranged in a spiral pattern, creating an extended structure. This symmetry is particularly important for filamentous proteins like actin filaments, microtubules, and tobacco mosaic virus. The helical arrangement allows for dynamic assembly and disassembly, making it perfect for cytoskeletal elements that need to rapidly reorganize.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="interactions" class="content-section">
+            <div class="card">
+                <h2><span class="icon">🔗</span>Stabilizing Interactions</h2>
+                
+                <ul class="significance-list">
+                    <li><strong>💧 Hydrogen Bonds</strong></li>
+                    <li><strong>⚡ Ionic Interactions (Salt Bridges)</strong></li>
+                    <li><strong>🛢️ Hydrophobic Interactions</strong></li>
+                    <li><strong>🔗 Disulfide Bonds</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="significance" class="content-section">
+            <div class="card">
+                <h2><span class="icon">🎯</span>Biological Significance</h2>
+                
+                <h3>🔬 Functional Advantages</h3>
+                <ul class="significance-list">
+                    <li><strong>Allosteric Regulation:</strong> Subunit interactions enable sophisticated regulatory mechanisms through conformational changes</li>
+                    <li><strong>Increased Stability:</strong> Multiple subunits can provide greater structural stability than single chains</li>
+                    <li><strong>Functional Diversity:</strong> Different subunit combinations create proteins with varied functions</li>
+                    <li><strong>Error Correction:</strong> Multiple active sites can provide proofreading and error correction</li>
+                    <li><strong>Cooperative Binding:</strong> Enhances sensitivity to substrate concentration changes</li>
+                </ul>
+
+                <h3>⚙️ Regulatory Mechanisms</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h3>🔄 Allosteric Control</h3>
+                        <p>Binding at one subunit affects activity at another subunit, enabling sophisticated regulation of enzyme activity and protein function.</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🎛️ Subunit Exchange</h3>
+                        <p>Dynamic assembly and disassembly allows for temporal and spatial control of protein function in cells.</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>📊 Cooperative Effects</h3>
+                        <p>Positive or negative cooperativity in binding creates sigmoidal response curves, perfect for biological switches.</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🔒 Compartmentalization</h3>
+                        <p>Large protein complexes can create distinct microenvironments for sequential reactions.</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div id="examples" class="content-section">
+            <div class="card">
+                <h2><span class="icon">🧪</span>Classic Examples</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h3>🩸 Hemoglobin (α₂β₂)</h3>
+                        <p><strong>Structure:</strong> Tetramer with 2 α and 2 β subunits</p>
+                        <p><strong>Function:</strong> Oxygen transport with cooperative binding</p>
+                        <p><strong>Significance:</strong> Classic example of allosteric regulation</p>
+                        <p><strong>Disease:</strong> Sickle cell anemia affects quaternary structure</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🔬 Immunoglobulin G</h3>
+                        <p><strong>Structure:</strong> Two heavy and two light chains (H₂L₂)</p>
+                        <p><strong>Function:</strong> Antibody with antigen recognition</p>
+                        <p><strong>Significance:</strong> Modular design allows diversity</p>
+                        <p><strong>Features:</strong> Disulfide bonds stabilize quaternary structure</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>⚡ ATP Synthase</h3>
+                        <p><strong>Structure:</strong> Multi-subunit rotary motor (α₃β₃γδε)</p>
+                        <p><strong>Function:</strong> ATP synthesis using proton gradient</p>
+                        <p><strong>Significance:</strong> Mechanical coupling between subunits</p>
+                        <p><strong>Features:</strong> Rotational catalysis mechanism</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🧬 DNA Polymerase III</h3>
+                        <p><strong>Structure:</strong> Multi-subunit replication complex</p>
+                        <p><strong>Function:</strong> High-fidelity DNA replication</p>
+                        <p><strong>Significance:</strong> Processivity through subunit interactions</p>
+                        <p><strong>Features:</strong> 3' to 5' exonuclease proofreading</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🏭 Ribosome</h3>
+                        <p><strong>Structure:</strong> Large (60S) and small (40S) subunits</p>
+                        <p><strong>Function:</strong> Protein synthesis machinery</p>
+                        <p><strong>Significance:</strong> RNA-protein complex (ribonucleoprotein)</p>
+                        <p><strong>Features:</strong> Dynamic assembly during translation</p>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <h3>🦠 Viral Capsids</h3>
+                        <p><strong>Structure:</strong> Icosahedral symmetry (T=1, T=3, etc.)</p>
+                        <p><strong>Function:</strong> Protect viral genetic material</p>
+                        <p><strong>Significance:</strong> Self-assembly from identical subunits</p>
+                        <p><strong>Features:</strong> Quasi-equivalent environments</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        
+        <div class="footer">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" alt="BETA Biosciences Logo" class="footer-logo" onerror="this.src=''; this.alt='Logo failed to load'; this.style.display='none';">
+            <div class="footer-text">
+                © 2025 BETA Biosciences. All rights reserved.<br>
+                Email: <a href="mailto:betabiosciences@gmail.com">betabiosciences@gmail.com</a><br>
+                Contact: <a href="tel:+919747533597">+91 97 47 53 35 97</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Watermark protection system
+        function initProtection() {
+            const requiredElements = [
+                'betabiosciences@gmail.com',
+                '+91 97 47 53 35 97',
+                '© 2025 BETA Biosciences'
+            ];
+            
+            function checkWatermark() {
+                const footerText = document.querySelector('.footer-text');
+                const logo = document.querySelector('.footer-logo');
+                const mainContent = document.getElementById('mainContent');
+                const watermarkBg = document.querySelector('.watermark');
+                const watermarkSingle = document.querySelector('.watermark-single');
+                
+                if (!footerText || !logo || !mainContent || !watermarkBg || !watermarkSingle) {
+                    document.body.innerHTML = '';
+                    return false;
+                }
+                
+                const footerContent = footerText.textContent || footerText.innerText;
+                const hasAllElements = requiredElements.every(element => 
+                    footerContent.includes(element)
+                );
+                
+                const logoSrc = logo.src || '';
+                const hasValidLogo = logoSrc.includes('betabiosciences.github.io') || 
+                                   logoSrc.includes('Logo transparent.png');
+                
+                // Check watermark elements
+                const watermarkStyle = window.getComputedStyle(watermarkBg);
+                const watermarkSingleStyle = window.getComputedStyle(watermarkSingle);
+                const hasValidWatermarks = watermarkStyle.backgroundImage.includes('betabiosciences.github.io') &&
+                                         watermarkSingleStyle.backgroundImage.includes('betabiosciences.github.io');
+                
+                if (!hasAllElements || !hasValidLogo || !hasValidWatermarks) {
+                    document.body.innerHTML = '';
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Initial check
+            if (!checkWatermark()) return;
+            
+            // Continuous monitoring
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                        if (!checkWatermark()) return;
+                    }
+                });
+            });
+            
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['src', 'href', 'class', 'id']
+            });
+            
+            // Additional checks
+            setInterval(checkWatermark, 2000);
+            
+            // Prevent common tampering methods
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+                    (e.ctrlKey && e.key === 'u')) {
+                    setTimeout(checkWatermark, 100);
+                }
+            });
+        }
+        
+        // Initialize protection when page loads
+        document.addEventListener('DOMContentLoaded', initProtection);
+        window.addEventListener('load', initProtection);
+
+        function showTab(tabName) {
+            // Hide all content sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section and activate button
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function animateModel() {
+            const subunits = document.querySelectorAll('.subunit');
+            subunits.forEach((subunit, index) => {
+                subunit.style.animation = 'none';
+                setTimeout(() => {
+                    subunit.style.animation = `float 1s ease-in-out infinite`;
+                    subunit.style.animationDelay = `${index * 0.2}s`;
+                }, 100);
+            });
+        }
+
+        function showSubunitInfo(subunit) {
+            const info = {
+                'A': 'Subunit A: α-chain with heme group. Critical for oxygen binding and allosteric regulation.',
+                'B': 'Subunit B: β-chain with heme group. Works cooperatively with α-chain for oxygen transport.',
+                'C': 'Subunit C: Second α-chain. Forms α₁β₁ and α₂β₂ dimers in hemoglobin tetramer.',
+                'D': 'Subunit D: Second β-chain. Essential for cooperative oxygen binding and release.'
+            };
+            
+            alert(`${info[subunit]}\n\nClick OK to continue exploring the quaternary structure!`);
+        }
+
+        function highlightInteraction(type) {
+            const display = document.getElementById('interaction-display');
+            const interactions = {
+                'hydrogen': {
+                    title: '💧 Hydrogen Bonds',
+                    content: 'Hydrogen bonds form between polar atoms (N, O) and hydrogen atoms. They provide specificity to protein-protein interactions and are crucial for maintaining the correct orientation of subunits. In quaternary structures, hydrogen bonds often form between complementary surfaces of different subunits.',
+                    examples: 'Examples: Ser-Thr, Asn-Gln, backbone interactions'
+                },
+                'ionic': {
+                    title: '⚡ Ionic Interactions (Salt Bridges)',
+                    content: 'Ionic interactions occur between oppositely charged residues. These are among the strongest non-covalent interactions and can provide significant stabilization to quaternary structures. They are particularly important at subunit interfaces.',
+                    examples: 'Examples: Arg-Glu, Lys-Asp, His-Asp (at physiological pH)'
+                },
+                'hydrophobic': {
+                    title: '🛢️ Hydrophobic Interactions',
+                    content: 'Hydrophobic interactions drive the association of nonpolar surfaces, excluding water molecules. This is often the major driving force for quaternary structure formation, as hydrophobic patches on different subunits come together to minimize contact with water.',
+                    examples: 'Examples: Phe-Phe, Leu-Val, Ile-Pro clustering'
+                },
+                'vdw': {
+                    title: '🌊 Van der Waals Forces',
+                    content: 'Van der Waals forces are weak attractions between atoms in close proximity. While individually weak, they contribute significantly to the stability of quaternary structures when many atoms are involved. They help fine-tune the fit between subunits.',
+                    examples: 'Examples: London dispersion forces, dipole interactions'
+                }
+            };
+            
+            const interaction = interactions[type];
+            display.innerHTML = `
+                <h4 style="color: #4ecdc4; margin-bottom: 15px;">${interaction.title}</h4>
+                <p style="margin-bottom: 15px;">${interaction.content}</p>
+                <p style="color: #ff6b6b; font-weight: bold;">${interaction.examples}</p>
+            `;
+        }
+
+        function showExample(example) {
+            const display = document.getElementById('example-display');
+            const examples = {
+                'hemoglobin': {
+                    title: '🩸 Hemoglobin - The Oxygen Carrier',
+                    content: 'Hemoglobin is a classic example of quaternary structure with its α₂β₂ arrangement. The four subunits work together through allosteric mechanisms - when one subunit binds oxygen, it increases the affinity of the other subunits for oxygen (positive cooperativity). This creates the characteristic sigmoidal oxygen-binding curve that makes hemoglobin an efficient oxygen transporter.',
+                    details: 'Key Features: Heme groups, allosteric regulation, cooperative binding, T-state and R-state conformations'
+                },
+                'antibody': {
+                    title: '🔬 Immunoglobulin G - Modular Defense',
+                    content: 'Antibodies demonstrate how quaternary structure enables functional modularity. The H₂L₂ structure creates two identical antigen-binding sites (Fab regions) connected to an effector region (Fc). Disulfide bonds between heavy and light chains, and between heavy chains, stabilize the quaternary structure while allowing flexibility at the hinge region.',
+                    details: 'Key Features: Heavy and light chains, disulfide bonds, antigen-binding sites, effector functions'
+                },
+                'ribosome': {
+                    title: '🧬 Ribosome - The Protein Factory',
+                    content: 'The ribosome is a massive ribonucleoprotein complex with large (60S) and small (40S) subunits in eukaryotes. Its quaternary structure creates distinct functional sites: the A, P, and E sites for tRNA binding, and the peptidyl transferase center. The dynamic association and dissociation of subunits is crucial for translation initiation and termination.',
+                    details: 'Key Features: RNA-protein complex, large and small subunits, tRNA binding sites, translation machinery'
+                }
+            };
+            
+            const ex = examples[example];
+            display.innerHTML = `
+                <h4 style="color: #4ecdc4; margin-bottom: 15px;">${ex.title}</h4>
+                <p style="margin-bottom: 15px;">${ex.content}</p>
+                <p style="color: #ff6b6b; font-weight: bold;">${ex.details}</p>
+            `;
+        }
+
+        // Add some interactive animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
