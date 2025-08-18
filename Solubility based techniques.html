@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Protein Purification by Solubility — Interactive Lab</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#1d0b6e;
+      --bg2:#0a2756;
+      --accent: #22d3ee;
+    }
+    html,body{scroll-behavior:smooth;}
+    body{font-family:"Plus Jakarta Sans",system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";}
+
+    /* Fun micro-interactions */
+    .pressable:active{transform:translateY(1px) scale(0.99);}
+    .card-pop{transition:transform .2s ease, box-shadow .2s ease; cursor: grab;}
+    .card-pop:hover{transform:translateY(-4px); box-shadow:0 20px 40px rgba(0,0,0,.25);}
+
+    /* Glass look */
+    .glass{backdrop-filter: blur(12px); background: rgba(255,255,255,0.1);}
+
+    /* Column simulation */
+    .column{
+      background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .bead{
+      border: 2px dashed rgba(255,255,255,0.25);
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+    .analyte{
+      transition: transform .9s ease, background .3s ease, box-shadow .3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,.25);
+    }
+
+    /* Confetti */
+    .confetti{position:fixed; top:0; left:0; pointer-events:none; width:100vw; height:100vh; overflow:hidden; z-index:9999;}
+    .confetti span{position:absolute; width:10px; height:14px; opacity:0.9; animation:fall 1200ms linear forwards;}
+    @keyframes fall{
+      0%{transform:translateY(-10vh) rotate(0deg);}
+      100%{transform:translateY(100vh) rotate(540deg); opacity:0;}
+    }
+
+    /* Tooltip popover */
+    .tip-bubble{display:none; position:absolute; bottom:120%; left:50%; transform:translateX(-50%); background:#0f172a; color:#fff; padding:.6rem .8rem; border-radius:.6rem; max-width: 18rem; white-space:normal; word-wrap:break-word; box-shadow:0 10px 20px rgba(0,0,0,.35); font-size:.9rem; z-index:50;}
+    .tip:hover .tip-bubble, .tip:focus-within .tip-bubble{display:block;}
+    .tip{position:relative; overflow:visible;}
+    .tip-bubble::after{content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%); border-width:8px; border-style:solid; border-color:#0f172a transparent transparent transparent;}
+
+    /* Sticky bottom nav shadow on iOS */
+    .safe-bottom{padding-bottom: constant(safe-area-inset-bottom); padding-bottom: env(safe-area-inset-bottom);}
+  </style>
+</head>
+<body class="min-h-screen text-white bg-gradient-to-br from-[#1e0a78] via-[#0b3b7a] to-[#0a1f3c]">
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+  <!-- Top header -->
+  <header class="px-5 pt-6 pb-4 md:pt-10 md:pb-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-cyan-400 to-fuchsia-500 grid place-items-center">
+          <!-- Simple chromatography SVG icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="white" stroke-width="2" opacity="0.9"/>
+            <rect x="6" y="6" width="3" height="12" rx="1.5" fill="#fbbf24"/>
+            <rect x="10.5" y="6" width="3" height="9" rx="1.5" fill="#22d3ee"/>
+            <rect x="15" y="6" width="3" height="6" rx="1.5" fill="#a78bfa"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Protein Purification by Solubility</h1>
+          <p class="text-cyan-200/90 text-sm md:text-base">Normal Phase • Reverse Phase • Hydrophobic Interaction Chromatography</p>
+        </div>
+      </div>
+      <a href="#quiz" class="hidden md:inline-flex pressable text-sm font-semibold px-4 py-2 rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-400 hover:opacity-95">
+        Test yourself
+      </a>
+    </div>
+  </header>
+
+  <!-- Sticky bottom section tabs for mobile -->
+  <nav class="md:hidden fixed bottom-3 left-0 right-0 safe-bottom z-50">
+    <div class="mx-4 p-2 rounded-2xl glass border border-white/10 shadow-xl">
+      <div class="grid grid-cols-5 gap-2 text-xs font-semibold">
+        <a href="#overview" class="pressable flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-white/10">
+          <span>Overview</span>
+        </a>
+        <a href="#techniques" class="pressable flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-white/10">
+          <span>Techniques</span>
+        </a>
+        <a href="#simulator" class="pressable flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-white/10">
+          <span>Simulator</span>
+        </a>
+        <a href="#quiz" class="pressable flex flex-col items-center gap-1 py-2 rounded-xl hover:bg-white/10">
+          <span>Quiz</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="px-5 md:px-8 pb-28 md:pb-12">
+    <section id="overview" class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="card-pop glass rounded-2xl p-6 border border-white/10">
+          <p class="text-white/90">Protein purification is a fundamental process in biochemistry that enables scientists to isolate specific proteins from complex mixtures. Among the various techniques, chromatography methods that exploit differences in protein solubility play a crucial role.</p>
+        </div>
+
+        <div class="card-pop glass rounded-2xl p-6 border border-white/10 relative overflow-hidden">
+          <h3 class="text-lg md:text-xl font-bold mb-4">Solubility & retention</h3>
+          <p class="text-white/90">Proteins interact with surfaces depending on polarity or hydrophobic patches. Tuning solvent strength or salt changes those interactions—this shifts who sticks and who elutes first.</p>
+          <div class="mt-5 grid grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl border border-white/10 bg-gradient-to-br from-amber-400/20 to-amber-500/10">
+              <div class="text-xs text-amber-200/90 font-bold">Normal Phase</div>
+              <div class="mt-1 text-sm">Polar surface (silica). Non‑polar mobile. Non‑polar elutes first.</div>
+            </div>
+            <div class="p-3 rounded-xl border border-white/10 bg-gradient-to-br from-fuchsia-400/20 to-fuchsia-500/10">
+              <div class="text-xs text-fuchsia-200/90 font-bold">Reverse Phase</div>
+              <div class="mt-1 text-sm">Hydrophobic surface (C18). Aqueous mobile + organic. More hydrophobic elutes later.</div>
+            </div>
+            <div class="p-3 rounded-xl border border-white/10 bg-gradient-to-br from-lime-300/20 to-emerald-400/10">
+              <div class="text-xs text-lime-200/90 font-bold">HIC</div>
+              <div class="mt-1 text-sm">High salt makes hydrophobes bind. Lower salt elutes least → most hydrophobic.</div>
+            </div>
+          </div>
+
+          <!-- Glossary chips -->
+          <div class="mt-6 flex flex-wrap gap-2">
+            <button class="tip relative pressable px-3 py-2 rounded-full bg-white/10 border border-white/10 text-sm">
+              Polarity
+              <span class="tip-bubble">How unevenly electrons are shared; more polar = more attracted to polar surfaces.</span>
+            </button>
+            <button class="tip relative pressable px-3 py-2 rounded-full bg-white/10 border border-white/10 text-sm">
+              Hydrophobic
+              <span class="tip-bubble">“Water‑fearing” patches prefer non‑polar surfaces; salt can strengthen this.</span>
+            </button>
+            <button class="tip relative pressable px-3 py-2 rounded-full bg-white/10 border border-white/10 text-sm">
+              Elution strength
+              <span class="tip-bubble">How strongly the mobile phase competes with analyte‑surface interactions.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Techniques -->
+    <section id="techniques" class="max-w-6xl mx-auto mt-10 md:mt-14">
+      <div class="glass rounded-2xl border border-white/10 p-2">
+        <!-- Tabs -->
+        <div class="grid grid-cols-3 gap-2">
+          <button data-tech="np" class="tech-tab pressable px-4 py-3 rounded-xl font-bold bg-amber-400 text-slate-900">Normal phase</button>
+          <button data-tech="rp" class="tech-tab pressable px-4 py-3 rounded-xl font-bold hover:bg-white/10 border border-white/10">Reverse phase</button>
+          <button data-tech="hic" class="tech-tab pressable px-4 py-3 rounded-xl font-bold hover:bg-white/10 border border-white/10">HIC</button>
+        </div>
+
+        <!-- Panels -->
+        <div class="mt-4 space-y-4" id="techPanels">
+          <!-- Normal Phase -->
+          <article data-panel="np" class="rounded-2xl p-5 md:p-6 border border-white/10 bg-gradient-to-br from-amber-400/15 to-orange-500/10">
+            <h3 class="text-xl md:text-2xl font-extrabold text-amber-200">Normal Phase Chromatography</h3>
+            <div class="mt-3 space-y-4">
+              <div class="card-pop rounded-xl p-5 md:p-6 bg-white/10 border border-white/10">
+                <div class="font-bold text-base md:text-lg">Principle</div>
+                <p class="text-white/90 mt-2 text-sm md:text-base">In Normal Phase chromatography, the stationary phase is polar (commonly silica or diol) and presents sites that can form hydrogen bonds and dipole–dipole interactions with polar residues or glycans on proteins. The mobile phase begins non‑polar, so non‑polar components do not interact strongly and move quickly through the column. As the solvent becomes more polar, it directly competes with protein–surface interactions, progressively displacing moderately polar and finally strongly polar components. Even trace water in the mobile phase increases effective polarity and shortens retention.</p>
+              </div>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Solvents</div>
+                  <p class="text-white/90 mt-1 text-sm">Start with low‑polarity solvents (hexane, heptane) and increase polarity using ethyl acetate, isopropanol.</p>
+                </div>
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Elution pattern</div>
+                  <p class="text-white/90 mt-1 text-sm">Non‑polar components elute first; more polar elute later as solvent polarity rises.</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+              <div class="font-bold">Example</div>
+              <p class="text-white/90 mt-1 text-sm">Separating a protein mixture where a glycosylated (more polar) variant is retained longer than a non‑glycosylated form. Typical stationary phase: silica or diol. Mobile phase often starts with hexane and ramps with ethyl acetate or isopropanol. Watch for water content, as trace water increases effective polarity and shortens retention.</p>
+            </div>
+          </article>
+
+          <!-- Reverse Phase -->
+          <article data-panel="rp" class="hidden rounded-2xl p-5 md:p-6 border border-white/10 bg-gradient-to-br from-fuchsia-400/15 to-purple-500/10">
+            <h3 class="text-xl md:text-2xl font-extrabold text-fuchsia-200">Reverse Phase Chromatography</h3>
+            <div class="mt-3 space-y-4">
+              <div class="card-pop rounded-xl p-5 md:p-6 bg-white/10 border border-white/10">
+                <div class="font-bold text-base md:text-lg">Principle</div>
+                <p class="text-white/90 mt-2 text-sm md:text-base">In Reverse Phase chromatography, the stationary phase is hydrophobic (for example C18 or C8 ligands) and favors interactions with hydrophobic side chains on proteins and peptides. The mobile phase is predominantly water with a small amount of acid to improve peak shape. Hydrophobic components adsorb onto the surface, while polar components spend more time in the mobile phase and therefore elute earlier. Increasing the percentage of organic solvent (such as acetonitrile) weakens hydrophobic interactions, allowing progressively more hydrophobic components to desorb and elute later in the run.</p>
+              </div>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Solvents</div>
+                  <p class="text-white/90 mt-1 text-sm">Aqueous buffers with acid modifier (e.g., 0.1% TFA or formic acid) and an organic solvent like acetonitrile or methanol for gradient elution.</p>
+                </div>
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Elution pattern</div>
+                  <p class="text-white/90 mt-1 text-sm">More polar elute first; increasing organic content releases more hydrophobic proteins later.</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+              <div class="font-bold">Example</div>
+              <p class="text-white/90 mt-1 text-sm">Separating peptides by hydrophobicity for LC‑MS: small polar peptides elute at low acetonitrile, hydrophobic peptides at higher acetonitrile. Common stationary phases: C18 or C8. Mobile phase: water + 0.1% formic acid (A) and acetonitrile + 0.1% formic acid (B). Typical gradient: 5–35% B over 30 minutes. Temperature can sharpen peaks by reducing viscosity.</p>
+            </div>
+          </article>
+
+          <!-- HIC -->
+          <article data-panel="hic" class="hidden rounded-2xl p-5 md:p-6 border border-white/10 bg-gradient-to-br from-lime-300/15 to-emerald-400/10">
+            <h3 class="text-xl md:text-2xl font-extrabold text-lime-200">Hydrophobic Interaction Chromatography (HIC)</h3>
+            <div class="mt-3 space-y-4">
+              <div class="card-pop rounded-xl p-5 md:p-6 bg-white/10 border border-white/10">
+                <div class="font-bold text-base md:text-lg">Principle</div>
+                <p class="text-white/90 mt-2 text-sm md:text-base">In Hydrophobic Interaction Chromatography (HIC), binding is driven by the “salting‑out” effect. At high concentrations of kosmotropic salts (such as ammonium sulfate), water molecules preferentially interact with the salt and are less available to solvate hydrophobic patches on proteins. This promotes association between hydrophobic patches and the mildly hydrophobic stationary phase. As the salt concentration is decreased, hydration is restored, these interactions weaken, and proteins elute in the order of increasing hydrophobicity.</p>
+              </div>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Solvents</div>
+                  <p class="text-white/90 mt-1 text-sm">Aqueous buffers with high salts (ammonium sulfate) to load; then reduce salt in a gradient to elute.</p>
+                </div>
+                <div class="card-pop rounded-xl p-4 bg-white/10 border border-white/10">
+                  <div class="font-bold">Elution pattern</div>
+                  <p class="text-white/90 mt-1 text-sm">Least hydrophobic elute first as salt drops; most hydrophobic elute last.</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+              <div class="font-bold">Example</div>
+              <p class="text-white/90 mt-1 text-sm">Polishing a monoclonal antibody: aggregates (more hydrophobic) elute later than the main monomer peak during a decreasing‑salt gradient. Stationary phase: butyl or phenyl ligands. Loading buffer: 1–2 M ammonium sulfate; elution: linear drop to ~0 M. Additives like mild detergents can help elute sticky species at the end.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Simulator -->
+    <section id="simulator" class="max-w-6xl mx-auto mt-10 md:mt-14">
+      <div class="glass rounded-2xl border border-white/10 p-5 md:p-6">
+        <h3 class="text-xl md:text-2xl font-extrabold">Elution Explorer (Simple Mode)</h3>
+        <p class="text-white/90 mt-1">Follow three quick steps: first choose a technique, then choose a condition, and finally view the predicted order with a short explanation.</p>
+
+        <!-- Step 1: Technique -->
+        <div class="mt-4">
+          <div class="text-sm font-bold mb-2">1) Choose technique</div>
+          <div class="flex flex-wrap gap-2" id="modeButtons">
+            <button class="modeBtn pressable px-3 py-2 rounded-full font-semibold bg-amber-400 text-slate-900" data-mode="np">Normal Phase</button>
+            <button class="modeBtn pressable px-3 py-2 rounded-full font-semibold border border-white/10 hover:bg-white/10" data-mode="rp">Reverse Phase</button>
+            <button class="modeBtn pressable px-3 py-2 rounded-full font-semibold border border-white/10 hover:bg-white/10" data-mode="hic">HIC</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Condition -->
+        <div class="mt-5">
+          <div class="text-sm font-bold mb-2">2) Pick condition</div>
+          <div id="condWrap" class="flex flex-wrap gap-2">
+            <!-- Filled by script based on technique -->
+          </div>
+          <div id="condHint" class="text-xs text-white/80 mt-2">For Normal Phase, this represents solvent polarity (low → high).</div>
+        </div>
+
+        <!-- Step 3: Predict -->
+        <div class="mt-5 grid md:grid-cols-2 gap-5">
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+            <div class="text-sm font-bold mb-3">3) See the predicted order</div>
+            <div class="flex gap-2 mb-3">
+              <button id="predictBtn" class="pressable px-4 py-2 rounded-xl font-semibold bg-gradient-to-r from-fuchsia-500 to-cyan-400 text-slate-900">Predict order</button>
+              <button id="resetSimNew" class="pressable px-4 py-2 rounded-xl font-semibold border border-white/15 hover:bg-white/10">Reset</button>
+            </div>
+            <ol id="resultOrder" class="list-decimal list-inside text-white/90 text-sm space-y-1">
+              <li>—</li>
+              <li>—</li>
+              <li>—</li>
+            </ol>
+            <div id="resultExplain" class="mt-3 text-white/90 text-sm"></div>
+          </div>
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10">
+            <div class="text-sm font-bold mb-2">Legend</div>
+            <div class="grid grid-cols-3 gap-2 text-xs">
+              <div class="rounded-xl p-3 border border-white/10 bg-gradient-to-r from-cyan-400/30 to-sky-500/20"><span class="font-bold">A</span> — <span id="legendA">Non‑polar</span></div>
+              <div class="rounded-xl p-3 border border-white/10 bg-gradient-to-r from-fuchsia-400/30 to-pink-500/20"><span class="font-bold">B</span> — <span id="legendB">Moderate</span></div>
+              <div class="rounded-xl p-3 border border-white/10 bg-gradient-to-r from-lime-300/30 to-emerald-400/20"><span class="font-bold">C</span> — <span id="legendC">Polar</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 text-xs text-white/80">Tip: Switch between techniques and conditions to compare how the order changes.</div>
+      </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz" class="max-w-6xl mx-auto mt-10 md:mt-14">
+      <div class="glass rounded-2xl border border-white/10 p-5 md:p-6">
+        <h3 class="text-xl md:text-2xl font-extrabold">Quiz Yourself</h3>
+        <p class="text-white/90 mt-1">Test your knowledge with a few quick questions. See if you can get all three right.</p>
+
+        <div id="quizWrap" class="mt-4 space-y-5">
+          <!-- Question 1 -->
+          <div class="quiz-q rounded-xl border border-white/10 p-5 md:p-6 bg-white/5">
+            <div class="font-bold text-lg mb-2">Q1: Which technique uses a decreasing salt gradient to elute proteins?</div>
+            <div class="space-y-2 text-sm text-white/90" data-q="q1" data-answer="hic">
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Normal Phase</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Reverse Phase</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Hydrophobic Interaction Chromatography (HIC)</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Size Exclusion Chromatography</button>
+            </div>
+          </div>
+          <!-- Question 2 -->
+          <div class="quiz-q rounded-xl border border-white/10 p-5 md:p-6 bg-white/5">
+            <div class="font-bold text-lg mb-2">Q2: In Reverse Phase, which type of protein elutes last?</div>
+            <div class="space-y-2 text-sm text-white/90" data-q="q2" data-answer="hydrophobic">
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Small, polar proteins</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Large, positively charged proteins</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Hydrophobic proteins</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Glycosylated proteins</button>
+            </div>
+          </div>
+          <!-- Question 3 -->
+          <div class="quiz-q rounded-xl border border-white/10 p-5 md:p-6 bg-white/5">
+            <div class="font-bold text-lg mb-2">Q3: What is the stationary phase in a Normal Phase column?</div>
+            <div class="space-y-2 text-sm text-white/90" data-q="q3" data-answer="polar">
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Non-polar</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Polar</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Charged</button>
+              <button class="answer-btn w-full text-left px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10">Hydrophobic</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="quizResult" class="hidden text-center mt-5 text-xl font-bold"></div>
+      </div>
+    </section>
+  </main>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Confetti function
+      function showConfetti(n = 30) {
+        const c = document.querySelector('.confetti');
+        if (!c) return;
+        for(let i=0;i<n;i++){
+          const s = document.createElement('span');
+          const colors = ['#22d3ee','#f472b6','#fbbf24','#84cc16','#a78bfa','#34d399'];
+          s.style.background = colors[Math.floor(Math.random()*colors.length)];
+          s.style.left = Math.random()*100 + 'vw';
+          s.style.transform = `translateY(-10vh) rotate(${Math.random()*360}deg)`;
+          s.style.animationDuration = (900 + Math.random()*700) + 'ms';
+          c.appendChild(s);
+          setTimeout(()=>s.remove(), 1400);
+        }
+      }
+
+      // Technique Tabs
+      const techTabs = document.querySelectorAll('.tech-tab');
+      const techPanels = document.querySelectorAll('[data-panel]');
+      techTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          techTabs.forEach(t => t.classList.remove('bg-amber-400', 'bg-fuchsia-400', 'bg-lime-400', 'text-slate-900', 'hover:bg-white/10', 'border-white/10'));
+          techTabs.forEach(t => t.classList.add('hover:bg-white/10', 'border', 'border-white/10'));
+          techPanels.forEach(p => p.classList.add('hidden'));
+
+          const tech = tab.dataset.tech;
+          document.querySelector(`[data-panel="${tech}"]`).classList.remove('hidden');
+
+          if(tech === 'np') tab.classList.remove('border-white/10', 'hover:bg-white/10'); tab.classList.add('bg-amber-400', 'text-slate-900');
+          if(tech === 'rp') tab.classList.remove('border-white/10', 'hover:bg-white/10'); tab.classList.add('bg-fuchsia-400', 'text-slate-900');
+          if(tech === 'hic') tab.classList.remove('border-white/10', 'hover:bg-white/10'); tab.classList.add('bg-lime-400', 'text-slate-900');
+        });
+      });
+
+      // Simulator logic
+      const modeButtons = document.querySelectorAll('.modeBtn');
+      const condWrap = document.getElementById('condWrap');
+      const condHint = document.getElementById('condHint');
+      const resultOrder = document.getElementById('resultOrder');
+      const resultExplain = document.getElementById('resultExplain');
+      const predictBtn = document.getElementById('predictBtn');
+      const resetBtn = document.getElementById('resetSimNew');
+      let currentMode = 'np';
+      let currentCond = 'low';
+
+      const legends = {
+        'np': { A: 'Non‑polar', B: 'Moderate', C: 'Polar' },
+        'rp': { A: 'Polar', B: 'Moderate', C: 'Hydrophobic' },
+        'hic': { A: 'Least hydrophobic', B: 'Moderate', C: 'Most hydrophobic' },
+      };
+
+      const conditions = {
+        'np': [
+          { value: 'low', text: 'Low polarity solvent' },
+          { value: 'high', text: 'High polarity solvent' }
+        ],
+        'rp': [
+          { value: 'low', text: 'Low organic solvent' },
+          { value: 'high', text: 'High organic solvent' }
+        ],
+        'hic': [
+          { value: 'low', text: 'Low salt concentration' },
+          { value: 'high', text: 'High salt concentration' }
+        ]
+      };
+
+      const elutionData = {
+        'np-low': {
+          order: ['C', 'B', 'A'],
+          explanation: 'With a low-polarity mobile phase, the polar stationary phase holds onto polar (C) and moderate (B) components, while the non-polar (A) component elutes first.',
+        },
+        'np-high': {
+          order: ['A', 'B', 'C'],
+          explanation: 'With a high-polarity mobile phase, the solvent competes more strongly with the stationary phase. The non-polar (A) component still elutes first, followed by the moderate (B), and finally the highly polar (C) components.',
+        },
+        'rp-low': {
+          order: ['C', 'B', 'A'],
+          explanation: 'With a low organic solvent mobile phase, the hydrophobic stationary phase retains hydrophobic (C) and moderate (B) components, while the polar (A) component elutes first.',
+        },
+        'rp-high': {
+          order: ['A', 'B', 'C'],
+          explanation: 'With a high organic solvent mobile phase, the solvent weakens the hydrophobic interactions. The polar (A) component still elutes first, followed by the moderate (B), and finally the highly hydrophobic (C) component.',
+        },
+        'hic-low': {
+          order: ['C', 'B', 'A'],
+          explanation: 'With a low salt concentration mobile phase, the hydrophobic interactions are weak. The most hydrophobic (C) component elutes first, followed by the moderate (B), and finally the least hydrophobic (A) component.',
+        },
+        'hic-high': {
+          order: ['A', 'B', 'C'],
+          explanation: 'With a high salt concentration mobile phase, the "salting-out" effect promotes interactions between the proteins and the stationary phase. The least hydrophobic (A) component elutes first, followed by the moderate (B), and finally the most hydrophobic (C) component.',
+        }
+      };
+
+      function updateCondButtons(mode) {
+        condWrap.innerHTML = '';
+        conditions[mode].forEach(cond => {
+          const btn = document.createElement('button');
+          btn.textContent = cond.text;
+          btn.className = `condBtn pressable px-3 py-2 rounded-full font-semibold border border-white/10 hover:bg-white/10 ${currentCond === cond.value ? 'bg-white/20' : ''}`;
+          btn.dataset.cond = cond.value;
+          condWrap.appendChild(btn);
+        });
+        document.getElementById('condHint').textContent = `For ${mode === 'np' ? 'Normal Phase' : mode === 'rp' ? 'Reverse Phase' : 'HIC'}, this represents ${mode === 'np' ? 'solvent polarity (low → high)' : mode === 'rp' ? 'organic solvent concentration (low → high)' : 'salt concentration (low → high)'}.`;
+        updateLegend(mode);
+        resetSimulator();
+      }
+
+      function updateLegend(mode) {
+        document.getElementById('legendA').textContent = legends[mode].A;
+        document.getElementById('legendB').textContent = legends[mode].B;
+        document.getElementById('legendC').textContent = legends[mode].C;
+      }
+
+      function resetSimulator() {
+        resultOrder.innerHTML = '<li>—</li><li>—</li><li>—</li>';
+        resultExplain.textContent = '';
+      }
+
+      modeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          modeButtons.forEach(b => b.classList.remove('bg-amber-400', 'bg-fuchsia-400', 'bg-lime-400', 'text-slate-900'));
+          btn.classList.add(`bg-${btn.dataset.mode === 'np' ? 'amber-400' : btn.dataset.mode === 'rp' ? 'fuchsia-400' : 'lime-400'}`, 'text-slate-900');
+          currentMode = btn.dataset.mode;
+          updateCondButtons(currentMode);
+        });
+      });
+
+      condWrap.addEventListener('click', e => {
+        if (e.target.classList.contains('condBtn')) {
+          document.querySelectorAll('.condBtn').forEach(b => b.classList.remove('bg-white/20'));
+          e.target.classList.add('bg-white/20');
+          currentCond = e.target.dataset.cond;
+          resetSimulator();
+        }
+      });
+
+      predictBtn.addEventListener('click', () => {
+        const key = `${currentMode}-${currentCond}`;
+        const data = elutionData[key];
+        if (data) {
+          resultOrder.innerHTML = data.order.map(item => `<li>Component <span class="font-bold">${item}</span></li>`).join('');
+          resultExplain.textContent = data.explanation;
+        } else {
+          resetSimulator();
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        resetSimulator();
+      });
+
+      // Quiz Logic
+      const quizWrap = document.getElementById('quizWrap');
+      const quizResult = document.getElementById('quizResult');
+      let correctAnswers = 0;
+
+      quizWrap.addEventListener('click', (e) => {
+        if (e.target.classList.contains('answer-btn')) {
+          const questionDiv = e.target.closest('.quiz-q');
+          const questionData = e.target.closest('[data-q]');
+          const correctAnswer = questionData.dataset.answer;
+
+          // Disable all buttons for this question
+          questionDiv.querySelectorAll('.answer-btn').forEach(btn => {
+            btn.disabled = true;
+            btn.classList.remove('hover:bg-white/10');
+            // Check if it's the correct answer and highlight
+            if (btn.textContent.toLowerCase().includes(correctAnswer.toLowerCase())) {
+              btn.classList.add('bg-green-600/30', 'border-green-400');
+            } else {
+              btn.classList.add('bg-red-600/30', 'border-red-400');
+            }
+          });
+
+          // Check if the clicked answer is correct
+          if (e.target.textContent.toLowerCase().includes(correctAnswer.toLowerCase())) {
+            correctAnswers++;
+          }
+
+          // Check if all questions are answered
+          const totalQuestions = quizWrap.querySelectorAll('.quiz-q').length;
+          const answeredQuestions = quizWrap.querySelectorAll('.quiz-q').length - quizWrap.querySelectorAll('.answer-btn:not(:disabled)').length / 4;
+          
+          if (answeredQuestions === totalQuestions) {
+            quizResult.classList.remove('hidden');
+            let message = `You got ${correctAnswers} out of ${totalQuestions} correct!`;
+            if (correctAnswers === totalQuestions) {
+              message += " Great job!";
+              showConfetti(50);
+            } else if (correctAnswers > 0) {
+              message += " You're on the right track.";
+            } else {
+              message += " Keep studying!";
+            }
+            quizResult.textContent = message;
+          }
+        }
+      });
+
+      // Initial state setup for simulator
+      updateCondButtons(currentMode);
+    });
+  </script>
+  <!-- Confetti container -->
+  <div class="confetti"></div>
+</body>
+</html>
