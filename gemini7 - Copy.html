@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Protein Purification Techniques</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .tab-active {
+            background-color: #6366F1; /* Vibrant Indigo for active tab */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .tab-inactive {
+            background-color: #374151; /* Dark Gray for inactive tab */
+            color: #9CA3AF;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-active {
+            display: block;
+        }
+        .protein {
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: transform 4s linear;
+        }
+        .large-protein {
+            background-color: #F59E0B; /* Amber */
+            width: 30px;
+            height: 30px;
+        }
+        .small-protein {
+            background-color: #D946EF; /* Fuchsia */
+            width: 15px;
+            height: 15px;
+        }
+        .bead {
+            background-color: #6B7280; /* Darker Gray */
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        /* GFC Animation Keyframes */
+        @keyframes gfc-large-protein-path {
+            from { transform: translateY(0); }
+            to { transform: translateY(300px); }
+        }
+        .gfc-large-animating {
+            animation: gfc-large-protein-path 2s ease-in-out forwards;
+        }
+        @keyframes gfc-small-protein-path {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-20px, 80px); }
+            50% { transform: translate(15px, 160px); }
+            75% { transform: translate(-10px, 240px); }
+            100% { transform: translate(5px, 300px); }
+        }
+        .gfc-small-animating {
+            animation: gfc-small-protein-path 4s ease-in-out forwards;
+        }
+
+        /* Sub-tab styling */
+        .sub-tab-active {
+            border-bottom: 3px solid #818CF8; /* Lighter Indigo for active sub-tab */
+            color: #C7D2FE;
+            font-weight: bold;
+        }
+        .sub-tab-inactive {
+            border-bottom: 3px solid transparent;
+            color: #9CA3AF;
+        }
+        .sub-tab-content {
+            display: none;
+        }
+        .sub-tab-content-active {
+            display: block;
+        }
+
+        /* Quiz styling */
+        .quiz-option {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .quiz-option.correct {
+            background-color: #166534; /* Darker green */
+            color: #D1FAE5; /* Lighter green */
+        }
+        .quiz-option.incorrect {
+            background-color: #7F1D1D; /* Darker red */
+            color: #FEE2E2; /* Lighter red */
+        }
+        .quiz-feedback {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-indigo-400 mb-2">Protein Purification by Size</h1>
+            <p class="text-lg text-gray-400">An interactive guide to techniques based on molecular weight.</p>
+        </header>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="flex justify-center space-x-2 md:space-x-4 mb-8 p-2 bg-gray-800 rounded-full shadow-inner">
+            <button id="tab-gfc" class="tab-button tab-active px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold transition-all duration-300">Gel Filtration</button>
+            <button id="tab-sds" class="tab-button tab-inactive px-4 py-2 md:px-6 md:py-3 rounded-full font-semibold transition-all duration-300">SDS-PAGE</button>
+        </nav>
+
+        <!-- Content Sections -->
+        <main>
+            <!-- Gel Filtration Chromatography Section -->
+            <section id="content-gfc" class="content-section content-active">
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold text-indigo-400 mb-4">Gel Filtration Chromatography</h2>
+                    
+                    <!-- Sub-tabs for content -->
+                    <div class="flex space-x-4 border-b border-gray-700 mb-4">
+                        <button class="sub-tab-button sub-tab-active py-2 px-4 transition-all duration-300" data-target="gfc-principle">Principle</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="gfc-procedure">Procedure</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="gfc-animation">Animation</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="gfc-quiz">Quiz</button>
+                    </div>
+
+                    <!-- Sub-tab content -->
+                    <div class="space-y-6">
+                        <!-- Principle Tab -->
+                        <div id="gfc-principle" class="sub-tab-content sub-tab-content-active prose prose-invert max-w-none">
+                            <p>Gel filtration chromatography, also known as size exclusion chromatography (SEC), separates molecules based on their size and shape. The stationary phase consists of porous beads. Larger molecules cannot enter the pores and elute first, while smaller molecules enter the pores and take a longer, more tortuous path, eluting later.</p>
+                            <p><strong>Key points:</strong></p>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Does not rely on binding interactions between the protein and resin</li>
+                                <li>Excellent for buffer exchange or desalting</li>
+                                <li>Can separate molecules with at least a 10% difference in molecular weight</li>
+                                <li>Common matrices: Sephadex, Sepharose, Superdex</li>
+                            </ul>
+                        </div>
+                        <!-- Procedure Tab -->
+                        <div id="gfc-procedure" class="sub-tab-content prose prose-invert max-w-none">
+                            <h3 class="font-semibold text-xl text-gray-300">Procedure</h3>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li>Equilibrate the column with appropriate buffer</li>
+                                <li>Apply sample (typically 1-5% of column volume)</li>
+                                <li>Elute with buffer and collect fractions</li>
+                                <li>Monitor protein elution (UV absorbance at 280nm)</li>
+                                <li>Analyze fractions for protein content and purity</li>
+                            </ol>
+                            <p><strong>Important parameters:</strong></p>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Column length affects resolution</li>
+                                <li>Flow rate affects separation quality</li>
+                                <li>Sample viscosity should be similar to buffer</li>
+                            </ul>
+                        </div>
+                        <!-- Animation Tab -->
+                        <div id="gfc-animation" class="sub-tab-content">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <!-- Interactive Animation -->
+                                <div>
+                                    <h3 class="font-semibold text-xl text-gray-300 mb-2">Interactive Animation</h3>
+                                    <div id="gfc-animation-container" class="relative w-full h-80 bg-gray-700 rounded-lg border-4 border-indigo-700 overflow-hidden">
+                                        <!-- Column -->
+                                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-full bg-gray-900 border-x-2 border-gray-600"></div>
+                                        <!-- Beads -->
+                                        <div id="gfc-beads" class="absolute inset-0"></div>
+                                        <!-- Proteins -->
+                                        <div id="gfc-proteins" class="absolute top-2 left-1/2 -translate-x-1/2 w-48 h-full"></div>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button id="run-gfc-btn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-full hover:bg-indigo-700 transition-colors shadow-md">Run Simulation</button>
+                                    </div>
+                                </div>
+                                <!-- Elution Chart -->
+                                <div>
+                                     <h3 class="font-semibold text-xl text-gray-300 mb-2">Elution Pattern</h3>
+                                    <div class="w-full h-64 bg-gray-700 rounded-lg p-4 relative">
+                                        <canvas id="gfc-chart"></canvas>
+                                        <div id="gfc-chart-labels" class="absolute inset-0 p-4 flex flex-col justify-between text-xs text-gray-400">
+                                            <span>Absorbance</span>
+                                            <span class="self-end">Elution Volume</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Quiz Tab -->
+                        <div id="gfc-quiz" class="sub-tab-content">
+                            <div class="bg-indigo-900 p-6 rounded-lg shadow-inner">
+                                <h3 class="font-bold text-lg text-indigo-400">Quick Quiz: Gel Filtration</h3>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">1. Which of these proteins would elute first in gel filtration chromatography?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">15 kDa protein</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">45 kDa protein</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">150 kDa protein</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">They would elute together</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">2. What property of the stationary phase beads is crucial for GFC separation?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">Pore size</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Charge</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Hydrophobicity</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Color</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">3. What is a common application of GFC besides protein purification?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Binding to a specific antibody</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Separating proteins by charge</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">Desalting or buffer exchange</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Breaking disulfide bonds</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">4. What is the relationship between elution time and protein size in GFC?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">Smaller proteins elute later than larger proteins</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Smaller proteins elute earlier than larger proteins</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Protein size does not affect elution time</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">All proteins elute at the same time</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">5. What does the term "elution volume" refer to?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">The volume of buffer required to elute a specific protein</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">The size of the column beads</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">The total volume of the column</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">The protein concentration in the sample</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SDS-PAGE Section -->
+            <section id="content-sds" class="content-section">
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl md:text-3xl font-bold text-indigo-400 mb-4">SDS-PAGE</h2>
+
+                    <!-- Sub-tabs for content -->
+                    <div class="flex space-x-4 border-b border-gray-700 mb-4 overflow-x-auto">
+                        <button class="sub-tab-button sub-tab-active py-2 px-4 transition-all duration-300" data-target="sds-principle">Principle</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="sds-sds">SDS Explained</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="sds-mobility">Mobility</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="sds-procedure">Procedure</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="sds-animation">Animation</button>
+                        <button class="sub-tab-button sub-tab-inactive py-2 px-4 transition-all duration-300" data-target="sds-quiz">Quiz</button>
+                    </div>
+
+                    <!-- Sub-tab content -->
+                    <div class="space-y-6">
+                        <!-- Principle Tab -->
+                        <div id="sds-principle" class="sub-tab-content sub-tab-content-active prose prose-invert max-w-none">
+                            <p><strong>S</strong>odium <strong>D</strong>odecyl <strong>S</strong>ulfate - <strong>P</strong>oly<strong>a</strong>crylamide <strong>G</strong>el <strong>E</strong>lectrophoresis (SDS-PAGE) separates proteins based almost exclusively on their mass under denaturing conditions. The technique uses:</p>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><strong>SDS:</strong> A detergent that denatures proteins and gives them a uniform negative charge</li>
+                                <li><strong>Polyacrylamide gel:</strong> Acts as a molecular sieve</li>
+                                <li><strong>Electric field:</strong> Drives the negatively charged proteins through the gel</li>
+                            </ul>
+                            <p>Smaller proteins migrate faster through the gel matrix, while larger proteins are retarded. The electrophoretic mobility (μ) of a protein in SDS-PAGE is given by:</p>
+                            <div class="my-4 p-3 bg-indigo-900 rounded-lg text-center text-lg font-mono tracking-wider">
+                                <span>v = Eq/f</span>
+                            </div>
+                            <p>Where all proteins have a similar charge-to-mass ratio due to SDS binding, making mobility primarily dependent on molecular size.</p>
+                        </div>
+                        <!-- SDS Explained Tab -->
+                        <div id="sds-sds" class="sub-tab-content prose prose-invert max-w-none">
+                            <h3 class="font-semibold text-xl text-gray-300">SDS Explained</h3>
+                            <p>SDS is a key component that enables separation purely by molecular weight. It performs two critical functions:</p>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><strong>Denaturation:</strong> SDS disrupts the secondary and tertiary structures of proteins, causing them to unfold into linear polypeptide chains. A reducing agent like beta-mercaptoethanol is also used to break disulfide bonds.</li>
+                                <li><strong>Uniform Charge:</strong> SDS molecules bind to the protein backbone at a constant ratio (about 1.4g of SDS per 1g of protein). This overwhelms the protein's intrinsic charge, giving all proteins a large, uniform negative charge proportional to their mass.</li>
+                            </ul>
+                            <p>This treatment means migration in the gel depends only on molecular weight, not native charge or shape.</p>
+                        </div>
+                        <!-- Mobility Tab -->
+                        <div id="sds-mobility" class="sub-tab-content prose prose-invert max-w-none">
+                            <h3 class="font-semibold text-xl text-gray-300">Electrophoretic Mobility</h3>
+                            <p>The velocity (v) of a protein's migration in an electric field is described by:</p>
+                            <div class="my-4 p-3 bg-indigo-900 rounded-lg text-center text-lg font-mono tracking-wider">
+                                <span>v = μE</span>
+                            </div>
+                            <p>Where:</p>
+                            <table class="w-full border-collapse my-4">
+                                <thead>
+                                    <tr>
+                                        <th class="border border-gray-600 p-2 text-left">Symbol</th>
+                                        <th class="border border-gray-600 p-2 text-left">Parameter</th>
+                                        <th class="border border-gray-600 p-2 text-left">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-gray-600 p-2">v</td>
+                                        <td class="border border-gray-600 p-2">Migration velocity</td>
+                                        <td class="border border-gray-600 p-2">Speed at which the protein moves through the gel</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-gray-600 p-2">μ</td>
+                                        <td class="border border-gray-600 p-2">Electrophoretic mobility</td>
+                                        <td class="border border-gray-600 p-2">Intrinsic mobility of the protein in the gel matrix</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-gray-600 p-2">E</td>
+                                        <td class="border border-gray-600 p-2">Electric field strength</td>
+                                        <td class="border border-gray-600 p-2">Voltage applied divided by gel length</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>The electrophoretic mobility (μ) itself depends on:</p>
+                            <div class="my-4 p-3 bg-indigo-900 rounded-lg text-center text-lg font-mono tracking-wider">
+                                <span>μ = q/f</span>
+                            </div>
+                            <p>Where q is the net charge and f is the frictional coefficient. In SDS-PAGE, since the charge-to-mass ratio is equalized, migration is therefore primarily determined by molecular size. Smaller proteins have lower frictional coefficients (f) and migrate faster.</p>
+                        </div>
+                        <!-- Procedure Tab -->
+                        <div id="sds-procedure" class="sub-tab-content prose prose-invert max-w-none">
+                            <h3 class="font-semibold text-xl text-gray-300">Procedure</h3>
+                            <ol class="list-decimal list-inside space-y-2">
+                                <li>Prepare samples with SDS and reducing agent (e.g., beta-mercaptoethanol)</li>
+                                <li>Heat samples to 95°C for 5 minutes to denature proteins</li>
+                                <li>Prepare polyacrylamide gel (concentration depends on target protein sizes)</li>
+                                <li>Load samples and molecular weight markers</li>
+                                <li>Run electrophoresis at constant voltage (100V-200V)</li>
+                                <li>Stain gel with Coomassie Blue or silver stain to visualize proteins</li>
+                            </ol>
+                            <p><strong>Gel concentration guide:</strong></p>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>5% gel: 200-1000 kDa</li>
+                                <li>10% gel: 15-70 kDa</li>
+                                <li>15% gel: 5-40 kDa</li>
+                            </ul>
+                        </div>
+                        <!-- Animation Tab -->
+                        <div id="sds-animation" class="sub-tab-content">
+                             <div class="grid md:grid-cols-2 gap-6">
+                                <!-- Interactive Animation -->
+                                <div>
+                                    <h3 class="font-semibold text-xl text-gray-300 mb-2">Interactive Animation</h3>
+                                    <div id="sds-gel-animation" class="relative w-full h-96 bg-gray-700 rounded-lg border-4 border-indigo-700 overflow-hidden p-4">
+                                        <!-- Gel Matrix -->
+                                        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-4/5 h-full border-x-2 border-b-2 border-gray-600">
+                                            <!-- Well -->
+                                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-6 bg-gray-600 border-2 border-gray-500"></div>
+                                            <!-- Electrodes -->
+                                            <div class="absolute -top-2 left-0 w-full text-center text-3xl font-bold text-gray-400">-</div>
+                                            <div class="absolute -bottom-3 left-0 w-full text-center text-3xl font-bold text-red-500">+</div>
+                                        </div>
+                                        <!-- Proteins -->
+                                        <div id="sds-proteins" class="absolute top-8 left-1/2 -translate-x-1/2 w-full h-full"></div>
+                                        <!-- Ladder -->
+                                        <div id="sds-ladder" class="absolute top-8 left-1/4 -translate-x-1/2 w-full h-full"></div>
+                                    </div>
+                                    <div class="text-center mt-4">
+                                        <button id="run-sds-btn" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-full hover:bg-indigo-700 transition-colors shadow-md">Apply Voltage</button>
+                                    </div>
+                                </div>
+                                <!-- Example -->
+                                <div class="prose prose-invert max-w-none">
+                                    <h3 class="font-semibold text-xl text-gray-300">Example</h3>
+                                    <p>Imagine you are analyzing a purified antibody (Immunoglobulin G). An antibody is composed of two heavy chains (~50 kDa each) and two light chains (~25 kDa each), linked by disulfide bonds.</p>
+                                    <ul class="list-disc list-inside space-y-2">
+                                        <li>If you run SDS-PAGE with a reducing agent, it breaks the disulfide bonds. You will then see two bands: one for the <strong class="text-fuchsia-400">heavy chains at 50 kDa</strong> and one for the <strong class="text-amber-400">light chains at 25 kDa</strong>.</li>
+                                    </ul>
+                                    <p class="mt-4 p-3 bg-indigo-900 rounded-lg border border-indigo-700">The animation shows the result after adding a reducing agent. The amber band is the heavy chain, and the fuchsia band is the light chain.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Quiz Tab -->
+                        <div id="sds-quiz" class="sub-tab-content">
+                            <div class="bg-indigo-900 p-6 rounded-lg shadow-inner">
+                                <h3 class="font-bold text-lg text-indigo-400">Quick Quiz: SDS-PAGE</h3>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">1. What is the purpose of SDS in SDS-PAGE?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To stain the proteins for visualization</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To crosslink the polyacrylamide gel</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">To denature proteins and give them uniform negative charge</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To separate proteins based on their native charge</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">2. In the electrophoretic mobility equation μ = q/f, what happens to mobility if molecular weight increases?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Mobility increases because q increases</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">Mobility decreases because f increases more than q</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Mobility stays the same because q and f increase proportionally</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Mobility becomes unpredictable</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">3. What is the name of the gel matrix used in SDS-PAGE?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Agarose</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">Polyacrylamide</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Sepharose</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">Silica</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">4. What is the purpose of a reducing agent like beta-mercaptoethanol in SDS-PAGE?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">To break disulfide bonds</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To increase protein charge</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To prevent protein degradation</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">To speed up migration</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                                <div class="mt-4 quiz-question">
+                                    <p class="font-medium">5. How are separated proteins visualized on an SDS-PAGE gel?</p>
+                                    <div class="space-y-2 mt-2">
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">By UV light without a stain</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">They are not visible</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="false">By X-ray crystallography</div>
+                                        <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer hover:bg-gray-600" data-correct="true">By staining with dyes like Coomassie Blue</div>
+                                    </div>
+                                    <div class="quiz-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- New Footer Section -->
+        <footer class="mt-16 py-8 bg-gray-800 rounded-t-2xl shadow-lg text-center text-gray-400">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="mx-auto w-14 h-auto mb-4">
+            <p class="text-sm">&copy; 2025 BETA Biosciences. All rights reserved.</p>
+            <p class="text-sm">Email: <a href="mailto:betabiosciences@gmail.com" class="text-indigo-400 hover:underline">betabiosciences@gmail.com</a></p>
+            <p class="text-sm">Contact: <a href="tel:+919747533597" class="text-indigo-400 hover:underline">+91 97 47 53 35 97</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Tab switching logic for main sections (GFC/SDS)
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.replace('tab-active', 'tab-inactive'));
+                    tab.classList.replace('tab-inactive', 'tab-active');
+
+                    const targetId = tab.id.replace('tab-', 'content-');
+                    contentSections.forEach(section => {
+                        section.classList.toggle('content-active', section.id === targetId);
+                    });
+                });
+            });
+
+            // Sub-tab switching logic for content within each section
+            const subTabContainers = document.querySelectorAll('.sub-tab-button');
+            subTabContainers.forEach(subTab => {
+                subTab.addEventListener('click', () => {
+                    const parentSection = subTab.closest('.bg-gray-800');
+                    parentSection.querySelectorAll('.sub-tab-button').forEach(t => t.classList.replace('sub-tab-active', 'sub-tab-inactive'));
+                    subTab.classList.replace('sub-tab-inactive', 'sub-tab-active');
+
+                    const targetId = subTab.getAttribute('data-target');
+                    parentSection.querySelectorAll('.sub-tab-content').forEach(content => {
+                        content.classList.toggle('sub-tab-content-active', content.id === targetId);
+                    });
+                });
+            });
+
+            // Quiz logic
+            document.querySelectorAll('.quiz-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const parentQuestion = option.closest('.quiz-question');
+                    const feedback = parentQuestion.querySelector('.quiz-feedback');
+                    const isCorrect = option.getAttribute('data-correct') === 'true';
+
+                    parentQuestion.querySelectorAll('.quiz-option').forEach(opt => {
+                        opt.classList.remove('correct', 'incorrect');
+                    });
+                    
+                    if (isCorrect) {
+                        option.classList.add('correct');
+                        feedback.textContent = 'Correct! Great job.';
+                        feedback.classList.remove('bg-red-900', 'text-red-300');
+                        feedback.classList.add('bg-green-900', 'text-green-300');
+                    } else {
+                        option.classList.add('incorrect');
+                        feedback.textContent = 'Incorrect, please try again.';
+                        feedback.classList.remove('bg-green-900', 'text-green-300');
+                        feedback.classList.add('bg-red-900', 'text-red-300');
+                    }
+                    feedback.style.display = 'block';
+                });
+            });
+
+            // --- Gel Filtration Chromatography (GFC) Logic ---
+            const runGfcBtn = document.getElementById('run-gfc-btn');
+            const gfcProteinsContainer = document.getElementById('gfc-proteins');
+            const gfcBeadsContainer = document.getElementById('gfc-beads');
+            let gfcChartInstance = null;
+
+            function setupGFC() {
+                gfcProteinsContainer.innerHTML = '';
+                gfcBeadsContainer.innerHTML = '';
+                if (gfcChartInstance) gfcChartInstance.destroy();
+
+                const column = document.querySelector('#gfc-animation-container > div');
+                const container = gfcBeadsContainer;
+                
+                setTimeout(() => {
+                    const columnRect = column.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    const columnLeft = columnRect.left - containerRect.left;
+                    const columnRight = columnRect.right - containerRect.left;
+
+                    // Create beads inside the column
+                    for (let i = 0; i < 40; i++) {
+                        const bead = document.createElement('div');
+                        bead.className = 'bead';
+                        const size = Math.random() * 25 + 20;
+                        bead.style.width = `${size}px`;
+                        bead.style.height = `${size}px`;
+                        
+                        const maxLeft = columnRight - size;
+                        const minLeft = columnLeft;
+                        bead.style.left = `${Math.random() * (maxLeft - minLeft) + minLeft}px`;
+                        bead.style.top = `${Math.random() * (containerRect.height - size)}px`;
+                        gfcBeadsContainer.appendChild(bead);
+                    }
+                }, 0);
+
+
+                // Create proteins at the top of their container
+                for (let i = 0; i < 5; i++) {
+                    const largeProtein = document.createElement('div');
+                    largeProtein.className = 'protein large-protein';
+                    largeProtein.textContent = 'L';
+                    largeProtein.style.top = '10px';
+                    largeProtein.style.left = `${30 + Math.random() * 40}%`;
+                    gfcProteinsContainer.appendChild(largeProtein);
+
+                    const smallProtein = document.createElement('div');
+                    smallProtein.className = 'protein small-protein';
+                    smallProtein.textContent = 'S';
+                    smallProtein.style.top = '10px';
+                    smallProtein.style.left = `${30 + Math.random() * 40}%`;
+                    gfcProteinsContainer.appendChild(smallProtein);
+                }
+                
+                drawGFCChart(0, 0);
+            }
+
+            function runGFCAnimation() {
+                runGfcBtn.disabled = true;
+                runGfcBtn.textContent = 'Running...';
+                
+                gfcProteinsContainer.querySelectorAll('.large-protein').forEach(p => p.classList.add('gfc-large-animating'));
+                gfcProteinsContainer.querySelectorAll('.small-protein').forEach(p => p.classList.add('gfc-small-animating'));
+                
+                setTimeout(() => drawGFCChart(1, 0), 2000);
+                setTimeout(() => drawGFCChart(1, 1), 4000);
+
+                setTimeout(() => {
+                    runGfcBtn.disabled = false;
+                    runGfcBtn.textContent = 'Run Simulation';
+                    setupGFC();
+                }, 5000);
+            }
+            
+            function drawGFCChart(largePeak, smallPeak) {
+                if(gfcChartInstance) gfcChartInstance.destroy();
+                const ctx = document.getElementById('gfc-chart').getContext('2d');
+                gfcChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                        datasets: [{
+                            label: 'Large Protein',
+                            data: [0, 0, largePeak * 0.2, largePeak * 1, largePeak * 0.3, 0, 0, 0, 0, 0, 0],
+                            borderColor: '#F59E0B', backgroundColor: 'rgba(245, 158, 11, 0.2)', fill: true, tension: 0.4
+                        }, {
+                            label: 'Small Protein',
+                            data: [0, 0, 0, 0, 0, 0, smallPeak * 0.1, smallPeak * 0.8, smallPeak * 1, smallPeak * 0.4, 0],
+                            borderColor: '#D946EF', backgroundColor: 'rgba(217, 70, 239, 0.2)', fill: true, tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                        scales: { y: { display: false, max: 1.2 }, x: { display: false } }
+                    }
+                });
+            }
+
+            runGfcBtn.addEventListener('click', runGFCAnimation);
+            
+            // --- SDS-PAGE Logic ---
+            const runSdsBtn = document.getElementById('run-sds-btn');
+            const sdsProteinsContainer = document.getElementById('sds-proteins');
+            const sdsLadderContainer = document.getElementById('sds-ladder');
+
+            function setupSDS() {
+                sdsProteinsContainer.innerHTML = '';
+                sdsLadderContainer.innerHTML = '';
+
+                const heavyChain = document.createElement('div');
+                heavyChain.className = 'protein';
+                heavyChain.style.cssText = 'background-color: #F59E0B; width: 50px; height: 10px; top: 5px; left: 55%;';
+                heavyChain.textContent = '50kDa';
+                sdsProteinsContainer.appendChild(heavyChain);
+
+                const lightChain = document.createElement('div');
+                lightChain.className = 'protein';
+                lightChain.style.cssText = 'background-color: #D946EF; width: 25px; height: 10px; top: 5px; left: 55%;';
+                lightChain.textContent = '25kDa';
+                sdsProteinsContainer.appendChild(lightChain);
+                
+                const ladderSizes = [100, 75, 50, 37, 25, 20, 15];
+                ladderSizes.forEach(size => {
+                    const band = document.createElement('div');
+                    band.className = 'protein';
+                    band.style.cssText = `background-color: #64748B; width: ${size*0.6}px; height: 8px; top: 5px; left: 0; font-size: 0.6rem;`;
+                    band.textContent = `${size}`;
+                    sdsLadderContainer.appendChild(band);
+                });
+            }
+
+            function runSDSAnimation() {
+                runSdsBtn.disabled = true;
+                runSdsBtn.textContent = 'Running...';
+
+                const heavyChain = sdsProteinsContainer.querySelector('.protein:nth-child(1)');
+                const lightChain = sdsProteinsContainer.querySelector('.protein:nth-child(2)');
+                heavyChain.style.transform = `translateY(150px)`;
+                lightChain.style.transform = `translateY(250px)`;
+
+                const ladderBands = sdsLadderContainer.querySelectorAll('.protein');
+                const ladderSizes = [100, 75, 50, 37, 25, 20, 15];
+                ladderBands.forEach((band, i) => {
+                    const distance = 300 - (Math.log10(ladderSizes[i]) * 120);
+                    band.style.transform = `translateY(${distance}px)`;
+                });
+
+                setTimeout(() => {
+                    runSdsBtn.disabled = false;
+                    runSdsBtn.textContent = 'Apply Voltage';
+                    setupSDS();
+                }, 5000);
+            }
+
+            runSdsBtn.addEventListener('click', runSDSAnimation);
+            
+            // Initial setup for the active sections
+            setupGFC();
+            setupSDS();
+        });
+    </script>
+</body>
+</html>
