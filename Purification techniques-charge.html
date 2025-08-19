@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Purification by Charge</title>
+    <!-- Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Vibrant new background gradient */
+            background: linear-gradient(135deg, #4b0082, #8a2be2, #e75c87);
+            background-attachment: fixed;
+            color: #e5e7eb;
+        }
+        .card {
+            /* Updated card style */
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        .nav-btn.active {
+            transform: translateY(-2px);
+            background-color: #f7b731; /* Vibrant yellow for active state */
+            color: #1f1c2c;
+            font-weight: bold;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .nav-btn:hover:not(.active) {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <main class="max-w-4xl mx-auto space-y-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-white leading-tight">Protein Purification by Charge</h1>
+            <p class="text-lg sm:text-xl text-gray-300 mt-2">Explore the principles behind charge-based separation techniques.</p>
+        </header>
+
+        <!-- Navigation Buttons -->
+        <nav class="flex justify-center space-x-2 sm:space-x-4 mb-8">
+            <button id="navBtn1" class="nav-btn py-2 px-4 sm:px-6 rounded-full text-sm sm:text-base active" onclick="showSection('section1')">Ion Exchange</button>
+            <button id="navBtn2" class="nav-btn py-2 px-4 sm:px-6 rounded-full text-sm sm:text-base" onclick="showSection('section2')">IEF</button>
+            <button id="navBtn3" class="nav-btn py-2 px-4 sm:px-6 rounded-full text-sm sm:text-base" onclick="showSection('section3')">2DGE</button>
+        </nav>
+
+        <!-- Section for Ion Exchange Chromatography -->
+        <section id="section1" class="content-section card p-6 sm:p-8 rounded-2xl shadow-xl space-y-6">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white">1. Ion Exchange Chromatography</h2>
+            <p class="text-gray-200">This technique separates proteins based on their <strong>net charge</strong> at a specific pH. It uses a stationary phase with charged beads that bind to oppositely charged proteins. The separation is achieved by changing the buffer conditions, usually by increasing salt concentration or altering the pH, to elute the bound proteins.</p>
+            <p class="text-gray-200 mt-2">Ion exchange chromatography separates proteins based on their net surface charge. The stationary phase contains charged functional groups that attract oppositely charged proteins. Proteins bind to the column resin through electrostatic interactions and are eluted by increasing the ionic strength of the buffer, which competes with proteins for binding sites.</p>
+
+            <div class="card p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
+                <h3 class="text-xl sm:text-2xl font-semibold text-white">Cation Exchange Chromatography 🧪</h3>
+                <p class="text-gray-300 mt-2">Separates <strong>positively charged</strong> proteins. The stationary phase has a <strong>negative charge</strong>. Positively charged proteins bind to the column, while others flow through. Cation exchange chromatography uses a negatively charged stationary phase to bind positively charged proteins (cations). The stationary phase typically contains functional groups like sulfonate (&ndash;SO<sub>3</sub><sup>&minus;</sup>) or carboxylate (&ndash;COO<sup>&minus;</sup>). Proteins with net positive charge at the operating pH will bind to the column.</p>
+                <!-- SVG Diagram for Cation Exchange -->
+                <div class="w-full mt-4 bg-white rounded-lg shadow-md p-4">
+                    <svg width="100%" height="250" viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#1f2937" />
+                            </marker>
+                        </defs>
+                        <rect x="50" y="20" width="500" height="160" rx="10" ry="10" stroke="#4a5568" stroke-width="2" fill="#e2e8f0" />
+                        <rect x="50" y="10" width="500" height="10" fill="#4a5568" />
+                        <rect x="50" y="180" width="500" height="10" fill="#4a5568" />
+                        <rect x="560" y="20" width="20" height="160" fill="#4a5568" />
+
+                        <!-- Positively charged proteins (bind to column) -->
+                        <circle cx="150" cy="50" r="10" fill="#e75c87" />
+                        <text x="165" y="55" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <circle cx="250" cy="80" r="10" fill="#e75c87" />
+                        <text x="265" y="85" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <circle cx="350" cy="110" r="10" fill="#e75c87" />
+                        <text x="365" y="115" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+
+                        <!-- Negatively charged proteins (flow through) -->
+                        <circle cx="100" cy="130" r="10" fill="#6ee7b7" />
+                        <text x="115" y="135" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <circle cx="200" cy="160" r="10" fill="#6ee7b7" />
+                        <text x="215" y="165" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+
+                        <!-- Column beads with negative charge -->
+                        <circle cx="100" cy="100" r="10" fill="#93c5fd" />
+                        <text x="95" y="105" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <circle cx="200" cy="50" r="10" fill="#93c5fd" />
+                        <text x="195" y="55" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <circle cx="300" cy="140" r="10" fill="#93c5fd" />
+                        <text x="295" y="145" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <text x="320" y="210" fill="#1f2937" font-size="14" font-weight="bold">Column: Negatively Charged Beads</text>
+
+                        <!-- Flow direction arrow - moved to x=590 -->
+                        <line x1="590" y1="50" x2="590" y2="150" stroke="#1f2937" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="590" y="170" text-anchor="middle" fill="#1f2937" font-size="12" font-weight="bold">Flow</text>
+                    </svg>
+                </div>
+                <p class="text-gray-300 mt-2">The diagram shows a cation exchange column. The negatively charged beads in the column (blue circles with a '-') attract and bind to the positively charged proteins (red circles with a '+'). The negatively charged proteins (green circles with a '-') pass through the column and are collected in the flow-through.</p>
+                <div class="mt-4">
+                    <p class="font-semibold text-gray-100">Example:</p>
+                    <p class="text-gray-300">Purification of Lysozyme (pI &asymp; 11) from an extract at pH 7. Lysozyme is positively charged and binds to a cation exchange column. Other proteins with a lower pI will flow through. Lysozyme is then eluted by raising the salt concentration.</p>
+                </div>
+            </div>
+
+            <div class="card p-4 sm:p-6 rounded-xl shadow-lg border border-gray-700">
+                <h3 class="text-xl sm:text-2xl font-semibold text-white">Anion Exchange Chromatography 🧪</h3>
+                <p class="text-gray-300 mt-2">Separates <strong>negatively charged</strong> proteins. The stationary phase has a <strong>positive charge</strong>. Negatively charged proteins bind, while others flow through. Anion exchange chromatography uses a positively charged stationary phase to bind negatively charged proteins (anions). The stationary phase typically contains functional groups like diethylaminoethyl (&ndash;DEAE) or quaternary ammonium (&ndash;Q). Proteins with net negative charge at the operating pH will bind to the column.</p>
+                <!-- SVG Diagram for Anion Exchange -->
+                <div class="w-full mt-4 bg-white rounded-lg shadow-md p-4">
+                    <svg width="100%" height="250" viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#1f2937" />
+                            </marker>
+                        </defs>
+                        <rect x="50" y="20" width="500" height="160" rx="10" ry="10" stroke="#4a5568" stroke-width="2" fill="#e2e8f0" />
+                        <rect x="50" y="10" width="500" height="10" fill="#4a5568" />
+                        <rect x="50" y="180" width="500" height="10" fill="#4a5568" />
+                        <rect x="560" y="20" width="20" height="160" fill="#4a5568" />
+                        
+                        <!-- Positively charged proteins (flow through) -->
+                        <circle cx="100" cy="130" r="10" fill="#e75c87" />
+                        <text x="115" y="135" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <circle cx="200" cy="160" r="10" fill="#e75c87" />
+                        <text x="215" y="165" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        
+                        <!-- Negatively charged proteins (bind to column) -->
+                        <circle cx="150" cy="50" r="10" fill="#6ee7b7" />
+                        <text x="165" y="55" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <circle cx="250" cy="80" r="10" fill="#6ee7b7" />
+                        <text x="265" y="85" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+                        <circle cx="350" cy="110" r="10" fill="#6ee7b7" />
+                        <text x="365" y="115" fill="#1f2937" font-size="12" font-weight="bold">-</text>
+
+                        <!-- Column beads with positive charge -->
+                        <circle cx="100" cy="100" r="10" fill="#93c5fd" />
+                        <text x="95" y="105" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <circle cx="200" cy="50" r="10" fill="#93c5fd" />
+                        <text x="195" y="55" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <circle cx="300" cy="140" r="10" fill="#93c5fd" />
+                        <text x="295" y="145" fill="#1f2937" font-size="12" font-weight="bold">+</text>
+                        <text x="320" y="210" fill="#1f2937" font-size="14" font-weight="bold">Column: Positively Charged Beads</text>
+                        
+                        <!-- Flow direction arrow - moved to x=590 -->
+                        <line x1="590" y1="50" x2="590" y2="150" stroke="#1f2937" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="590" y="170" text-anchor="middle" fill="#1f2937" font-size="12" font-weight="bold">Flow</text>
+                    </svg>
+                </div>
+                <p class="text-gray-300 mt-2">The diagram shows an anion exchange column. The positively charged beads (blue circles with a '+') attract and bind to the negatively charged proteins (green circles with a '-'). The positively charged proteins (red circles with a '+') pass through the column and are collected in the flow-through.</p>
+                <div class="mt-4">
+                    <p class="font-semibold text-gray-100">Example:</p>
+                    <p class="text-gray-300">Purification of a protein with a pI of 4.5 from an extract at pH 7. The protein is negatively charged and binds to an anion exchange column. It is then eluted by increasing the salt concentration.</p>
+                    <p class="font-semibold text-gray-100 mt-4">Separation of serum proteins:</p>
+                    <p class="text-gray-300">Human serum contains albumin (pI &asymp; 4.7) and immunoglobulins (pI &asymp; 5.5-8.3). Using anion exchange chromatography at pH 7.4:</p>
+                    <ul class="list-disc list-inside text-gray-300">
+                        <li>Albumin (negatively charged) binds to the column.</li>
+                        <li>Immunoglobulins (less negative) pass through or elute first.</li>
+                        <li>A salt gradient elutes albumin at higher ionic strength.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section for Isoelectric Focusing -->
+        <section id="section2" class="content-section card p-6 sm:p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white">2. Isoelectric Focusing (IEF)</h2>
+            <p class="text-gray-200">Separates proteins based on their <strong>isoelectric point (pI)</strong>. The pI is the pH at which a protein's net charge is zero. A pH gradient is created across a gel, and an electric field is applied. Proteins migrate through the gel until they reach a pH equal to their pI, at which point their net charge becomes zero and they stop moving.</p>
+            <!-- SVG Diagram for IEF -->
+            <div class="w-full mt-4 bg-white rounded-lg shadow-md p-4">
+                <svg width="100%" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- pH Gradient -->
+                    <defs>
+                        <linearGradient id="phGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#fca5a5;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#93c5fd;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#6ee7b7;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="50" y="50" width="500" height="100" rx="10" ry="10" fill="url(#phGradient)" />
+                    
+                    <!-- Labels -->
+                    <text x="50" y="175" fill="#1f2937" font-size="14" font-weight="bold">pH 1 (Acidic)</text>
+                    <text x="520" y="175" fill="#1f2937" font-size="14" font-weight="bold">pH 14 (Basic)</text>
+                    <text x="270" y="40" fill="#1f2937" font-size="14" font-weight="bold">IEF Gel with pH Gradient</text>
+                    
+                    <!-- Proteins migrating to their pI -->
+                    <circle cx="100" cy="100" r="10" fill="#1f2937" />
+                    <text x="100" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">pI 3</text>
+
+                    <circle cx="200" cy="100" r="10" fill="#1f2937" />
+                    <text x="200" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">pI 5</text>
+
+                    <circle cx="300" cy="100" r="10" fill="#1f2937" />
+                    <text x="300" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">pI 7</text>
+                    
+                    <circle cx="400" cy="100" r="10" fill="#1f2937" />
+                    <text x="400" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">pI 9</text>
+
+                    <circle cx="500" cy="100" r="10" fill="#1f2937" />
+                    <text x="500" y="105" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">pI 12</text>
+                </svg>
+            </div>
+            <p class="text-gray-300 mt-2">This diagram shows a gel with a pH gradient, ranging from acidic (pH 1) on the left to basic (pH 14) on the right. Proteins are loaded and an electric current is applied. Each protein migrates along the gel until it reaches the pH where its net charge is zero, known as its isoelectric point (pI). At this point, it stops moving, resulting in distinct bands based on pI.</p>
+            <div class="mt-4">
+                <p class="font-semibold text-gray-100">Example:</p>
+                <p class="text-gray-300">Separation of Hemoglobin variants with different pI values. For example, hemoglobin A (pI &asymp; 7.1) and hemoglobin S (pI &asymp; 7.2) can be separated in a pH gradient. The small difference in charge at a specific pH causes them to stop at different points, allowing for their resolution.</p>
+            </div>
+        </section>
+
+        <!-- Section for 2D Gel Electrophoresis -->
+        <section id="section3" class="content-section card p-6 sm:p-8 rounded-2xl shadow-xl space-y-6 hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white">3. Two-Dimensional Gel Electrophoresis (2DGE)</h2>
+            <p class="text-gray-200">A powerful technique that combines two separation methods: IEF (by pI) in the first dimension, followed by SDS-PAGE (by size) in the second dimension. This allows for the separation of thousands of proteins from a complex mixture, creating a protein map.</p>
+            <!-- SVG Diagram for 2DGE -->
+            <div class="w-full mt-4 bg-white rounded-lg shadow-md p-4">
+                <svg width="100%" height="300" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="50" width="500" height="200" fill="#e2e8f0" stroke="#4a5568" stroke-width="2" />
+                    
+                    <!-- Axes and Labels -->
+                    <line x1="50" y1="250" x2="550" y2="250" stroke="#1f2937" stroke-width="2" />
+                    <line x1="50" y1="50" x2="50" y2="250" stroke="#1f2937" stroke-width="2" />
+                    
+                    <text x="300" y="275" text-anchor="middle" fill="#1f2937" font-size="14" font-weight="bold">Isoelectric Point (pI)</text>
+                    <text x="25" y="150" text-anchor="middle" transform="rotate(-90, 25, 150)" fill="#1f2937" font-size="14" font-weight="bold">Molecular Weight</text>
+
+                    <text x="50" y="265" text-anchor="start" fill="#1f2937" font-size="12">Low</text>
+                    <text x="550" y="265" text-anchor="end" fill="#1f2937" font-size="12">High</text>
+                    <text x="45" y="250" text-anchor="end" fill="#1f2937" font-size="12">High</text>
+                    <text x="45" y="50" text-anchor="end" fill="#1f2937" font-size="12">Low</text>
+                    
+                    <!-- Protein Spots -->
+                    <circle cx="150" cy="180" r="5" fill="#e75c87" />
+                    <circle cx="200" cy="120" r="5" fill="#f7b731" />
+                    <circle cx="300" cy="220" r="5" fill="#6ee7b7" />
+                    <circle cx="400" cy="100" r="5" fill="#93c5fd" />
+                    <circle cx="450" cy="150" r="5" fill="#e75c87" />
+                    <circle cx="180" cy="200" r="5" fill="#f7b731" />
+                    <circle cx="350" cy="80" r="5" fill="#6ee7b7" />
+                    <circle cx="480" cy="230" r="5" fill="#93c5fd" />
+                </svg>
+            </div>
+            <p class="text-gray-300 mt-2">The diagram shows a 2D gel. The horizontal axis represents the <strong>isoelectric point (pI)</strong>, separating proteins by charge from low to high. The vertical axis represents <strong>molecular weight</strong>, separating proteins by size from low to high. Each dot on the gel is a unique protein separated from the complex mixture. This creates a powerful "map" of the protein sample.</p>
+            <div class="mt-4">
+                <p class="font-semibold text-gray-100">Example:</p>
+                <p class="text-gray-300">Analyzing the proteome of a cell before and after a stimulus. 2DGE can reveal which proteins have changed in abundance, providing a detailed picture of the cellular response.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-12 py-8">
+        <div class="flex flex-col items-center">
+            <img id="footer-logo" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="h-16 w-16 mb-4">
+            <p class="text-gray-400 text-sm">© 2025 BETA Biosciences. All rights reserved.</p>
+            <p class="text-gray-400 text-sm">Email: betabiosciences@gmail.com</p>
+            <p class="text-gray-400 text-sm">Contact: +91 97 47 53 35 97</p>
+        </div>
+    </footer>
+
+    <script>
+        // Main function to show the selected section and update button styles
+        function showSection(sectionId) {
+            // Get all sections and navigation buttons
+            const sections = document.querySelectorAll('.content-section');
+            const navButtons = document.querySelectorAll('.nav-btn');
+
+            // Hide all sections
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Deactivate all navigation buttons
+            navButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show the selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
+
+            // Activate the corresponding button
+            const selectedButton = document.getElementById(`navBtn${sectionId.slice(-1)}`);
+            if (selectedButton) {
+                selectedButton.classList.add('active');
+            }
+        }
+
+        // Add event listener to disable Ctrl+P for printing
+        window.addEventListener('keydown', function(event) {
+            // Check for Ctrl/Cmd + P
+            if ((event.ctrlKey || event.metaKey) && event.key === 'p') {
+                event.preventDefault();
+                console.log("Print functionality is disabled for this page.");
+            }
+        });
+
+        // Add a security check for the footer logo.
+        // If the image fails to load, it will clear the webpage body.
+        const footerLogo = document.getElementById('footer-logo');
+        if (footerLogo) {
+            footerLogo.onerror = function() {
+                console.error('The footer logo failed to load. The webpage is being disabled for security purposes.');
+                document.body.innerHTML = '';
+            };
+        }
+    </script>
+</body>
+</html>
