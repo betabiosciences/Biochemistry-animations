@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Absorption Spectroscopy Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#0ea5e9; --bg2:#9333ea; --bg3:#22c55e; --card:#0b1020ee; --accent:#22d3ee;
+    }
+    html,body{font-family:"Poppins",system-ui,ui-sans-serif;scroll-behavior:smooth;}
+    body{
+      background:
+        radial-gradient(1200px 600px at 10% 0%, rgba(255,255,255,.08), transparent 40%),
+        linear-gradient(135deg, #0ea5e9 0%, #9333ea 55%, #22c55e 100%);
+    }
+    /* Soft blobs */
+    .blob{position:absolute; filter:blur(40px); opacity:.25; border-radius:50%; animation:float 18s ease-in-out infinite;}
+    .blob2{animation-duration:24s;} .blob3{animation-duration:28s;}
+    @keyframes float{0%,100%{transform:translateY(0) translateX(0) scale(1)}50%{transform:translateY(-20px) translateX(10px) scale(1.05)}}
+    /* Glow cards and scrollbar */
+    .glow:hover{box-shadow:0 8px 40px rgba(34,211,238,.25), inset 0 0 0 1px rgba(255,255,255,.1)}
+    ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#22d3ee,#a78bfa);border-radius:9999px}::-webkit-scrollbar-track{background:rgba(255,255,255,.08)}
+    /* Tooltip */
+    .tip{position:relative} .tip:hover .tip-box{opacity:1;transform:translateY(-6px)} .tip-box{position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:#0b1020;color:#fff;padding:.5rem .75rem;border-radius:.5rem;opacity:0;transition:.2s;white-space:nowrap;border:1px solid rgba(255,255,255,.12)}
+    /* Security show/hide: keep page blank until watermark verified */
+    body.secure-hide { visibility: hidden; }
+    /* Watermark style for all figures */
+    .wm { position:absolute; right:8px; bottom:8px; width:34px; height:auto; opacity:.25; pointer-events:none; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+    /* Hide everything when printing */
+    @media print {
+      body { display: none !important; }
+    }
+  </style>
+</head>
+<body class="text-white secure-hide h-full" data-verified="no">
+  <!-- Ambient blobs -->
+  <div class="blob w-72 h-72 bg-cyan-400/40 -top-10 -left-10"></div>
+  <div class="blob blob2 w-96 h-96 bg-fuchsia-500/40 top-40 -right-16"></div>
+  <div class="blob blob3 w-80 h-80 bg-emerald-400/40 bottom-10 left-1/3"></div>
+
+  <!-- Invisible key watermark image for security check -->
+  <img id="wmKey" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="wmkey" class="hidden" crossorigin="anonymous"/>
+
+  <!-- Header (tabs removed as requested) -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-black/30 border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="text-xl sm:text-2xl font-bold">Absorption Spectroscopy Lab</h1>
+      </div>
+      <!-- No navigation tabs here -->
+    </div>
+  </header>
+
+  <!-- Hero: only spectrum (text removed as requested) -->
+  <section class="max-w-6xl mx-auto px-4 pt-8 pb-4 relative">
+    <div class="rounded-2xl bg-[var(--card)]/90 border border-white/10 p-3 sm:p-4 glow relative overflow-hidden">
+      <div class="rounded-xl overflow-hidden border border-white/10 relative">
+        <div class="h-24 sm:h-28 w-full" style="background:linear-gradient(90deg, #6b21a8 0%, #3b82f6 20%, #22d3ee 40%, #22c55e 60%, #eab308 80%, #f97316 90%, #ef4444 100%);"></div>
+        <!-- Watermark -->
+        <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Navigator (one section at a time) -->
+  <main id="lesson" class="max-w-6xl mx-auto px-4 pb-6">
+    <!-- Section container -->
+    <div id="sectionContainer" class="rounded-2xl bg-[var(--card)] border border-white/10 p-6 sm:p-8 glow relative overflow-hidden">
+      <!-- Fundamentals -->
+      <section data-section="fundamentals" class="section">
+        <h2 class="text-2xl font-bold">Fundamentals of Absorption</h2>
+        <p class="text-white/80 mt-2">When light passes through a sample, some energies are taken up by the sample’s particles. Each allowed “jump” creates a dip in transmitted light at a specific wavelength—this pattern is a spectrum.</p>
+
+        <div class="mt-5 grid md:grid-cols-2 gap-6">
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10">
+            <h4 class="font-semibold">Pick a wavelength</h4>
+            <input id="lambda" type="range" min="200" max="700" value="500" class="w-full mt-3">
+            <div class="mt-3 rounded-xl h-10 border border-white/10 overflow-hidden relative">
+              <div id="colorBar" class="h-full" style="background:linear-gradient(90deg, #6b21a8, #3b82f6, #22d3ee, #22c55e, #eab308, #f97316, #ef4444);"></div>
+              <!-- Watermark -->
+              <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+            </div>
+            <div class="mt-2 text-sm">λ = <span id="lambdaVal" class="font-semibold">500</span> nm • Energy ~ <span id="energyVal" class="font-semibold">2.48</span> eV</div>
+          </div>
+
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10">
+            <h4 class="font-semibold">Concentration effect</h4>
+            <div class="mt-3 flex items-center gap-3">
+              <span class="text-sm">Relative amount</span>
+              <input id="concSlider" type="range" min="0" max="100" value="30" class="w-full">
+              <span class="w-12 text-right"><span id="concVal">0.30</span>x</span>
+            </div>
+            <div class="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+              <div id="absBar" class="h-full bg-emerald-400" style="width:30%"></div>
+            </div>
+            <div class="text-xs text-white/70 mt-1">Higher concentration → stronger absorption</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Orbitals and Electronic Transitions (IR section removed) -->
+      <section data-section="orbitals" class="section hidden">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <h2 class="text-2xl font-bold">Electronic Excitation & Orbitals</h2>
+          <span class="px-3 py-1 rounded-full bg-cyan-400/20 border border-cyan-300/40 text-cyan-200 text-sm">UV–Vis: ~200–800 nm</span>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-6 mt-6">
+          <div>
+            <h4 class="font-semibold">Bonding vs antibonding</h4>
+            <div class="mt-3 space-y-3 text-white/80">
+              <div class="rounded-lg p-3 bg-black/30 border border-white/10">
+                <span class="font-semibold text-emerald-300">Bonding orbitals (σ, π)</span><br>
+                Electron density lies between nuclei, pulling atoms together. Fewer nodes (regions of zero electron density). Lower energy, stabilizing.
+              </div>
+              <div class="rounded-lg p-3 bg-black/30 border border-white/10">
+                <span class="font-semibold text-pink-300">Antibonding orbitals (σ*, π*)</span><br>
+                A node sits between nuclei, pushing atoms apart. More nodes. Higher energy, destabilizing. Occupying these weakens the bond.
+              </div>
+              <div class="rounded-lg p-3 bg-black/30 border border-white/10">
+                <span class="font-semibold text-cyan-300">Non‑bonding (n)</span><br>
+                Lone pairs that are mostly on one atom. They often jump to π* or σ* in the UV region.
+              </div>
+              <div class="rounded-lg p-3 bg-black/30 border border-white/10">
+                <span class="font-semibold">Selection tips</span>
+                <ul class="mt-2 list-disc ml-5 space-y-1">
+                  <li>σ → σ*: needs the most energy (far UV).</li>
+                  <li>π → π*: strong, moves to longer λ with more conjugation.</li>
+                  <li>n → π*: moderate, often gives pale colors.</li>
+                  <li>n → σ*: UV, common in saturated groups with heteroatoms.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clearer interactive map -->
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10 relative overflow-hidden">
+            <h4 class="font-semibold mb-2">Transition map</h4>
+            <div class="flex gap-2 mb-3 flex-wrap">
+              <button class="tBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-t="sigmasigma">σ → σ*</button>
+              <button class="tBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-t="pipistar">π → π*</button>
+              <button class="tBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-t="npistar">n → π*</button>
+              <button class="tBtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-t="nsigma">n → σ*</button>
+            </div>
+            <div class="relative">
+              <svg id="orbitalMap" viewBox="0 0 520 260" class="w-full rounded-lg bg-white/5">
+                <!-- Axes -->
+                <line x1="60" y1="220" x2="500" y2="220" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="60" y1="30" x2="60" y2="220" stroke="#94a3b8" stroke-width="2"/>
+                <text x="10" y="30" fill="#94a3b8" font-size="12">Energy ↑</text>
+                <!-- Level bands -->
+                <g font-size="12">
+                  <!-- Bonding -->
+                  <line x1="90" x2="480" y1="190" y2="190" stroke="#34d399" stroke-width="3"></line>
+                  <text x="20" y="193" fill="#34d399">σ (bonding)</text>
+                  <line x1="90" x2="480" y1="165" y2="165" stroke="#34d399" stroke-width="3"></line>
+                  <text x="20" y="168" fill="#34d399">π (bonding)</text>
+                  <!-- Non-bonding -->
+                  <line x1="90" x2="480" y1="140" y2="140" stroke="#22d3ee" stroke-width="3" stroke-dasharray="6 4"></line>
+                  <text x="20" y="143" fill="#22d3ee">n (lone pair)</text>
+                  <!-- Antibonding -->
+                  <line x1="90" x2="480" y1="90" y2="90" stroke="#f472b6" stroke-width="3"></line>
+                  <text x="20" y="93" fill="#f472b6">π*</text>
+                  <line x1="90" x2="480" y1="60" y2="60" stroke="#f472b6" stroke-width="3"></line>
+                  <text x="20" y="63" fill="#f472b6">σ*</text>
+                </g>
+                <!-- Arrows (turned on by buttons) -->
+                <g id="t_sigma" opacity="0">
+                  <path d="M 130 188 C 170 150, 240 100, 380 62" stroke="#f59e0b" stroke-width="4" fill="none"></path>
+                  <polygon points="380,62 370,68 373,56" fill="#f59e0b"></polygon>
+                </g>
+                <g id="t_pipi" opacity="0">
+                  <path d="M 180 163 C 230 140, 280 120, 360 92" stroke="#f59e0b" stroke-width="4" fill="none"></path>
+                  <polygon points="360,92 350,98 352,86" fill="#f59e0b"></polygon>
+                </g>
+                <g id="t_npi" opacity="0">
+                  <path d="M 240 138 C 270 125, 300 110, 340 92" stroke="#f59e0b" stroke-width="4" fill="none" stroke-dasharray="6 5"></path>
+                  <polygon points="340,92 330,98 332,86" fill="#f59e0b"></polygon>
+                </g>
+                <g id="t_nsigma" opacity="0">
+                  <path d="M 280 138 C 320 110, 360 85, 420 62" stroke="#f59e0b" stroke-width="4" fill="none" stroke-dasharray="6 5"></path>
+                  <polygon points="420,62 410,68 412,56" fill="#f59e0b"></polygon>
+                </g>
+              </svg>
+              <!-- Watermark -->
+              <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+            </div>
+            <div id="transitionInfo" class="mt-3 text-sm text-white/80">Choose a button to highlight a transition and see where it sits in energy.</div>
+            <div id="transitionHint" class="mt-3 rounded-lg p-3 bg-white/5 border border-white/10 text-sm">
+              Hint: Longer arrows mean bigger energy gaps, which correspond to shorter wavelengths (toward UV).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- UV–Visible -->
+      <section data-section="uvvis" class="section hidden">
+        <h2 class="text-2xl font-bold">UV–Visible Absorption</h2>
+        <p class="text-white/80 mt-2">
+          UV–Vis probes electron jumps between orbitals. Conjugation (linked double bonds) narrows the energy gap, shifting peaks to longer wavelengths (red shift).
+          Substituents and solvent can fine‑tune both peak position and intensity.
+        </p>
+        <ul class="mt-3 list-disc ml-5 text-white/80 space-y-1">
+          <li>π → π* in conjugated systems is typically strong and can enter the visible region.</li>
+          <li>n → π* transitions are weaker (often pale) and sensitive to environment (e.g., hydrogen bonding).</li>
+          <li>Broader peaks can come from many closely spaced vibronic levels in solution.</li>
+        </ul>
+
+        <div class="grid md:grid-cols-2 gap-6 mt-6">
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10">
+            <h4 class="font-semibold">Conjugation explorer</h4>
+            <div class="mt-3 flex items-center gap-3">
+              <span class="text-sm">Double bonds in a row</span>
+              <input id="conjSlider" type="range" min="1" max="10" value="3" class="w-full">
+              <span class="w-10 text-right" id="conjVal">3</span>
+            </div>
+            <div class="mt-4">
+              <div class="text-sm">Predicted peak near <span id="conjPeak" class="font-semibold">280</span> nm</div>
+              <div class="mt-2 h-8 w-full rounded-full border border-white/10 overflow-hidden relative">
+                <div id="conjColor" class="h-full" style="background:#a78bfa"></div>
+                <!-- Watermark -->
+                <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+              </div>
+              <div class="text-xs text-white/70 mt-1">More conjugation → longer wavelength (red shift)</div>
+            </div>
+          </div>
+
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10 relative overflow-hidden">
+            <h4 class="font-semibold">Simulated spectrum</h4>
+            <svg id="uvPlot" viewBox="0 0 360 160" class="w-full rounded-lg bg-white/5">
+              <rect x="0" y="0" width="360" height="160" fill="transparent"/>
+              <line x1="40" y1="130" x2="340" y2="130" stroke="#94a3b8" stroke-width="2"/>
+              <line x1="40" y1="20" x2="40" y2="130" stroke="#94a3b8" stroke-width="2"/>
+              <text x="5" y="20" fill="#94a3b8" font-size="12">A</text>
+              <text x="300" y="145" fill="#94a3b8" font-size="12">Wavelength (nm)</text>
+              <defs>
+                <linearGradient id="uvGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.7"/>
+                  <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.05"/>
+                </linearGradient>
+              </defs>
+              <path id="uvCurve" d="" fill="url(#uvGrad)" stroke="#22d3ee" stroke-width="2" opacity="0.9"></path>
+            </svg>
+            <!-- Watermark -->
+            <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+            <div class="mt-2 text-xs text-white/80">A stylized curve that follows the current predicted peak and width.</div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-xl p-4 bg-black/30 border border-white/10">
+          <h4 class="font-semibold">Practical notes</h4>
+          <ul class="mt-2 text-white/80 space-y-1 list-disc ml-5">
+            <li>Keep absorbance in a sensible range (roughly 0.1–1.5) for best linearity.</li>
+            <li>Use quartz cuvettes for measurements below ~320 nm (glass absorbs UV).</li>
+            <li>Baseline with pure solvent; match cuvette orientation to reduce stray differences.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Beer–Lambert -->
+      <section data-section="beer" class="section hidden">
+        <h2 class="text-2xl font-bold">Beer–Lambert Law</h2>
+        <p class="text-white/80 mt-2">
+          The law links absorbance (A) to how much absorbing species you have and how far light travels: A = ε × c × l.
+        </p>
+
+        <div class="mt-4 grid lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 rounded-xl p-4 bg-black/30 border border-white/10 relative overflow-hidden">
+            <h4 class="font-semibold">Interactive calculator</h4>
+            <div class="grid sm:grid-cols-2 gap-4 mt-3">
+              <div>
+                <label class="text-sm text-white/80">Solve for</label>
+                <select id="solveFor" class="mt-1 w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+                  <option value="A">Absorbance (A)</option>
+                  <option value="e">Molar absorptivity (ε)</option>
+                  <option value="c">Concentration (c)</option>
+                  <option value="l">Path length (l)</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm text-white/80">Concentration units</label>
+                <div class="mt-1 grid grid-cols-3 gap-2 text-xs">
+                  <button data-unit="M" class="unitBtn px-2 py-2 rounded-lg bg-emerald-400 text-black font-semibold">M</button>
+                  <button data-unit="mM" class="unitBtn px-2 py-2 rounded-lg bg-white/10">mM</button>
+                  <button data-unit="µM" class="unitBtn px-2 py-2 rounded-lg bg-white/10">µM</button>
+                </div>
+              </div>
+            </div>
+            <div class="grid sm:grid-cols-4 gap-3 mt-4">
+              <div>
+                <label class="text-sm">A</label>
+                <input id="A" type="number" step="0.0001" value="0.800" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">ε (M⁻¹·cm⁻¹)</label>
+                <input id="e" type="number" step="1" value="15000" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">c</label>
+                <input id="c" type="number" step="0.000001" value="0.00005" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">l (cm)</label>
+                <input id="l" type="number" step="0.01" value="1.00" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button id="calcBeer" class="px-4 py-2 rounded-lg bg-cyan-400 text-black font-semibold hover:bg-cyan-300">Calculate</button>
+              <button id="resetBeer" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Reset</button>
+              <div id="beerMsg" class="text-sm text-white/80"></div>
+            </div>
+            <div class="mt-4 rounded-lg p-3 bg-white/5 border border-white/10 text-sm">
+              Tip: If A is above ~1.5, too little light gets through—dilute your sample for better accuracy.
+            </div>
+            <!-- Watermark -->
+            <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+          </div>
+
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10">
+            <h4 class="font-semibold">What each term means</h4>
+            <ul class="mt-2 text-white/80 space-y-2">
+              <li><span class="text-emerald-300 font-semibold">A (absorbance):</span> a measure of light loss; unitless. A = −log₁₀(T), where T is transmittance.</li>
+              <li><span class="text-emerald-300 font-semibold">ε (molar absorptivity):</span> how strongly a substance absorbs at a given wavelength; units M⁻¹·cm⁻¹. Depends on the transition and λ.</li>
+              <li><span class="text-emerald-300 font-semibold">c (concentration):</span> amount of substance per volume. Choose consistent units; here M (mol/L) is used with ε.</li>
+              <li><span class="text-emerald-300 font-semibold">l (path length):</span> how far light travels through the sample, usually 1.00 cm in standard cuvettes.</li>
+            </ul>
+            <div class="mt-3 rounded-lg p-3 bg-white/5 border border-white/10 text-sm">
+              Limitations: high concentrations can scatter light or change refractive index; chemical equilibria can shift with concentration or solvent; stray light flattens curves at high A.
+            </div>
+
+            <div class="mt-4">
+              <button id="showTrans" class="px-3 py-2 rounded-lg bg-emerald-400 text-black font-semibold hover:bg-emerald-300">Show transmittance</button>
+              <div id="transBarWrap" class="hidden mt-3">
+                <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div id="transBar" class="h-full bg-emerald-400" style="width:16%"></div>
+                </div>
+                <div class="text-xs text-white/80 mt-1">Light through sample</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- New: Absorption Spectrum Simulator -->
+        <div class="mt-6 grid lg:grid-cols-3 gap-6">
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10 lg:col-span-1">
+            <h4 class="font-semibold">Absorption Spectrum Simulator</h4>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button class="simSample px-3 py-2 rounded-lg bg-emerald-400 text-black font-semibold" data-sample="protein">Protein</button>
+              <button class="simSample px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-sample="dna">DNA</button>
+              <button class="simSample px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20" data-sample="organic">Organic</button>
+            </div>
+            <div class="mt-4">
+              <label class="text-sm">Concentration (arbitrary)</label>
+              <input id="simC" type="range" min="0" max="100" value="40" class="w-full">
+              <div class="text-xs text-white/70 mt-1">Current: <span id="simCVal">0.40</span></div>
+            </div>
+            <div class="mt-4">
+              <label class="text-sm">Path length (cm)</label>
+              <input id="simL" type="range" min="1" max="20" value="10" class="w-full">
+              <div class="text-xs text-white/70 mt-1">Current: <span id="simLVal">1.0</span> cm</div>
+            </div>
+          </div>
+
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10 lg:col-span-2 relative overflow-hidden">
+            <h4 class="font-semibold">Simulated spectrum (A vs λ)</h4>
+            <svg id="simPlot" viewBox="0 0 460 200" class="w-full rounded-lg bg-white/5">
+              <rect x="0" y="0" width="460" height="200" fill="transparent"/>
+              <line x1="50" y1="170" x2="430" y2="170" stroke="#94a3b8" stroke-width="2"/>
+              <line x1="50" y1="30" x2="50" y2="170" stroke="#94a3b8" stroke-width="2"/>
+              <text x="20" y="35" fill="#94a3b8" font-size="12">A</text>
+              <text x="360" y="185" fill="#94a3b8" font-size="12">Wavelength (nm)</text>
+              <defs>
+                <linearGradient id="simGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.8"/>
+                  <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.06"/>
+                </linearGradient>
+              </defs>
+              <path id="simCurve" d="" fill="url(#simGrad)" stroke="#a78bfa" stroke-width="2" opacity="0.95"></path>
+              <!-- Dynamic wavelength marker -->
+              <line id="simMarker" x1="-100" y1="30" x2="-100" y2="170" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+              <text id="simMarkerText" x="-100" y="185" fill="#f59e0b" font-size="11" text-anchor="middle"></text>
+            </svg>
+            <!-- Watermark -->
+            <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+            <div class="mt-2 text-xs text-white/80">Peaks and intensity respond to sample type and sliders.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Proteins -->
+      <section data-section="proteins" class="section hidden">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <h2 class="text-2xl font-bold">Protein Extinction at 280 nm</h2>
+          <span class="px-3 py-1 rounded-full bg-fuchsia-400/20 border border-fuchsia-300/40 text-fuchsia-200 text-sm">Rule of thumb at 280 nm</span>
+        </div>
+        <p class="text-white/80 mt-2">Estimate ε(280) from aromatic residues: ε ≈ 5500×Trp + 1490×Tyr + 125×Cystine (Cys pairs). Then use A = εcl to predict A280.</p>
+
+        <div class="grid lg:grid-cols-2 gap-6 mt-6">
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10">
+            <h4 class="font-semibold">Sequence helper</h4>
+            <label class="text-sm text-white/80">Paste a protein sequence (single-letter)</label>
+            <textarea id="seq" rows="5" class="mt-2 w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10" placeholder="MVLSEGEWQLVLHVWAK..."></textarea>
+
+            <div class="grid grid-cols-3 gap-3 mt-3">
+              <div>
+                <label class="text-sm">Trp (W)</label>
+                <input id="Trp" type="number" value="0" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">Tyr (Y)</label>
+                <input id="Tyr" type="number" value="0" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">Cys (C)</label>
+                <input id="Cys" type="number" value="0" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+            </div>
+
+            <div class="mt-3 text-sm text-white/80">
+              Count method:
+              <label class="inline-flex items-center gap-2 ml-2">
+                <input type="radio" name="cysMode" value="pairs" checked class="accent-emerald-400"> assume disulfide pairs
+              </label>
+              <label class="inline-flex items-center gap-2 ml-4">
+                <input type="radio" name="cysMode" value="none" class="accent-emerald-400"> ignore disulfides
+              </label>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-3 mt-4">
+              <div>
+                <label class="text-sm">Path (cm)</label>
+                <input id="l280" type="number" value="1.0" step="0.01" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">Conc (mg/mL)</label>
+                <input id="mgml" type="number" value="1.0" step="0.01" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+              <div>
+                <label class="text-sm">MW (kDa)</label>
+                <input id="mw" type="number" value="50" step="0.1" class="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/10">
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center gap-3">
+              <button id="calcProt" class="px-4 py-2 rounded-lg bg-emerald-400 text-black font-semibold hover:bg-emerald-300">Calculate ε and A280</button>
+              <button id="resetProt" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Reset</button>
+            </div>
+          </div>
+
+          <div class="rounded-xl p-4 bg-black/30 border border-white/10 relative overflow-hidden">
+            <h4 class="font-semibold">Results</h4>
+            <div class="mt-2 space-y-2 text-white/80">
+              <div>Residue counts: W=<span id="Wout">0</span>, Y=<span id="Yout">0</span>, C=<span id="Cout">0</span>, Cystine=<span id="CystineOut">0</span></div>
+              <div>ε(280) = <span id="eps280" class="font-semibold text-emerald-300">0</span> M⁻¹·cm⁻¹</div>
+              <div>Concentration c = <span id="cM" class="font-semibold">0.000e+0</span> M</div>
+              <div>Predicted A280 (εcl) = <span id="A280" class="font-semibold text-cyan-300">0.00</span></div>
+            </div>
+            <div class="mt-3 rounded-lg p-3 bg-white/5 border border-white/10 text-sm">
+              Note: Real proteins can deviate due to environment, scattering, or unfolding.
+            </div>
+            <!-- Watermark -->
+            <img class="wm" src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA watermark" crossorigin="anonymous"/>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quiz -->
+      <section data-section="quiz" class="section hidden">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <h2 class="text-2xl font-bold">Review Quiz</h2>
+          <span id="quizProgress" class="px-3 py-1 rounded-full bg-white/10 text-sm">Q1 of 10</span>
+        </div>
+        <div id="quizCard" class="mt-4 rounded-xl p-4 bg-black/30 border border-white/10">
+          <div id="quizQ" class="text-lg font-semibold">Loading…</div>
+          <div id="quizOptions" class="mt-4 grid sm:grid-cols-2 gap-3"></div>
+          <div id="quizFeedback" class="mt-3 text-sm"></div>
+          <div class="mt-4 flex items-center gap-3">
+            <button id="submitAns" class="px-4 py-2 rounded-lg bg-cyan-400 text-black font-semibold hover:bg-cyan-300">Submit</button>
+            <button id="nextQ" class="px-4 py-2 rounded-lg bg-emerald-400 text-black font-semibold hover:bg-emerald-300 hidden">Next</button>
+            <button id="restartQuiz" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 hidden">Restart</button>
+            <div id="quizScore" class="ml-auto text-sm text-white/80">Score: 0</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Section navigation -->
+    <div class="mt-4 flex items-center justify-between gap-3">
+      <button id="prevBtn" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Previous</button>
+      <div class="flex items-center gap-2 text-sm">
+        <span id="secLabel" class="px-3 py-1 rounded-full bg-white/10">Fundamentals</span>
+      </div>
+      <button id="nextBtn" class="px-4 py-2 rounded-lg bg-cyan-400 text-black font-semibold hover:bg-cyan-300">Next</button>
+    </div>
+  </main>
+
+  <!-- New Footer with provided logo and contact -->
+  <footer class="max-w-6xl mx-auto px-4 py-8">
+    <div class="rounded-2xl p-6 bg-black/30 border border-white/10 flex flex-col items-center text-center gap-4">
+      <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences" class="w-14 h-auto" crossorigin="anonymous">
+      <div class="text-white/90 text-sm leading-relaxed">
+        © 2025 BETA Biosciences. All rights reserved.<br/>
+        Email: betabiosciences@gmail.com<br/>
+        Contact: +91 97 47 53 35 97
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ----- Security layer to enforce watermark presence -----
+    (function(){
+      const body = document.body;
+      const keyImg = document.getElementById('wmKey');
+
+      function verifyWatermarks(){
+        const wms = Array.from(document.querySelectorAll('img.wm'));
+        const enough = wms.length >= 3;
+        const allLoaded = wms.every(i => i.complete && i.naturalWidth > 0);
+        const keyLoaded = keyImg && keyImg.complete && keyImg.naturalWidth > 0;
+        return enough && allLoaded && keyLoaded;
+      }
+
+      function showOrBlank(){
+        if(verifyWatermarks()){
+          body.classList.remove('secure-hide');
+          body.setAttribute('data-verified','yes');
+        } else {
+          // keep it blank
+          body.setAttribute('data-verified','no');
+          // ensure blank view
+          body.classList.add('secure-hide');
+        }
+      }
+
+      // Observe removal or mutation of watermark images, then blank the page
+      const observer = new MutationObserver((mutations)=>{
+        for(const m of mutations){
+          if(m.removedNodes){
+            for(const n of m.removedNodes){
+              if(n.nodeType===1 && n.matches && n.matches('img.wm')) {
+                document.body.innerHTML = ''; // permanently blank
+                return;
+              }
+            }
+          }
+          if(m.target && m.target.matches && m.target.matches('img.wm')){
+            document.body.innerHTML = '';
+            return;
+          }
+        }
+      });
+      observer.observe(document.documentElement, { childList:true, subtree:true, attributes:true, attributeFilter:['src','class'] });
+
+      // Wait for key image to load or error
+      function onReadyCheck(){
+        // If key image fails to load, blank page
+        if(!(keyImg && keyImg.complete && keyImg.naturalWidth > 0)){
+          // Re-check shortly to allow load
+          setTimeout(showOrBlank, 50);
+        }
+        showOrBlank();
+      }
+      if(keyImg){
+        keyImg.addEventListener('load', onReadyCheck);
+        keyImg.addEventListener('error', ()=>{ document.body.innerHTML=''; });
+      }
+      // Also check after DOM is ready
+      document.addEventListener('DOMContentLoaded', onReadyCheck);
+      window.addEventListener('load', onReadyCheck);
+
+      // Block common print and screenshot shortcuts
+      document.addEventListener('keydown', (e)=>{
+        const key = e.key.toLowerCase();
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+        const mod = isMac ? e.metaKey : e.ctrlKey;
+        // Ctrl/Cmd+P (Print)
+        if(mod && key==='p'){
+          e.preventDefault(); e.stopPropagation(); alert('Printing is disabled on this page.'); return false;
+        }
+        // Ctrl/Cmd+S (Save), Ctrl/Cmd+Shift+S
+        if(mod && (key==='s')){ e.preventDefault(); e.stopPropagation(); alert('Save is disabled on this page.'); return false; }
+        // PrintScreen (some browsers report as key "PrintScreen")
+        if(key==='printscreen'){
+          e.preventDefault(); e.stopPropagation(); alert('Screenshots are disabled on this page.'); return false;
+        }
+      }, true);
+      // Attempt to clear clipboard after PrintScreen on some systems
+      window.addEventListener('keyup', (e)=>{
+        if(e.key && e.key.toLowerCase()==='printscreen'){
+          navigator.clipboard && navigator.clipboard.writeText('Screenshots are disabled.');
+        }
+      });
+    })();
+
+    // ----- Fundamentals controls -----
+    const lambda = document.getElementById('lambda');
+    const lambdaVal = document.getElementById('lambdaVal');
+    const energyVal = document.getElementById('energyVal');
+    function updateEnergy(){
+      const nm = Number(lambda.value);
+      lambdaVal.textContent = nm;
+      const e = (1240/nm).toFixed(2); // eV approx
+      energyVal.textContent = e;
+    }
+    if(lambda){ lambda.addEventListener('input', updateEnergy); updateEnergy(); }
+
+    const concSlider = document.getElementById('concSlider');
+    const concVal = document.getElementById('concVal');
+    const absBar = document.getElementById('absBar');
+    if(concSlider){
+      concSlider.addEventListener('input', ()=>{
+        const val = (concSlider.value/100).toFixed(2);
+        concVal.textContent = val;
+        absBar.style.width = (concSlider.value)+'%';
+      });
+    }
+
+    // ----- Orbitals map buttons -----
+    const tBtns = document.querySelectorAll('.tBtn');
+    const t_sigma = document.getElementById('t_sigma');
+    const t_pipi = document.getElementById('t_pipi');
+    const t_npi = document.getElementById('t_npi');
+    const t_nsigma = document.getElementById('t_nsigma');
+    const transitionInfo = document.getElementById('transitionInfo');
+
+    function clearArrows(){ [t_sigma,t_pipi,t_npi,t_nsigma].forEach(g=>g && g.setAttribute('opacity','0')); }
+    tBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        clearArrows();
+        tBtns.forEach(b=>b.classList.remove('bg-cyan-400','text-black','font-semibold'));
+        btn.classList.add('bg-cyan-400','text-black','font-semibold');
+        const t = btn.getAttribute('data-t');
+        const hint = document.getElementById('transitionHint');
+        if(t==='sigmasigma'){ t_sigma.setAttribute('opacity','1'); transitionInfo.textContent='σ → σ*: far UV, very large gap, strongest energies.'; hint.innerHTML = 'Typical wavelength: 150–200 nm (far UV).'; }
+        if(t==='pipistar'){ t_pipi.setAttribute('opacity','1'); transitionInfo.textContent='π → π*: moves to longer λ as conjugation grows; often strong.'; hint.innerHTML = 'Typical wavelength: 200–400+ nm (UV to visible with strong conjugation).'; }
+        if(t==='npistar'){ t_npi.setAttribute('opacity','1'); transitionInfo.textContent='n → π*: moderate intensity; sensitive to solvent and hydrogen bonding.'; hint.innerHTML = 'Typical wavelength: 280–400 nm (UV).'; }
+        if(t==='nsigma'){ t_nsigma.setAttribute('opacity','1'); transitionInfo.textContent='n → σ*: UV transitions common in saturated heteroatom groups.'; hint.innerHTML = 'Typical wavelength: 180–260 nm (UV).'; }
+      });
+    });
+
+    // ----- UV–Vis simulated spectrum -----
+    const conjSlider = document.getElementById('conjSlider');
+    const conjVal = document.getElementById('conjVal');
+    const conjPeak = document.getElementById('conjPeak');
+    const conjColor = document.getElementById('conjColor');
+    const uvCurve = document.getElementById('uvCurve');
+
+    function numberToColor(nm){
+      const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+      nm = clamp(nm,380,700);
+      let r=0,g=0,b=0;
+      if(nm<440){ r = -(nm-440)/(440-380); b=1; }
+      else if(nm<490){ g=(nm-440)/(490-440); b=1; }
+      else if(nm<510){ g=1; b=-(nm-510)/(510-490); }
+      else if(nm<580){ r=(nm-510)/(580-510); g=1; }
+      else if(nm<645){ r=1; g=-(nm-645)/(645-580); }
+      else { r=1; }
+      const gamma=0.8,intensity= nm<420?0.3+0.7*(nm-380)/(420-380) : nm>645?0.3+0.7*(700-nm)/(700-645) : 1;
+      const R=Math.round(255*Math.pow(r*intensity,gamma));
+      const G=Math.round(255*Math.pow(g*intensity,gamma));
+      const B=Math.round(255*Math.pow(b*intensity,gamma));
+      return `rgb(${R},${G},${B})`;
+    }
+    function updateConjugation(){
+      if(!conjSlider) return;
+      const n = Number(conjSlider.value);
+      conjVal.textContent = n;
+      const peak = Math.round(200 + 20*n + n*n*4); // simple trend
+      conjPeak.textContent = peak;
+      if(conjColor) conjColor.style.background = numberToColor(Math.min(peak,700));
+      // Draw a Gaussian-like bump at center = peak
+      const x0 = 40, x1 = 340, yBase = 130;
+      const pts = [];
+      for(let x = x0; x <= x1; x+=4){
+        const nm = 200 + (x-x0)/(x1-x0)*500;
+        const width = 30 + 4*n;
+        const Amax = 0.9;
+        const y = yBase - 90 * Math.exp(-0.5 * Math.pow((nm-peak)/width, 2)) * Amax;
+        pts.push(`${x},${y}`);
+      }
+      const path = `M ${x0},${yBase} L ${pts.join(' ')} L ${x1},${yBase} Z`;
+      if(uvCurve) uvCurve.setAttribute('d', path);
+    }
+    if(conjSlider){ conjSlider.addEventListener('input', updateConjugation); updateConjugation(); }
+
+    // ----- Beer–Lambert calculator -----
+    const unitBtns = document.querySelectorAll('.unitBtn');
+    let concUnit = 'M';
+    unitBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        unitBtns.forEach(b=>{ b.classList.remove('bg-emerald-400','text-black','font-semibold'); b.classList.add('bg-white/10'); });
+        btn.classList.remove('bg-white/10'); btn.classList.add('bg-emerald-400','text-black','font-semibold');
+        concUnit = btn.getAttribute('data-unit');
+      });
+    });
+
+    const A_in = document.getElementById('A');
+    const e_in = document.getElementById('e');
+    const c_in = document.getElementById('c');
+    const l_in = document.getElementById('l');
+    const solveFor = document.getElementById('solveFor');
+    const calcBeer = document.getElementById('calcBeer');
+    const resetBeer = document.getElementById('resetBeer');
+    const beerMsg = document.getElementById('beerMsg');
+    const showTrans = document.getElementById('showTrans');
+    const transBarWrap = document.getElementById('transBarWrap');
+    const transBar = document.getElementById('transBar');
+
+    function toM(val){
+      if(concUnit==='M') return val;
+      if(concUnit==='mM') return val/1000;
+      if(concUnit==='µM') return val/1e6;
+      return val;
+    }
+    function fromM(val){
+      if(concUnit==='M') return val;
+      if(concUnit==='mM') return val*1000;
+      if(concUnit==='µM') return val*1e6;
+      return val;
+    }
+    if(calcBeer){
+      calcBeer.addEventListener('click', ()=>{
+        const A = Number(A_in.value);
+        const e = Number(e_in.value);
+        const c_user = Number(c_in.value);
+        const l = Number(l_in.value);
+        let msg = '';
+        let result;
+        const cM = toM(c_user);
+        const target = solveFor.value;
+        if(target==='A'){
+          result = e * cM * l;
+          A_in.value = result.toFixed(4);
+          msg = `Absorbance updated.`;
+        } else if(target==='e'){
+          if(cM<=0 || l<=0){ msg='Provide c and l greater than 0.'; }
+          else{ result = A/(cM*l); e_in.value = Math.max(0,result).toFixed(0); msg='Molar absorptivity updated.'; }
+        } else if(target==='c'){
+          if(e<=0 || l<=0){ msg='Provide ε and l greater than 0.'; }
+          else{
+            result = A/(e*l);
+            c_in.value = fromM(result).toExponential(3);
+            msg=`Concentration updated in ${concUnit}.`;
+          }
+        } else if(target==='l'){
+          if(e<=0 || cM<=0){ msg='Provide ε and c greater than 0.'; }
+          else{ result = A/(e*cM); l_in.value = result.toFixed(2); msg='Path length updated.'; }
+        }
+        const T = Math.pow(10,-Number(A_in.value));
+        if(transBar) transBar.style.width = (T*100).toFixed(1)+'%';
+        if(transBarWrap) transBarWrap.classList.remove('hidden');
+        beerMsg.textContent = msg;
+      });
+    }
+    if(resetBeer){
+      resetBeer.addEventListener('click', ()=>{
+        A_in.value='0.800'; e_in.value='15000'; c_in.value='0.00005'; l_in.value='1.00';
+        solveFor.value='A'; beerMsg.textContent=''; if(transBarWrap) transBarWrap.classList.add('hidden');
+      });
+    }
+    if(showTrans){
+      showTrans.addEventListener('click', ()=>{
+        transBarWrap.classList.toggle('hidden');
+      });
+    }
+
+    // ----- New: Absorption Spectrum Simulator logic -----
+    const simButtons = document.querySelectorAll('.simSample');
+    let simSample = 'protein';
+    const simC = document.getElementById('simC');
+    const simL = document.getElementById('simL');
+    const simCVal = document.getElementById('simCVal');
+    const simLVal = document.getElementById('simLVal');
+    const simCurve = document.getElementById('simCurve');
+
+    simButtons.forEach(b=>{
+      b.addEventListener('click', ()=>{
+        simButtons.forEach(x=>x.classList.remove('bg-emerald-400','text-black','font-semibold'));
+        b.classList.add('bg-emerald-400','text-black','font-semibold');
+        simSample = b.getAttribute('data-sample');
+        drawSim();
+      })
+    });
+    function peakParams(sample){
+      // returns array of peaks: [center nm, width, intensity base ε-like]
+      if(sample==='protein') return [ [280, 25, 1.0] ]; // aromatics
+      if(sample==='dna') return [ [260, 20, 0.9] ]; // nucleic acids
+      if(sample==='organic') return [ [220, 15, 0.5], [320, 30, 0.7] ]; // example
+      return [ [280, 25, 1.0] ];
+    }
+    function drawSim(){
+      const cRel = Number(simC.value)/100; // 0–1
+      const lcm = Number(simL.value)/10;   // map 1–20 to 0.1–2.0 cm
+      simCVal.textContent = cRel.toFixed(2);
+      simLVal.textContent = lcm.toFixed(1);
+      const x0=50, x1=430, yBase=170, height=120;
+      const pts=[];
+      let mainPeakNm = peakParams(simSample)[0][0];
+      for(let x=x0; x<=x1; x+=3){
+        const nm = 200 + (x-x0)/(x1-x0)*400; // 200–600 nm
+        let A = 0;
+        for(const [center,width,intensity] of peakParams(simSample)){
+          A += intensity * Math.exp(-0.5 * Math.pow((nm-center)/width,2));
+        }
+        A = A * (0.3 + 1.7*cRel) * (0.5 + 0.5*lcm); // scale with conc and path
+        const y = yBase - height * Math.min(1.2, A);
+        pts.push(`${x},${y}`);
+      }
+      const path = `M ${x0},${yBase} L ${pts.join(' ')} L ${x1},${yBase} Z`;
+      if(simCurve) simCurve.setAttribute('d', path);
+      // Move marker to the main peak wavelength
+      const marker = document.getElementById('simMarker');
+      const markerText = document.getElementById('simMarkerText');
+      const xPos = x0 + (mainPeakNm-200)/400 * (x1-x0);
+      if(marker){ marker.setAttribute('x1', xPos); marker.setAttribute('x2', xPos); }
+      if(markerText){ markerText.setAttribute('x', xPos); markerText.textContent = `${mainPeakNm} nm`; }
+    }
+    if(simC){ simC.addEventListener('input', drawSim); }
+    if(simL){ simL.addEventListener('input', drawSim); }
+    drawSim();
+
+    // ----- Protein extinction -----
+    const seq = document.getElementById('seq');
+    const Trp = document.getElementById('Trp');
+    const Tyr = document.getElementById('Tyr');
+    const Cys = document.getElementById('Cys');
+    const l280 = document.getElementById('l280');
+    const mgml = document.getElementById('mgml');
+    const mw = document.getElementById('mw');
+
+    const Wout = document.getElementById('Wout');
+    const Yout = document.getElementById('Yout');
+    const Cout = document.getElementById('Cout');
+    const CystineOut = document.getElementById('CystineOut');
+    const eps280 = document.getElementById('eps280');
+    const cM_out = document.getElementById('cM');
+    const A280 = document.getElementById('A280');
+    const calcProt = document.getElementById('calcProt');
+    const resetProt = document.getElementById('resetProt');
+
+    function parseSeq(){
+      const s = (seq.value||'').toUpperCase().replace(/[^A-Z]/g,'');
+      const w = (s.match(/W/g)||[]).length;
+      const y = (s.match(/Y/g)||[]).length;
+      const c = (s.match(/C/g)||[]).length;
+      if(s.length>0){ Trp.value = w; Tyr.value = y; Cys.value = c; }
+    }
+    if(seq){ seq.addEventListener('input', parseSeq); }
+
+    function computeProtein(){
+      const w = Number(Trp.value)||0;
+      const y = Number(Tyr.value)||0;
+      const c = Number(Cys.value)||0;
+      const mode = document.querySelector('input[name="cysMode"]:checked').value;
+      const cystine = mode==='pairs' ? Math.floor(c/2) : 0;
+      const eps = 5500*w + 1490*y + 125*cystine;
+      const mw_gmol = Number(mw.value||0)*1000;
+      const conc_mgml = Number(mgml.value||0);
+      const cM = mw_gmol>0 ? (conc_mgml/1000)/mw_gmol*1000 : 0; // mg/mL -> M
+      const A = eps * cM * Number(l280.value||0);
+      Wout.textContent = w; Yout.textContent = y; Cout.textContent = c; CystineOut.textContent = cystine;
+      eps280.textContent = eps.toFixed(0);
+      cM_out.textContent = isFinite(cM) ? cM.toExponential(3) : '0.000e+0';
+      A280.textContent = isFinite(A)? A.toFixed(2) : '—';
+    }
+    if(calcProt){ calcProt.addEventListener('click', computeProtein); }
+    if(resetProt){
+      resetProt.addEventListener('click', ()=>{
+        seq.value=''; Trp.value=0; Tyr.value=0; Cys.value=0; l280.value=1.0; mgml.value=1.0; mw.value=50;
+        Wout.textContent='0'; Yout.textContent='0'; Cout.textContent='0'; CystineOut.textContent='0';
+        eps280.textContent='0'; cM_out.textContent='0.000e+0'; A280.textContent='0.00';
+      });
+    }
+
+    // ----- Quiz -----
+    const quizData = [
+      {q:"Absorbance increases when concentration increases, if all else is constant.", options:["True","False"], correct:0, explain:"A = εcl, so A scales with c."},
+      {q:"Which jump usually needs the most energy (shortest wavelength)?", options:["π → π*","n → π*","σ → σ*","n → σ*"], correct:2, explain:"σ → σ* is typically far UV."},
+      {q:"In UV–Vis, conjugation tends to shift peaks:", options:["To shorter λ (blue)","To longer λ (red)","No change","Only in IR"], correct:1, explain:"Conjugation narrows the gap (red shift)."},
+      {q:"A at 1.0 corresponds to transmittance of:", options:["1%","10%","50%","90%"], correct:1, explain:"T = 10^−A = 0.1 = 10%."},
+      {q:"The symbol ε represents:", options:["Path length","Molar absorptivity","Molarity","Energy"], correct:1, explain:"ε gives how strongly light is absorbed at a wavelength."},
+      {q:"Non‑bonding electrons often jump to:", options:["σ","π","π* or σ*","σ and π"], correct:2, explain:"Common n → π* and n → σ*."},
+      {q:"Keeping A between 0.1 and 1.5 helps because:", options:["Detector saturates","Law is more linear","Light is brighter","Cuvette warms up"], correct:1, explain:"Linearity is best in this range."},
+      {q:"Which cuvette is best for 260 nm?", options:["Plastic","Glass","Quartz","Ceramic"], correct:2, explain:"Quartz transmits deeper UV."},
+      {q:"Doubling path length from 0.5 to 1.0 cm makes absorbance:", options:["Half","Same","Double","Triple"], correct:2, explain:"A ∝ l, so it doubles."},
+      {q:"If A is very high (>1.5), you should:", options:["Use thicker cuvette","Dilute the sample","Change the detector","Ignore it"], correct:1, explain:"Dilute to bring A into range."}
+    ];
+    let qIndex = 0, score = 0, selected = null;
+    const quizQ = document.getElementById('quizQ');
+    const quizOptions = document.getElementById('quizOptions');
+    const quizFeedback = document.getElementById('quizFeedback');
+    const submitAns = document.getElementById('submitAns');
+    const nextQ = document.getElementById('nextQ');
+    const restartQuiz = document.getElementById('restartQuiz');
+    const quizProgress = document.getElementById('quizProgress');
+    const quizScore = document.getElementById('quizScore');
+
+    function renderQ(){
+      const item = quizData[qIndex];
+      quizQ.textContent = item.q;
+      quizOptions.innerHTML='';
+      quizFeedback.textContent='';
+      submitAns.classList.remove('hidden');
+      nextQ.classList.add('hidden');
+      restartQuiz.classList.add('hidden');
+      selected = null;
+      item.options.forEach((opt,i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'opt px-3 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-left';
+        btn.textContent = opt;
+        btn.addEventListener('click', ()=>{
+          document.querySelectorAll('.opt').forEach(b=>b.classList.remove('ring-2','ring-emerald-300','bg-emerald-400/20'));
+          btn.classList.add('ring-2','ring-emerald-300','bg-emerald-400/20');
+          selected = i;
+        });
+        quizOptions.appendChild(btn);
+      });
+      quizProgress.textContent = `Q${qIndex+1} of ${quizData.length}`;
+      quizScore.textContent = `Score: ${score}`;
+    }
+    function submit(){
+      if(selected===null){ quizFeedback.textContent='Pick an option first.'; return; }
+      const item = quizData[qIndex];
+      const correct = selected===item.correct;
+      if(correct) score++;
+      quizFeedback.innerHTML = correct ? '<span class="text-emerald-300 font-semibold">Correct!</span> ' + item.explain
+                                      : '<span class="text-rose-300 font-semibold">Not quite.</span> ' + item.explain;
+      submitAns.classList.add('hidden');
+      nextQ.classList.remove('hidden');
+      quizScore.textContent = `Score: ${score}`;
+      const buttons = document.querySelectorAll('.opt');
+      buttons.forEach((b,idx)=>{
+        b.classList.remove('hover:bg-white/20');
+        if(idx===item.correct){ b.classList.add('bg-emerald-400','text-black'); }
+        if(idx===selected && idx!==item.correct){ b.classList.add('bg-rose-400/40'); }
+      });
+    }
+    if(submitAns){ submitAns.addEventListener('click', submit); }
+    if(nextQ){
+      nextQ.addEventListener('click', ()=>{
+        qIndex++;
+        if(qIndex>=quizData.length){
+          quizQ.textContent = `Done! You scored ${score}/${quizData.length}.`;
+          quizOptions.innerHTML='';
+          quizFeedback.textContent = score>=8 ? 'Great job! You really get it.' : score>=5 ? 'Nice work—review any tricky parts above.' : 'Keep practicing—revisit the sections and try again.';
+          submitAns.classList.add('hidden');
+          nextQ.classList.add('hidden');
+          restartQuiz.classList.remove('hidden');
+          quizProgress.textContent = 'Completed';
+        } else {
+          renderQ();
+        }
+      });
+    }
+    if(restartQuiz){
+      restartQuiz.addEventListener('click', ()=>{
+        qIndex = 0; score=0; renderQ();
+      });
+    }
+    renderQ();
+
+    // Keyboard helpers for quiz
+    document.addEventListener('keydown', (e)=>{
+      if(['1','2','3','4'].includes(e.key) && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){
+        const idx = Number(e.key)-1;
+        const opts = document.querySelectorAll('.opt');
+        if(opts[idx]) opts[idx].click();
+      }
+      if(e.key==='Enter' && !document.getElementById('submitAns').classList.contains('hidden')) document.getElementById('submitAns').click();
+      if(e.key==='Enter' && !document.getElementById('nextQ').classList.contains('hidden')) document.getElementById('nextQ').click();
+    });
+
+    // ----- One-section-at-a-time Navigation -----
+    const sections = Array.from(document.querySelectorAll('.section'));
+    const labels = ['Fundamentals','Electronic Excitation','UV–Vis','Beer–Lambert','Proteins','Quiz'];
+    let current = 0;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const secLabel = document.getElementById('secLabel');
+
+    function updateSections(){
+      sections.forEach((s,i)=> s.classList.toggle('hidden', i!==current));
+      secLabel.textContent = labels[current];
+      prevBtn.disabled = current===0;
+      nextBtn.disabled = current===sections.length-1;
+      prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+      nextBtn.classList.toggle('opacity-50', nextBtn.disabled);
+    }
+    if(prevBtn) prevBtn.addEventListener('click', ()=>{ if(current>0){ current--; updateSections(); } });
+    if(nextBtn) nextBtn.addEventListener('click', ()=>{ if(current<sections.length-1){ current++; updateSections(); } });
+    updateSections();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9716c113b0992fe5',t:'MTc1NTU3NjEzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
