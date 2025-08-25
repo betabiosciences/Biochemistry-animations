@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Collagen: Structure, Function, and Clinical Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --brand-a:#6EE7F9; /* cyan */
+      --brand-b:#A78BFA; /* violet */
+      --brand-c:#F472B6; /* pink */
+      --brand-d:#34D399; /* emerald */
+      --brand-e:#FBBF24; /* amber */
+      --ink:#0B1021;
+    }
+    html,body{scroll-behavior:smooth}
+    /* Subtle float animation for blobs */
+    @keyframes floaty { 
+      0%{ transform: translateY(0) translateX(0) rotate(0deg) scale(1);}
+      50%{ transform: translateY(-10px) translateX(6px) rotate(3deg) scale(1.03);}
+      100%{ transform: translateY(0) translateX(0) rotate(0deg) scale(1);}
+    }
+    /* Card glow */
+    .glow{ box-shadow: 0 10px 30px rgba(167,139,250,.25), inset 0 0 0 1px rgba(255,255,255,.06); }
+    .soft-glow{ box-shadow: 0 10px 30px rgba(52,211,153,.18), inset 0 0 0 1px rgba(255,255,255,.06); }
+
+    /* Flip cards: ensure proper 3D and visibility */
+    .perspective{ perspective: 1000px; }
+    .flip{ transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transition: transform .6s; will-change: transform; }
+    .flipped{ transform: rotateY(180deg); }
+    .flip-face{ backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .flip-back{ transform: rotateY(180deg); z-index: 2; }
+
+    /* Toggle highlight */
+    .active-tab{ background: linear-gradient(135deg, var(--brand-a), var(--brand-b)); color:#0b1021; }
+
+    /* Hide utility (for slide system) */
+    .hidden-slide{ display: none; }
+
+    /* Accessibility focus */
+    .focus-ring:focus{ outline: 3px solid rgba(167,139,250,0.9); outline-offset: 3px; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-[#0B1021] via-[#101935] to-[#101525] text-white font-[Poppins] selection:bg-fuchsia-400 selection:text-[#0B1021]">
+  <!-- Decorative gradient blobs -->
+  <div class="pointer-events-none fixed inset-0 -z-10 opacity-40">
+    <div class="absolute -top-24 -left-20 w-72 h-72 bg-gradient-to-br from-cyan-400 to-violet-500 rounded-full blur-3xl animate-[floaty_8s_ease-in-out_infinite]"></div>
+    <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-gradient-to-br from-pink-400 to-amber-300 rounded-full blur-3xl animate-[floaty_9s_ease-in-out_infinite]"></div>
+  </div>
+
+  <!-- Header / Hero -->
+  <header class="px-5 pt-8 pb-4 max-w-2xl mx-auto text-center">
+    <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-2">
+      Collagen: Structure, Function, and Clinical Connections
+    </h1>
+    <p class="text-white/80">
+      Learn collagen’s blueprint, how it’s made, where vitamin C fits, and why cross-linking matters.
+    </p>
+  </header>
+
+  <!-- Top progress / section indicator -->
+  <div class="max-w-xl mx-auto mb-3 px-5">
+    <div class="flex items-center justify-between text-xs text-white/70">
+      <span id="sectionLabel">Structure Essentials</span>
+      <span id="sectionStep">1 / 6</span>
+    </div>
+    <div class="mt-2 w-full h-2 bg-white/10 rounded-full overflow-hidden">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-cyan-400 to-violet-500" style="width:16.6%;"></div>
+    </div>
+  </div>
+
+  <!-- Main slides container: one section visible at a time -->
+  <main class="px-5 pb-28 max-w-xl mx-auto">
+    <!-- SLIDE 1: Structure Essentials (text-only, per request) -->
+    <section id="structure" class="slide rounded-2xl p-4 bg-white/5 glow">
+      <h2 class="text-xl font-bold mb-2">Structure Essentials</h2>
+
+      <div class="rounded-xl p-4 bg-gradient-to-br from-cyan-400/15 to-violet-500/15 border border-white/10 space-y-3">
+        <h3 class="text-lg font-semibold">The Basic Blueprint</h3>
+        <p class="text-sm text-white/85">
+          Tripeptide Repeat: The primary structure of a collagen polypeptide is a repeating sequence of three amino acids: Gly-X-Y.
+        </p>
+        <ul class="list-disc pl-5 text-sm text-white/85 space-y-2">
+          <li>
+            <span class="font-semibold">Glycine (Gly):</span> With only a hydrogen atom as its side chain, it's the smallest amino acid. This is critical for allowing the three helical chains to pack into a very tight superhelix.
+          </li>
+          <li>
+            <span class="font-semibold">X (often Proline):</span> Its rigid ring structure helps form the helical turns of the individual polypeptide chain.
+          </li>
+          <li>
+            <span class="font-semibold">Y (often Hydroxyproline):</span> A modified version of proline. Its hydroxyl (-OH) group is vital for forming hydrogen bonds that stabilize the final triple helix.
+          </li>
+        </ul>
+        <p class="text-sm text-white/85">
+          This unique, repetitive sequence forces each polypeptide chain into a left-handed helix called a polyproline II helix, which is more extended than a typical alpha-helix.
+        </p>
+      </div>
+
+      <div class="mt-4 rounded-xl p-4 bg-gradient-to-br from-emerald-300/15 to-violet-400/15 border border-white/10 space-y-3">
+  <h3 class="text-lg font-semibold">PDB Spotlight</h3>
+  <p class="text-sm text-white/80">Collagen triple helix (PDB: 1BKV). This is a sample illustration. To show the actual structure image, please share an image link and I’ll place it here.</p>
+  <div class="rounded-lg overflow-hidden bg-white/5 border border-white/10 p-3">
+    <div class="text-xs text-white/70 mb-2">PDB: 1BKV — actual image</div>
+    <img src="https://cdn.rcsb.org/images/structures/1bkv_assembly-1.jpeg" alt="Collagen triple helix PDB 1BKV" class="w-full h-40 object-cover rounded"/>
+    <div class="mt-2 flex items-center justify-between text-xs text-white/70">
+      <span>Source: RCSB PDB</span>
+      <a href="https://www.rcsb.org/structure/1BKV" target="_blank" class="px-2 py-1 rounded bg-white/10 hover:bg-white/20">Open entry</a>
+    </div>
+  </div>
+</div>
+    </section>
+
+    <!-- SLIDE 2: Biosynthesis -->
+    <section id="biosynthesis" class="slide rounded-2xl p-4 bg-white/5 glow hidden-slide">
+      <h2 class="text-xl font-bold mb-1">Biosynthesis Roadmap</h2>
+      <p class="text-white/80 text-sm mb-3">Tap each step to learn what happens from gene to tough fibrils.</p>
+      <div class="space-y-3">
+        <details class="group rounded-xl bg-gradient-to-br from-violet-500/15 to-cyan-400/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-violet-400/30 flex items-center justify-center">1</span>
+              <span class="font-semibold">Synthesis of preprocollagen (RER)</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Ribosomes make prepro-α chains with signal peptides. After entry into the rough ER, signal peptides are removed → procollagen α-chains.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-emerald-300/15 to-violet-400/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-emerald-300/30 flex items-center justify-center">2</span>
+              <span class="font-semibold">Hydroxylation (needs Vitamin C)</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Selected proline and lysine residues are hydroxylated by prolyl and lysyl hydroxylases. These enzymes require vitamin C (ascorbate), Fe²⁺, and O₂.
+            Hydroxyproline is crucial for helix stability.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-amber-300/15 to-pink-400/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-amber-300/30 flex items-center justify-center">3</span>
+              <span class="font-semibold">Glycosylation and helix assembly</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Some hydroxylysine residues are glycosylated (glucose/galactose). Three α-chains align via C-terminal propeptides and zip up into a triple helix → procollagen.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-cyan-400/15 to-violet-500/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-cyan-400/30 flex items-center justify-center">4</span>
+              <span class="font-semibold">Golgi packaging & secretion</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Procollagen is packaged in the Golgi into secretory vesicles and released outside the cell along microtubules to the plasma membrane.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-fuchsia-400/15 to-cyan-300/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-fuchsia-400/30 flex items-center justify-center">5</span>
+              <span class="font-semibold">Propeptide cleavage → tropocollagen</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Outside the cell, N- and C-procollagen peptidases remove terminal propeptides, yielding tropocollagen able to laterally assemble.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-pink-400/15 to-amber-300/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-pink-400/30 flex items-center justify-center">6</span>
+              <span class="font-semibold">Fibrillogenesis & cross-linking</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/85">
+            Tropocollagen self-assembles into striated fibrils in a quarter-staggered pattern; lysyl oxidase then initiates covalent cross-links to strengthen the fibrils.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: Vitamin C & Scurvy (tap-to-reveal panels) -->
+    <section id="vitc" class="slide rounded-2xl p-4 bg-white/5 glow hidden-slide">
+      <h2 class="text-xl font-bold mb-1">Vitamin C & Scurvy</h2>
+      <p class="text-white/80 text-sm mb-3">Tap a panel to reveal details.</p>
+
+      <div class="space-y-3">
+        <details class="group rounded-xl bg-gradient-to-br from-cyan-400/15 to-violet-500/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-lg bg-cyan-400/30 flex items-center justify-center">🍊</span>
+              <span class="font-semibold">Why Vitamin C?</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/90">
+            Vitamin C (ascorbate) keeps iron in the active form within prolyl and lysyl hydroxylases. Without it, hydroxylation of proline and lysine fails, weakening hydrogen bonding and destabilizing the triple helix.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-amber-300/15 to-pink-400/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-lg bg-amber-300/30 flex items-center justify-center">🩸</span>
+              <span class="font-semibold">Scurvy</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/90">
+            Insufficient vitamin C → under-hydroxylated collagen → fragile connective tissues. Findings include bleeding gums, easy bruising, poor wound healing, corkscrew hairs, subperiosteal hemorrhage, and bone pain.
+          </p>
+        </details>
+
+        <details class="group rounded-xl bg-gradient-to-br from-emerald-300/15 to-violet-400/15 border border-white/10 p-4">
+          <summary class="cursor-pointer list-none flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-lg bg-emerald-300/30 flex items-center justify-center">🧷</span>
+              <span class="font-semibold">Helix instability</span>
+            </div>
+            <span class="text-white/60 group-open:rotate-180 transition">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-white/90">
+            Hydroxyproline enables hydrogen bonds that stabilize the triple helix at body temperature. When hydroxylation is impaired, the helix loosens and becomes unstable.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Cross-linking & Lathyrism (info only) -->
+    <section id="crosslink" class="slide rounded-2xl p-4 bg-white/5 glow hidden-slide">
+      <h2 class="text-xl font-bold mb-2">Cross-linking Strength (Lysyl Oxidase)</h2>
+      <p class="text-white/80 text-sm mb-3">
+        Cross-links between collagen molecules give tensile strength. Failure → fragile tissues (lathyrism).
+      </p>
+      <div class="rounded-xl p-4 bg-gradient-to-br from-violet-500/15 to-cyan-400/15 border border-white/10">
+        <div class="font-semibold mb-2">What lysyl oxidase does</div>
+        <ul class="list-disc pl-5 space-y-1 text-sm text-white/85">
+          <li>Converts lysine/hydroxylysine into aldehydes (allysine), enabling covalent cross-links.</li>
+          <li>Requires copper as a cofactor; copper deficiency weakens cross-linking.</li>
+          <li>Acts after fibrils assemble outside the cell to mature the matrix.</li>
+        </ul>
+      </div>
+
+      <div class="mt-3 rounded-xl p-4 bg-white/5 border border-white/10">
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 rounded-lg bg-pink-400/30 flex items-center justify-center">🌱</div>
+          <div class="font-semibold">Lathyrism</div>
+        </div>
+        <p class="text-sm text-white/85 mb-2">
+          Lathyrism is a syndrome of weak connective tissues due to impaired cross-links, historically linked to Lathyrus (sweet pea) seed exposure.
+        </p>
+        <div class="font-semibold mb-1">β-aminopropionitrile (BAPN)</div>
+        <ul class="list-disc pl-5 space-y-1 text-sm text-white/85">
+          <li>Mechanism: irreversible inhibitor of lysyl oxidase; prevents allysine formation, blocking cross-links.</li>
+          <li>Use: research tool to induce lathyrism; not a treatment in patients due to toxicity.</li>
+          <li>Effects: leads to fragile vessels, skeletal deformities, and poor wound strength when exposure occurs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Chains & Types -->
+    <section id="types" class="slide rounded-2xl p-4 bg-white/5 glow hidden-slide">
+      <h2 class="text-xl font-bold mb-2">Triple Helix Chains & Major Types</h2>
+
+      <!-- Chain builder -->
+      <div class="rounded-xl p-4 bg-gradient-to-br from-amber-300/15 to-pink-400/15 border border-white/10 mb-4">
+        <div class="font-semibold mb-2">Build a Collagen Triple Helix</div>
+        <p class="text-sm text-white/80 mb-3">
+          Choose the three chains. See which collagen type you’ve made.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <select id="chain1" class="px-3 py-2 rounded-lg bg-white/10 focus-ring">
+            <option>α1(I)</option>
+            <option>α2(I)</option>
+            <option>α1(II)</option>
+            <option>α1(III)</option>
+          </select>
+          <select id="chain2" class="px-3 py-2 rounded-lg bg-white/10 focus-ring">
+            <option>α1(I)</option>
+            <option>α2(I)</option>
+            <option>α1(II)</option>
+            <option>α1(III)</option>
+          </select>
+          <select id="chain3" class="px-3 py-2 rounded-lg bg-white/10 focus-ring">
+            <option>α1(I)</option>
+            <option>α2(I)</option>
+            <option>α1(II)</option>
+            <option>α1(III)</option>
+          </select>
+        </div>
+        <button id="checkType" class="mt-3 w-full px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 focus-ring">Check Type</button>
+        <div id="typeResult" class="mt-3 text-sm font-semibold">
+          Pick chains and tap “Check Type”.
+        </div>
+      </div>
+
+      <!-- Major types quick cards -->
+      <div class="grid grid-cols-1 gap-3">
+        <div class="rounded-xl p-4 bg-gradient-to-br from-cyan-400/15 to-violet-500/15 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Type I</div>
+            <div class="text-xs px-2 py-1 rounded-full bg-white/10">[α1(I)]₂α2(I)</div>
+          </div>
+          <p class="text-sm text-white/85 mt-1">Bone, skin, tendon, ligaments, dentin. High tensile strength.</p>
+        </div>
+        <div class="rounded-xl p-4 bg-gradient-to-br from-emerald-300/15 to-violet-400/15 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Type II</div>
+            <div class="text-xs px-2 py-1 rounded-full bg-white/10">[α1(II)]₃</div>
+          </div>
+          <p class="text-sm text-white/85 mt-1">Cartilage (hyaline), vitreous body, nucleus pulposus.</p>
+        </div>
+        <div class="rounded-xl p-4 bg-gradient-to-br from-pink-400/15 to-amber-300/15 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Type III</div>
+            <div class="text-xs px-2 py-1 rounded-full bg-white/10">[α1(III)]₃</div>
+          </div>
+          <p class="text-sm text-white/85 mt-1">Reticular fibers: vessels, skin, uterus, granulation tissue.</p>
+        </div>
+        <div class="rounded-xl p-4 bg-gradient-to-br from-fuchsia-400/15 to-cyan-300/15 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Type IV</div>
+            <div class="text-xs px-2 py-1 rounded-full bg-white/10">Network-forming</div>
+          </div>
+          <p class="text-sm text-white/85 mt-1">Basement membranes (lamina densa). Mesh-like, not fibrillar.</p>
+        </div>
+        <div class="rounded-xl p-4 bg-gradient-to-br from-rose-400/15 to-amber-200/15 border border-white/10">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Type V</div>
+            <div class="text-xs px-2 py-1 rounded-full bg-white/10">Fibril-associated</div>
+          </div>
+          <p class="text-sm text-white/85 mt-1">Regulates fibril diameter; in placenta and interstitial tissues.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Quiz -->
+    <section id="quiz" class="slide rounded-2xl p-4 bg-white/5 glow hidden-slide">
+      <h2 class="text-xl font-bold mb-2">Quick Check</h2>
+      <div id="score" class="text-sm text-white/80 mb-3">Score: 0/5</div>
+
+      <div class="space-y-3">
+        <!-- Q1 -->
+        <div class="rounded-xl p-4 bg-gradient-to-br from-cyan-400/15 to-violet-500/15 border border-white/10">
+          <div class="font-semibold mb-2">1) What repeat enables tight packing?</div>
+          <div class="grid gap-2">
+            <button data-q="1" data-correct="true" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Gly–X–Y with glycine every third residue</button>
+            <button data-q="1" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Ala–Val–Leu hydrophobic repeat</button>
+            <button data-q="1" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Poly-lysine stretches</button>
+          </div>
+        </div>
+        <!-- Q2 -->
+        <div class="rounded-xl p-4 bg-gradient-to-br from-emerald-300/15 to-violet-400/15 border border-white/10">
+          <div class="font-semibold mb-2">2) Vitamin C is required for:</div>
+          <div class="grid gap-2">
+            <button data-q="2" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Glycosylation of hydroxylysine</button>
+            <button data-q="2" data-correct="true" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Hydroxylation of proline and lysine</button>
+            <button data-q="2" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Copper transport</button>
+          </div>
+        </div>
+        <!-- Q3 -->
+        <div class="rounded-xl p-4 bg-gradient-to-br from-amber-300/15 to-pink-400/15 border border-white/10">
+          <div class="font-semibold mb-2">3) Lysyl oxidase deficiency leads to:</div>
+          <div class="grid gap-2">
+            <button data-q="3" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Excessive cross-linking</button>
+            <button data-q="3" data-correct="true" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Weak fibrils and lathyrism-like changes</button>
+            <button data-q="3" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Increased bone density</button>
+          </div>
+        </div>
+        <!-- Q4 -->
+        <div class="rounded-xl p-4 bg-gradient-to-br from-fuchsia-400/15 to-cyan-300/15 border border-white/10">
+          <div class="font-semibold mb-2">4) The triple helix assembles starting at:</div>
+          <div class="grid gap-2">
+            <button data-q="4" data-correct="true" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">C-terminus (zips toward N-terminus)</button>
+            <button data-q="4" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">N-terminus</button>
+            <button data-q="4" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Both ends at once</button>
+          </div>
+        </div>
+        <!-- Q5 -->
+        <div class="rounded-xl p-4 bg-gradient-to-br from-rose-400/15 to-amber-200/15 border border-white/10">
+          <div class="font-semibold mb-2">5) Type I collagen is most abundant in:</div>
+          <div class="grid gap-2">
+            <button data-q="5" data-correct="true" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Bone and skin</button>
+            <button data-q="5" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Basement membranes</button>
+            <button data-q="5" class="qbtn px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-left">Elastic fibers of lungs</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="resetQuiz" class="mt-3 w-full px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20">Reset Quiz</button>
+    </section>
+  </main>
+
+  <!-- Bottom navigation: one section at a time -->
+  <div class="fixed bottom-0 left-0 right-0 z-20 bg-[#0B1021]/80 backdrop-blur px-5 py-3 border-t border-white/10">
+    <div class="max-w-xl mx-auto flex items-center justify-between">
+      <button id="prevBtn" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 focus-ring">◀ Previous</button>
+      <div class="flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="0"></span>
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="1"></span>
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="2"></span>
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="3"></span>
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="4"></span>
+        <span class="w-2 h-2 rounded-full bg-white/30" data-dot="5"></span>
+      </div>
+      <button id="nextBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-500 text-[#0B1021] font-semibold focus-ring">Next ▶</button>
+    </div>
+  </div>
+
+  <script>
+    // Slides control: show only one section at a time
+    const slides = [...document.querySelectorAll('.slide')];
+    const labels = [
+      'Structure Essentials',
+      'Biosynthesis Roadmap',
+      'Vitamin C & Scurvy',
+      'Cross-linking & Lathyrism',
+      'Chains & Types',
+      'Quiz'
+    ];
+    const sectionLabel = document.getElementById('sectionLabel');
+    const sectionStep = document.getElementById('sectionStep');
+    const progressBar = document.getElementById('progressBar');
+    const dots = [...document.querySelectorAll('[data-dot]')];
+    let current = 0;
+
+    function renderSlides(){
+      slides.forEach((s,i)=>{
+        if(i===current){ s.classList.remove('hidden-slide'); }
+        else { s.classList.add('hidden-slide'); }
+      });
+      sectionLabel.textContent = labels[current];
+      sectionStep.textContent = (current+1) + ' / ' + slides.length;
+      const pct = ((current) / (slides.length-1)) * 100;
+      progressBar.style.width = Math.max(16.6, pct) + '%';
+      dots.forEach((d,i)=> d.style.background = i===current ? 'white' : 'rgba(255,255,255,0.3)');
+      // Toggle prev/next disabled style
+      document.getElementById('prevBtn').style.opacity = current===0 ? 0.6 : 1;
+      document.getElementById('nextBtn').style.opacity = current===slides.length-1 ? 0.6 : 1;
+    }
+    renderSlides();
+
+    document.getElementById('prevBtn').addEventListener('click', ()=>{
+      if(current>0){ current--; renderSlides(); }
+    });
+    document.getElementById('nextBtn').addEventListener('click', ()=>{
+      if(current<slides.length-1){ current++; renderSlides(); }
+    });
+    dots.forEach((d,i)=> d.addEventListener('click', ()=>{ current=i; renderSlides(); }));
+
+    // Flip cards
+    document.querySelectorAll('[data-flip]').forEach(card=>{
+      card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    });
+
+    // Chain builder logic
+    const chain1 = document.getElementById('chain1');
+    const chain2 = document.getElementById('chain2');
+    const chain3 = document.getElementById('chain3');
+    const typeResult = document.getElementById('typeResult');
+    if(typeResult){
+      document.getElementById('checkType').addEventListener('click', ()=>{
+        const arr = [chain1.value, chain2.value, chain3.value].sort();
+        const key = arr.join('|');
+        let msg = 'Unknown combination. Try common sets like [α1(I)]₂α2(I).';
+        if(key === 'α1(I)|α1(I)|α2(I)') msg = 'You made Type I: [α1(I)]₂α2(I) — bone, skin, tendon.';
+        if(key === 'α1(II)|α1(II)|α1(II)') msg = 'You made Type II: [α1(II)]₃ — cartilage.';
+        if(key === 'α1(III)|α1(III)|α1(III)') msg = 'You made Type III: [α1(III)]₃ — reticular fibers.';
+        typeResult.textContent = msg;
+      });
+    }
+
+    // Quiz logic
+    let score = 0;
+    const scoreBox = document.getElementById('score');
+    const answered = new Set();
+    function updateScore(){ if(scoreBox) scoreBox.textContent = `Score: ${score}/5`; }
+    document.querySelectorAll('.qbtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const q = btn.getAttribute('data-q');
+        if(answered.has(q)) return;
+        answered.add(q);
+        const correct = btn.getAttribute('data-correct') === 'true';
+        if(correct){
+          score++;
+          btn.style.background = 'rgba(52,211,153,0.45)';
+        } else {
+          btn.style.background = 'rgba(244,114,182,0.45)';
+          const siblings = document.querySelectorAll(`.qbtn[data-q="${q}"]`);
+          siblings.forEach(s=>{
+            if(s.getAttribute('data-correct')==='true'){
+              s.style.outline = '2px solid rgba(52,211,153,0.8)';
+            }
+          });
+        }
+        updateScore();
+      });
+    });
+    const reset = document.getElementById('resetQuiz');
+    if(reset){ reset.addEventListener('click', ()=>{
+      score = 0; answered.clear(); updateScore();
+      document.querySelectorAll('.qbtn').forEach(btn=>{
+        btn.style.background = 'rgba(255,255,255,0.06)';
+        btn.style.outline = 'none';
+      });
+    });}
+    updateScore();
+  </script>
+  
+  <!-- Footer Section -->
+  <footer class="mt-12 py-8 text-center text-white/60 text-sm border-t border-white/10">
+    <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" alt="BETA Biosciences Logo" class="mx-auto h-16 w-auto mb-4" onerror="this.style.display='none'">
+    <p>© 2025 BETA Biosciences. All rights reserved.</p>
+    <p>Email: betabiosciences@gmail.com</p>
+  </footer>
+
+</body>
+</html>
