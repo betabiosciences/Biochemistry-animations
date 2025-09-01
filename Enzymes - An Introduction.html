@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzymes: An Introduction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .content-card {
+            background-color: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(227, 22, 99, 0.2);
+        }
+        .card-title {
+            color: #e94560;
+            font-weight: 700;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .highlight {
+            color: #16c79a;
+            font-weight: 600;
+        }
+        .quiz-option {
+            background-color: #0f3460;
+            border: 1px solid #533483;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .quiz-option:hover {
+            background-color: #533483;
+            border-color: #e94560;
+        }
+        .quiz-option.selected {
+            background-color: #e94560;
+            color: #ffffff;
+        }
+         .quiz-option.correct {
+            background-color: #16c79a;
+            color: #ffffff;
+        }
+        .quiz-option.incorrect {
+            background-color: #e94560;
+            color: #ffffff;
+        }
+        .figure-caption {
+            font-size: 0.875rem;
+            color: #a0a0a0;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .svg-icon {
+            width: 3rem;
+            height: 3rem;
+            margin-right: 1rem;
+        }
+        .btn {
+            background-color: #e94560;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #c73550;
+        }
+        .nav-btn:disabled {
+            background-color: #4a5568;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Enzymes: An Introduction</h1>
+            <p class="text-lg text-gray-400">Exploring the Catalysts of Life</p>
+        </header>
+        
+        <!-- Content sections container -->
+        <div id="content-sections-container">
+            <!-- Section 1: Physical Features -->
+            <section id="physical-features" class="content-card">
+                <h2 class="card-title">1. Physical Features of Enzymes</h2>
+                <p class="mb-4">Enzymes are fascinating biological molecules with distinct physical properties. Understanding these features is key to grasping how they function.</p>
+                <ul class="list-disc list-inside space-y-3">
+                    <li><span class="highlight">Protein Nature:</span> Almost all enzymes are <span class="highlight">globular proteins</span>. Their function is intricately linked to their complex three-dimensional structure. A few RNA molecules, called ribozymes, can also act as enzymes.</li>
+                    <li><span class="highlight">Three-Dimensional Structure:</span> The polypeptide chain of an enzyme folds into a specific 3D shape, creating a unique microenvironment. This structure is crucial and is maintained by various bonds like hydrogen bonds, ionic bonds, and disulfide bridges.</li>
+                    <li><span class="highlight">The Active Site:</span> A small, specific region within the enzyme's structure, called the <span class="highlight">active site</span>, is where the substrate binds and the chemical reaction occurs. The active site has a precise shape and chemical properties that complement its specific substrate(s).</li>
+                    <li><span class="highlight">Colloidal Nature:</span> Being large molecules, enzymes form colloidal solutions in water. This property provides a large surface area for catalytic activity.</li>
+                    <li><span class="highlight">Sensitivity:</span> Enzyme structures are sensitive to changes in temperature and pH. Extreme conditions can cause the enzyme to <span class="highlight">denature</span> (unfold), leading to a loss of its catalytic activity.</li>
+                </ul>
+            </section>
+
+            <!-- Section 2: Holoenzyme -->
+            <section id="holoenzyme" class="content-card hidden">
+                <h2 class="card-title">2. Holoenzyme and its Components</h2>
+                <p class="mb-4">Many enzymes require non-protein components to be active. A complete, catalytically active enzyme is called a <span class="highlight">holoenzyme</span>.</p>
+                 <div class="bg-gray-800 p-4 rounded-lg text-center my-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-full" viewBox="0 0 300 120">
+                        <defs>
+                            <linearGradient id="apoenzymeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#16c79a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0f3460;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="cofactorGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#e94560;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#c73550;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Apoenzyme -->
+                        <path d="M 50,20 C 20,20 20,80 50,80 L 100,80 C 120,80 120,50 100,50 C 80,20 100,20 100,20 Z" fill="url(#apoenzymeGradient)"/>
+                        <text x="75" y="55" font-family="Inter" font-size="10" fill="white" text-anchor="middle">Apoenzyme</text>
+                        <!-- Plus sign -->
+                        <text x="125" y="55" font-family="Inter" font-size="20" fill="#e0e0e0" text-anchor="middle">+</text>
+                        <!-- Cofactor -->
+                        <circle cx="155" cy="50" r="15" fill="url(#cofactorGradient)"/>
+                        <text x="155" y="55" font-family="Inter" font-size="10" fill="white" text-anchor="middle">Cofactor</text>
+                        <!-- Equals sign -->
+                        <text x="185" y="55" font-family="Inter" font-size="20" fill="#e0e0e0" text-anchor="middle">=</text>
+                        <!-- Holoenzyme -->
+                        <path d="M 230,20 C 200,20 200,80 230,80 L 280,80 C 300,80 300,50 280,50 C 260,20 280,20 280,20 Z" fill="url(#apoenzymeGradient)"/>
+                        <circle cx="230" cy="50" r="15" fill="url(#cofactorGradient)"/>
+                        <text x="255" y="55" font-family="Inter" font-size="10" fill="white" text-anchor="middle">Holoenzyme</text>
+                    </svg>
+                    <p class="figure-caption">Figure 1: The components of a Holoenzyme.</p>
+                </div>
+                <p class="mb-2">The holoenzyme consists of two parts:</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><span class="highlight">Apoenzyme:</span> The protein part of the enzyme, which is catalytically inactive on its own.</li>
+                    <li><span class="highlight">Cofactor:</span> The non-protein part required for activity. Cofactors can be:
+                        <ul class="list-decimal list-inside ml-6 mt-2 space-y-1">
+                            <li><span class="highlight">Coenzymes:</span> Organic molecules, often derived from vitamins (e.g., NAD+, FAD), that are loosely bound to the apoenzyme.</li>
+                            <li><span class="highlight">Prosthetic Groups:</span> Organic or inorganic molecules that are tightly and permanently bound to the apoenzyme (e.g., the heme group in catalase).</li>
+                            <li><span class="highlight">Metal Ions:</span> Inorganic ions that help in binding the substrate or participate directly in the catalytic reaction (e.g., Zn²⁺, Mg²⁺).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 3: Enzyme Nomenclature -->
+            <section id="nomenclature" class="content-card hidden">
+                <h2 class="card-title">3. Enzyme Nomenclature (EC Number)</h2>
+                <p class="mb-4">To standardize the naming of enzymes, the International Union of Biochemistry and Molecular Biology (IUBMB) established the Enzyme Commission (EC). Each enzyme is assigned a unique four-digit <span class="highlight">EC number</span>.</p>
+                <p class="mb-2">For example, ATP:glucose phosphotransferase has the EC number <span class="highlight">EC 2.7.1.1</span>.</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>EC 2:</strong> The first digit represents the major class (<span class="highlight">Transferase</span>).</li>
+                    <li><strong>EC 2.7:</strong> The second digit indicates the subclass (transferring <span class="highlight">phosphorus-containing groups</span>).</li>
+                    <li><strong>EC 2.7.1:</strong> The third digit specifies the sub-subclass (a <span class="highlight">hydroxyl group</span> acts as the acceptor).</li>
+                    <li><strong>EC 2.7.1.1:</strong> The fourth digit is a serial number for the specific enzyme (<span class="highlight">glucose</span> is the phosphate acceptor).</li>
+                </ul>
+            </section>
+
+            <!-- Section 4: 6 Major Classes of Enzymes -->
+            <section id="classes" class="content-card hidden">
+                <h2 class="card-title">4. The 6 Major Classes of Enzymes</h2>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-green-400">1. Oxidoreductases (EC 1)</h3>
+                        <p>Catalyze oxidation-reduction reactions. Example: <span class="highlight">Lactate dehydrogenase</span>.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-blue-400">2. Transferases (EC 2)</h3>
+                        <p>Transfer functional groups (e.g., an amino or phosphate group) from one molecule to another. Example: <span class="highlight">Hexokinase</span>.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-purple-400">3. Hydrolases (EC 3)</h3>
+                        <p>Catalyze hydrolysis, breaking bonds by adding water. Example: <span class="highlight">Trypsin</span>.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-yellow-400">4. Lyases (EC 4)</h3>
+                        <p>Break various chemical bonds by means other than hydrolysis and oxidation, often forming a new double bond. Example: <span class="highlight">Aldolase</span>.</p>
+                    </div>
+                     <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-pink-400">5. Isomerases (EC 5)</h3>
+                        <p>Catalyze the rearrangement of atoms within a molecule, converting one isomer to another. Example: <span class="highlight">Triose-phosphate isomerase</span>.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-orange-400">6. Ligases (EC 6)</h3>
+                        <p>Join two molecules together, usually with the hydrolysis of ATP. Example: <span class="highlight">DNA Ligase</span>.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 5 & 6: Comparison with Catalysts -->
+            <section id="comparison" class="content-card hidden">
+                <h2 class="card-title">5 & 6. Enzymes vs. Inorganic Catalysts</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-green-400">Similarities</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Increase the rate of reaction without being consumed.</li>
+                            <li>Required in very small quantities.</li>
+                            <li>Do not alter the equilibrium constant of the reaction.</li>
+                            <li>Form unstable intermediate complexes with reactants.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-red-400">Differences</h3>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><span class="highlight">Composition:</span> Enzymes are complex proteins; catalysts are simple inorganic molecules.</li>
+                            <li><span class="highlight">Specificity:</span> Enzymes are highly specific; catalysts are often non-specific.</li>
+                            <li><span class="highlight">Conditions:</span> Enzymes work under mild conditions (temp, pH); catalysts often require high temp/pressure.</li>
+                            <li><span class="highlight">Regulation:</span> Enzyme activity is highly regulated in cells; catalyst activity is not.</li>
+                            <li><span class="highlight">Efficiency:</span> Enzymes are generally much more efficient than inorganic catalysts.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Enzyme Specificity -->
+            <section id="specificity" class="content-card hidden">
+                <h2 class="card-title">7. Types of Enzyme Specificity</h2>
+                <p class="mb-4">Enzyme specificity refers to their ability to catalyze only one or a limited range of chemical reactions. This is a hallmark of their function.</p>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-teal-400">1. Absolute Specificity</h3>
+                        <p>The enzyme catalyzes only one specific reaction on one specific substrate. Example: <span class="highlight">Urease</span> acts only on urea.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-indigo-400">2. Group Specificity</h3>
+                        <p>The enzyme acts on a group of substrates that have a similar functional group or structure. Example: <span class="highlight">Pepsin</span> cleaves peptide bonds adjacent to aromatic amino acids.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-rose-400">3. Linkage Specificity</h3>
+                        <p>The enzyme acts on a particular type of chemical bond, irrespective of the rest of the molecular structure. Example: <span class="highlight">Amylase</span> cleaves α-1,4 glycosidic bonds in starch and glycogen.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800">
+                        <h3 class="font-semibold text-lg text-amber-400">4. Stereochemical Specificity</h3>
+                        <p>The enzyme acts on a particular stereoisomer (e.g., D- or L-isomer) of a substrate. Example: <span class="highlight">L-amino acid oxidase</span> acts only on L-amino acids, not D-amino acids.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quiz Section -->
+            <section id="quiz" class="content-card hidden">
+                <h2 class="card-title">Review Quiz</h2>
+                <div id="quiz-container" class="space-y-6"></div>
+                <div id="quiz-result" class="mt-6 text-center text-xl font-bold"></div>
+                <div class="text-center mt-6">
+                    <button id="submit-quiz" class="btn">Submit Answers</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between items-center mt-8">
+            <button id="prev-btn" class="btn nav-btn">Previous</button>
+            <button id="next-btn" class="btn nav-btn">Next</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center p-4 mt-8">
+        <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo transparent.png" alt="Beta Biosciences Logo" class="mx-auto h-14 mb-4">
+        <p class="text-sm text-gray-500">
+            © 2025 BETA Biosciences. All rights reserved. <br>
+            Email: betabiosciences@gmail.com <br>
+            Contact: +91 97 47 53 35 97
+        </p>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the protein part of a holoenzyme called?",
+                options: ["Cofactor", "Apoenzyme", "Prosthetic group", "Coenzyme"],
+                answer: "Apoenzyme"
+            },
+            {
+                question: "Which class of enzymes catalyzes the joining of two molecules?",
+                options: ["Hydrolases", "Lyases", "Ligases", "Isomerases"],
+                answer: "Ligases"
+            },
+            {
+                question: "The specificity of an enzyme is due to its:",
+                options: ["Molecular weight", "Colloidal nature", "Three-dimensional structure", "Solubility"],
+                answer: "Three-dimensional structure"
+            },
+            {
+                question: "In the EC number 2.7.1.1, what does the '2' represent?",
+                options: ["The specific substrate", "The major enzyme class", "The type of bond broken", "The reaction direction"],
+                answer: "The major enzyme class"
+            },
+            {
+                question: "Which of the following is a key difference between enzymes and inorganic catalysts?",
+                options: ["Catalysts are not consumed", "Enzymes are highly specific", "Both increase reaction rates", "Both are needed in small amounts"],
+                answer: "Enzymes are highly specific"
+            },
+            {
+                question: "Vitamins are often precursors for which type of molecule?",
+                options: ["Apoenzymes", "Coenzymes", "Substrates", "Holoenzymes"],
+                answer: "Coenzymes"
+            },
+            {
+                question: "Urease acting only on urea is an example of what type of specificity?",
+                options: ["Group", "Linkage", "Stereochemical", "Absolute"],
+                answer: "Absolute"
+            },
+            {
+                question: "The process of an enzyme losing its 3D structure due to extreme pH or temperature is called:",
+                options: ["Hydrolysis", "Denaturation", "Oxidation", "Isomerization"],
+                answer: "Denaturation"
+            },
+            {
+                question: "Which class of enzymes breaks bonds by adding water?",
+                options: ["Hydrolases", "Lyases", "Transferases", "Oxidoreductases"],
+                answer: "Hydrolases"
+            },
+            {
+                question: "The active site of an enzyme is where:",
+                options: ["The enzyme is stored", "The cofactor binds", "The substrate binds", "The enzyme is synthesized"],
+                answer: "The substrate binds"
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        const submitButton = document.getElementById('submit-quiz');
+        const quizResult = document.getElementById('quiz-result');
+        let userAnswers = {};
+
+        const contentSections = document.querySelectorAll('#content-sections-container > section');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        let currentSectionIndex = 0;
+
+        function showSection(index) {
+            // Hide all sections
+            contentSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            // Show the current section
+            contentSections[index].classList.remove('hidden');
+
+            // Update button states
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === contentSections.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSectionIndex > 0) {
+                currentSectionIndex--;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSectionIndex < contentSections.length - 1) {
+                currentSectionIndex++;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        function buildQuiz() {
+            quizData.forEach((data, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question-block');
+                
+                const questionText = document.createElement('p');
+                questionText.classList.add('font-semibold', 'mb-3');
+                questionText.textContent = `${index + 1}. ${data.question}`;
+                questionDiv.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-3');
+                
+                data.options.forEach(option => {
+                    const optionButton = document.createElement('button');
+                    optionButton.classList.add('quiz-option', 'p-3', 'rounded-lg', 'text-left', 'w-full');
+                    optionButton.textContent = option;
+                    optionButton.dataset.questionIndex = index;
+                    optionButton.dataset.option = option;
+
+                    optionButton.addEventListener('click', () => {
+                        // Deselect other options for the same question
+                        document.querySelectorAll(`button[data-question-index='${index}']`).forEach(btn => {
+                            btn.classList.remove('selected');
+                        });
+                        // Select the clicked option
+                        optionButton.classList.add('selected');
+                        userAnswers[index] = option;
+                    });
+                    
+                    optionsDiv.appendChild(optionButton);
+                });
+                
+                questionDiv.appendChild(optionsDiv);
+                quizContainer.appendChild(questionDiv);
+            });
+        }
+
+        submitButton.addEventListener('click', () => {
+            let score = 0;
+            quizData.forEach((data, index) => {
+                const questionBlock = quizContainer.children[index];
+                const optionButtons = questionBlock.querySelectorAll('.quiz-option');
+                
+                optionButtons.forEach(button => {
+                    button.disabled = true; // Disable buttons after submission
+                    const option = button.dataset.option;
+                    
+                    // Mark correct answer in green
+                    if (option === data.answer) {
+                        button.classList.add('correct');
+                    }
+                    // Mark user's incorrect choice in red
+                    if (userAnswers[index] === option && userAnswers[index] !== data.answer) {
+                         button.classList.add('incorrect');
+                    }
+                });
+
+                if (userAnswers[index] === data.answer) {
+                    score++;
+                }
+            });
+            
+            quizResult.textContent = `You scored ${score} out of ${quizData.length}!`;
+            if(score > 7) {
+                quizResult.style.color = '#16c79a';
+            } else {
+                quizResult.style.color = '#e94560';
+            }
+        });
+
+        // Initial setup
+        showSection(currentSectionIndex);
+        buildQuiz();
+    </script>
+
+</body>
+</html>
