@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Kinetics</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles based on the provided design for a dark, vibrant aesthetic */
+        :root {
+            --bg: #0b1020;
+            --card: #121937;
+            --accent: #8b5cf6;
+            --accent-2: #06b6d4;
+            --accent-3: #f59e0b;
+            --muted: #9aa7ff;
+            --text: #e6e9ff;
+            --grid: rgba(255,255,255,0.06);
+        }
+        html, body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        /* Subtle animated gradient halo */
+        .gradient-bg {
+            background: radial-gradient(1000px 600px at 120% -10%, rgba(139,92,246,0.22), transparent 60%),
+                        radial-gradient(800px 500px at -20% 0%, rgba(6,182,212,0.18), transparent 55%),
+                        radial-gradient(900px 600px at 50% 120%, rgba(245,158,11,0.14), transparent 60%),
+                        linear-gradient(180deg, #0b1020, #0b1125 60%, #0b1020 100%);
+        }
+        .card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+        .soft {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .chip {
+            background: rgba(139,92,246,0.15);
+            border: 1px solid rgba(139,92,246,0.35);
+            color: #d7c8ff;
+        }
+        .chip-2 {
+            background: rgba(6,182,212,0.12);
+            border: 1px solid rgba(6,182,212,0.35);
+            color: #b7f6ff;
+        }
+        .chip-3 {
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.35);
+            color: #ffe7b8;
+        }
+        .btn {
+            transition: transform 0.06s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn:active {
+            transform: translateY(1px);
+        }
+        .tab {
+            transition: all 0.2s ease;
+        }
+        .grid-bg {
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .badge {
+            background: linear-gradient(90deg, rgba(139,92,246,0.2), rgba(6,182,212,0.2));
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+        .section-title {
+            background: linear-gradient(90deg, rgba(139,92,246,0.2), rgba(245,158,11,0.2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .heading-collision {
+            color: #6ee7b7; /* Green color for Collision Theory */
+        }
+        .heading-tst {
+            color: #58a6ff; /* Blue color for Transition State Theory */
+        }
+        /* Styling for the SVG diagrams */
+        .svg-axis text, .svg-text { fill: #cbd5ff; font-size: 14px; }
+        .svg-axis line, .svg-axis path { stroke: rgba(255,255,255,0.3); }
+        .svg-line { stroke: #8b5cf6; }
+        .svg-point { fill: #06b6d4; }
+        .hint { color: #a9b5ff; }
+
+        /* Ensure the SVG element has a specified height to be rendered */
+        .svg-container {
+            width: 100%;
+            height: 350px;
+        }
+
+        /* Specific SVG line and text colors */
+        .svg-line-ea { stroke: #8b5cf6; }
+        .svg-text-ea { fill: #8b5cf6; }
+        .svg-line-dh { stroke: #eab308; }
+        .svg-text-dh { fill: #eab308; }
+        .svg-curve { stroke: #6ee7b7; }
+    </style>
+</head>
+
+<body class="gradient-bg min-h-screen">
+    <!-- Main Header with logo and tabs -->
+    <header class="sticky top-0 z-30 backdrop-blur-md soft border-b border-white/10">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col items-center justify-center">
+            <div class="flex flex-col items-center gap-1 text-center">
+                <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Reaction Kinetics</h1>
+                <p class="text-sm text-white/70">Collision Theory • Transition State Theory</p>
+            </div>
+        </div>
+        <!-- Tab Navigation -->
+        <div class="max-w-5xl mx-auto px-4 pb-3">
+            <div class="card soft rounded-2xl p-1 grid grid-cols-2 gap-1">
+                <button id="tabCollision" class="tab rounded-xl py-2.5 text-sm font-semibold bg-violet-600/30 text-white border border-violet-400/40 shadow-inner">
+                    Collision Theory
+                </button>
+                <button id="tabTST" class="tab rounded-xl py-2.5 text-sm font-semibold hover:bg-white/5 text-white/80 border border-white/10">
+                    Transition State Theory
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-4 pb-24 pt-4">
+
+        <!-- Theory Content Sections -->
+        <div id="theory-content">
+
+            <!-- Collision Theory Section -->
+            <section id="collisionSection" class="space-y-5">
+                <h2 class="text-2xl md:text-4xl font-bold heading-collision mb-6 rounded-lg bg-white/5 p-4">
+                    1. Collision Theory
+                </h2>
+                <p class="mb-6 text-white/80 card soft rounded-2xl p-5">
+                    Collision theory provides a straightforward model for understanding how chemical reactions occur. Its core principle is that reactant particles must collide with each other for a reaction to take place, but not all collisions are effective.
+                </p>
+
+                <!-- Collapsible sections for sub-topics -->
+                <div class="space-y-4">
+                    <!-- Basic Definition and Interpretation -->
+                    <div class="card soft rounded-2xl p-5 grid-bg">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-def">
+                            <h3 class="text-lg font-semibold text-white">1.1. Basic Definition and Interpretation</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-def" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                At its core, collision theory is a model that quantitatively explains the rates of chemical reactions by relating them to the frequency of collisions between reactant molecules. The advanced treatment refines the basic model by incorporating molecular speed distributions, orientation effects, and energy thresholds with greater mathematical rigor.
+                            </p>
+                            <p class="text-white/80 mt-2">
+                                The fundamental postulate is:
+                            </p>
+                            <p class="text-white/80 mt-2">
+                                The rate of a bimolecular elementary reaction is proportional to:
+                            </p>
+                            <ul class="list-disc list-inside mt-2 space-y-2 text-white/80">
+                                <li><strong>The Collision Frequency (Z):</strong> The number of collisions per unit time per unit volume.</li>
+                                <li><strong>The Fraction of Collisions with Sufficient Energy (f):</strong> The fraction of colliding pairs that have kinetic energy greater than or equal to the activation energy (E<sub>a</sub>).</li>
+                                <li><strong>The Steric Factor (p):</strong> The fraction of collisions with the correct molecular orientation.</li>
+                            </ul>
+                            <p class="text-white/80 mt-2">
+                                Thus, the rate constant k is given by:
+                            </p>
+                            <p class="my-4 text-center text-lg font-mono text-cyan-400">
+                                k = p &sdot; Z &sdot; f
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Activation Energy Barrier -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-ea">
+                            <h3 class="text-lg font-semibold text-white">1.2. Activation Energy Barrier (E<sub>a</sub>)</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-ea" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The activation energy, E<sub>a</sub>, is the minimum amount of energy that reacting particles must possess to overcome the energy barrier and form products. Think of it like a hill that a hiker needs to climb before they can get to the valley on the other side. A higher activation energy means a steeper hill, and therefore fewer particles will have enough energy to make it over, resulting in a slower reaction rate.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Rate Law Expression -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-rate-law">
+                            <h3 class="text-lg font-semibold text-white">1.3. Rate Law Expression</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-rate-law" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The rate law is a crucial mathematical expression that relates the rate of a reaction to the concentration of its reactants. For a generic reaction aA + bB &rarr; products, the rate law is:
+                            </p>
+                            <p class="my-4 text-center text-lg font-mono text-cyan-400">
+                                Rate = k[A]<sup>m</sup>[B]<sup>n</sup>
+                            </p>
+                            <p class="text-white/80">
+                                Here, [A] and [B] are the molar concentrations, k is the rate constant, and m and n are the <strong>reaction orders</strong> with respect to A and B. It is important to remember that the exponents m and n are determined <strong>experimentally</strong> and are not necessarily equal to the stoichiometric coefficients a and b.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Rate Constant Explained -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-rate-constant">
+                            <h3 class="text-lg font-semibold text-white">1.4. Rate Constant (k) Explained</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-rate-constant" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The <strong>rate constant</strong>, k, is a proportionality constant that links the concentrations of reactants to the reaction rate. A larger value of k signifies a faster reaction. The rate constant is unique for a given reaction and is highly dependent on temperature. Its units change depending on the overall <strong>reaction order</strong>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Order of Reaction -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-order">
+                            <h3 class="text-lg font-semibold text-white">1.5. Order of Reaction</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-order" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The order of a reaction is the exponent of a reactant's concentration in the rate law. The overall reaction order is the sum of all the exponents (m+n). It describes the dependence of the reaction rate on concentration. For example, if doubling the concentration of a reactant doubles the rate, the reaction is first order with respect to that reactant. The order of a reaction can be zero, an integer, or even a fraction, and it must be determined by experiment.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Molecularity of Reactions -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-mol">
+                            <h3 class="text-lg font-semibold text-white">1.6. Molecularity of Reactions</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-mol" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                Molecularity is a theoretical concept that refers to the number of molecules, atoms, or ions that participate in an elementary reaction step (a single step in a reaction mechanism). Unlike reaction order, which is a property of the overall reaction and determined experimentally, molecularity is an intrinsic property of an elementary step. It can be unimolecular (one particle), bimolecular (two), or termolecular (three).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Zero, First, and Second-Order Reactions with Examples -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-orders">
+                            <h3 class="text-lg font-semibold text-white">1.7. Zero, First, and Second-Order Reactions with Examples</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-orders" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                <strong>Zero-order reaction:</strong> The rate is independent of reactant concentration. The rate is constant and equal to k. Example: The decomposition of dinitrogen monoxide on a gold surface.
+                                <br>Rate = k[N<sub>2</sub>O]<sup>0</sup> = k
+                            </p>
+                            <p class="text-white/80">
+                                <strong>First-order reaction:</strong> The rate is directly proportional to the concentration of a single reactant. Example: The radioactive decay of carbon-14.
+                                <br>Rate = k[<sup>14</sup>C]<sup>1</sup>
+                            </p>
+                            <p class="text-white/80">
+                                <strong>Second-order reaction:</strong> The rate is proportional to the square of a single reactant's concentration or the product of two reactant concentrations. Example: The decomposition of nitrogen dioxide.
+                                <br>Rate = k[NO<sub>2</sub>]<sup>2</sup>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Arrhenius Equation and Interpretation -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-arr">
+                            <h3 class="text-lg font-semibold text-white">1.8. Arrhenius Equation and Interpretation</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-arr" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The Arrhenius equation mathematically relates the rate constant (k) to temperature. It is given by:
+                            </p>
+                            <p class="my-4 text-center text-lg font-mono text-cyan-400">
+                                k = A e<sup>-Ea/RT</sup>
+                            </p>
+                            <p class="text-white/80">
+                                Where A is the <strong>pre-exponential factor</strong> (or frequency factor), representing the frequency of correctly oriented collisions. The exponential term, e<sup>-Ea/RT</sup>, is the fraction of collisions with sufficient energy. The equation clearly shows that increasing temperature (T) or decreasing activation energy (E<sub>a</sub>) will increase the rate constant, and thus the reaction rate.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Arrhenius Plot -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="col-arr-plot">
+                            <h3 class="text-lg font-semibold text-white">1.9. Arrhenius Plot</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="col-arr-plot" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                A linear form of the Arrhenius equation can be used to find the activation energy experimentally. By taking the natural logarithm of both sides, we get:
+                            </p>
+                            <p class="my-4 text-center text-lg font-mono text-cyan-400">
+                                ln(k) = ln(A) - (E<sub>a</sub> / R) (1 / T)
+                            </p>
+                            <p class="text-white/80">
+                                This is in the form of a straight line, y = mx + c, where y = ln(k) and x = 1/T. Plotting ln(k) versus 1/T gives a straight line with a <strong>slope</strong> of -E<sub>a</sub>/R and a <strong>y-intercept</strong> of ln(A).
+                            </p>
+                            <!-- Static Arrhenius Plot using SVG -->
+                            <div class="mt-5 rounded-2xl bg-white/5 border border-white/10 p-4 svg-container">
+                                <svg width="100%" height="100%" viewBox="0 0 400 350">
+                                    <!-- Watermark -->
+                                    <image href="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" x="120" y="80" width="160" height="160" opacity="0.1" />
+                                    <!-- Axes -->
+                                    <line x1="40" y1="30" x2="40" y2="320" stroke="#a9a9a9" stroke-width="2" />
+                                    <line x1="40" y1="320" x2="380" y2="320" stroke="#a9a9a9" stroke-width="2" />
+                                    <!-- Axis labels -->
+                                    <text x="20" y="175" font-size="14" fill="#e6e9ff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90, 20, 175)">ln(k)</text>
+                                    <text x="210" y="340" font-size="14" fill="#e6e9ff" text-anchor="middle">1/T</text>
+                                    <!-- Plot line with corrected slope -->
+                                    <line x1="50" y1="280" x2="350" y2="80" stroke="#8b5cf6" stroke-width="3" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transition State Theory Section (hidden by default) -->
+            <section id="tstSection" class="space-y-5 hidden">
+                <h2 class="text-2xl md:text-4xl font-bold heading-tst mb-6 rounded-lg bg-white/5 p-4">
+                    2. Transition State Theory
+                </h2>
+                <p class="mb-6 text-white/80 card soft rounded-2xl p-5">
+                    Transition State Theory (TST) provides a more detailed, quantum-mechanical explanation of reaction rates. It proposes that reactants pass through a unique, high-energy intermediate state called the <strong>activated complex</strong> or <strong>transition state</strong>.
+                </p>
+
+                <!-- Collapsible sections for sub-topics -->
+                <div class="space-y-4">
+                    <!-- Theory Definition and Interpretation -->
+                    <div class="card soft rounded-2xl p-5 grid-bg">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="tst-def">
+                            <h3 class="text-lg font-semibold text-white">2.1. Theory Definition and Interpretation</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="tst-def" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                TST theorizes that for a reaction to proceed, the reactants must form an unstable, temporary species known as the transition state. This complex exists at the highest energy point on the reaction pathway and can either proceed to form products or revert back to reactants. The reaction rate is governed by the concentration of this activated complex and the rate at which it breaks down into products.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Reaction Coordinate Diagram -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="tst-diagram">
+                            <h3 class="text-lg font-semibold text-white">2.2. Reaction Coordinate Diagram and Analysis</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="tst-diagram" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                A reaction coordinate diagram is a graphical representation of the potential energy of a chemical system as a function of the progress of a reaction. The x-axis represents the <strong>reaction coordinate</strong> (the progress from reactants to products), and the y-axis represents the <strong>potential energy</strong>. The peak of the curve signifies the <strong>transition state</strong>. The energy difference between the reactants and this peak is the <strong>activation energy (E<sub>a</sub>)</strong>.
+                            </p>
+                            <!-- Static Reaction Coordinate Diagram using SVG for a spontaneous reaction -->
+                            <div class="mt-5 rounded-2xl bg-white/5 border border-white/10 p-4 svg-container">
+                                <svg width="100%" height="100%" viewBox="0 0 400 350">
+                                    <!-- Watermark -->
+                                    <image href="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" x="120" y="80" width="160" height="160" opacity="0.1" />
+                                    <!-- Axes -->
+                                    <line x1="40" y1="30" x2="40" y2="320" stroke="#a9a9a9" stroke-width="2" />
+                                    <line x1="40" y1="320" x2="380" y2="320" stroke="#a9a9a9" stroke-width="2" />
+                                    <!-- Axis labels -->
+                                    <text x="20" y="175" font-size="14" fill="#e6e9ff" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90, 20, 175)">Potential Energy</text>
+                                    <text x="210" y="340" font-size="14" fill="#e6e9ff" text-anchor="middle">Reaction Coordinate</text>
+                                    <!-- Reaction Curve (Spontaneous) -->
+                                    <path d="M 50 250 C 150 250, 150 100, 200 100 C 250 100, 350 300, 350 300" fill="none" stroke="#6ee7b7" stroke-width="3" />
+                                    <!-- Activation Energy (Ea) lines -->
+                                    <line x1="50" y1="250" x2="50" y2="100" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4" />
+                                    <line x1="50" y1="100" x2="200" y2="100" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4" />
+                                    <line x1="50" y1="250" x2="200" y2="250" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4" />
+                                    <!-- Enthalpy Change (&Delta;H) lines -->
+                                    <line x1="350" y1="300" x2="350" y2="250" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
+                                    <line x1="350" y1="300" x2="50" y2="300" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
+                                    <!-- Labels -->
+                                    <text x="50" y="270" font-size="14" fill="#e6e9ff" text-anchor="middle">Reactants</text>
+                                    <text x="350" y="320" font-size="14" fill="#e6e9ff" text-anchor="middle">Products</text>
+                                    <text x="125" y="175" font-size="14" fill="#8b5cf6" text-anchor="middle" transform="rotate(-90, 125, 175)">Ea</text>
+                                    <text x="200" y="265" font-size="14" fill="#f59e0b" text-anchor="middle">&Delta;H</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features of a Transition State -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="tst-features">
+                            <h3 class="text-lg font-semibold text-white">2.3. Features of a Transition State</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="tst-features" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The transition state is a unique and fleeting species with several defining characteristics:
+                                <ul class="list-disc list-inside mt-2 space-y-2">
+                                    <li><strong>Extremely Unstable:</strong> It exists for an incredibly short period of time (10<sup>-15</sup> to 10<sup>-14</sup> seconds).</li>
+                                    <li><strong>Partial Bonds:</strong> Bonds are simultaneously breaking and forming, a state often represented with dashed lines in chemical diagrams.</li>
+                                    <li><strong>Hypothetical Species:</strong> It cannot be isolated or directly observed. Its structure and properties are inferred based on theoretical calculations and kinetic data.</li>
+                                    <li><strong>Saddle Point:</strong> On a potential energy surface (a multi-dimensional version of the diagram above), the transition state exists at a "saddle point" &ndash; a maximum in one dimension (the reaction coordinate) and a minimum in all other dimensions.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Structure in Spontaneous and Non-Spontaneous Reactions -->
+                    <div class="card soft rounded-2xl p-5">
+                        <button class="w-full flex items-center justify-between text-left" data-accordion="tst-spontaneous">
+                            <h3 class="text-lg font-semibold text-white">2.4. Structure in Spontaneous and Non-Spontaneous Reactions</h3>
+                            <span class="text-white/70 accordion-indicator">Expand</span>
+                        </button>
+                        <div id="tst-spontaneous" class="mt-4 hidden">
+                            <p class="text-white/80">
+                                The concept of a transition state is applicable to both types of reactions, but the energy relationship between reactants and products differs.
+                            </p>
+                            <p class="text-white/80">
+                                <strong>Spontaneous Reactions (Exergonic):</strong> In these reactions, the products have a lower Gibbs free energy (&Delta;G &lt; 0) than the reactants. The transition state still represents an energy barrier (E<sub>a</sub>) that must be overcome, but once past it, the reaction proceeds spontaneously, releasing energy.
+                            </p>
+                            <p class="text-white/80">
+                                <strong>Non-Spontaneous Reactions (Endergonic):</strong> Here, the products have a higher Gibbs free energy (&Delta;G &gt; 0) than the reactants. The transition state is still the peak, but a continuous external input of energy is required for the reaction to proceed. The concept of the transition state still helps us understand the reaction pathway and the magnitude of the energy barrier.
+                            </p>
+                        </div>
+                    </details>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900/50 backdrop-blur-md soft border-t border-white/10 mt-10">
+        <div class="max-w-5xl mx-auto px-4 py-8 flex flex-col items-center text-center text-white/70 text-sm space-y-2">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="w-14 h-auto mb-2">
+            <p>© 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: betabiosciences@gmail.com</p>
+            <p>Contact: +91 97 47 53 35 97</p>
+        </div>
+    </footer>
+
+    <script>
+        // Get the tab buttons and content sections
+        const tabCollision = document.getElementById('tabCollision');
+        const tabTST = document.getElementById('tabTST');
+        const collisionSection = document.getElementById('collisionSection');
+        const tstSection = document.getElementById('tstSection');
+
+        /**
+         * Switches the active tab and shows the corresponding content section.
+         * @param {string} tabId - The ID of the tab to activate ('tabCollision' or 'tabTST').
+         */
+        function switchTab(tabId) {
+            if (tabId === 'tabCollision') {
+                tabCollision.classList.add('bg-violet-600/30', 'border-violet-400/40', 'shadow-inner');
+                tabCollision.classList.remove('hover:bg-white/5', 'text-white/80', 'border-white/10');
+                
+                tabTST.classList.add('hover:bg-white/5', 'text-white/80', 'border-white/10');
+                tabTST.classList.remove('bg-violet-600/30', 'border-violet-400/40', 'shadow-inner');
+
+                collisionSection.classList.remove('hidden');
+                tstSection.classList.add('hidden');
+            } else if (tabId === 'tabTST') {
+                tabTST.classList.add('bg-violet-600/30', 'border-violet-400/40', 'shadow-inner');
+                tabTST.classList.remove('hover:bg-white/5', 'text-white/80', 'border-white/10');
+                
+                tabCollision.classList.add('hover:bg-white/5', 'text-white/80', 'border-white/10');
+                tabCollision.classList.remove('bg-violet-600/30', 'border-violet-400/40', 'shadow-inner');
+
+                tstSection.classList.remove('hidden');
+                collisionSection.classList.add('hidden');
+            }
+        }
+
+        // Add event listeners for tab switching
+        tabCollision.addEventListener('click', () => switchTab('tabCollision'));
+        tabTST.addEventListener('click', () => switchTab('tabTST'));
+
+        // Accordion functionality for all collapsible sections
+        document.querySelectorAll('[data-accordion]').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-accordion');
+                const targetSection = document.getElementById(targetId);
+                const indicator = button.querySelector('.accordion-indicator');
+
+                if (targetSection.classList.contains('hidden')) {
+                    targetSection.classList.remove('hidden');
+                    indicator.textContent = 'Hide';
+                } else {
+                    targetSection.classList.add('hidden');
+                    indicator.textContent = 'Expand';
+                }
+            });
+        });
+
+        // Open a few sections by default
+        document.getElementById("col-def").classList.remove("hidden");
+        document.querySelector('[data-accordion="col-def"] .accordion-indicator').textContent = "Hide";
+        document.getElementById("tst-diagram").classList.remove("hidden");
+        document.querySelector('[data-accordion="tst-diagram"] .accordion-indicator').textContent = "Hide";
+    </script>
+</body>
+</html>
