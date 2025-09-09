@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Enzyme Catalysis : Theories and mechanisms</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121835;
+      --panel-2:#0e1530;
+      --text:#e8eefc;
+      --muted:#a3b2d9;
+      --accent:#7cdbff;
+      --accent-2:#a78bfa;
+      --hot:#ff7ab6;
+      --lime:#b4ff39;
+      --sun:#ffd166;
+      --teal:#2dd4bf;
+      --rose:#fb7185;
+    }
+    html,body{scroll-behavior:smooth;}
+    body{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";}
+    .glass{background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); backdrop-filter: blur(8px);}
+    .grad-text{background: linear-gradient(90deg, var(--accent), var(--hot), var(--accent-2)); -webkit-background-clip:text;background-clip:text;color:transparent;}
+    .glow{box-shadow: 0 0 0 1px rgba(124,219,255,.1), 0 10px 30px rgba(124,219,255,.08), inset 0 0 40px rgba(124,219,255,.05);}
+    .glow-2{box-shadow: 0 0 0 1px rgba(167,139,250,.12), 0 10px 30px rgba(167,139,250,.10), inset 0 0 40px rgba(167,139,250,.06);}
+    .chip{background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.03)); border: 1px solid rgba(255,255,255,.08)}
+    .section-card{border:1px solid rgba(255,255,255,.06); background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));}
+    .sticky-nav{background: linear-gradient(180deg, rgba(14,21,48,.9), rgba(14,21,48,.6)); backdrop-filter: blur(10px); border-bottom:1px solid rgba(255,255,255,.06)}
+    .btn{transition: transform .08s ease, filter .2s ease;}
+    .btn:active{transform: translateY(1px) scale(0.99);}
+    /* Stepper visibility */
+    .section-pane{display:none}
+    .section-pane.active{display:block}
+  </style>
+</head>
+<body class="bg-[var(--bg)] text-[var(--text)]">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 sticky-nav">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl grid place-items-center glow bg-[var(--panel)]">
+          <svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true">
+            <defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7cdbff"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs>
+            <circle cx="20" cy="24" r="10" fill="url(#g1)"/>
+            <rect x="28" y="18" rx="4" width="26" height="12" fill="#ffd166"/>
+            <circle cx="48" cy="24" r="6" fill="#fb7185"/>
+            <path d="M6 46 C 20 34, 44 34, 58 46" fill="none" stroke="#2dd4bf" stroke-width="3"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-extrabold grad-text">Enzyme Catalysis : Theories and mechanisms</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section 1: Lock & Key -->
+  <section id="lock-key" class="section-pane active">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="rounded-2xl p-6 section-card glow">
+          <h3 class="text-2xl font-bold mb-4">1) Lock and Key Model</h3>
+          <p class="text-[var(--muted)] mb-4">
+            The active site is pre-formed to fit the substrate, emphasizing shape and chemical complementarity. This view explains specificity well:
+            a substrate “key” slots into a rigid “lock,” already arranged for binding.
+          </p>
+          <ul class="text-[var(--muted)] space-y-2 mb-4">
+            <li><span class="text-[var(--teal)] font-semibold">Specificity:</span> Matching geometry and interaction patterns restrict what can bind.</li>
+            <li><span class="text-[var(--teal)] font-semibold">Simplicity:</span> Recognition is intuitive and immediate with little rearrangement.</li>
+          </ul>
+          <div class="rounded-xl bg-[var(--panel)] p-4">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Lock%20and%20Key.jpg" alt="Lock and Key Model Diagram" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0e1530/e8eefc?text=Image+Not+Found';">
+            <p class="text-[var(--muted)] text-sm mt-2">A pre-shaped pocket complements the substrate—recognition occurs without major shape change.</p>
+          </div>
+          <div class="mt-4 space-y-2 text-sm text-[var(--muted)]">
+            <p><span class="text-[var(--rose)] font-semibold">Drawbacks:</span> Ignores enzyme dynamics and how rearrangements can better stabilize the transition state. Can over-emphasize tight ground-state binding, which may actually slow catalysis if it traps ES too deeply.</p>
+            <p><span class="text-white font-semibold">Key takeaway:</span> Specificity can arise from fit, but maximal rate enhancement often needs flexibility and transition-state complementarity.</p>
+          </div>
+        </div>
+
+        <!-- Lock & Key Reaction Coordinate -->
+        <div class="rounded-2xl p-6 section-card glow-2">
+          <h4 class="text-xl font-bold mb-2">Reaction Coordinate: Lock & Key</h4>
+          <p class="text-[var(--muted)] mb-3">Spontaneous reaction: products lower than reactants. Here, the barrier is lowered modestly by pre-existing complementarity.</p>
+          <img src="https://betabiosciences.github.io/Biochemistry-animations/lock%20and%20key%20rxn%20coordinate.png" alt="Lock and Key Reaction Coordinate" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0e1530/e8eefc?text=Image+Not+Found';">
+          <ul class="list-disc pl-6 text-[var(--muted)] text-sm space-y-1 mt-2">
+            <li>Good ground-state fit can help binding but may not maximize transition state stabilization.</li>
+            <li>Best for explaining specificity; less powerful for explaining very large rate accelerations.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Induced Fit -->
+  <section id="induced-fit" class="section-pane">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="rounded-2xl p-6 section-card glow">
+          <h3 class="text-2xl font-bold mb-4">2) Induced Fit Theory</h3>
+          <p class="text-[var(--muted)] mb-4">
+            Binding triggers conformational changes that mold the active site around the substrate and, more importantly, around the transition-state-like geometry.
+            This aligns catalytic groups, excludes water, and creates optimal contacts precisely where the barrier is highest.
+          </p>
+          <ul class="text-[var(--muted)] space-y-2 mb-4">
+            <li><span class="text-[var(--teal)] font-semibold">Adaptive recognition:</span> The active site shifts to favor the on-pathway conformations.</li>
+            <li><span class="text-[var(--teal)] font-semibold">Transition-state focus:</span> Stronger rate boosts arise when the highest-energy configuration is stabilized most.</li>
+            <li><span class="text-[var(--teal)] font-semibold">Selectivity & fidelity:</span> Conformational checkpoints can reject off-pathway or incorrect substrates.</li>
+          </ul>
+          <div class="rounded-xl bg-[var(--panel)] p-4">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Induced%20fit.jpg" alt="Induced Fit Model Diagram" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0e1530/e8eefc?text=Image+Not+Found';">
+            <p class="text-[var(--muted)] text-sm mt-2">The enzyme “hugs” the substrate into an arrangement that best resembles the transition state.</p>
+          </div>
+        </div>
+
+        <!-- Induced Fit Reaction Coordinate -->
+        <div class="rounded-2xl p-6 section-card glow-2">
+          <h4 class="text-xl font-bold mb-2">Reaction Coordinate: Induced Fit</h4>
+          <p class="text-[var(--muted)] mb-3">Products lower than reactants. Induced fit usually provides a deeper reduction in the barrier by improving TS contacts.</p>
+          <img src="https://betabiosciences.github.io/Biochemistry-animations/Induced%20fit%20rxn%20coordinate.png" alt="Induced Fit Reaction Coordinate" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0e1530/e8eefc?text=Image+Not+Found';">
+          <ul class="list-disc pl-6 text-[var(--muted)] text-sm space-y-1 mt-2">
+            <li>Conformational changes align catalytic residues, exclude bulk water, and pre-organize charges.</li>
+            <li>Better TS stabilization generally means a larger rate increase than a rigid pocket can provide.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Catalytic Mechanisms -->
+  <section id="mechanisms" class="section-pane">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div class="rounded-2xl p-6 section-card glow">
+        <h3 class="text-2xl font-bold mb-4">3) Common Catalytic Mechanisms</h3>
+        <p class="text-[var(--muted)] mb-6">
+          Enzymes combine several strategies at once. Each strategy lowers the barrier by stabilizing key states, improving alignment, or providing alternative pathways
+          with more favorable steps.
+        </p>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Acid/Base -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--hot)] text-[var(--bg)] font-extrabold">H+</div>
+              <h4 class="font-semibold">General Acid/Base</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">Residues donate/accept protons to stabilize charges, make better leaving groups, or activate nucleophiles. Histidine is a versatile proton shuttle near neutral pH.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Stabilizes buildup of charge in TS</li>
+              <li>Speeds bond breaking/forming</li>
+            </ul>
+          </div>
+          <!-- Covalent (Nucleophilic) -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--teal)] text-[var(--bg)] font-extrabold">Nu:</div>
+              <h4 class="font-semibold">Covalent Catalysis (Nucleophilic)</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">A catalytic nucleophile (e.g., Ser, Cys, Lys) forms a temporary covalent adduct, splitting the reaction into easier steps and stabilizing intermediates.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Creates alternate, lower-barrier pathway</li>
+              <li>Common in proteases and transferases</li>
+            </ul>
+          </div>
+          <!-- Covalent (Electrophilic) -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--rose)] text-white font-extrabold">E+</div>
+              <h4 class="font-semibold">Covalent Catalysis (Electrophilic)</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">Positively polarized groups withdraw electron density, stabilize anionic intermediates, or create better leaving groups to drive bond formation.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Stabilizes negative charge development</li>
+              <li>Often paired with metal ions</li>
+            </ul>
+          </div>
+          <!-- Metal-mediated -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--sun)] text-[var(--bg)] font-extrabold">M²⁺</div>
+              <h4 class="font-semibold">Metal-Mediated Catalysis</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">Metal ions (e.g., Zn²⁺, Mg²⁺) polarize bonds, stabilize charges, and orient substrates; they can also activate water for nucleophilic attack.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Stabilizes TS charges</li>
+              <li>Controls geometry and orientation</li>
+            </ul>
+          </div>
+          <!-- Electrostatic -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--accent)] text-[var(--bg)] font-extrabold">⚡</div>
+              <h4 class="font-semibold">Electrostatic Catalysis</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">Pre-positioned charges and dipoles in the active site preferentially stabilize the polar/charged transition state.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Preorganized fields reduce TS energy</li>
+              <li>Often combined with acid/base steps</li>
+            </ul>
+          </div>
+          <!-- Proximity & Orientation -->
+          <div class="p-5 rounded-xl bg-[var(--panel)] glow">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-lg grid place-items-center bg-[var(--lime)] text-[var(--bg)] font-extrabold">🎯</div>
+              <h4 class="font-semibold">Proximity & Orientation (Entropy Traps)</h4>
+            </div>
+            <p class="text-[var(--muted)] text-sm mb-3">By holding reactants close and correctly aligned, enzymes cut down the random motions needed for collision and reaction.</p>
+            <ul class="text-[var(--muted)] text-xs mt-2 list-disc pl-5">
+              <li>Reduces entropy cost of association</li>
+              <li>Improves effective molarity and collision geometry</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-6 text-[var(--muted)]">
+          <p><span class="text-white font-semibold">Reality check:</span> Most active sites use several of these at once—for example, metal ions to polarize bonds, acid/base residues to shuttle protons, and proximity/orientation to align partners.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Summary Diagram -->
+  <section id="summary" class="section-pane">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="rounded-2xl p-6 section-card glow">
+          <h3 class="text-2xl font-bold mb-3">4) Summary of Fundamentals</h3>
+          <ul class="text-[var(--muted)] space-y-2 mb-4">
+            <li><span class="text-white font-semibold">Free Energy (ΔG):</span> For spontaneous reactions, products are lower than reactants. Enzymes do not change this gap.</li>
+            <li><span class="text-white font-semibold">Equilibrium Constant (K):</span> Unchanged; catalysts only speed how fast equilibrium is reached.</li>
+            <li><span class="text-white font-semibold">Spontaneity:</span> Determined by ΔG between R and P, not by the catalyst.</li>
+            <li><span class="text-white font-semibold">Activation Energy (ΔG‡):</span> Lowered by transition-state stabilization, preorganization, acid/base, covalent steps, metals, and electrostatics.</li>
+          </ul>
+          <p class="text-[var(--muted)]">Think of an enzyme as a guide that reshapes the path up the hill—making the climb easier—while leaving the start and end of the hike in the same places.</p>
+        </div>
+        <div class="rounded-2xl p-6 section-card glow-2">
+          <h4 class="text-xl font-bold mb-2">All Together in a Reaction Coordinate (Spontaneous)</h4>
+           <img src="https://betabiosciences.github.io/Biochemistry-animations/Reaction%20coordinate%20summary.png" alt="Reaction Coordinate Summary" class="w-full h-auto rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0e1530/e8eefc?text=Image+Not+Found';">
+          <p class="text-[var(--muted)] text-sm mt-2">Equilibrium and spontaneity are unchanged; only the route is improved.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Review Quiz -->
+  <section id="quiz" class="section-pane">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div class="rounded-2xl p-6 section-card glow">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-2xl font-bold">Review Quiz</h3>
+          <span class="chip px-3 py-1 rounded-full text-sm">10 Questions</span>
+        </div>
+        <p class="text-[var(--muted)] mb-6">Pick the best answer for each. You’ll get instant scoring and feedback.</p>
+        <div id="quiz-list" class="space-y-5"></div>
+        <div class="flex flex-wrap items-center gap-3 mt-6">
+          <button id="submit-quiz" class="btn bg-[var(--accent)] text-[var(--bg)] px-5 py-2.5 rounded-lg font-semibold hover:brightness-110">Submit Quiz</button>
+          <button id="retry-quiz" class="btn chip px-5 py-2.5 rounded-lg">Retry</button>
+          <div id="quiz-score" class="ml-auto text-white font-bold"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stepper Controls -->
+  <div class="sticky bottom-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3">
+      <div class="section-card glow bg-[var(--panel)] rounded-2xl px-4 py-3 flex items-center gap-3">
+        <button id="prev-btn" class="btn chip px-4 py-2 rounded-lg">Previous</button>
+        <button id="next-btn" class="btn bg-[var(--accent)] text-[var(--bg)] hover:brightness-110 px-4 py-2 rounded-lg font-semibold">Next</button>
+        <div class="ml-auto flex items-center gap-2">
+          <span class="text-[var(--muted)] text-sm" id="step-indicator">Section 1 of 5</span>
+          <select id="jump-select" class="chip rounded-lg px-3 py-2 bg-transparent text-sm">
+            <option value="lock-key">Lock & Key</option>
+            <option value="induced-fit">Induced Fit</option>
+            <option value="mechanisms">Catalytic Mechanisms</option>
+            <option value="summary">Summary</option>
+            <option value="quiz">Quiz</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-center">
+      <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="mx-auto w-14 h-auto mb-4" onerror="this.onerror=null;this.src='https://placehold.co/128x128/0e1530/e8eefc?text=Logo';"/>
+      <p class="text-[var(--muted)]">
+        © 2025 BETA Biosciences. All rights reserved.<br/>
+        Email: betabiosciences@gmail.com<br/>
+        Contact: +91 97 47 53 35 97
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Sections stepper
+    const panes = [
+      document.getElementById('lock-key'),
+      document.getElementById('induced-fit'),
+      document.getElementById('mechanisms'),
+      document.getElementById('summary'),
+      document.getElementById('quiz')
+    ].filter(Boolean);
+
+    let current = 0;
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const stepInd = document.getElementById('step-indicator');
+    const jumpSel = document.getElementById('jump-select');
+
+    function show(i){
+      current = Math.max(0, Math.min(panes.length-1, i));
+      panes.forEach((el, idx)=> el.classList.toggle('active', idx===current));
+      prevBtn.disabled = current===0;
+      prevBtn.style.opacity = current === 0 ? 0.5 : 1;
+      nextBtn.textContent = current===panes.length-1 ? 'Finish' : 'Next';
+      stepInd.textContent = `Section ${current+1} of ${panes.length}`;
+      const id = panes[current].id;
+      [...jumpSel.options].forEach(o => o.selected = (o.value===id));
+      window.scrollTo({top: 0, behavior:'smooth'});
+    }
+
+    prevBtn.addEventListener('click', ()=> show(current-1));
+    nextBtn.addEventListener('click', ()=> {
+      if(current===panes.length-1){
+        // At end, loop to start
+        show(0);
+      } else {
+        show(current+1);
+      }
+    });
+    jumpSel.addEventListener('change', ()=> {
+      const idx = panes.findIndex(p => p.id === jumpSel.value);
+      if(idx>=0) show(idx);
+    });
+
+    // Initialize
+    show(0);
+
+    // Quiz Data
+    const quiz = [
+      {
+        id:'q1',
+        q:'Which statement best describes the Lock & Key model?',
+        options:[
+          'The enzyme reshapes extensively after binding.',
+          'The active site is pre-formed and matches the substrate.',
+          'The enzyme binds only products.',
+          'Substrates always distort enzymes into inactive forms.'
+        ],
+        answer:1,
+        why:'Lock & Key proposes a pre-formed complementary pocket for recognition.'
+      },
+      {
+        id:'q2',
+        q:'A main drawback of the Lock & Key model is that it:',
+        options:[
+          'Ignores that enzymes can be flexible and change shape on binding.',
+          'Says enzymes cannot bind substrates.',
+          'Claims enzymes change equilibrium constants.',
+          'Suggests reactions cannot be spontaneous.'
+        ],
+        answer:0,
+        why:'It does not account for induced conformational changes that stabilize the transition state.'
+      },
+      {
+        id:'q3',
+        q:'Induced Fit theory emphasizes that enzymes:',
+        options:[
+          'Are rigid and never move.',
+          'Change shape upon binding to improve catalytic contacts.',
+          'Bind only to products.',
+          'Increase ΔG of the reaction.'
+        ],
+        answer:1,
+        why:'Binding drives conformational adjustments that favor the transition state.'
+      },
+      {
+        id:'q4',
+        q:'Binding energy primarily helps by:',
+        options:[
+          'Raising the activation energy.',
+          'Tight binding to the ground state only.',
+          'Stabilizing the transition state via many small interactions.',
+          'Changing product energy to be lower than reactants.'
+        ],
+        answer:2,
+        why:'Many weak interactions add up to lower the barrier when the transition state is best recognized.'
+      },
+      {
+        id:'q5',
+        q:'Which is an example of general acid/base catalysis?',
+        options:[
+          'A metal ion stabilizes negative charge.',
+          'A residue donates or accepts a proton to support bond changes.',
+          'An enzyme forms a covalent adduct via a nucleophile.',
+          'Substrates are held closer together.'
+        ],
+        answer:1,
+        why:'Proton donation/abstraction by residues like His, Glu, or Asp.'
+      },
+      {
+        id:'q6',
+        q:'Covalent catalysis (nucleophilic) involves:',
+        options:[
+          'A cation pulling electrons from the substrate.',
+          'A catalytic group forming a temporary bond to create a new pathway.',
+          'Only water acting as a base.',
+          'Permanent modification of the enzyme every cycle.'
+        ],
+        answer:1,
+        why:'A transient covalent intermediate diverts the reaction to a lower-barrier route.'
+      },
+      {
+        id:'q7',
+        q:'Metal-mediated catalysis can:',
+        options:[
+          'Change ΔG of the reaction.',
+          'Always replace the enzyme active site.',
+          'Stabilize charged intermediates and orient substrates.',
+          'Prevent proton transfers entirely.'
+        ],
+        answer:2,
+        why:'Metal ions often stabilize charge, activate water, and help with positioning.'
+      },
+      {
+        id:'q8',
+        q:'Electrostatic catalysis refers to:',
+        options:[
+          'Random collisions at high temperature.',
+          'Pre-positioned charges or dipoles that stabilize the transition state.',
+          'Only covalent bond formation with the substrate.',
+          'Enzyme denaturation.'
+        ],
+        answer:1,
+        why:'Fixed charges/dipoles in the active site reduce energy cost of charged TS.'
+      },
+      {
+        id:'q9',
+        q:'Proximity and orientation effects mainly reduce:',
+        options:[
+          'Entropy penalties by holding reactants close and aligned.',
+          'The energy of the products.',
+          'The number of enzyme molecules needed.',
+          'Water concentration.'
+        ],
+        answer:0,
+        why:'Restraint of motion reduces the “search cost,” lowering the effective barrier.'
+      },
+      {
+        id:'q10',
+        q:'Enzymes speed reactions by lowering ΔG‡. What stays the same?',
+        options:[
+          'Equilibrium constant (K) and ΔG between reactants and products.',
+          'The height of the activation barrier.',
+          'The rate without enzyme.',
+          'The identity of reactants and products changes.'
+        ],
+        answer:0,
+        why:'Catalysts change the path, not the thermodynamic endpoints.'
+      }
+    ];
+
+    const list = document.getElementById('quiz-list');
+    const scoreBox = document.getElementById('quiz-score');
+    const submitBtn = document.getElementById('submit-quiz');
+    const retryBtn = document.getElementById('retry-quiz');
+
+    // Render quiz with stable IDs
+    const renderQuiz = () => {
+      if(!list) return;
+      list.innerHTML = '';
+      quiz.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'rounded-xl p-4 bg-[var(--panel-2)] border border-[rgba(255,255,255,.06)]';
+        card.setAttribute('data-qid', item.id);
+
+        const title = document.createElement('p');
+        title.className = 'font-semibold mb-3';
+        title.textContent = (idx+1)+'. '+item.q;
+
+        const opts = document.createElement('div');
+        opts.className = 'space-y-2';
+        item.options.forEach((opt, i) => {
+          const optWrap = document.createElement('label');
+          optWrap.className = 'flex items-start gap-3 p-2 rounded-lg chip cursor-pointer hover:brightness-110';
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = item.id;
+          input.value = i;
+          input.className = 'mt-1';
+          const span = document.createElement('span');
+          span.textContent = opt;
+          optWrap.appendChild(input); optWrap.appendChild(span);
+          opts.appendChild(optWrap);
+        });
+
+        const fb = document.createElement('div');
+        fb.className = 'mt-3 text-sm hidden';
+        fb.setAttribute('data-fb', 'true');
+
+        card.appendChild(title);
+        card.appendChild(opts);
+        card.appendChild(fb);
+        list.appendChild(card);
+      });
+      if(scoreBox) scoreBox.textContent = '';
+    };
+
+    // Grade
+    const grade = () => {
+      if(!list) return;
+      let correct = 0;
+      quiz.forEach(item => {
+        const card = list.querySelector(`[data-qid="${item.id}"]`);
+        if(!card) return;
+        const options = card.querySelectorAll(`input[name="${item.id}"]`);
+        let picked = -1;
+        options.forEach((o,i)=>{ if(o.checked) picked = i; });
+
+        // Clear previous styles
+        card.querySelectorAll('label').forEach(l => {
+          l.style.borderColor = 'rgba(255,255,255,.08)';
+          l.style.background = 'linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03))';
+          l.style.color = 'inherit';
+        });
+
+        // Mark
+        const fb = card.querySelector('[data-fb="true"]');
+        fb.classList.remove('hidden');
+        if (picked === item.answer) {
+          correct++;
+          const lab = options[item.answer].parentElement;
+          lab.style.background = 'linear-gradient(180deg, rgba(45,212,191,.25), rgba(45,212,191,.08))';
+          lab.style.borderColor = 'rgba(45,212,191,.6)';
+          fb.textContent = 'Correct! '+item.why;
+          fb.style.color = '#2dd4bf';
+        } else {
+          if (picked >= 0) {
+            const wrong = options[picked].parentElement;
+            wrong.style.background = 'linear-gradient(180deg, rgba(251,113,133,.18), rgba(251,113,133,.06))';
+            wrong.style.borderColor = 'rgba(251,113,133,.6)';
+          }
+          const right = options[item.answer].parentElement;
+          right.style.background = 'linear-gradient(180deg, rgba(45,212,191,.25), rgba(45,212,191,.08))';
+          right.style.borderColor = 'rgba(45,212,191,.6)';
+          fb.textContent = 'Not quite. '+item.why;
+          fb.style.color = '#fb7185';
+        }
+      });
+      if(scoreBox) scoreBox.textContent = `Score: ${correct} / ${quiz.length}`;
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    };
+
+    const retry = () => {
+      renderQuiz();
+      window.scrollTo({top: 0, behavior:'smooth'});
+    };
+
+    renderQuiz();
+    if(submitBtn) submitBtn.addEventListener('click', grade);
+    if(retryBtn) retryBtn.addEventListener('click', retry);
+  </script>
+</body>
+</html>
