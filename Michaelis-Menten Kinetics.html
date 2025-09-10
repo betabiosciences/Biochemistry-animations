@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michaelis-Menten Kinetics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax script for rendering equations. The 'async' attribute ensures the page loads before the script runs. -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --accent: #bb86fc;
+            --accent2: #03dac6;
+            --text: #e4e4e4;
+            --highlight: #ff7597;
+            --success: #4CAF50;
+            --warning: #FFC107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--darker-bg), var(--card-bg));
+            border-bottom: 2px solid var(--accent);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--accent2);
+            font-size: 1.5rem;
+            margin: 15px 0;
+        }
+        
+        h3 {
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .equation {
+            background-color: var(--darker-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--accent2);
+            overflow-x: auto;
+        }
+        
+        .interactive-box {
+            background-color: var(--darker-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--highlight);
+        }
+        
+        .slider-container {
+            margin: 15px 0;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--card-bg);
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+        
+        .value-display {
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent2);
+            margin-top: 10px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: var(--dark-bg);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: var(--accent2);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #444;
+            color: #777;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .quiz-question {
+            margin-bottom: 20px;
+        }
+        
+        .options label {
+            display: block;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: var(--darker-bg);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .options label:hover {
+            background-color: #2a2a2a;
+        }
+
+        .options label.correct {
+            background-color: rgba(76, 175, 80, 0.3) !important;
+            border-color: var(--success);
+        }
+        .options label.incorrect {
+            background-color: rgba(244, 67, 54, 0.3) !important;
+            border-color: var(--highlight);
+        }
+        .options label.disabled {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        
+        .quiz-result {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--accent2);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: var(--darker-bg);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .section-counter {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--accent2);
+            font-weight: bold;
+        }
+        
+        .key-term {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .concept-box {
+            background: linear-gradient(135deg, var(--darker-bg), var(--card-bg));
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--accent2);
+        }
+        
+        .concept-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent2);
+            margin-bottom: 10px;
+        }
+        
+        .concept-title i {
+            font-size: 1.2rem;
+        }
+        
+        .definition-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .definition-list li {
+            margin-bottom: 10px;
+        }
+        
+        .important-note {
+            background-color: rgba(255, 117, 151, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--highlight);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid var(--card-bg);
+        }
+        footer img {
+            width: 75px;
+            margin-bottom: 15px;
+        }
+        footer p {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Michaelis-Menten Kinetics</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="section-counter">
+            <span id="current-section">1</span> / <span id="total-sections">7</span>
+        </div>
+        
+        <!-- Section 1: Introduction -->
+        <div class="section active" id="section1">
+            <h2>1. Michaelis-Menten Reactions and Representations</h2>
+            <p>The Michaelis-Menten model describes the kinetics of enzyme-catalyzed reactions. It explains how the rate of reaction depends on the concentration of the substrate and enzyme.</p>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-flask"></i>
+                    <h3>Enzyme-Substrate Reaction</h3>
+                </div>
+                <p>The basic enzymatic reaction can be represented as:</p>
+                <div class="equation">
+                    $$E + S \rightleftharpoons ES \rightarrow E + P$$
+                </div>
+                
+                <p>Where:</p>
+                <ul class="definition-list">
+                    <li><span class="key-term">E</span> is the enzyme</li>
+                    <li><span class="key-term">S</span> is the substrate</li>
+                    <li><span class="key-term">ES</span> is the enzyme-substrate complex</li>
+                    <li><span class="key-term">P</span> is the product</li>
+                </ul>
+            </div>
+            
+            <p>This representation shows that the enzyme binds to the substrate to form an enzyme-substrate complex, which then converts the substrate to product, releasing the enzyme unchanged.</p>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> Enzymes are biological catalysts that speed up chemical reactions without being consumed in the process. They achieve this by lowering the activation energy of the reaction.</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Reaction Progress</h3>
+                <p>Observe how the concentrations change over time in an enzymatic reaction:</p>
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Time: </span>
+                        <span id="time-value">0 s</span>
+                    </div>
+                    <input type="range" id="time-slider" min="0" max="100" value="0">
+                </div>
+                <div class="value-display" id="concentration-display">
+                    [S] = 100%, [ES] = 0%, [P] = 0%
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(2)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 2: Rate Constants -->
+        <div class="section" id="section2">
+            <h2>2. Rate Constants \(k_1\), \(k_{-1}\) and \(k_2\)</h2>
+            <p>The Michaelis-Menten model uses three fundamental rate constants to describe the kinetics of enzyme-catalyzed reactions:</p>
+            
+            <div class="equation">
+                $$E + S \underset{k_{-1}}{\stackrel{k_1}{\rightleftharpoons}} ES \stackrel{k_2}{\rightarrow} E + P$$
+            </div>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>Rate Constants Explained</h3>
+                </div>
+                <ul class="definition-list">
+                    <li><span class="key-term">\(k_1\)</span>: Forward rate constant for the formation of ES complex. This measures how quickly the enzyme and substrate bind together.</li>
+                    <li><span class="key-term">\(k_{-1}\)</span>: Reverse rate constant for the dissociation of ES complex. This measures how quickly the enzyme-substrate complex falls apart without forming product.</li>
+                    <li><span class="key-term">\(k_2\)</span> (also called \(k_{cat}\)): Catalytic rate constant for the conversion of ES to product. This measures how quickly the enzyme converts substrate to product once the complex is formed.</li>
+                </ul>
+            </div>
+            
+            <p>These constants determine the speed at which each step of the reaction occurs. The relationship between these constants defines the enzyme's efficiency and affinity for its substrate.</p>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> The ratio of these rate constants \((k_{-1} + k_2)/k_1\) defines the Michaelis constant (\(K_m\)), which is a measure of the enzyme's affinity for its substrate.</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Rate Constants Effects</h3>
+                <p>Adjust the rate constants to see how they affect the reaction rate:</p>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>\(k_1\) (Formation): </span>
+                        <span id="k1-value">0.1 μM⁻¹s⁻¹</span>
+                    </div>
+                    <input type="range" id="k1-slider" min="1" max="100" value="10">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>\(k_{-1}\) (Dissociation): </span>
+                        <span id="km1-value">0.01 s⁻¹</span>
+                    </div>
+                    <input type="range" id="km1-slider" min="1" max="100" value="1">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>\(k_2\) (Catalysis): </span>
+                        <span id="k2-value">0.05 s⁻¹</span>
+                    </div>
+                    <input type="range" id="k2-slider" min="1" max="100" value="5">
+                </div>
+                
+                <div class="value-display" id="rate-display">
+                    Initial reaction rate: 0.45 μM/s
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(1)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(3)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 3: Michaelis-Menten Equation -->
+        <div class="section" id="section3">
+            <h2>3. Michaelis-Menten Equation</h2>
+            <p>The Michaelis-Menten equation describes the relationship between substrate concentration and reaction rate:</p>
+            
+            <div class="equation">
+                $$v = \frac{V_{max} [S]}{K_m + [S]}$$
+            </div>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Equation Parameters</h3>
+                </div>
+                <ul class="definition-list">
+                    <li><span class="key-term">v</span> is the initial reaction rate</li>
+                    <li><span class="key-term">\(V_{max}\)</span> is the maximum reaction rate</li>
+                    <li><span class="key-term">[S]</span> is the substrate concentration</li>
+                    <li><span class="key-term">\(K_m\)</span> is the Michaelis constant</li>
+                </ul>
+            </div>
+            
+            <p>This equation predicts that:</p>
+            <ul class="definition-list">
+                <li>At low [S] (when \([S] \ll K_m\)), \(v \approx \frac{V_{max}}{K_m}[S]\) (first-order kinetics)</li>
+                <li>At high [S] (when \([S] \gg K_m\)), \(v \approx V_{max}\) (zero-order kinetics)</li>
+                <li>When \([S] = K_m\), \(v = \frac{V_{max}}{2}\)</li>
+            </ul>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> The Michaelis-Menten equation assumes that the enzyme-substrate complex is in rapid equilibrium with the free enzyme and substrate, and that the product formation rate is slow compared to the dissociation rate.</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Explore the Equation</h3>
+                <p>Adjust parameters to see how they affect the reaction rate:</p>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Substrate Concentration [S]: </span>
+                        <span id="s-value">5.0 μM</span>
+                    </div>
+                    <input type="range" id="s-slider" min="0" max="100" value="5">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>\(K_m\): </span>
+                        <span id="km-value">5.0 μM</span>
+                    </div>
+                    <input type="range" id="km-slider" min="1" max="20" value="5">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>\(V_{max}\): </span>
+                        <span id="vmax-value">10.0 μM/s</span>
+                    </div>
+                    <input type="range" id="vmax-slider" min="1" max="20" value="10">
+                </div>
+                
+                <div class="value-display" id="equation-result">
+                    Reaction rate v = 5.0 μM/s
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(2)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(4)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 4: Parameters Interpretation -->
+        <div class="section" id="section4">
+            <h2>4. Interpretation of Parameters: \(K_m\), \(V_{max}\), \(k_{cat}\)</h2>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-search"></i>
+                    <h3>Michaelis Constant (\(K_m\))</h3>
+                </div>
+                <p>\(K_m\) is the substrate concentration at which the reaction rate is half of \(V_{max}\). It represents the enzyme's affinity for the substrate:</p>
+                <ul class="definition-list">
+                    <li><span class="key-term">Low \(K_m\)</span> indicates high affinity (enzyme saturates at low [S])</li>
+                    <li><span class="key-term">High \(K_m\)</span> indicates low affinity (requires high [S] to saturate)</li>
+                </ul>
+                <p>\(K_m\) is approximately equal to the dissociation constant (\(K_d\)) of the ES complex when \(k_2 \ll k_{-1}\).</p>
+                <div class="equation">
+                     $$K_m = \frac{k_{-1} + k_2}{k_1}$$
+                </div>
+            </div>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>Maximum Velocity (\(V_{max}\))</h3>
+                </div>
+                <p>\(V_{max}\) is the maximum reaction rate when the enzyme is fully saturated with substrate. It represents the turnover capacity of the enzyme.</p>
+                <p>\(V_{max}\) is dependent on enzyme concentration and the catalytic rate constant: \(V_{max} = k_{cat} \times [E_t]\), where \([E_t]\) is the total enzyme concentration.</p>
+            </div>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-sync-alt"></i>
+                    <h3>Catalytic Constant (\(k_{cat}\) or \(k_2\))</h3>
+                </div>
+                <p>\(k_{cat}\) is the turnover number, representing the number of substrate molecules converted to product per enzyme molecule per unit time when the enzyme is saturated.</p>
+                <p>\(k_{cat}\) is a measure of the catalytic efficiency of the enzyme. Higher \(k_{cat}\) values indicate more efficient enzymes.</p>
+                <!-- NEW Interactive element from gemini1.html -->
+                <div class="interactive-box" style="margin-top: 20px; border-color: var(--accent2);">
+                    <h4>Turnover Simulation</h4>
+                    <p style="font-size: 0.9em; margin-bottom: 10px;">Imagine one enzyme molecule. How many products can it make in 10 seconds?</p>
+                    <div class="slider-container">
+                       <label for="kcat_select" class="slider-label" style="justify-content:start; gap: 10px;">Select Enzyme (by \(k_{cat}\)):</label>
+                       <select id="kcat_select" style="width: 100%; padding: 8px; border-radius: 6px; background-color: var(--darker-bg); color: var(--text); border: 1px solid var(--accent);">
+                           <option value="1">Slow Enzyme (1/s)</option>
+                           <option value="100">Average Enzyme (100/s)</option>
+                           <option value="40000000">Catalase (40,000,000/s)</option>
+                       </select>
+                    </div>
+                    <p class="value-display" id="kcat_result">It would produce 10 products.</p>
+                </div>
+            </div>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> The ratio \(k_{cat}/K_m\) (specificity constant) is a measure of catalytic efficiency, as it takes into account both the binding affinity (\(K_m\)) and the catalytic rate (\(k_{cat}\)).</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Parameter Relationships</h3>
+                <p>Explore how changes in parameters affect enzyme performance:</p>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme Affinity (1/\(K_m\)): </span>
+                        <span id="affinity-value">Medium</span>
+                    </div>
+                    <input type="range" id="affinity-slider" min="1" max="100" value="50">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Turnover Rate (\(k_{cat}\)): </span>
+                        <span id="kcat-value">Medium</span>
+                    </div>
+                    <input type="range" id="kcat-slider" min="1" max="100" value="50">
+                </div>
+                
+                <div class="value-display" id="parameter-result">
+                    Efficiency: Medium
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(3)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(5)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 5: Specificity Constant -->
+        <div class="section" id="section5">
+            <h2>5. Specificity Constant: Calculation and Significance</h2>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-crosshairs"></i>
+                    <h3>Specificity Constant (\(k_{cat}/K_m\))</h3>
+                </div>
+                <p>The specificity constant (\(k_{cat}/K_m\)) is a measure of an enzyme's catalytic efficiency toward a specific substrate. It represents the enzyme's ability to distinguish between different substrates.</p>
+                
+                <div class="equation">
+                    $$\text{Specificity Constant} = \frac{k_{cat}}{K_m}$$
+                </div>
+                
+                <p>This constant has units of \(M^{-1}s^{-1}\) and represents:</p>
+                <ul class="definition-list">
+                    <li>The enzyme's efficiency at low substrate concentrations</li>
+                    <li>The enzyme's specificity for one substrate over another</li>
+                    <li>The apparent second-order rate constant of the enzymatic reaction</li>
+                </ul>
+            </div>
+            
+            <p>An enzyme with a high \(k_{cat}/K_m\) ratio is efficient even at low substrate concentrations and shows high specificity for its substrate. This parameter is particularly important for comparing the efficiency of different enzymes or the same enzyme with different substrates.</p>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> The specificity constant represents the enzyme's efficiency in converting substrate to product when the substrate concentration is low. It has a theoretical upper limit of about \(10^8 - 10^9 M^{-1}s^{-1}\), which is the diffusion-controlled limit where every collision between enzyme and substrate results in catalysis.</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Compare Enzyme Specificity</h3>
+                <p>Compare two enzymes with different kinetic parameters:</p>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme A \(k_{cat}\): </span>
+                        <span id="enzymeA-kcat">50 s⁻¹</span>
+                    </div>
+                    <input type="range" id="enzymeA-kcat-slider" min="1" max="100" value="50">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme A \(K_m\): </span>
+                        <span id="enzymeA-km">10 μM</span>
+                    </div>
+                    <input type="range" id="enzymeA-km-slider" min="1" max="20" value="10">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme B \(k_{cat}\): </span>
+                        <span id="enzymeB-kcat">10 s⁻¹</span>
+                    </div>
+                    <input type="range" id="enzymeB-kcat-slider" min="1" max="100" value="10">
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme B \(K_m\): </span>
+                        <span id="enzymeB-km">2 μM</span>
+                    </div>
+                    <input type="range" id="enzymeB-km-slider" min="1" max="20" value="2">
+                </div>
+                
+                <div class="value-display" id="specificity-display">
+                    Enzyme A: k<sub>cat</sub>/K<sub>m</sub> = 5.0 μM⁻¹s⁻¹<br>
+                    Enzyme B: k<sub>cat</sub>/K<sub>m</sub> = 5.0 μM⁻¹s⁻¹
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(4)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(6)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 6: Diffusion Controlled Enzymes -->
+        <div class="section" id="section6">
+            <h2>6. Diffusion Controlled Enzymes</h2>
+            
+            <div class="concept-box">
+                <div class="concept-title">
+                    <i class="fas fa-border-all"></i>
+                    <h3>Diffusion-Controlled Enzymes</h3>
+                </div>
+                <p>Diffusion-controlled enzymes are enzymes whose catalytic efficiency is limited only by the rate at which they encounter substrate molecules through diffusion. These enzymes have achieved near-perfect efficiency.</p>
+                
+                <p>Characteristics of diffusion-controlled enzymes:</p>
+                <ul class="definition-list">
+                    <li>Extremely high \(k_{cat}/K_m\) values (\(10^8 - 10^9 M^{-1}s^{-1}\))</li>
+                    <li>Reaction rate is limited by diffusion rather than chemistry</li>
+                    <li>Often participate in critical biological processes where rapid substrate turnover is essential</li>
+                </ul>
+            </div>
+            
+            <p>Examples of such enzymes include:</p>
+            <ul class="definition-list">
+                <li><span class="key-term">Superoxide dismutase</span> (\(k_{cat}/K_m \approx 10^9 M^{-1}s^{-1}\)) - protects cells from oxidative damage</li>
+                <li><span class="key-term">Acetylcholinesterase</span> (\(k_{cat}/K_m \approx 10^8 M^{-1}s^{-1}\)) - rapidly hydrolyzes acetylcholine at nerve synapses</li>
+                <li><span class="key-term">Carbonic anhydrase</span> (\(k_{cat}/K_m \approx 10^7 M^{-1}s^{-1}\)) - rapidly interconverts CO₂ and bicarbonate</li>
+            </ul>
+            
+            <div class="important-note">
+                <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> Diffusion-controlled enzymes represent the theoretical maximum efficiency for enzyme-catalyzed reactions. Their \(k_{cat}/K_m\) values approach the diffusion limit of about \(10^8 - 10^9 M^{-1}s^{-1}\), meaning that almost every collision between enzyme and substrate results in catalysis.</p>
+            </div>
+            
+            <div class="interactive-box">
+                <h3>Interactive: Compare Enzyme Efficiency</h3>
+                <p>See how different enzymes compare to the diffusion limit:</p>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Enzyme Efficiency (\(k_{cat}/K_m\)): </span>
+                        <span id="efficiency-value">10⁵ M⁻¹s⁻¹</span>
+                    </div>
+                    <input type="range" id="efficiency-slider" min="0" max="9" value="5" step="1">
+                </div>
+                
+                <div class="value-display" id="efficiency-comparison">
+                    This enzyme is 1000 times less efficient than the diffusion limit.
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(5)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(7)">Next <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Section 7: Quiz -->
+        <div class="section" id="section7">
+            <h2>Review Quiz</h2>
+            
+            <div class="quiz-container">
+                <div class="quiz-question">
+                    <h3>Question 1: What does the Michaelis-Menten equation describe?</h3>
+                    <div class="options">
+                        <label data-question="q1" data-answer="a">a) How enzyme concentration affects reaction rate</label>
+                        <label data-question="q1" data-answer="b">b) The relationship between substrate concentration and reaction rate</label>
+                        <label data-question="q1" data-answer="c">c) How temperature affects enzyme activity</label>
+                        <label data-question="q1" data-answer="d">d) The molecular structure of enzymes</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>Question 2: What does \(K_m\) represent?</h3>
+                    <div class="options">
+                        <label data-question="q2" data-answer="a">a) The maximum reaction rate</label>
+                        <label data-question="q2" data-answer="b">b) The enzyme-substrate complex concentration</label>
+                        <label data-question="q2" data-answer="c">c) The substrate concentration at half \(V_{max}\)</label>
+                        <label data-question="q2" data-answer="d">d) The product concentration</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>Question 3: Which parameter represents the turnover number?</h3>
+                    <div class="options">
+                        <label data-question="q3" data-answer="a">a) \(K_m\)</label>
+                        <label data-question="q3" data-answer="b">b) \(V_{max}\)</label>
+                        <label data-question="q3" data-answer="c">c) \(k_{cat}\)</label>
+                        <label data-question="q3" data-answer="d">d) \(k_1\)</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>Question 4: What does a low \(K_m\) value indicate?</h3>
+                    <div class="options">
+                        <label data-question="q4" data-answer="a">a) Low enzyme affinity for substrate</label>
+                        <label data-question="q4" data-answer="b">b) High enzyme affinity for substrate</label>
+                        <label data-question="q4" data-answer="c">c) High product concentration</label>
+                        <label data-question="q4" data-answer="d">d) Low reaction rate</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>Question 5: How is the specificity constant calculated?</h3>
+                    <div class="options">
+                        <label data-question="q5" data-answer="a">a) \(k_{cat} \times K_m\)</label>
+                        <label data-question="q5" data-answer="b">b) \(k_{cat} / K_m\)</label>
+                        <label data-question="q5" data-answer="c">c) \(V_{max} \times K_m\)</label>
+                        <label data-question="q5" data-answer="d">d) \(V_{max} / K_m\)</label>
+                    </div>
+                </div>
+                
+                <div class="quiz-question">
+                    <h3>Question 6: Which of these enzymes is known to be diffusion-controlled?</h3>
+                    <div class="options">
+                        <label data-question="q6" data-answer="a">a) Hexokinase</label>
+                        <label data-question="q6" data-answer="b">b) Superoxide dismutase</label>
+                        <label data-question="q6" data-answer="c">c) Trypsin</label>
+                        <label data-question="q6" data-answer="d">d) DNA polymerase</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button onclick="showSection(6)"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button onclick="showSection(1)"><i class="fas fa-redo"></i> Restart Tutorial</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo">
+        <p>© 2025 BETA Biosciences. All rights reserved. <br>
+           Email: betabiosciences@gmail.com <br>
+           Contact: +91 97 47 53 35 97</p>
+    </footer>
+
+    <script>
+        // Total number of sections
+        const totalSections = 7;
+        document.getElementById('total-sections').textContent = totalSections;
+        
+        // Show a specific section
+        function showSection(sectionNumber) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById('section' + i).classList.remove('active');
+            }
+            
+            // Show the requested section
+            document.getElementById('section' + sectionNumber).classList.add('active');
+            
+            // Update progress bar
+            const progressPercentage = ((sectionNumber - 1) / (totalSections - 1)) * 100;
+            document.getElementById('progress').style.width = progressPercentage + '%';
+            
+            // Update section counter
+            document.getElementById('current-section').textContent = sectionNumber;
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        // Set up interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Time slider for section 1
+            const timeSlider = document.getElementById('time-slider');
+            const timeValue = document.getElementById('time-value');
+            const concentrationDisplay = document.getElementById('concentration-display');
+            
+            timeSlider.addEventListener('input', function() {
+                const time = parseInt(this.value);
+                timeValue.textContent = time + ' s';
+                
+                // Simulate concentration changes
+                const s = Math.max(0, 100 - time);
+                const es = Math.min(100, time);
+                const p = Math.max(0, time - 50);
+                
+                concentrationDisplay.textContent = `[S] = ${s}%, [ES] = ${es}%, [P] = ${p}%`;
+            });
+            
+            // Rate constant sliders for section 2
+            const k1Slider = document.getElementById('k1-slider');
+            const k1Value = document.getElementById('k1-value');
+            const km1Slider = document.getElementById('km1-slider');
+            const km1Value = document.getElementById('km1-value');
+            const k2Slider = document.getElementById('k2-slider');
+            const k2Value = document.getElementById('k2-value');
+            const rateDisplay = document.getElementById('rate-display');
+            
+            function updateRate() {
+                const k1 = parseInt(k1Slider.value) / 100;
+                const km1 = parseInt(km1Slider.value) / 100;
+                const k2 = parseInt(k2Slider.value) / 100;
+                
+                k1Value.textContent = k1.toFixed(2) + ' μM⁻¹s⁻¹';
+                km1Value.textContent = km1.toFixed(2) + ' s⁻¹';
+                k2Value.textContent = k2.toFixed(2) + ' s⁻¹';
+                
+                // Simplified calculation for demonstration
+                const rate = (k1 * k2 * 10) / (km1 + k2);
+                rateDisplay.textContent = 'Initial reaction rate: ' + rate.toFixed(2) + ' μM/s';
+            }
+            
+            k1Slider.addEventListener('input', updateRate);
+            km1Slider.addEventListener('input', updateRate);
+            k2Slider.addEventListener('input', updateRate);
+            
+            // Michaelis-Menten equation sliders for section 3
+            const sSlider = document.getElementById('s-slider');
+            const sValue = document.getElementById('s-value');
+            const kmSlider = document.getElementById('km-slider');
+            const kmValue = document.getElementById('km-value');
+            const vmaxSlider = document.getElementById('vmax-slider');
+            const vmaxValue = document.getElementById('vmax-value');
+            const equationResult = document.getElementById('equation-result');
+            
+            function updateEquation() {
+                const s = parseFloat(sSlider.value);
+                const km = parseFloat(kmSlider.value);
+                const vmax = parseFloat(vmaxSlider.value);
+                
+                sValue.textContent = s.toFixed(1) + ' μM';
+                kmValue.textContent = km.toFixed(1) + ' μM';
+                vmaxValue.textContent = vmax.toFixed(1) + ' μM/s';
+                
+                // Calculate v using Michaelis-Menten equation
+                const v = (vmax * s) / (km + s);
+                equationResult.textContent = 'Reaction rate v = ' + v.toFixed(1) + ' μM/s';
+            }
+            
+            sSlider.addEventListener('input', updateEquation);
+            kmSlider.addEventListener('input', updateEquation);
+            vmaxSlider.addEventListener('input', updateEquation);
+            
+            // Parameter relationship sliders for section 4
+            const affinitySlider = document.getElementById('affinity-slider');
+            const affinityValue = document.getElementById('affinity-value');
+            const kcatSlider2 = document.getElementById('kcat-slider');
+            const kcatValue = document.getElementById('kcat-value');
+            const parameterResult = document.getElementById('parameter-result');
+            
+            function updateParameters() {
+                const affinity = parseInt(affinitySlider.value);
+                const kcat = parseInt(kcatSlider2.value);
+                
+                let affinityText, kcatText, efficiency;
+                
+                if (affinity < 33) {
+                    affinityText = 'Low';
+                } else if (affinity < 66) {
+                    affinityText = 'Medium';
+                } else {
+                    affinityText = 'High';
+                }
+                
+                if (kcat < 33) {
+                    kcatText = 'Low';
+                } else if (kcat < 66) {
+                    kcatText = 'Medium';
+                } else {
+                    kcatText = 'High';
+                }
+                
+                if (affinity < 33 || kcat < 33) {
+                    efficiency = 'Low';
+                } else if (affinity < 66 || kcat < 66) {
+                    efficiency = 'Medium';
+                } else {
+                    efficiency = 'High';
+                }
+                
+                affinityValue.textContent = affinityText;
+                kcatValue.textContent = kcatText;
+                parameterResult.textContent = 'Efficiency: ' + efficiency;
+            }
+            
+            affinitySlider.addEventListener('input', updateParameters);
+            kcatSlider2.addEventListener('input', updateParameters);
+
+            // Turnover simulation for section 4 (from gemini1)
+            const kcatSelect = document.getElementById('kcat_select');
+            const kcatResult = document.getElementById('kcat_result');
+            
+            function updateKcat() {
+                const kcat = parseFloat(kcatSelect.value);
+                const time = 10; // seconds
+                const products = kcat * time;
+                kcatResult.textContent = `It would produce ${products.toLocaleString()} products.`;
+            }
+            kcatSelect.addEventListener('change', updateKcat);
+            
+            // Enzyme comparison sliders for section 5
+            const enzymeAKcatSlider = document.getElementById('enzymeA-kcat-slider');
+            const enzymeAKcatValue = document.getElementById('enzymeA-kcat');
+            const enzymeAKmSlider = document.getElementById('enzymeA-km-slider');
+            const enzymeAKmValue = document.getElementById('enzymeA-km');
+            const enzymeBKcatSlider = document.getElementById('enzymeB-kcat-slider');
+            const enzymeBKcatValue = document.getElementById('enzymeB-kcat');
+            const enzymeBKmSlider = document.getElementById('enzymeB-km-slider');
+            const enzymeBKmValue = document.getElementById('enzymeB-km');
+            const specificityDisplay = document.getElementById('specificity-display');
+            
+            function updateEnzymeComparison() {
+                const aKcat = parseInt(enzymeAKcatSlider.value);
+                const aKm = parseInt(enzymeAKmSlider.value);
+                const bKcat = parseInt(enzymeBKcatSlider.value);
+                const bKm = parseInt(enzymeBKmSlider.value);
+                
+                enzymeAKcatValue.textContent = aKcat + ' s⁻¹';
+                enzymeAKmValue.textContent = aKm + ' μM';
+                enzymeBKcatValue.textContent = bKcat + ' s⁻¹';
+                enzymeBKmValue.textContent = bKm + ' μM';
+
+                const specA = (aKcat / aKm).toFixed(1);
+                const specB = (bKcat / bKm).toFixed(1);
+                
+                specificityDisplay.innerHTML = `Enzyme A: k<sub>cat</sub>/K<sub>m</sub> = ${specA} μM⁻¹s⁻¹<br>Enzyme B: k<sub>cat</sub>/K<sub>m</sub> = ${specB} μM⁻¹s⁻¹`;
+            }
+            
+            enzymeAKcatSlider.addEventListener('input', updateEnzymeComparison);
+            enzymeAKmSlider.addEventListener('input', updateEnzymeComparison);
+            enzymeBKcatSlider.addEventListener('input', updateEnzymeComparison);
+            enzymeBKmSlider.addEventListener('input', updateEnzymeComparison);
+            
+            // Efficiency slider for section 6
+            const efficiencySlider = document.getElementById('efficiency-slider');
+            const efficiencyValue = document.getElementById('efficiency-value');
+            const efficiencyComparison = document.getElementById('efficiency-comparison');
+            
+            efficiencySlider.addEventListener('input', function() {
+                const exponent = parseInt(this.value);
+                efficiencyValue.innerHTML = '10<sup>' + exponent + '</sup> M⁻¹s⁻¹';
+                
+                const diff = 9 - exponent;
+                if (diff <= 0) {
+                    efficiencyComparison.textContent = 'This enzyme is at or near the diffusion limit.';
+                } else {
+                    efficiencyComparison.textContent = `This enzyme is ${Math.pow(10, diff).toLocaleString()} times less efficient than the diffusion limit.`;
+                }
+            });
+
+            // New Quiz Logic
+            const quizAnswers = {
+                q1: 'b',
+                q2: 'c',
+                q3: 'c',
+                q4: 'b',
+                q5: 'b',
+                q6: 'b'
+            };
+
+            const quizLabels = document.querySelectorAll('.quiz-container .options label');
+
+            quizLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    const question = this.dataset.question;
+                    const selectedAnswer = this.dataset.answer;
+                    const correctAnswer = quizAnswers[question];
+
+                    const questionOptions = document.querySelectorAll(`.quiz-container .options label[data-question="${question}"]`);
+
+                    questionOptions.forEach(opt => {
+                        opt.classList.add('disabled'); // Disable all options for this question
+                        const optAnswer = opt.dataset.answer;
+                        if (optAnswer === correctAnswer) {
+                            opt.classList.add('correct');
+                        }
+                    });
+
+                    if (selectedAnswer !== correctAnswer) {
+                        this.classList.add('incorrect');
+                    }
+                });
+            });
+
+            
+            // Initializations
+            updateRate();
+            updateEquation();
+            updateParameters();
+            updateKcat();
+            updateEnzymeComparison();
+            efficiencySlider.dispatchEvent(new Event('input'));
+        });
+
+    </script>
+</body>
+</html>
+
+
