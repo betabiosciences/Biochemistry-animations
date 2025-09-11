@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enzyme Kinetic Plots</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #d1d5db;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: #60a5fa; /* A bright blue for active state */
+            border-bottom-color: #60a5fa;
+        }
+        .slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #60a5fa;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid #111827;
+        }
+        .slider-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #374151;
+            border-radius: 9999px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #60a5fa;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-top: -6px; /* Center thumb on track */
+        }
+        input[type=range]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #60a5fa;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        /* D3 plot styles */
+        .plot-bg {
+            fill: #1f2937;
+        }
+        .grid-line {
+            stroke: #374151;
+            stroke-dasharray: 2,2;
+        }
+        .axis-label {
+            font-size: 0.8rem;
+            fill: #9ca3af;
+        }
+        .plot-line {
+            fill: none;
+            stroke-width: 2.5px;
+        }
+        .plot-dot {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .plot-area:hover .plot-dot {
+            opacity: 1;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: #e5e7eb;
+        }
+        .intercept-text {
+            font-size: 11px;
+            fill: #f9a8d4; /* A contrasting pink for labels */
+        }
+        .vmax-line {
+            stroke-dasharray: 4,4;
+            stroke-width: 1.5px;
+            stroke: #a78bfa; /* A nice purple */
+        }
+        .km-line {
+            stroke-dasharray: 4,4;
+            stroke-width: 1.5px;
+            stroke: #fde047; /* A bright yellow */
+        }
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.9em;
+            margin: 0 0.25rem;
+        }
+        .numerator {
+            padding: 0 0.4em;
+            border-bottom: 1.5px solid currentColor;
+        }
+        .denominator {
+            padding: 0 0.4em;
+        }
+        /* Quiz styles */
+        .quiz-option {
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .quiz-option.correct {
+            background-color: #166534; /* Green-800 */
+            border-color: #22c55e; /* Green-500 */
+        }
+        .quiz-option.incorrect {
+            background-color: #991b1b; /* Red-800 */
+            border-color: #ef4444; /* Red-500 */
+        }
+        .quiz-options.answered .quiz-option {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="min-h-screen container mx-auto p-4 md:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight">Enzyme Kinetic Plots</h1>
+        </header>
+
+        <!-- Interactive Controls -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-6 bg-gray-800 rounded-xl shadow-lg">
+            <div>
+                <label for="vmax-slider" class="block mb-2 text-sm font-medium text-gray-300">Vmax (Maximum Velocity): <span id="vmax-value" class="font-bold text-blue-400">100</span></label>
+                <input id="vmax-slider" type="range" min="10" max="200" value="100" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            </div>
+            <div>
+                <label for="km-slider" class="block mb-2 text-sm font-medium text-gray-300">Km (Michaelis Constant): <span id="km-value" class="font-bold text-blue-400">20</span></label>
+                <input id="km-slider" type="range" min="1" max="100" value="20" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="mb-4 border-b border-gray-700">
+            <nav class="flex flex-wrap -mb-px" id="tabs">
+                <button class="tab-btn active text-lg py-4 px-6 font-semibold" data-target="michaelis-menten">Michaelis-Menten</button>
+                <button class="tab-btn text-lg py-4 px-6 font-semibold" data-target="lineweaver-burk">Lineweaver-Burk</button>
+                <button class="tab-btn text-lg py-4 px-6 font-semibold" data-target="eadie-hofstee">Eadie-Hofstee</button>
+                <button class="tab-btn text-lg py-4 px-6 font-semibold" data-target="hanes-woolf">Hanes-Woolf</button>
+                <button class="tab-btn text-lg py-4 px-6 font-semibold" data-target="review-quiz">Review Quiz</button>
+            </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tab-content">
+            <!-- Michaelis-Menten Plot -->
+            <div id="michaelis-menten" class="tab-pane active grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="bg-gray-800 p-4 rounded-xl shadow-lg h-full">
+                    <div id="mm-plot" class="w-full h-96"></div>
+                </div>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    <h3 class="text-2xl font-semibold text-white">Michaelis-Menten Plot Analysis</h3>
+                    <p>This plot shows the relationship between the initial reaction velocity (V₀) and the substrate concentration ([S]). The plot is defined by the Michaelis-Menten equation:</p>
+                    <div class="my-4 p-2 bg-gray-900 rounded-md text-lg text-blue-300 flex items-center justify-center">
+                        <span>V₀ = </span>
+                        <div class="fraction">
+                            <span class="numerator">Vmax [S]</span>
+                            <span class="denominator">Km + [S]</span>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><strong class="text-purple-400">Vmax (Maximum Velocity):</strong> The rate of reaction when the enzyme is fully saturated with substrate. It is the plateau the curve approaches. On the graph, this is indicated by the horizontal dashed line.</li>
+                        <li><strong class="text-yellow-400">Km (Michaelis Constant):</strong> The substrate concentration at which the reaction velocity is half of Vmax (Vmax/2). A small Km indicates high affinity of the enzyme for its substrate, and vice versa.</li>
+                        <li><strong>Shape:</strong> The plot has a <strong class="text-blue-400">rectangular hyperbolic shape</strong>. At low [S], the velocity is directly proportional to [S]. At high [S], the velocity becomes independent of [S] and approaches Vmax.</li>
+                    </ul>
+                     <p><strong>Interact with the graph:</strong> Hover your mouse over the curve to see the precise V₀ and [S] values at any point. Use the sliders above to see how Vmax and Km affect the curve's shape.</p>
+                </div>
+            </div>
+
+            <!-- Lineweaver-Burk Plot -->
+            <div id="lineweaver-burk" class="tab-pane hidden grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="bg-gray-800 p-4 rounded-xl shadow-lg h-full">
+                    <div id="lb-plot" class="w-full h-96"></div>
+                </div>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    <h3 class="text-2xl font-semibold text-white">Lineweaver-Burk (Double Reciprocal) Plot</h3>
+                    <p>This plot linearizes the Michaelis-Menten equation by plotting the reciprocal of velocity (1/V₀) against the reciprocal of substrate concentration (1/[S]).</p>
+                    <div class="my-4 p-2 bg-gray-900 rounded-md text-lg text-blue-300 flex items-center justify-center flex-wrap">
+                        <div class="fraction">
+                            <span class="numerator">1</span>
+                            <span class="denominator">V₀</span>
+                        </div>
+                        <span class="mx-2">=</span>
+                        <div class="fraction">
+                            <span class="numerator">Km</span>
+                            <span class="denominator">Vmax</span>
+                        </div>
+                        <div class="fraction mx-1">
+                            <span class="numerator">1</span>
+                            <span class="denominator">[S]</span>
+                        </div>
+                        <span class="mx-2">+</span>
+                        <div class="fraction">
+                            <span class="numerator">1</span>
+                            <span class="denominator">Vmax</span>
+                        </div>
+                    </div>
+                     <p>This follows the form of a linear equation <code class="text-md text-pink-400">y = mx + c</code>.</p>
+                    <ul>
+                        <li><strong>Y-intercept:</strong> The point where the line crosses the y-axis is equal to <strong class="text-purple-400">1/Vmax</strong>.</li>
+                        <li><strong>X-intercept:</strong> The point where the line crosses the x-axis is equal to <strong class="text-yellow-400">-1/Km</strong>.</li>
+                        <li><strong>Slope:</strong> The slope of the line is equal to <strong class="text-green-400">Km/Vmax</strong>.</li>
+                    </ul>
+                    <p><strong>Advantage:</strong> It provides a more precise way to determine Vmax and Km from experimental data compared to the non-linear Michaelis-Menten plot.
+                    <br><strong>Disadvantage:</strong> It gives undue weight to data points at low substrate concentrations (where 1/[S] is large), which are often the most susceptible to experimental error.</p>
+                </div>
+            </div>
+
+            <!-- Eadie-Hofstee Plot -->
+            <div id="eadie-hofstee" class="tab-pane hidden grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="bg-gray-800 p-4 rounded-xl shadow-lg h-full">
+                    <div id="eh-plot" class="w-full h-96"></div>
+                </div>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    <h3 class="text-2xl font-semibold text-white">Eadie-Hofstee Plot Analysis</h3>
+                    <p>This is another linear transformation of the Michaelis-Menten equation, where V₀ is plotted against V₀/[S].</p>
+                    <div class="my-4 p-2 bg-gray-900 rounded-md text-lg text-blue-300 flex items-center justify-center">
+                        <span>V₀ = -Km</span>
+                        <div class="fraction mx-1">
+                            <span class="numerator">V₀</span>
+                            <span class="denominator">[S]</span>
+                        </div>
+                        <span class="mx-2">+ Vmax</span>
+                    </div>
+                    <ul>
+                        <li><strong>Y-intercept:</strong> The y-intercept gives a direct value of <strong class="text-purple-400">Vmax</strong>.</li>
+                        <li><strong>X-intercept:</strong> The x-intercept is equal to <strong class="text-blue-400">Vmax/Km</strong>.</li>
+                        <li><strong>Slope:</strong> The slope of the line is <strong class="text-yellow-400">-Km</strong>.</li>
+                    </ul>
+                    <p><strong>Advantage:</strong> This plot does not compress the data points at low [S] as much as the Lineweaver-Burk plot.
+                    <br><strong>Disadvantage:</strong> Both axes depend on V₀, so any experimental error in measuring velocity is present in both the x and y coordinates, complicating error analysis.</p>
+                </div>
+            </div>
+
+            <!-- Hanes-Woolf Plot -->
+            <div id="hanes-woolf" class="tab-pane hidden grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                 <div class="bg-gray-800 p-4 rounded-xl shadow-lg h-full">
+                    <div id="hw-plot" class="w-full h-96"></div>
+                </div>
+                <div class="text-gray-300 prose prose-invert max-w-none">
+                    <h3 class="text-2xl font-semibold text-white">Hanes-Woolf Plot Analysis</h3>
+                    <p>In this plot, [S]/V₀ is plotted against [S]. This linearization is generally considered the most accurate for determining kinetic parameters.</p>
+                    <div class="my-4 p-2 bg-gray-900 rounded-md text-lg text-blue-300 flex items-center justify-center">
+                        <div class="fraction">
+                            <span class="numerator">[S]</span>
+                            <span class="denominator">V₀</span>
+                        </div>
+                        <span class="mx-2">=</span>
+                        <div class="fraction">
+                            <span class="numerator">1</span>
+                            <span class="denominator">Vmax</span>
+                        </div>
+                        <span class="mx-1">[S] +</span>
+                        <div class="fraction">
+                            <span class="numerator">Km</span>
+                            <span class="denominator">Vmax</span>
+                        </div>
+                    </div>
+                    <ul>
+                        <li><strong>Y-intercept:</strong> The y-intercept is equal to <strong class="text-blue-400">Km/Vmax</strong>.</li>
+                        <li><strong>X-intercept:</strong> The x-intercept is <strong class="text-yellow-400">-Km</strong>.</li>
+                        <li><strong>Slope:</strong> The slope of the line is <strong class="text-purple-400">1/Vmax</strong>.</li>
+                    </ul>
+                     <p><strong>Advantage:</strong> This plot provides a more even distribution of data points along the line compared to other linearizations, reducing the impact of errors at low substrate concentrations.</p>
+                </div>
+            </div>
+            
+            <!-- Review Quiz -->
+            <div id="review-quiz" class="tab-pane hidden">
+                <div class="space-y-8 max-w-4xl mx-auto">
+                    <!-- Question 1 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">1. In a Michaelis-Menten plot, what does the Y-axis represent?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) Substrate Concentration ([S])</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">B) Initial Velocity (V₀)</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) 1 / [S]</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) 1 / V₀</div>
+                        </div>
+                    </div>
+                    <!-- Question 2 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">2. What is Km, the Michaelis constant?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) The maximum rate of the reaction.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">B) The enzyme concentration.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">C) The substrate concentration at which the reaction rate is half of Vmax.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) The rate constant for product formation.</div>
+                        </div>
+                    </div>
+                    <!-- Question 3 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">3. A high Km value indicates:</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) High affinity of the enzyme for the substrate.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">B) Low affinity of the enzyme for the substrate.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) The enzyme is saturated.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) The reaction has reached Vmax.</div>
+                        </div>
+                    </div>
+                     <!-- Question 4 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">4. In a Lineweaver-Burk plot, the y-intercept is equal to:</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) Vmax</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">B) -1/Km</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) Km/Vmax</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">D) 1/Vmax</div>
+                        </div>
+                    </div>
+                    <!-- Question 5 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">5. What is a major disadvantage of the Lineweaver-Burk plot?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) It is a non-linear plot.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">B) It gives undue weight to data points at low substrate concentrations.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) It cannot be used to determine Km.</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) Vmax cannot be accurately determined.</div>
+                        </div>
+                    </div>
+                    <!-- Question 6 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">6. The shape of a Michaelis-Menten curve is a:</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) Straight line</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">B) Parabola</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">C) Rectangular hyperbola</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) Sigmoidal curve</div>
+                        </div>
+                    </div>
+                     <!-- Question 7 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">7. In an Eadie-Hofstee plot, what is plotted on the x-axis?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) V₀</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">B) [S]</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">C) V₀ / [S]</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) [S] / V₀</div>
+                        </div>
+                    </div>
+                    <!-- Question 8 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">8. If Vmax is 100 µM/min and Km is 10 µM, at what substrate concentration will the velocity be 50 µM/min?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) 5 µM</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">B) 10 µM</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) 20 µM</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) 50 µM</div>
+                        </div>
+                    </div>
+                    <!-- Question 9 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">9. In a Hanes-Woolf plot, the slope of the line is equal to:</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) -Km</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">B) 1/Vmax</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) Km/Vmax</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">D) Vmax</div>
+                        </div>
+                    </div>
+                    <!-- Question 10 -->
+                    <div class="quiz-question bg-gray-800 p-6 rounded-lg">
+                        <p class="mb-4 text-lg font-medium text-white">10. Which linearized plot is generally considered the most reliable for determining kinetic parameters due to a more even distribution of data points?</p>
+                        <div class="quiz-options grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">A) Lineweaver-Burk Plot</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">B) Michaelis-Menten Plot</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent">C) Eadie-Hofstee Plot</div>
+                            <div class="quiz-option bg-gray-700 p-3 rounded-md cursor-pointer border-2 border-transparent" data-correct="true">D) Hanes-Woolf Plot</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <footer class="text-center py-8 text-gray-400 text-sm">
+        <div class="flex flex-col items-center">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="w-14 mb-4">
+            <p>© 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: betabiosciences@gmail.com</p>
+            <p>Contact: +91 97 47 53 35 97</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Global State & Setup ---
+        let vmax = 100;
+        let km = 20;
+
+        const vmaxSlider = document.getElementById('vmax-slider');
+        const kmSlider = document.getElementById('km-slider');
+        const vmaxValueSpan = document.getElementById('vmax-value');
+        const kmValueSpan = document.getElementById('km-value');
+
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        const margin = { top: 20, right: 30, bottom: 50, left: 60 };
+        let width, height; // Will be set dynamically
+
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip");
+
+        // --- Data Generation ---
+        const generateData = (v, k) => {
+            const data = [];
+            for (let s = 0; s <= 150; s += 1) {
+                const velocity = (v * s) / (k + s);
+                data.push({ s, v: velocity });
+            }
+            return data;
+        };
+
+        // --- Plotting Functions ---
+        // Base setup for a plot
+        function setupPlot(selector) {
+            const container = d3.select(selector);
+            const containerNode = container.node();
+            if (!containerNode) return { svg: null, width: 0, height: 0 };
+            const rect = containerNode.getBoundingClientRect();
+
+            width = rect.width - margin.left - margin.right;
+            height = rect.height - margin.top - margin.bottom;
+
+            container.selectAll("svg").remove(); // Clear previous plot
+
+            const svg = container.append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+            
+            svg.append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("class", "plot-bg");
+
+            return { svg, width, height };
+        }
+        
+        // --- Michaelis-Menten Plot ---
+        function drawMMPlot() {
+            const { svg, width, height } = setupPlot("#mm-plot");
+            if (!svg) return;
+            const data = generateData(vmax, km);
+
+            const x = d3.scaleLinear().domain([0, d3.max(data, d => d.s)]).range([0, width]);
+            
+            // --- CHANGE: Set a fixed Y-axis domain based on the slider's max value ---
+            const yMax = 200; // Max value of the Vmax slider
+            const y = d3.scaleLinear().domain([0, yMax * 1.1]).range([height, 0]);
+            // --- END CHANGE ---
+
+            // Axes and Grid
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").call(d3.axisLeft(y)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).selectAll("line").attr("class", "grid-line");
+            svg.append("g").attr("class", "grid").call(d3.axisBottom(x).tickSize(height).tickFormat("")).selectAll("line").attr("class", "grid-line");
+
+            // Axis Labels
+            svg.append("text").attr("text-anchor", "middle").attr("x", width/2).attr("y", height + margin.bottom - 10).text("Substrate Concentration [S]").attr("class", "axis-label");
+            svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -margin.left + 20).attr("x", -height/2).text("Initial Velocity (V₀)").attr("class", "axis-label");
+
+            // Vmax and Km lines
+            svg.append("line").attr("class", "vmax-line").attr("x1", 0).attr("x2", width).attr("y1", y(vmax)).attr("y2", y(vmax));
+            svg.append("text").attr("x", 5).attr("y", y(vmax) - 5).text(`Vmax = ${vmax}`).attr("class", "intercept-text").style("fill", "#a78bfa");
+            
+            svg.append("line").attr("class", "km-line").attr("x1", x(km)).attr("x2", x(km)).attr("y1", y(0)).attr("y2", y(vmax / 2));
+            svg.append("line").attr("class", "km-line").attr("x1", 0).attr("x2", x(km)).attr("y1", y(vmax / 2)).attr("y2", y(vmax / 2));
+            svg.append("text").attr("x", x(km) + 5).attr("y", height - 10).text(`Km = ${km}`).attr("class", "intercept-text").style("fill", "#fde047");
+            svg.append("text").attr("x", 5).attr("y", y(vmax / 2) - 5).text(`Vmax/2`).attr("class", "intercept-text").style("fill", "#fde047");
+
+            // Data line
+            const line = d3.line().x(d => x(d.s)).y(d => y(d.v));
+            svg.append("path").datum(data).attr("class", "plot-line").style("stroke", "#60a5fa").attr("d", line);
+
+            // Interactive tooltip setup
+            addTooltip(svg, width, height, x, y, data, (d) => `[S]: ${d.s.toFixed(1)}<br>V₀: ${d.v.toFixed(1)}`, (d) => d.s, (d) => d.v);
+        }
+
+        // --- Lineweaver-Burk Plot ---
+        function drawLBPlot() {
+            const { svg, width, height } = setupPlot("#lb-plot");
+            if (!svg) return;
+            const data = generateData(vmax, km).filter(d => d.s > 0.1); // Avoid infinity
+            const plotData = data.map(d => ({ invS: 1 / d.s, invV: 1 / d.v }));
+
+            const xMax = 4 * (1/km); // Set a dynamic max for 1/[S] to balance the axis
+            const yMax = (km/vmax) * xMax + 1/vmax;
+            
+            const x = d3.scaleLinear().domain([-1/km * 1.2, xMax]).range([0, width]);
+            const y = d3.scaleLinear().domain([0, yMax * 1.2]).range([height, 0]);
+
+            // Axes and Grid
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("transform", `translate(${x(0)},0)`).call(d3.axisLeft(y)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).selectAll("line").attr("class", "grid-line");
+            svg.append("g").attr("class", "grid").call(d3.axisBottom(x).tickSize(height).tickFormat("")).selectAll("line").attr("class", "grid-line");
+
+            // Axis Labels
+            svg.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", height + margin.bottom - 10).text("1 / [S]").attr("class", "axis-label");
+            svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -margin.left + 20).attr("x", -height / 2).text("1 / V₀").attr("class", "axis-label");
+
+            // Plot line
+            svg.append("line")
+                .attr("class", "plot-line")
+                .style("stroke", "#f472b6")
+                .attr("x1", x(-1/km))
+                .attr("y1", y(0))
+                .attr("x2", x(xMax))
+                .attr("y2", y((km/vmax) * xMax + 1/vmax));
+
+            // Intercepts
+            svg.append("circle").attr("cx", x(0)).attr("cy", y(1 / vmax)).attr("r", 5).attr("fill", "#a78bfa");
+            svg.append("text").attr("x", x(0) + 10).attr("y", y(1 / vmax)).text(`1/Vmax = ${(1/vmax).toFixed(3)}`).attr("class", "intercept-text");
+
+            svg.append("circle").attr("cx", x(-1 / km)).attr("cy", y(0)).attr("r", 5).attr("fill", "#fde047");
+            svg.append("text").attr("x", x(-1 / km)).attr("y", y(0) + 20).text(`-1/Km = ${(-1/km).toFixed(3)}`).attr("class", "intercept-text").attr("text-anchor", "middle");
+        }
+
+        // --- Eadie-Hofstee Plot ---
+        function drawEHPlot() {
+            const { svg, width, height } = setupPlot("#eh-plot");
+            if (!svg) return;
+            const data = generateData(vmax, km).filter(d => d.s > 0.1);
+            const plotData = data.map(d => ({ vOverS: d.v / d.s, v: d.v }));
+
+            const x = d3.scaleLinear().domain([0, vmax/km * 1.2]).range([0, width]);
+            const y = d3.scaleLinear().domain([0, vmax * 1.2]).range([height, 0]);
+
+            // Axes and Grid
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").call(d3.axisLeft(y)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).selectAll("line").attr("class", "grid-line");
+            svg.append("g").attr("class", "grid").call(d3.axisBottom(x).tickSize(height).tickFormat("")).selectAll("line").attr("class", "grid-line");
+
+            // Axis Labels
+            svg.append("text").attr("text-anchor", "middle").attr("x", width/2).attr("y", height + margin.bottom - 10).text("V₀ / [S]").attr("class", "axis-label");
+            svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -margin.left + 20).attr("x", -height/2).text("V₀").attr("class", "axis-label");
+
+            // Plot line
+            svg.append("line")
+                .attr("class", "plot-line")
+                .style("stroke", "#4ade80")
+                .attr("x1", x(0))
+                .attr("y1", y(vmax))
+                .attr("x2", x(vmax / km))
+                .attr("y2", y(0));
+            
+            // Intercepts
+            svg.append("circle").attr("cx", x(0)).attr("cy", y(vmax)).attr("r", 5).attr("fill", "#a78bfa");
+            svg.append("text").attr("x", x(0) + 10).attr("y", y(vmax)).text(`Vmax = ${vmax.toFixed(1)}`).attr("class", "intercept-text");
+            
+            svg.append("circle").attr("cx", x(vmax / km)).attr("cy", y(0)).attr("r", 5).attr("fill", "#fb923c");
+            svg.append("text").attr("x", x(vmax / km)).attr("y", y(0) + 20).text(`Vmax/Km = ${(vmax/km).toFixed(2)}`).attr("class", "intercept-text").attr("text-anchor", "middle");
+        }
+        
+        // --- Hanes-Woolf Plot ---
+        function drawHWPlot() {
+            const { svg, width, height } = setupPlot("#hw-plot");
+            if (!svg) return;
+            const data = generateData(vmax, km).filter(d => d.s > 0.1);
+            const plotData = data.map(d => ({ s: d.s, sOverV: d.s / d.v }));
+
+            const xMax = Math.min(d3.max(plotData, d => d.s), 5 * km); // Dynamically cap the x-axis to reduce clutter
+            const yMax = (1/vmax) * xMax + (km/vmax);
+
+            const x = d3.scaleLinear().domain([-km*1.2, xMax]).range([0, width]);
+            const y = d3.scaleLinear().domain([0, yMax * 1.2]).range([height, 0]);
+
+            // Axes and Grid
+            svg.append("g").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("transform", `translate(${x(0)},0)`).call(d3.axisLeft(y)).selectAll("text").style("fill", "#9ca3af");
+            svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat("")).selectAll("line").attr("class", "grid-line");
+            svg.append("g").attr("class", "grid").call(d3.axisBottom(x).tickSize(height).tickFormat("")).selectAll("line").attr("class", "grid-line");
+
+            // Axis Labels
+            svg.append("text").attr("text-anchor", "middle").attr("x", width / 2).attr("y", height + margin.bottom - 10).text("[S]").attr("class", "axis-label");
+            svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("y", -margin.left + 20).attr("x", -height / 2).text("[S] / V₀").attr("class", "axis-label");
+
+            // Plot line
+            svg.append("line")
+                .attr("class", "plot-line")
+                .style("stroke", "#facc15")
+                .attr("x1", x(-km))
+                .attr("y1", y(0))
+                .attr("x2", x(xMax))
+                .attr("y2", y((1/vmax) * xMax + km/vmax));
+            
+            // Intercepts
+            svg.append("circle").attr("cx", x(0)).attr("cy", y(km / vmax)).attr("r", 5).attr("fill", "#fb7185");
+            svg.append("text").attr("x", x(0) + 10).attr("y", y(km/vmax)).text(`Km/Vmax = ${(km/vmax).toFixed(2)}`).attr("class", "intercept-text");
+            
+            svg.append("circle").attr("cx", x(-km)).attr("cy", y(0)).attr("r", 5).attr("fill", "#fde047");
+            svg.append("text").attr("x", x(-km)).attr("y", y(0) + 20).text(`-Km = ${-km.toFixed(1)}`).attr("class", "intercept-text").attr("text-anchor", "middle");
+        }
+
+        // --- Tooltip Logic ---
+        function addTooltip(svg, width, height, x, y, data, contentFn, xAccessor, yAccessor) {
+            const focus = svg.append("g").style("display", "none");
+            focus.append("circle").attr("class", "plot-dot").attr("r", 5).attr("fill", "#60a5fa");
+
+            const bisect = d3.bisector(d => xAccessor(d)).left;
+
+            svg.append("rect")
+                .attr("class", "plot-area")
+                .style("fill", "none")
+                .style("pointer-events", "all")
+                .attr("width", width)
+                .attr("height", height)
+                .on("mouseover", () => { focus.style("display", null); tooltip.style("opacity", 1); })
+                .on("mouseout", () => { focus.style("display", "none"); tooltip.style("opacity", 0); })
+                .on("mousemove", (event) => {
+                    const x0 = x.invert(d3.pointer(event)[0]);
+                    const i = bisect(data, x0, 1);
+                    const d0 = data[i - 1];
+                    const d1 = data[i];
+                    if (!d0 || !d1) return;
+                    const d = x0 - xAccessor(d0) > xAccessor(d1) - x0 ? d1 : d0;
+                    
+                    focus.attr("transform", `translate(${x(xAccessor(d))},${y(yAccessor(d))})`);
+                    
+                    tooltip.html(contentFn(d))
+                        .style("left", (event.pageX + 15) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                });
+        }
+
+
+        // --- Event Handling & Initial Draw ---
+        function updateAllPlots() {
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (!activeTab || activeTab.dataset.target === 'review-quiz') return;
+            
+            const activePlotId = activeTab.dataset.target;
+            
+            switch(activePlotId) {
+                case 'michaelis-menten':
+                    drawMMPlot();
+                    break;
+                case 'lineweaver-burk':
+                    drawLBPlot();
+                    break;
+                case 'eadie-hofstee':
+                    drawEHPlot();
+                    break;
+                case 'hanes-woolf':
+                    drawHWPlot();
+                    break;
+            }
+        }
+
+        vmaxSlider.addEventListener('input', (e) => {
+            vmax = +e.target.value;
+            vmaxValueSpan.textContent = vmax;
+            updateAllPlots();
+        });
+
+        kmSlider.addEventListener('input', (e) => {
+            km = +e.target.value;
+            kmValueSpan.textContent = km;
+            updateAllPlots();
+        });
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabPanes.forEach(pane => {
+                    const paneIsActive = pane.id === tab.dataset.target;
+                    pane.classList.toggle('hidden', !paneIsActive);
+                    // Use flex for quiz pane, grid for others
+                    if (paneIsActive) {
+                        pane.classList.toggle(pane.id === 'review-quiz' ? 'block' : 'grid', true);
+                        pane.classList.toggle(pane.id !== 'review-quiz' ? 'block' : 'grid', false);
+                    } else {
+                         pane.classList.remove('grid', 'block');
+                    }
+                });
+
+                if (tab.dataset.target !== 'review-quiz') {
+                    // A small delay to allow the container to be visible before drawing
+                    setTimeout(updateAllPlots, 10);
+                }
+            });
+        });
+        
+        // --- Quiz Logic ---
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        quizOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                const clickedOption = e.target;
+                const optionsContainer = clickedOption.parentElement;
+
+                // Prevent re-answering
+                if (optionsContainer.classList.contains('answered')) {
+                    return;
+                }
+                optionsContainer.classList.add('answered');
+
+                const correctOption = optionsContainer.querySelector('[data-correct="true"]');
+                
+                // Highlight the correct answer in green
+                correctOption.classList.add('correct');
+
+                // If the clicked answer is wrong, highlight it in red
+                if (clickedOption !== correctOption) {
+                    clickedOption.classList.add('incorrect');
+                }
+            });
+        });
+
+
+        // Debounced resize handler
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(updateAllPlots, 250);
+        });
+
+        // Initial Draw
+        document.addEventListener('DOMContentLoaded', () => {
+            // A brief timeout to ensure the DOM is fully rendered, especially the plot containers
+            setTimeout(updateAllPlots, 50);
+        });
+    </script>
+</body>
+</html>
