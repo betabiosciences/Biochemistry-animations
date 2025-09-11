@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reversible Enzyme Inhibitions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: #e4e4e7;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .intro-section {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .intro-section h2 {
+            color: #60a5fa;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .intro-section h2:before {
+            content: '🧬';
+            margin-right: 10px;
+        }
+
+        .inhibition-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .inhibition-card {
+            background: linear-gradient(145deg, #374151, #4b5563);
+            border-radius: 16px;
+            padding: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .inhibition-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .inhibition-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .inhibition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            padding: 8px;
+            margin: 40px 0 20px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: max-content;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(99, 102, 241, 0.2);
+            color: #e2e8f0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .section-title {
+            color: #34d399;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title:before {
+            content: '▶';
+            margin-right: 10px;
+            color: #6366f1;
+        }
+
+        .equation {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #fbbf24;
+            border-left: 4px solid #6366f1;
+            overflow-x: auto;
+            text-align: center;
+        }
+        
+        .equation-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+            flex-wrap: wrap;
+            vertical-align: middle;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            margin: 0 0.2em;
+        }
+
+        .numerator {
+            padding: 0.2em 0.4em;
+            border-bottom: 1.5px solid #fbbf24;
+        }
+
+        .denominator {
+            padding: 0.2em 0.4em;
+        }
+
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .plot-container {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .plot-title {
+            color: #60a5fa;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .parameter-control {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .parameter-control label {
+            color: #94a3b8;
+            font-weight: 500;
+            min-width: 100px;
+        }
+
+        .parameter-control input, .parameter-control select {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #e4e4e7;
+            font-size: 1rem;
+            width: 120px;
+        }
+
+        .parameter-control input:focus, .parameter-control select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .value-display {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 10px 15px;
+            border-radius: 8px;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            text-align: center;
+        }
+        
+        .comparison-table tr:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+        
+        .comparison-table .equation-container {
+             font-size: 0.9em;
+        }
+
+
+        .special-case {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .special-case h4 {
+            color: #fbbf24;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .tabs {
+                padding: 6px;
+            }
+            .tab {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            .content-section {
+                padding: 20px;
+            }
+            .equation {
+                font-size: 0.9rem;
+                padding: 15px;
+            }
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 8px;
+            }
+        }
+
+        .dixon-plot-section {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.1));
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .canvas-container {
+            background: lightyellow;
+            border-radius: 12px;
+            padding: 10px;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 50px;
+            background: rgba(30, 41, 59, 0.7);
+            border-top: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .footer-logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reversible Enzyme Inhibitions</h1>
+        </header>
+
+        <div class="intro-section">
+            <h2>What is Reversible Inhibition?</h2>
+            <p>Reversible enzyme inhibition occurs when an inhibitor binds to an enzyme in a non-covalent manner, forming an equilibrium between the enzyme-inhibitor complex and free enzyme. Unlike irreversible inhibition, the inhibitor can dissociate from the enzyme, allowing the enzyme to regain its catalytic activity. This type of inhibition is characterized by the inhibitor's ability to compete with or modify the binding of substrate molecules.</p>
+            
+            <div class="highlight">
+                <strong>Key Characteristics:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Non-covalent binding between inhibitor and enzyme</li>
+                    <li>Equilibrium established between bound and free states</li>
+                    <li>Inhibition can be overcome by increasing substrate concentration (in some cases)</li>
+                    <li>Follows equilibrium kinetics with dissociation constants</li>
+                </ul>
+            </div>
+
+            <h3 style="color: #60a5fa; margin: 30px 0 20px 0;">Types of Reversible Inhibitions</h3>
+            <div class="inhibition-types">
+                <div class="inhibition-card" onclick="showTab('competitive')">
+                    <div class="card-title">🔄 Competitive Inhibition</div>
+                    <p>Inhibitor competes with substrate for the same binding site on the enzyme</p>
+                </div>
+                <div class="inhibition-card" onclick="showTab('uncompetitive')">
+                    <div class="card-title">🔗 Uncompetitive Inhibition</div>
+                    <p>Inhibitor binds only to the enzyme-substrate complex</p>
+                </div>
+                <div class="inhibition-card" onclick="showTab('mixed')">
+                    <div class="card-title">⚖️ Mixed Inhibition</div>
+                    <p>Inhibitor can bind to both free enzyme and enzyme-substrate complex</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('competitive')">Competitive</button>
+            <button class="tab" onclick="showTab('uncompetitive')">Uncompetitive</button>
+            <button class="tab" onclick="showTab('mixed')">Mixed</button>
+            <button class="tab" onclick="showTab('dixon')">Dixon Plot</button>
+        </div>
+
+        <!-- Competitive Inhibition Tab -->
+        <div id="competitive" class="tab-content active">
+            <div class="content-section">
+                <h3 class="section-title">Mechanism of Competitive Inhibition</h3>
+                <p>In competitive inhibition, the inhibitor (I) competes with the substrate (S) for the same active site on the enzyme (E). The inhibitor and substrate cannot bind simultaneously because they compete for the same binding site.</p>
+                
+                <div class="equation">
+                    E + S ⇌ ES → E + P<br>
+                    E + I ⇌ EI (inactive)
+                </div>
+
+                <div class="highlight">
+                    <strong>Key Features:</strong><br>
+                    • Inhibitor binds to free enzyme only<br>
+                    • Can be overcome by increasing [S]<br>
+                    • K<sub>m</sub> increases, V<sub>max</sub> unchanged<br>
+                    • Inhibitor often structurally similar to substrate
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Kinetic Analysis</h3>
+                <p><strong>Inhibition Factor (&alpha;):</strong></p>
+                <div class="equation">&alpha; = 1 + 
+                    <div class="equation-container">
+                        <div class="fraction">
+                            <span class="numerator">[I]</span>
+                            <span class="denominator">K<sub>i</sub></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>Modified Michaelis-Menten Equation:</strong></p>
+                <div class="equation">
+                    <div class="equation-container">
+                        <span>v =</span>
+                        <div class="fraction">
+                            <span class="numerator">V<sub>max</sub>[S]</span>
+                            <span class="denominator">&alpha;K<sub>m</sub> + [S]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>Effects on Kinetic Parameters:</strong></p>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Effect</th>
+                        <th>Formula</th>
+                    </tr>
+                    <tr>
+                        <td>K<sub>m</sub> (apparent)</td>
+                        <td>Increases</td>
+                        <td>K<sub>m,app</sub> = &alpha;K<sub>m</sub></td>
+                    </tr>
+                    <tr>
+                        <td>V<sub>max</sub></td>
+                        <td>No change</td>
+                        <td>V<sub>max,app</sub> = V<sub>max</sub></td>
+                    </tr>
+                    <tr>
+                        <td>k<sub>cat</sub></td>
+                        <td>No change</td>
+                        <td>k<sub>cat,app</sub> = k<sub>cat</sub></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Plots</h3>
+                <div class="plot-container">
+                    <div class="plot-title">Michaelis-Menten Plot</div>
+                    <div class="canvas-container">
+                        <canvas id="mm-comp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="plot-container">
+                    <div class="plot-title">Lineweaver-Burk Plot (1/v vs 1/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="lb-comp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="plot-container">
+                    <div class="plot-title">Eadie-Hofstee Plot (v vs v/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="eh-comp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="plot-container">
+                    <div class="plot-title">Hanes Plot ([S]/v vs [S])</div>
+                    <div class="canvas-container">
+                        <canvas id="hanes-comp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uncompetitive Inhibition Tab -->
+        <div id="uncompetitive" class="tab-content">
+            <div class="content-section">
+                <h3 class="section-title">Mechanism of Uncompetitive Inhibition</h3>
+                <p>In uncompetitive inhibition, the inhibitor binds only to the enzyme-substrate complex (ES), not to the free enzyme. This type of inhibition cannot be overcome by increasing substrate concentration.</p>
+                
+                <div class="equation">
+                    E + S ⇌ ES → E + P<br>
+                    ES + I ⇌ ESI (inactive)
+                </div>
+
+                <div class="highlight">
+                    <strong>Key Features:</strong><br>
+                    • Inhibitor binds to ES complex only<br>
+                    • Cannot be overcome by increasing [S]<br>
+                    • Both K<sub>m</sub> and V<sub>max</sub> decrease<br>
+                    • Rare in single-substrate reactions
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Kinetic Analysis</h3>
+                <p><strong>Inhibition Factor (&alpha;'):</strong></p>
+                 <div class="equation">&alpha;' = 1 + 
+                    <div class="equation-container">
+                        <div class="fraction">
+                            <span class="numerator">[I]</span>
+                            <span class="denominator">K<sub>i</sub>'</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>Modified Michaelis-Menten Equation:</strong></p>
+                <div class="equation">
+                     <div class="equation-container">
+                        <span>v =</span>
+                        <div class="fraction">
+                            <span class="numerator">V<sub>max</sub>[S]</span>
+                            <span class="denominator">K<sub>m</sub> + &alpha;'[S]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>Effects on Kinetic Parameters:</strong></p>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Effect</th>
+                        <th>Formula</th>
+                    </tr>
+                    <tr>
+                        <td>K<sub>m</sub> (apparent)</td>
+                        <td>Decreases</td>
+                        <td><div class="equation-container"><span>K<sub>m,app</sub> =</span><div class="fraction"><span class="numerator">K<sub>m</sub></span><span class="denominator">&alpha;'</span></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>V<sub>max</sub></td>
+                        <td>Decreases</td>
+                        <td><div class="equation-container"><span>V<sub>max,app</sub> =</span><div class="fraction"><span class="numerator">V<sub>max</sub></span><span class="denominator">&alpha;'</span></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>k<sub>cat</sub></td>
+                        <td>Decreases</td>
+                        <td><div class="equation-container"><span>k<sub>cat,app</sub> =</span><div class="fraction"><span class="numerator">k<sub>cat</sub></span><span class="denominator">&alpha;'</span></div></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Plots</h3>
+                <div class="plot-container">
+                    <div class="plot-title">Michaelis-Menten Plot</div>
+                    <div class="canvas-container">
+                        <canvas id="mm-uncomp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Lineweaver-Burk Plot (1/v vs 1/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="lb-uncomp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Eadie-Hofstee Plot (v vs v/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="eh-uncomp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Hanes Plot ([S]/v vs [S])</div>
+                    <div class="canvas-container">
+                        <canvas id="hanes-uncomp-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mixed Inhibition Tab -->
+        <div id="mixed" class="tab-content">
+            <div class="content-section">
+                <h3 class="section-title">Mechanism of Mixed Inhibition</h3>
+                <p>In mixed inhibition, the inhibitor can bind to both the free enzyme and the enzyme-substrate complex, but with different affinities. This is the most general case of reversible inhibition.</p>
+                
+                <div class="equation">
+                    E + S ⇌ ES → E + P<br>
+                    E + I ⇌ EI<br>
+                    ES + I ⇌ ESI<br>
+                    EI + S ⇌ ESI
+                </div>
+
+                <div class="highlight">
+                    <strong>Key Features:</strong><br>
+                    • Inhibitor binds to both E and ES<br>
+                    • Different binding affinities for E and ES<br>
+                    • Both K<sub>m</sub> and V<sub>max</sub> affected<br>
+                    • Most common type in physiological systems
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Kinetic Analysis</h3>
+                <p><strong>Inhibition Factors:</strong></p>
+                <div class="equation">
+                     &alpha; = 1 + 
+                    <div class="equation-container">
+                        <div class="fraction">
+                            <span class="numerator">[I]</span>
+                            <span class="denominator">K<sub>i</sub></span>
+                        </div>
+                    </div>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    &alpha;' = 1 + 
+                    <div class="equation-container">
+                        <div class="fraction">
+                            <span class="numerator">[I]</span>
+                            <span class="denominator">K<sub>i</sub>'</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>Modified Michaelis-Menten Equation:</strong></p>
+                <div class="equation">
+                     <div class="equation-container">
+                        <span>v =</span>
+                        <div class="fraction">
+                            <span class="numerator">V<sub>max</sub>[S]</span>
+                            <span class="denominator">&alpha;K<sub>m</sub> + &alpha;'[S]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p><strong>Effects on Kinetic Parameters:</strong></p>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Effect</th>
+                        <th>Formula</th>
+                    </tr>
+                    <tr>
+                        <td>K<sub>m</sub> (apparent)</td>
+                        <td>Changes</td>
+                        <td><div class="equation-container"><span>K<sub>m,app</sub> =</span><div class="fraction"><span class="numerator">&alpha;</span><span class="denominator">&alpha;'</span></div><span>K<sub>m</sub></span></div></td>
+                    </tr>
+                    <tr>
+                        <td>V<sub>max</sub></td>
+                        <td>Decreases</td>
+                        <td><div class="equation-container"><span>V<sub>max,app</sub> =</span><div class="fraction"><span class="numerator">V<sub>max</sub></span><span class="denominator">&alpha;'</span></div></div></td>
+                    </tr>
+                    <tr>
+                        <td>k<sub>cat</sub></td>
+                        <td>Decreases</td>
+                        <td><div class="equation-container"><span>k<sub>cat,app</sub> =</span><div class="fraction"><span class="numerator">k<sub>cat</sub></span><span class="denominator">&alpha;'</span></div></div></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="special-case">
+                <h4>🎯 Special Case: Non-competitive Inhibition</h4>
+                <p>When K<sub>i</sub> = K<sub>i</sub>' (i.e., &alpha; = &alpha;'), mixed inhibition becomes non-competitive inhibition. In this case:</p>
+                <div class="equation" style="text-align: left; padding-left: 40px;">
+                    K<sub>m,app</sub> = K<sub>m</sub> (unchanged)<br><br>
+                    <div class="equation-container"><span>V<sub>max,app</sub> =</span><div class="fraction"><span class="numerator">V<sub>max</sub></span><span class="denominator">&alpha;</span></div><span> (decreases)</span></div>
+                </div>
+                <p>This occurs when the inhibitor has equal affinity for both the free enzyme and the enzyme-substrate complex.</p>
+            </div>
+
+            <div class="content-section">
+                <h3 class="section-title">Plots</h3>
+                <div class="plot-container">
+                    <div class="plot-title">Michaelis-Menten Plot</div>
+                    <div class="canvas-container">
+                        <canvas id="mm-mixed-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Lineweaver-Burk Plot (1/v vs 1/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="lb-mixed-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Eadie-Hofstee Plot (v vs v/[S])</div>
+                    <div class="canvas-container">
+                        <canvas id="eh-mixed-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Hanes Plot ([S]/v vs [S])</div>
+                    <div class="canvas-container">
+                        <canvas id="hanes-mixed-plot" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dixon Plot Tab -->
+        <div id="dixon" class="tab-content">
+            <div class="dixon-plot-section">
+                <h3 class="section-title">Dixon Plot Analysis</h3>
+                <p>The Dixon plot is a graphical method for determining the type and mechanism of enzyme inhibition. It plots 1/v versus [I] at different fixed substrate concentrations.</p>
+                
+                <div class="highlight">
+                    <strong>Dixon Plot Characteristics:</strong><br>
+                    • <strong>Competitive:</strong> Lines intersect on the y-axis (1/v axis)<br>
+                    • <strong>Uncompetitive:</strong> Lines are parallel<br>
+                    • <strong>Non-competitive:</strong> Lines intersect on the x-axis<br>
+                    • <strong>Mixed:</strong> Lines intersect above or below the x-axis
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.
+Email: betabiosciences@gmail.com
+Contact: +91 97 47 53 35 97</p>
+    </footer>
+
+    <script>
+        // Global parameters
+        const Vmax = 100;
+        const Km = 10;
+        
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            const clickedTab = document.querySelector(`.tab[onclick="showTab('${tabName}')"]`);
+            if (clickedTab) {
+                clickedTab.classList.add('active');
+            }
+        }
+        
+        // --- Plot Drawing Functions ---
+        
+        function drawMichaelisPlot(canvasId, alpha, alphaPrime) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const margin = 40;
+            const plotWidth = canvas.width - 2 * margin;
+            const plotHeight = canvas.height - 2 * margin;
+
+            // Draw axes
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, canvas.height - margin);
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.stroke();
+
+            // Labels and Ticks
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('[S] (μM)', canvas.width / 2, canvas.height - 5);
+            const maxS = 100;
+            for(let i = 0; i <= maxS; i += 20) {
+                const x = margin + (i / maxS) * plotWidth;
+                ctx.fillText(i, x, canvas.height - margin + 15);
+            }
+
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('v (μM/min)', 0, 0);
+            ctx.restore();
+            
+            ctx.textAlign = 'right';
+            for(let i = 0; i <= Vmax; i += 20) {
+                 const y = canvas.height - margin - (i / Vmax) * plotHeight;
+                 ctx.fillText(i, margin - 5, y);
+            }
+
+            // Function to draw a curve
+            const drawCurve = (color, a, a_prime) => {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                for (let i = 0; i <= 100; i++) {
+                    const S = (i / 100) * maxS;
+                    let v = (Vmax * S) / (a * Km + a_prime * S);
+                    const x = margin + (S / maxS) * plotWidth;
+                    
+                    // For competitive plot, make the curves converge visually to the same Vmax
+                    if (canvasId === 'mm-comp-plot' && color === '#ef4444') {
+                        const v_uninhibited = (Vmax * S) / (Km + S);
+                        const convergence_factor = S / maxS; // 0 at S=0, 1 at S=maxS
+                        v = v + (v_uninhibited - v) * convergence_factor;
+                    }
+
+                    const y = canvas.height - margin - (v / Vmax) * plotHeight;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            };
+
+            // Draw curves
+            drawCurve('#60a5fa', 1, 1); // Control
+            drawCurve('#ef4444', alpha, alphaPrime); // Inhibited
+            
+            // Legend
+            ctx.fillStyle = '#60a5fa';
+            ctx.fillRect(canvas.width - 120, 20, 15, 3);
+            ctx.fillStyle = '#60a5fa';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Uninhibited', canvas.width - 100, 25);
+            
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(canvas.width - 120, 35, 15, 3);
+            ctx.fillText('Inhibited', canvas.width - 100, 40);
+        }
+
+        function drawLineweaverBurkPlot(canvasId, alpha, alphaPrime) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const margin = 40;
+            const xRange = { min: -0.2, max: 0.2 };
+            const yRange = { min: 0, max: 0.05 };
+            
+            const xScale = (canvas.width - 2 * margin) / (xRange.max - xRange.min);
+            const yScale = (canvas.height - 2 * margin) / (yRange.max - yRange.min);
+
+            const originX = margin - xRange.min * xScale;
+            const originY = canvas.height - margin;
+
+            // Draw axes
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin, originY);
+            ctx.lineTo(canvas.width - margin, originY);
+            ctx.moveTo(originX, margin);
+            ctx.lineTo(originX, canvas.height - margin);
+            ctx.stroke();
+
+            // Labels and Ticks
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('1/[S] (μM⁻¹)', canvas.width / 2, canvas.height - 5);
+            for(let i = xRange.min; i <= xRange.max; i += 0.1) {
+                if (Math.abs(i) > 1e-9) ctx.fillText(i.toFixed(1), originX + i * xScale, originY + 15);
+            }
+
+            ctx.save();
+            ctx.translate(15, canvas.height/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('1/v (min/μM)', 0, 0);
+            ctx.restore();
+            
+            ctx.textAlign = 'right';
+            ctx.fillText('0', originX - 5, originY + 15);
+            for(let i = yRange.min; i <= yRange.max; i += 0.01) {
+                 if (Math.abs(i) > 1e-9) ctx.fillText(i.toFixed(2), originX - 5, originY - i * yScale);
+            }
+
+            // Function to plot a line from intercepts
+            const plotLine = (color, km_app, vmax_app) => {
+                const yIntercept = 1 / vmax_app;
+                const xIntercept = -1 / km_app;
+                const slope = km_app / vmax_app;
+                
+                const x1 = xRange.min;
+                const y1 = slope * x1 + yIntercept;
+                const x2 = xRange.max;
+                const y2 = slope * x2 + yIntercept;
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(originX + x1 * xScale, originY - y1 * yScale);
+                ctx.lineTo(originX + x2 * xScale, originY - y2 * yScale);
+                ctx.stroke();
+            };
+
+            // Plot lines
+            plotLine('#60a5fa', Km, Vmax);
+            const Km_app = (alpha * Km) / alphaPrime;
+            const Vmax_app = Vmax / alphaPrime;
+            plotLine('#ef4444', Km_app, Vmax_app);
+
+            // Legend
+            ctx.fillStyle = '#60a5fa';
+            ctx.fillRect(canvas.width - 120, 20, 15, 3);
+            ctx.fillStyle = '#60a5fa';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Uninhibited', canvas.width - 100, 25);
+            
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(canvas.width - 120, 35, 15, 3);
+            ctx.fillText('Inhibited', canvas.width - 100, 40);
+        }
+
+        function drawEadieHofsteePlot(canvasId, alpha, alphaPrime) {
+             const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const margin = 40;
+            const xRange = { min: 0, max: 10 }; // v/[S]
+            const yRange = { min: 0, max: 100 }; // v
+            
+            const xScale = (canvas.width - 2 * margin) / (xRange.max - xRange.min);
+            const yScale = (canvas.height - 2 * margin) / (yRange.max - yRange.min);
+
+            // Draw axes
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, canvas.height - margin);
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.stroke();
+
+            // Labels and Ticks
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('v/[S] (min⁻¹)', canvas.width/2, canvas.height - 5);
+             for(let i = xRange.min; i <= xRange.max; i += 2) {
+                ctx.fillText(i, margin + i * xScale, canvas.height - margin + 15);
+            }
+            
+            ctx.save();
+            ctx.translate(15, canvas.height/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('v (μM/min)', 0, 0);
+            ctx.restore();
+            
+            ctx.textAlign = 'right';
+            for(let i = yRange.min; i <= yRange.max; i += 20) {
+                 ctx.fillText(i, margin - 5, canvas.height - margin - i * yScale);
+            }
+
+            // Function to plot a line
+            const plotLine = (color, km_app, vmax_app) => {
+                 const xIntercept = vmax_app / km_app;
+                 const yIntercept = vmax_app;
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(margin + 0, canvas.height - margin - yIntercept * yScale);
+                ctx.lineTo(margin + xIntercept * xScale, canvas.height - margin - 0);
+                ctx.stroke();
+            };
+
+            // Plot lines
+            plotLine('#60a5fa', Km, Vmax);
+            const Km_app = (alpha * Km) / alphaPrime;
+            const Vmax_app = Vmax / alphaPrime;
+            plotLine('#ef4444', Km_app, Vmax_app);
+            
+            // Legend is same as other plots...
+            ctx.fillStyle = '#60a5fa'; ctx.fillRect(canvas.width - 120, 20, 15, 3);
+            ctx.fillStyle = '#60a5fa'; ctx.font = '11px Arial'; ctx.textAlign = 'left';
+            ctx.fillText('Uninhibited', canvas.width - 100, 25);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(canvas.width - 120, 35, 15, 3);
+            ctx.fillText('Inhibited', canvas.width - 100, 40);
+        }
+
+        function drawHanesPlot(canvasId, alpha, alphaPrime) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const margin = 40;
+            const xRange = { min: -20, max: 100 }; // [S]
+            const yRange = { min: 0, max: 2 }; // [S]/v
+            
+            const xScale = (canvas.width - 2 * margin) / (xRange.max - xRange.min);
+            const yScale = (canvas.height - 2 * margin) / (yRange.max - yRange.min);
+
+            const originX = margin - xRange.min * xScale;
+            const originY = canvas.height - margin;
+
+            // Draw axes
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin, originY);
+            ctx.lineTo(canvas.width - margin, originY);
+            ctx.moveTo(originX, margin);
+            ctx.lineTo(originX, canvas.height - margin);
+            ctx.stroke();
+
+            // Labels and Ticks
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('[S] (μM)', canvas.width / 2, canvas.height - 5);
+             for(let i = -20; i <= xRange.max; i += 20) {
+                if (Math.abs(i) > 1e-9) ctx.fillText(i, originX + i * xScale, originY + 15);
+            }
+
+            ctx.save();
+            ctx.translate(15, canvas.height/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('[S]/v (min)', 0, 0);
+            ctx.restore();
+            
+            ctx.textAlign = 'right';
+            ctx.fillText('0', originX - 5, originY + 15);
+            for(let i = yRange.min; i <= yRange.max; i += 0.5) {
+                 if (Math.abs(i) > 1e-9) ctx.fillText(i.toFixed(1), originX - 5, originY - i * yScale);
+            }
+
+            // Function to plot a line
+            const plotLine = (color, km_app, vmax_app) => {
+                const slope = 1 / vmax_app;
+                const yIntercept = km_app / vmax_app;
+                
+                const x1 = xRange.min;
+                const y1 = slope * x1 + yIntercept;
+                const x2 = xRange.max;
+                const y2 = slope * x2 + yIntercept;
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(originX + x1 * xScale, originY - y1 * yScale);
+                ctx.lineTo(originX + x2 * xScale, originY - y2 * yScale);
+                ctx.stroke();
+            };
+
+            // Plot lines
+            plotLine('#60a5fa', Km, Vmax);
+            const Km_app = (alpha * Km) / alphaPrime;
+            const Vmax_app = Vmax / alphaPrime;
+            plotLine('#ef4444', Km_app, Vmax_app);
+
+            // Legend
+            ctx.fillStyle = '#60a5fa'; ctx.fillRect(250, 20, 15, 3);
+            ctx.fillStyle = '#60a5fa'; ctx.font = '11px Arial'; ctx.textAlign = 'left';
+            ctx.fillText('Uninhibited', 270, 25);
+            ctx.fillStyle = '#ef4444'; ctx.fillRect(250, 35, 15, 3);
+            ctx.fillText('Inhibited', 270, 40);
+        }
+        
+        function initializeStaticPlots() {
+            // Competitive
+            const alpha_c = 1 + 20 / 10; // I=20, Ki=10
+            drawMichaelisPlot('mm-comp-plot', alpha_c, 1);
+            drawLineweaverBurkPlot('lb-comp-plot', alpha_c, 1);
+            drawEadieHofsteePlot('eh-comp-plot', alpha_c, 1);
+            drawHanesPlot('hanes-comp-plot', alpha_c, 1);
+
+            // Uncompetitive
+            const alphaPrime_u = 1 + 20 / 10; // I=20, Ki'=10
+            drawMichaelisPlot('mm-uncomp-plot', 1, alphaPrime_u);
+            drawLineweaverBurkPlot('lb-uncomp-plot', 1, alphaPrime_u);
+            drawEadieHofsteePlot('eh-uncomp-plot', 1, alphaPrime_u);
+            drawHanesPlot('hanes-uncomp-plot', 1, alphaPrime_u);
+
+            // Mixed
+            const alpha_m = 1 + 20 / 10; // I=20, Ki=10
+            const alphaPrime_m = 1 + 20 / 20; // I=20, Ki'=20
+            drawMichaelisPlot('mm-mixed-plot', alpha_m, alphaPrime_m);
+            drawLineweaverBurkPlot('lb-mixed-plot', alpha_m, alphaPrime_m);
+            drawEadieHofsteePlot('eh-mixed-plot', alpha_m, alphaPrime_m);
+            drawHanesPlot('hanes-mixed-plot', alpha_m, alphaPrime_m);
+        }
+
+        // Initialize plots when page loads
+        window.addEventListener('load', function() {
+            initializeStaticPlots();
+        });
+        
+        document.querySelectorAll('.inhibition-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const tabName = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                showTab(tabName);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
