@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinetics of Bi-Bi Enzymatic Reactions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
+        .kinetics-section {
+            display: none;
+        }
+        .kinetics-section.active {
+            display: block;
+        }
+        /* Style for the reaction representations */
+        .reaction-path {
+            font-family: monospace;
+            background-color: #1a202c; /* Slightly lighter than bg-gray-900 */
+            color: #a0aec0; /* text-gray-400 */
+            padding: 1.5rem 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #2d3748; /* border-gray-700 */
+            overflow-x: auto;
+            white-space: pre;
+            text-align: center;
+            line-height: 1.75;
+        }
+        .plot-image-container {
+            background-color: #f7fafc; /* bg-gray-100 for contrast with white bg images */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #2d3748; /* border-gray-700 */
+            position: relative; /* Added for watermark positioning */
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <main class="w-full max-w-4xl mx-auto">
+        <div class="bg-gray-800 shadow-2xl rounded-xl overflow-hidden">
+            <div class="p-6 md-p-8">
+                <!-- Header -->
+                <header class="text-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-bold text-cyan-400">Bi-Bi Enzymatic Reactions</h1>
+                   
+                </header>
+
+                <!-- Dynamic Content Sections -->
+                <div id="sections-container">
+                    
+                    <!-- Section 1: Challenges -->
+                    <section id="section-0" class="kinetics-section active">
+                        <h2 class="text-2xl font-semibold text-white mb-4">The Challenge of Two Substrates</h2>
+                        <div class="space-y-4 text-gray-300">
+                            <p>Most enzymatic reactions in biological systems involve two substrates and yield two products (Bi-Bi reactions). Studying their kinetics is far more complex than for single-substrate reactions.</p>
+                            <p><strong class="text-cyan-400">The Core Problem:</strong> With two changing variables (the concentration of substrate A, [A], and substrate B, [B]), it's difficult to determine the true effect of each on the reaction rate.</p>
+                            <p><strong class="text-cyan-400">The Solution:</strong> To simplify this, we fix the concentration of one substrate at a saturating level (making it a pseudo-constant) and then vary the concentration of the other. By repeating this process at several fixed concentrations of the first substrate, we can build a complete kinetic profile and determine the reaction mechanism.</p>
+                        </div>
+                    </section>
+
+                    <!-- Section 2: Single Displacement Introduction -->
+                    <section id="section-1" class="kinetics-section">
+                        <h2 class="text-2xl font-semibold text-white mb-4">1. Single Displacement (Sequential) Reactions</h2>
+                        <div class="space-y-4 text-gray-300">
+                            <p>In sequential mechanisms, both substrates must bind to the enzyme before any product is released. This forms a central <strong class="text-cyan-400">ternary complex</strong>, which contains the enzyme and both substrates (EAB).</p>
+                            <p>The general reaction pathway is:</p>
+                            <div class="reaction-path">E + A + B  ⇌  EAB  ⇌  EPQ  ⇌  E + P + Q</div>
+                            <p>There are two main subtypes for how the ternary complex can be formed: Ordered and Random.</p>
+                        </div>
+                    </section>
+                    
+                    <!-- Section 3: Ordered Single Displacement -->
+                    <section id="section-2" class="kinetics-section">
+                        <h3 class="text-2xl font-semibold text-white mb-4">1a. Ordered Single Displacement</h3>
+                        <div class="space-y-6 text-gray-300">
+                            <p>Substrates bind in a compulsory order. Substrate A (the <strong class="text-cyan-400">leading substrate</strong>) must bind first, creating a binding site for substrate B. Products are also released in a defined order.</p>
+                            <div class="reaction-path">E  + A  ⇌  EA  + B  ⇌  EAB  ⇌  EPQ  ⇌  EQ + P  ⇌  E + Q</div>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400 mb-2">Kinetic Effects:</h4>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li><strong class="text-white">Apparent K<sub>M</sub>:</strong> The K<sub>M</sub> for one substrate is dependent on the concentration of the other.</li>
+                                    <li><strong class="text-white">V<sub>max</sub>:</strong> The maximum velocity also changes as the concentration of the co-substrate changes.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400 mb-2">Lineweaver-Burk Plot:</h4>
+                                <p class="mb-4">The plot shows lines that <strong class="text-white">intersect to the left of the 1/V axis</strong>. Each line represents a different fixed concentration of the non-varied substrate.</p>
+                                <!-- Replaced SVG with Image -->
+                                <div class="plot-image-container">
+                                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Ordered%20single%20displacement%20V2.png" alt="Lineweaver-Burk plot for an ordered single displacement reaction" class="w-full h-auto rounded-md">
+                                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="Watermark" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 opacity-10 pointer-events-none">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section 4: Random Single Displacement -->
+                    <section id="section-3" class="kinetics-section">
+                        <h3 class="text-2xl font-semibold text-white mb-4">1b. Random Single Displacement</h3>
+                        <div class="space-y-6 text-gray-300">
+                            <p>The substrates can bind in any order to the enzyme. Both paths lead to the formation of the same EAB ternary complex.</p>
+                             <!-- Replaced representation with Image -->
+                            <div class="plot-image-container bg-gray-800 p-0 border-none">
+                                <img src="https://betabiosciences.github.io//Biochemistry-animations/Random%20single%20displacement%20representation.png" alt="Reaction pathway for random single displacement" class="w-full h-auto rounded-md">
+                                <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="Watermark" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 opacity-5 pointer-events-none">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400 mb-2">Kinetic Effects & Plot:</h4>
+                                <p>Kinetically, this mechanism is often indistinguishable from the ordered mechanism using initial rate studies alone. The Lineweaver-Burk plot also shows <strong class="text-white">intersecting lines to the left of the 1/V axis</strong>, which can look identical to the ordered mechanism. Differentiating them requires other techniques like product inhibition studies.</p>
+                            </div>
+                             <!-- Replaced SVG with Image -->
+                             <div class="plot-image-container">
+                                <img src="https://betabiosciences.github.io//Biochemistry-animations/Random%20single%20displacement%20V3.png" alt="Lineweaver-Burk plot for a random single displacement reaction" class="w-full h-auto rounded-md">
+                                <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="Watermark" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 opacity-10 pointer-events-none">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Section 5: Double Displacement -->
+                    <section id="section-4" class="kinetics-section">
+                        <h2 class="text-2xl font-semibold text-white mb-4">2. Double Displacement (Ping-Pong) Reactions</h2>
+                        <div class="space-y-6 text-gray-300">
+                            <p>In this mechanism, one substrate binds and one product is released <strong class="text-cyan-400">before</strong> the second substrate binds. This creates a stable, modified enzyme intermediate (F). No ternary complex is formed.</p>
+                            <div class="reaction-path">E + A  ⇌  EA  ⇌  FP  - P  →  F  + B  ⇌  FB  ⇌  EQ  - Q  →  E</div>
+                             <div>
+                                <h4 class="font-semibold text-cyan-400 mb-2">Kinetic Effects:</h4>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li><strong class="text-white">Apparent K<sub>M</sub>:</strong> Increases as [B] increases.</li>
+                                    <li><strong class="text-white">V<sub>max</sub>:</strong> Increases as [B] increases.</li>
+                                    <li>The ratio of Apparent K<sub>M</sub> / V<sub>max</sub> remains constant.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-cyan-400 mb-2">Lineweaver-Burk Plot:</h4>
+                                <p class="mb-4">This mechanism is easily identified by its distinctive plot, which shows a series of <strong class="text-white">parallel lines</strong>.</p>
+                                <!-- Replaced SVG with Image -->
+                                <div class="plot-image-container">
+                                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Pin%20Pong%20Bi-Bi%20V2.png" alt="Lineweaver-Burk plot for a double displacement (ping-pong) reaction" class="w-full h-auto rounded-md">
+                                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="Watermark" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 opacity-10 pointer-events-none">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <footer class="bg-gray-800 border-t border-gray-700 p-4 flex justify-between items-center">
+                <button id="prev-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <div id="progress-indicator" class="text-sm text-gray-400">
+                    <span id="current-page">1</span> / <span id="total-pages">5</span>
+                </div>
+                <button id="next-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    Next
+                </button>
+            </footer>
+
+            <!-- New Footer with Logo and Info -->
+            <div class="border-t border-gray-700 p-6 text-center text-gray-400 text-xs">
+                <div class="flex flex-col items-center space-y-3">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="w-14 h-auto">
+                    <div>
+                        <p>© 2025 BETA Biosciences. All rights reserved.</p>
+                        <p>Email: betabiosciences@gmail.com</p>
+                        <p>Contact: +91 97 47 53 35 97</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.kinetics-section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentPageSpan = document.getElementById('current-page');
+            const totalPagesSpan = document.getElementById('total-pages');
+
+            let currentSectionIndex = 0;
+            const totalSections = sections.length;
+            
+            totalPagesSpan.textContent = totalSections;
+
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach((section, i) => {
+                    section.classList.remove('active');
+                });
+                // Show the target section with a fade-in effect
+                const targetSection = document.getElementById(`section-${index}`);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+            }
+
+            function updateButtons() {
+                // Update page number
+                currentPageSpan.textContent = currentSectionIndex + 1;
+                
+                // Enable/disable buttons
+                if (currentSectionIndex === 0) {
+                    prevBtn.disabled = true;
+                } else {
+                    prevBtn.disabled = false;
+                }
+
+                if (currentSectionIndex === totalSections - 1) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSectionIndex < totalSections - 1) {
+                    currentSectionIndex++;
+                    showSection(currentSectionIndex);
+                    updateButtons();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    showSection(currentSectionIndex);
+                    updateButtons();
+                }
+            });
+
+            // Initial setup
+            showSection(currentSectionIndex);
+            updateButtons();
+        });
+    </script>
+</body>
+</html>
+
+
