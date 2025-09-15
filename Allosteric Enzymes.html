@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allosteric Enzyme Kinetics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: #1a1a2e;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #e94560;
+        }
+
+        .content-section {
+            background: #16213e;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #0f3460;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none; /* Initially hide all sections */
+        }
+        
+        .content-section:first-of-type {
+            display: block; /* Show the first section */
+        }
+
+        .section-title {
+            color: #e94560;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #e94560;
+            padding-bottom: 10px;
+        }
+
+        .subsection {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a2e;
+            border-left: 4px solid #e94560;
+            border-radius: 5px;
+        }
+
+        .subsection h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+        }
+
+        .interactive-panel {
+            background: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #e94560;
+        }
+
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .activator-btn { background-color: #27ae60; }
+        .activator-btn:hover { background-color: #2ecc71; }
+        .inhibitor-btn { background-color: #c0392b; }
+        .inhibitor-btn:hover { background-color: #e74c3c; }
+        .reset-btn { background-color: #7f8c8d; }
+        .reset-btn:hover { background-color: #95a5a6; }
+
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .equation {
+            background: #1a1a2e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #e94560;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #f0f0f0;
+            text-align: center;
+        }
+
+        .highlight {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #f1c40f;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #16213e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(45deg, #e94560, #a24b76);
+            color: white;
+            font-weight: bold;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #1a1a2e;
+        }
+
+        .tabs {
+            display: flex;
+            background: #0f3460;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: #16213e;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #1f4068;
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #e94560, #a24b76);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mechanism-diagram {
+            background: #16213e;
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .enzyme-state {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #ff8c00, #c0392b);
+            color: white;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #e94560;
+            margin: 0 10px;
+        }
+        
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-button {
+            background-color: #e94560;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: #ff718a;
+        }
+
+        .nav-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid #0f3460;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .footer img {
+            width: 56px; /* Corresponds to w-14 in Tailwind */
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .footer p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Allosteric Enzyme Kinetics</h1>
+            <p>Interactive Guide to Understanding Allosteric Regulation and Kinetic Behavior</p>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Introduction to Allosteric Enzymes</h2>
+            <p>Allosteric enzymes are regulatory proteins that undergo conformational changes upon binding of effector molecules at sites other than the active site. These enzymes play crucial roles in metabolic regulation and cellular control mechanisms.</p>
+            
+            <div class="subsection">
+                <h3>Key Characteristics</h3>
+                <ul>
+                    <li><strong>Multiple binding sites:</strong> Active site for substrate and allosteric site for regulators</li>
+                    <li><strong>Conformational changes:</strong> Binding induces structural changes affecting activity</li>
+                    <li><strong>Cooperative behavior:</strong> Often exhibit sigmoidal kinetics rather than hyperbolic</li>
+                    <li><strong>Regulatory function:</strong> Fine-tune metabolic pathways and cellular responses</li>
+                </ul>
+            </div>
+
+            <div class="mechanism-diagram">
+                <h3>Allosteric Mechanism</h3>
+                <div>
+                    <span class="enzyme-state">T-state (Tense)</span>
+                    <span class="arrow">⇌</span>
+                    <span class="enzyme-state">R-state (Relaxed)</span>
+                </div>
+                <p><em>Conformational equilibrium between low-affinity (T) and high-affinity (R) states</em></p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Types of Allosteric Regulation</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(0)">Positive Regulation</button>
+                <button class="tab" onclick="switchTab(1)">Negative Regulation</button>
+                <button class="tab" onclick="switchTab(2)">Mixed Regulation</button>
+            </div>
+
+            <div class="tab-content active" id="tab0">
+                <h3>Positive Allosteric Regulation</h3>
+                <p>Positive effectors (activators) bind to the allosteric site and increase enzyme activity by stabilizing the R-state (active form).</p>
+                <div class="highlight">
+                    <strong>Examples:</strong>
+                    <ul>
+                        <li>ADP activates phosphofructokinase in glycolysis</li>
+                        <li>ADP activates isocitrate dehydrogenase in citric acid cycle</li>
+                        <li>Calcium activates phosphorylase kinase</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab1">
+                <h3>Negative Allosteric Regulation</h3>
+                <p>Negative effectors (inhibitors) bind to the allosteric site and decrease enzyme activity by stabilizing the T-state (inactive form).</p>
+                <div class="highlight">
+                    <strong>Examples:</strong>
+                    <ul>
+                        <li>CTP inhibits aspartate transcarbamoylase</li>
+                        <li>ATP inhibits phosphofructokinase (feedback inhibition)</li>
+                        <li>Glucose-6-phosphate inhibits hexokinase</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab2">
+                <h3>Mixed Allosteric Regulation</h3>
+                <p>Some enzymes can be regulated by both positive and negative effectors, allowing for fine-tuned control.</p>
+                <div class="highlight">
+                    <strong>Example:</strong> Phosphofructokinase
+                    <ul>
+                        <li><strong>Activators:</strong> AMP, ADP</li>
+                        <li><strong>Inhibitors:</strong> ATP, citrate (at high concentrations)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Michaelis-Menten Kinetics vs. Allosteric Kinetics</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Aspect</th>
+                        <th>Michaelis-Menten Enzymes</th>
+                        <th>Allosteric Enzymes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Kinetic Curve</strong></td>
+                        <td>Hyperbolic (rectangular hyperbola)</td>
+                        <td>Sigmoidal (S-shaped)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cooperativity</strong></td>
+                        <td>No cooperativity</td>
+                        <td>Cooperativity</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hill Coefficient</strong></td>
+                        <td>nH = 1</td>
+                        <td>nH > 1 or nH < 1</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Regulation</strong></td>
+                        <td>Competitive, non-competitive inhibition</td>
+                        <td>Allosteric regulation by effectors</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Km Definition</strong></td>
+                        <td>Well-defined Km</td>
+                        <td>K0.5 (substrate concentration for half-maximal velocity)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight">
+                <h3>Do Allosteric Enzymes Follow Michaelis-Menten Kinetics?</h3>
+                <p><strong>Answer: No, classical allosteric enzymes do NOT follow simple Michaelis-Menten kinetics.</strong></p>
+                <p>Instead, they follow more complex kinetic models such as:</p>
+                <ul>
+                    <li><strong>Hill Equation:</strong> Describes cooperative binding</li>
+                    <li><strong>Monod-Wyman-Changeux (MWC) Model:</strong> Concerted conformational changes</li>
+                    <li><strong>Koshland-Nemethy-Filmer (KNF) Model:</strong> Sequential conformational changes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Mathematical Models</h2>
+            
+            <div class="subsection">
+                <h3>Michaelis-Menten Equation</h3>
+                <div class="equation">
+                    $$ v = \frac{V_{max} \cdot [S]}{K_m + [S]} $$
+                </div>
+                <p>Where v = reaction velocity, [S] = substrate concentration, Vmax = maximum velocity, Km = Michaelis constant</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Hill Equation (for Allosteric Enzymes)</h3>
+                <div class="equation">
+                    $$ v = \frac{V_{max} \cdot [S]^{n_H}}{K_{0.5}^{n_H} + [S]^{n_H}} $$
+                </div>
+                <p>Where nH = Hill coefficient (cooperativity), K0.5 = substrate concentration at half-maximal velocity</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Hill Coefficient Interpretation</h3>
+                <ul>
+                    <li><strong>nH = 1:</strong> No cooperativity (Michaelis-Menten behavior)</li>
+                    <li><strong>nH > 1:</strong> Positive cooperativity (allosteric activation)</li>
+                    <li><strong>nH < 1:</strong> Negative cooperativity (rare)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Interactive Kinetic Curves</h2>
+            
+            <div class="interactive-panel">
+                <h3>Compare Michaelis-Menten vs. Allosteric Kinetics</h3>
+                
+                <div class="control-group">
+                    <button id="addActivator" class="action-button activator-btn">Add Activator</button>
+                    <button id="addInhibitor" class="action-button inhibitor-btn">Add Inhibitor</button>
+                    <button id="resetChart" class="action-button reset-btn">Reset Chart</button>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="kineticChart"></canvas>
+                </div>
+
+                <div class="highlight">
+                    <h4>Observations:</h4>
+                    <ul>
+                        <li>The base allosteric curve (nH > 1) is Sigmoidal. The Michaelis-Menten curve is Hyperbolic.</li>
+                        <li>Click "Add Activator" to see how a positive effector shifts the curve left (lower K0.5), increasing affinity.</li>
+                        <li>Click "Add Inhibitor" to see how a negative effector shifts the curve right (higher K0.5), decreasing affinity.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">Physiological Significance</h2>
+            
+            <div class="subsection">
+                <h3>Metabolic Control</h3>
+                <p>Allosteric enzymes serve as metabolic switches, allowing cells to rapidly respond to changing conditions. Their sigmoidal kinetics provide sharp transitions between "off" and "on" states, making them ideal for regulatory purposes.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Examples in Metabolism</h3>
+                <ul>
+                    <li><strong>Phosphofructokinase:</strong> Key regulatory enzyme in glycolysis</li>
+                    <li><strong>Pyruvate kinase:</strong> Final step of glycolysis, regulated by multiple effectors</li>
+                    <li><strong>Aspartate transcarbamoylase:</strong> First enzyme in pyrimidine biosynthesis</li>
+                    <li><strong>Acetyl-CoA carboxylase:</strong> Rate-limiting enzyme in fatty acid synthesis</li>
+                </ul>
+            </div>
+
+            <div class="highlight">
+                <h3>Clinical Relevance</h3>
+                <p>Understanding allosteric regulation is crucial for:</p>
+                <ul>
+                    <li>Drug design targeting allosteric sites</li>
+                    <li>Understanding metabolic disorders</li>
+                    <li>Developing enzyme replacement therapies</li>
+                    <li>Designing allosteric modulators as therapeutic agents</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="navigation-controls">
+            <button id="prevBtn" class="nav-button">Previous</button>
+            <button id="nextBtn" class="nav-button">Next</button>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo">
+        <p>
+            © 2025 BETA Biosciences. All rights reserved. <br>
+            Email: betabiosciences@gmail.com <br>
+            Contact: +91 97 47 53 35 97
+        </p>
+    </footer>
+
+    <script>
+        let chart;
+        let currentTab = 0;
+        
+        // --- Section Navigation Logic ---
+        const sections = document.querySelectorAll('.content-section');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentSectionIndex = 0;
+
+        function showSection(index) {
+            sections.forEach((section, i) => {
+                section.style.display = i === index ? 'block' : 'none';
+            });
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === sections.length - 1;
+            window.scrollTo(0, 0); // Scroll to top on section change
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSectionIndex > 0) {
+                currentSectionIndex--;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSectionIndex < sections.length - 1) {
+                currentSectionIndex++;
+                showSection(currentSectionIndex);
+            }
+        });
+
+        // --- Tab Logic ---
+        function switchTab(tabIndex) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabs = document.querySelectorAll('.tab');
+            
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(`tab${tabIndex}`).classList.add('active');
+            tabs[tabIndex].classList.add('active');
+            currentTab = tabIndex;
+        }
+
+        // --- Chart Logic ---
+        const VMAX = 100;
+        const KM_K05 = 10;
+        const HILL_COEFF = 2.5;
+        const EFFECTOR_CONC = 5;
+        const substrates = Array.from({ length: 101 }, (_, i) => i * 0.5); // Substrate concentrations from 0 to 50
+
+        const effectorColors = ['rgb(75, 192, 192)', 'rgb(255, 159, 64)', 'rgb(153, 102, 255)', 'rgb(255, 205, 86)'];
+        let colorIndex = 0;
+        let effectorCount = 0;
+
+        // Define the watermark image and plugin
+        const watermarkImage = new Image();
+        watermarkImage.src = 'https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png';
+
+        const watermarkPlugin = {
+            id: 'watermark',
+            afterDraw: (chart) => {
+                if (watermarkImage.complete) {
+                    const ctx = chart.ctx;
+                    const chartArea = chart.chartArea;
+                    const imageWidth = 150; 
+                    const imageHeight = watermarkImage.height * (imageWidth / watermarkImage.width); 
+                    const x = chartArea.left + (chartArea.right - chartArea.left - imageWidth) / 2;
+                    const y = chartArea.top + (chartArea.bottom - chartArea.top - imageHeight) / 2;
+                    
+                    ctx.globalAlpha = 0.1; 
+                    ctx.drawImage(watermarkImage, x, y, imageWidth, imageHeight);
+                    ctx.globalAlpha = 1; 
+                } else {
+                    watermarkImage.onload = () => chart.draw();
+                }
+            }
+        };
+
+        function getBaseDatasets() {
+            const velocitiesHill = substrates.map(s => (VMAX * Math.pow(s, HILL_COEFF)) / (Math.pow(KM_K05, HILL_COEFF) + Math.pow(s, HILL_COEFF)));
+            const velocitiesMM = substrates.map(s => (VMAX * s) / (KM_K05 + s));
+            
+            return [
+                {
+                    label: `Allosteric (nH = ${HILL_COEFF})`,
+                    data: velocitiesHill,
+                    borderColor: '#e94560',
+                    backgroundColor: 'rgba(233, 69, 96, 0.1)',
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4
+                },
+                {
+                    label: 'Michaelis-Menten (nH = 1)',
+                    data: velocitiesMM,
+                    borderColor: '#f1c40f',
+                    backgroundColor: 'rgba(241, 196, 15, 0.1)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }
+            ];
+        }
+
+        function addEffectorCurve(type) {
+            effectorCount++;
+            let effectiveK = KM_K05;
+            let label = '';
+            
+            if (type === 'activator') {
+                effectiveK = KM_K05 / (1 + EFFECTOR_CONC * 0.5);
+                label = `Activator #${effectorCount}`;
+            } else if (type === 'inhibitor') {
+                effectiveK = KM_K05 * (1 + EFFECTOR_CONC * 0.5);
+                label = `Inhibitor #${effectorCount}`;
+            }
+            
+            const velocities = substrates.map(s => (VMAX * Math.pow(s, HILL_COEFF)) / (Math.pow(effectiveK, HILL_COEFF) + Math.pow(s, HILL_COEFF)));
+            
+            const newDataset = {
+                label: label,
+                data: velocities,
+                borderColor: effectorColors[colorIndex],
+                backgroundColor: effectorColors[colorIndex].replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                borderWidth: 2,
+                fill: false,
+                tension: 0.4
+            };
+            
+            chart.data.datasets.push(newDataset);
+            chart.update();
+            
+            colorIndex = (colorIndex + 1) % effectorColors.length;
+        }
+
+        function initializeChart() {
+            if (chart) {
+                chart.destroy();
+            }
+            colorIndex = 0;
+            effectorCount = 0;
+            
+            const ctx = document.getElementById('kineticChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: substrates,
+                    datasets: getBaseDatasets()
+                },
+                plugins: [watermarkPlugin], // Add the watermark plugin here
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Substrate Concentration [S]', font: { size: 14, weight: 'bold' }, color: '#e0e0e0' },
+                            ticks: { color: '#ccc' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Reaction Velocity (v)', font: { size: 14, weight: 'bold' }, color: '#e0e0e0' },
+                            min: 0,
+                            max: VMAX * 1.1,
+                            ticks: { color: '#ccc' },
+                            grid: { color: 'rgba(255,255,255,0.1)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, position: 'top', labels: { font: { size: 12 }, color: '#e0e0e0' } },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
+            });
+        }
+        
+        document.getElementById('addActivator').addEventListener('click', () => addEffectorCurve('activator'));
+        document.getElementById('addInhibitor').addEventListener('click', () => addEffectorCurve('inhibitor'));
+        document.getElementById('resetChart').addEventListener('click', initializeChart);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection(currentSectionIndex);
+            initializeChart();
+        });
+    </script>
+</body>
+</html>
+
