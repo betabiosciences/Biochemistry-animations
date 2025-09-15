@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Irreversible Enzyme Inhibition — Interactive Guide</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111834;
+      --panel-2: #0f1530;
+      --accent: #7c5cff; /* electric violet */
+      --accent-2: #00e0b8; /* aqua mint */
+      --glow: 0 0 24px rgba(124,92,255,0.4);
+      --text: #e8ecff;
+      --muted: #a8b0d6;
+      --good: #4ade80;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+    }
+
+    body {
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(124,92,255,0.2), transparent 60%),
+                  radial-gradient(900px 600px at -10% 100%, rgba(0,224,184,0.18), transparent 60%),
+                  linear-gradient(180deg, #0b1020 0%, #0a0f20 35%, #0b0f24 100%);
+      color: var(--text);
+      font-feature-settings: "ss01" on, "cv11" on;
+    }
+
+    .glow-border {
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), var(--glow);
+    }
+    .neon { text-shadow: 0 0 12px rgba(124,92,255,0.6); }
+    .chip {
+      background: linear-gradient(135deg, rgba(124,92,255,0.15), rgba(0,224,184,0.10));
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+    }
+    .grad-accent { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    .pill { background: rgba(255,255,255,0.06); }
+    .tap:active { transform: scale(0.98); }
+
+    .h-hero { font-size: clamp(1.6rem, 3.8vw, 2.8rem); line-height: 1.15; }
+    .h-sub  { font-size: clamp(1rem, 2.4vw, 1.2rem); line-height: 1.5; }
+
+    .dot {
+      width: 14px; height: 14px; border-radius: 9999px;
+      background: radial-gradient(circle at 30% 30%, #fff, #fff0 60%), var(--accent);
+      box-shadow: 0 0 16px rgba(124,92,255,0.7);
+    }
+
+    :focus-visible { outline: 2px dashed var(--accent-2); outline-offset: 3px; }
+    .lift:hover { transform: translateY(-3px); transition: transform .2s ease, box-shadow .2s ease; }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-[#7c5cff]/30 selection:text-white">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-14">
+    <!-- Header -->
+    <header class="flex items-start sm:items-center justify-between gap-4 mb-8">
+      <div class="flex items-start sm:items-center gap-3">
+        <div class="w-10 h-10 rounded-xl grad-accent glow-border"></div>
+        <div>
+          <h1 class="h-hero font-semibold neon tracking-tight">Irreversible Enzyme Inhibition</h1>
+          
+        </div>
+      </div>
+      <!-- Removed toggle -->
+    </header>
+
+    <!-- Mode selector -->
+    <section class="card rounded-2xl p-4 sm:p-5 mb-6 glow-border">
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="chip px-3 py-1.5 rounded-full text-sm text-[color:var(--muted)]">Choose a topic</span>
+        <div class="flex flex-wrap gap-2">
+          <button data-view="overview" class="tap pill px-3.5 py-2 rounded-xl border border-white/10 text-sm hover:border-white/20 hover:bg-white/10 transition" aria-pressed="true">Overview</button>
+          <button data-view="tsa" class="tap pill px-3.5 py-2 rounded-xl border border-white/10 text-sm hover:border-white/20 hover:bg-white/10 transition">Transition-State Analogs</button>
+          <button data-view="suicide" class="tap pill px-3.5 py-2 rounded-xl border border-white/10 text-sm hover:border-white/20 hover:bg-white/10 transition">Suicide Inhibitors</button>
+          <button data-view="compare" class="tap pill px-3.5 py-2 rounded-xl border border-white/10 text-sm hover:border-white/20 hover:bg-white/10 transition">Compare</button>
+          <button data-view="quiz" class="tap pill px-3.5 py-2 rounded-xl border border-white/10 text-sm hover:border-white/20 hover:bg-white/10 transition">Quick Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content area -->
+    <main id="content">
+      <!-- Dynamic content goes here -->
+    </main>
+
+    <!-- Footer with logo and contact -->
+    <footer class="mt-10">
+      <div class="max-w-5xl mx-auto flex flex-col items-center gap-3">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences logo" class="w-14 h-auto" onerror="this.src=''; this.alt='Image failed to load'; this.style.display='none';">
+        <p class="text-center text-[color:var(--muted)] text-xs whitespace-pre-line">© 2025 BETA Biosciences. All rights reserved.
+Email: betabiosciences@gmail.com
+Contact: +91 97 47 53 35 97</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Simple view switching + quiz
+    const state = { view: 'overview' };
+    const content = document.getElementById('panel-left'); // (not used; main replaces it)
+    const main = document.getElementById('content');
+    const viewButtons = Array.from(document.querySelectorAll('[data-view]'));
+
+    function setViewActive() {
+      viewButtons.forEach(b => {
+        const active = b.dataset.view === state.view;
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        b.classList.toggle('bg-white/10', active);
+        b.classList.toggle('border-white/20', active);
+      });
+      renderView();
+    }
+
+    // Shared decorative badge
+    const lead = (title) => `
+      <div class="flex items-center gap-3 mb-3">
+        <div class="dot"></div>
+        <h2 class="text-xl font-semibold">${title}</h2>
+      </div>
+    `;
+
+    function renderView() {
+      const views = {
+        overview: `
+          <section class="card rounded-2xl p-5 sm:p-6 md:p-7 glow-border">
+            ${lead('What is irreversible inhibition?')}
+            <p class="text-[color:var(--muted)] mb-5">
+              Irreversible inhibitors form very stable, often permanent interactions with enzymes, reducing the number of active molecules.
+              Two important types are
+              <span class="text-white">transition-state analogs</span> (ultra-tight binders that mimic the high‑energy state) and
+              <span class="text-white">suicide (mechanism-based) inhibitors</span> that the enzyme activates into its own inactivator.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div class="rounded-xl p-4 lift glow-border" style="background:rgba(124,92,255,0.08); border:1px solid rgba(124,92,255,0.35);">
+                <h3 class="font-semibold mb-2">Transition-State Analogs</h3>
+                <ul class="text-sm space-y-2 text-[color:var(--muted)] list-disc pl-5">
+                  <li>Mimic geometry and charge of the true transition state.</li>
+                  <li>Bind with exceptional affinity → enzyme becomes functionally unavailable.</li>
+                  <li>Often noncovalent but dissociate extremely slowly.</li>
+                </ul>
+              </div>
+              <div class="rounded-xl p-4 lift glow-border" style="background:rgba(251,113,133,0.08); border:1px solid rgba(251,113,133,0.35);">
+                <h3 class="font-semibold mb-2">Suicide Inhibitors</h3>
+                <ul class="text-sm space-y-2 text-[color:var(--muted)] list-disc pl-5">
+                  <li>Initially look like normal substrates (pro‑inhibitors).</li>
+                  <li>During turnover, a reactive species forms in the active site.</li>
+                  <li>A covalent adduct permanently inactivates the enzyme.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Why “irreversible” matters</h4>
+                <p class="text-sm text-[color:var(--muted)]">Effect persists until new enzyme is made, so dosing can be less frequent.</p>
+              </div>
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Selectivity</h4>
+                <p class="text-sm text-[color:var(--muted)]">TS analogs target catalytic geometry; suicide inhibitors require the exact mechanism—both can be highly specific.</p>
+              </div>
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Safety note</h4>
+                <p class="text-sm text-[color:var(--muted)]">Irreversible action can cause longer‑lasting effects and side effects if off‑target binding occurs.</p>
+              </div>
+            </div>
+          </section>
+        `,
+
+        tsa: `
+          <section class="card rounded-2xl p-5 sm:p-6 md:p-7 glow-border">
+            ${lead('Transition-State Analog Inhibition')}
+            <p class="text-[color:var(--muted)] mb-4">
+              Transition-state analogs resemble the high‑energy configuration the enzyme is evolved to stabilize.
+              Because the pocket is “designed” for that fleeting state, these analogs bind extraordinarily tightly,
+              often making the enzyme effectively unavailable.
+            </p>
+
+            <div class="rounded-xl p-4 glow-border mb-4" style="background:rgba(34,211,238,0.08); border:1px solid rgba(34,211,238,0.35);">
+              <h3 class="font-semibold mb-2">Mode of Action</h3>
+              <ol class="text-sm space-y-2 text-[color:var(--muted)] list-decimal pl-5">
+                <li>Mimic the geometry and charge distribution of the true transition state.</li>
+                <li>Bind in the catalytic site with exceptionally low dissociation.</li>
+                <li>Enzyme is “trapped” in a nonproductive complex.</li>
+              </ol>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Example: Statins (HMG‑CoA reductase)</h4>
+                <p class="text-sm text-[color:var(--muted)]">
+                  Statins mimic key features of the mevalonate pathway transition state, achieving high affinity and
+                  reducing cholesterol synthesis.
+                </p>
+              </div>
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Example: Tetrahedral intermediate mimics (proteases)</h4>
+                <p class="text-sm text-[color:var(--muted)]">
+                  Inhibitors that resemble the tetrahedral oxyanion intermediate bind tightly in protease active sites,
+                  leveraging the oxyanion hole’s stabilization.
+                </p>
+              </div>
+            </div>
+
+
+          </section>
+        `,
+
+        suicide: `
+          <section class="card rounded-2xl p-5 sm:p-6 md:p-7 glow-border">
+            ${lead('Suicide (Mechanism‑Based) Inhibition')}
+            <p class="text-[color:var(--muted)] mb-4">
+              Suicide inhibitors begin harmless. The enzyme’s own mechanism transforms them into a reactive species
+              that covalently attaches to the active site, permanently inactivating the enzyme.
+            </p>
+
+            <div class="rounded-xl p-4 glow-border mb-4" style="background:rgba(251,191,36,0.08); border:1px solid rgba(251,191,36,0.35);">
+              <h3 class="font-semibold mb-2">Mode of Action</h3>
+              <ol class="text-sm space-y-2 text-[color:var(--muted)] list-decimal pl-5">
+                <li>Recognized and bound like a normal substrate.</li>
+                <li>Turnover generates a short‑lived reactive intermediate in the pocket.</li>
+                <li>Intermediate forms a covalent adduct with catalytic residues → permanent loss.</li>
+              </ol>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Example: Penicillin vs. transpeptidase</h4>
+                <p class="text-sm text-[color:var(--muted)]">
+                  The β‑lactam ring opens during catalysis, acylating the active‑site serine and blocking bacterial cell wall synthesis.
+                </p>
+              </div>
+              <div class="card rounded-xl p-4">
+                <h4 class="font-semibold mb-1">Example: DFMO vs. ornithine decarboxylase</h4>
+                <p class="text-sm text-[color:var(--muted)]">
+                  Difluoromethylornithine is activated inside the enzyme and forms a covalent adduct; used clinically in selected diseases.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="chip p-4 rounded-xl">
+                <p class="text-sm"><span class="text-white font-medium">Specificity:</span> Activation relies on the enzyme’s mechanism, aiding selectivity.</p>
+              </div>
+              <div class="chip p-4 rounded-xl">
+                <p class="text-sm"><span class="text-white font-medium">Time‑dependence:</span> More exposure leads to more inactivation until enzyme is resynthesized.</p>
+              </div>
+              <div class="chip p-4 rounded-xl">
+                <p class="text-sm"><span class="text-white font-medium">Reversal:</span> Recovery depends on new enzyme production, not inhibitor removal.</p>
+              </div>
+            </div>
+          </section>
+        `,
+
+        compare: `
+          <section class="card rounded-2xl p-5 sm:p-6 md:p-7 glow-border">
+            ${lead('Side‑by‑Side Comparison')}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+              <div class="rounded-xl p-4 glow-border" style="background:rgba(124,92,255,0.08); border:1px solid rgba(124,92,255,0.35);">
+                <h3 class="font-semibold mb-2">Transition-State Analog</h3>
+                <ul class="text-sm space-y-2 text-[color:var(--muted)] list-disc pl-5">
+                  <li>Ultra‑tight binding to the catalytic site; often noncovalent.</li>
+                  <li>Appears “irreversible” due to very slow dissociation.</li>
+                  <li>Design: match transition‑state geometry, charge, and key interactions.</li>
+                  <li>Risk: may affect related enzymes with similar active sites.</li>
+                </ul>
+              </div>
+              <div class="rounded-xl p-4 glow-border" style="background:rgba(251,113,133,0.08); border:1px solid rgba(251,113,133,0.35);">
+                <h3 class="font-semibold mb-2">Suicide (Mechanism‑Based)</h3>
+                <ul class="text-sm space-y-2 text-[color:var(--muted)] list-disc pl-5">
+                  <li>Requires catalytic turnover to generate a reactive intermediate.</li>
+                  <li>Forms covalent adduct with active‑site residues → permanent inactivation.</li>
+                  <li>Time‑dependent effect; persists until new enzyme is made.</li>
+                  <li>Often highly specific because activation uses the enzyme’s mechanism.</li>
+                </ul>
+              </div>
+            </div>
+
+
+          </section>
+        `,
+
+        quiz: `
+          <section class="card rounded-2xl p-5 sm:p-6 md:p-7 glow-border">
+            ${lead('Quick Quiz')}
+            <p class="text-[color:var(--muted)] mb-4">Test your understanding. Tap the best answer.</p>
+
+            <div class="space-y-4">
+              <div class="card p-4 rounded-xl">
+                <p class="font-medium mb-3">1) Which type usually forms a covalent adduct during inactivation?</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="1" data-a="wrong">Transition-state analog</button>
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="1" data-a="right">Suicide (mechanism-based)</button>
+                </div>
+              </div>
+
+              <div class="card p-4 rounded-xl">
+                <p class="font-medium mb-3">2) Why do transition-state analogs bind so tightly?</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="2" data-a="right">They mimic the high‑energy state stabilized by the enzyme</button>
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="2" data-a="wrong">They are always covalent</button>
+                </div>
+              </div>
+
+              <div class="card p-4 rounded-xl">
+                <p class="font-medium mb-3">3) What best describes suicide inhibition?</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="3" data-a="wrong">Reversible binding to a non‑catalytic site</button>
+                  <button class="tap answer pill px-3 py-2 rounded-lg border border-white/10 text-left" data-q="3" data-a="right">Activation by the enzyme to form a covalent adduct</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="quizResult" class="hidden mt-3 p-3 rounded-lg chip text-sm"></div>
+          </section>
+        `
+      };
+
+      main.innerHTML = views[state.view] || views.overview;
+
+      // Quiz wiring if present
+      if (state.view === 'quiz') {
+        const answers = Array.from(main.querySelectorAll('.answer'));
+        const result = main.querySelector('#quizResult');
+        const chosen = {};
+        answers.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const q = btn.dataset.q;
+            const isRight = btn.dataset.a === 'right';
+            chosen[q] = isRight;
+
+            answers.filter(a => a.dataset.q === q)
+              .forEach(a => a.style.background = 'rgba(255,255,255,0.06)');
+            btn.style.background = isRight ? 'rgba(74,222,128,0.18)' : 'rgba(251,113,133,0.18)';
+
+            const allDone = ['1','2','3'].every(x => x in chosen);
+            if (allDone) {
+              const score = Object.values(chosen).filter(Boolean).length;
+              result.classList.remove('hidden');
+              result.innerHTML = score === 3
+                ? 'Perfect! You nailed every concept 🎉'
+                : `You scored ${score}/3. Review the panels and try again!`;
+            }
+          });
+        });
+      }
+    }
+
+    // Handlers
+    viewButtons.forEach(b => {
+      b.addEventListener('click', () => { state.view = b.dataset.view; setViewActive(); });
+    });
+
+    // Initial render
+    (function init() {
+      setViewActive();
+    })();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97d8f890026a2fe5',t:'MTc1NzYxMjY0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
