@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Signaling Pathway</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100vw;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .content-area {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 30px 25px;
+            box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h2 {
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .section h3 {
+            font-size: 1.6em;
+            margin: 20px 0 15px 0;
+            color: #ff9a9e;
+            border-bottom: 2px solid rgba(255, 154, 158, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .section p {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #f0f0f0;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255, 215, 0, 0.3), rgba(255, 107, 107, 0.3));
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #ffd700;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .states-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .state-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .state-card.dark {
+            border-left: 4px solid #9b59b6;
+        }
+
+        .state-card.light {
+            border-left: 4px solid #f39c12;
+        }
+
+        .steps-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .steps-list li {
+            counter-increment: step-counter;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 12px 0;
+            padding: 18px;
+            border-radius: 12px;
+            position: relative;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            background: linear-gradient(45deg, #ff6b6b, #ffd700);
+            color: white;
+            font-weight: bold;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            max-width: 120px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .section-counter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            color: #ffd700;
+            font-size: 1em;
+        }
+
+        .molecular-structure {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 215, 0, 0.2));
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .section-image {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .state-image {
+            width: 100%;
+            max-width: 400px;
+            margin: 15px auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+        }
+        
+        .footer-logo {
+            width: 70px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .footer-text {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+        
+        .watermark {
+            position: relative;
+        }
+        
+        .watermark::after {
+            content: "";
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .section h2 {
+                font-size: 1.8em;
+            }
+            
+            .content-area {
+                padding: 20px;
+                min-height: 50vh;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+            
+            .footer-logo {
+                width: 100px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vision Signaling</h1>
+            <p>Interactive Guide to Photoreceptor Cell Biology</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Section 1: Introduction to Photoreceptor Cells -->
+            <div class="section active" id="section1">
+                <h2>Photoreceptor Cells</h2>
+                <p>The human retina contains two main types of photoreceptor cells that convert light into electrical signals, enabling vision.</p>
+                
+                <div class="card">
+                    <h4>🔴 Rod Cells</h4>
+                    <p><span class="highlight">Rod cells</span> are highly sensitive photoreceptors responsible for vision in low-light conditions (scotopic vision). They contain the photopigment rhodopsin and are most abundant in the peripheral retina.</p>
+                    <p><strong>Key features:</strong></p>
+                    <p>• Extremely light-sensitive (can detect single photons)</p>
+                    <p>• No color discrimination</p>
+                    <p>• ~120 million rods in human retina</p>
+                    <p>• Peak sensitivity at 498 nm (blue-green light)</p>
+                </div>
+
+                <div class="card">
+                    <h4>🟡 Cone Cells</h4>
+                    <p><span class="highlight">Cone cells</span> are responsible for color vision and function in bright light conditions (photopic vision). They come in three types: S-cones (blue), M-cones (green), and L-cones (red).</p>
+                    <p><strong>Key features:</strong></p>
+                    <p>• Less light-sensitive than rods</p>
+                    <p>• Enable color discrimination</p>
+                    <p>• ~6 million cones in human retina</p>
+                    <p>• Concentrated in the fovea</p>
+                </div>
+
+                <p>Both cell types use similar phototransduction mechanisms but differ in their sensitivity and spectral responses. This guide will focus primarily on rod cell signaling.</p>
+            </div>
+
+            <!-- Section 2: Rod Cell Structure -->
+            <div class="section" id="section2">
+                <h2>Rod Cell Structure</h2>
+                <p>Rod cells have a highly specialized structure optimized for light detection and signal transmission.</p>
+                
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Rod%20cell.png" alt="Rod Cell Structure" class="section-image watermark">
+
+                <h3>Outer Segment</h3>
+                <p>The <span class="highlight">outer segment</span> contains stacked membranous discs filled with rhodopsin molecules. This is where phototransduction begins.</p>
+                
+                <h3>Inner Segment</h3>
+                <p>The <span class="highlight">inner segment</span> contains the cell's metabolic machinery including mitochondria, endoplasmic reticulum, and the Golgi apparatus. It's responsible for protein synthesis and energy production for the photoreceptor cell.</p>
+
+                <h3>Ion Channels in Rod Cells</h3>
+                <p>Three critical ion channels regulate rod cell function:</p>
+
+                <div class="card">
+                    <h4>1. Sodium-Potassium Pump (Na⁺/K⁺-ATPase)</h4>
+                    <p>• Actively transports 3 Na⁺ out and 2 K⁺ in</p>
+                    <p>• Maintains resting membrane potential</p>
+                    <p>• ATP-dependent</p>
+                    <p>• Located throughout the cell membrane</p>
+                </div>
+
+                <div class="card">
+                    <h4>2. Sodium-Calcium Exchanger (NCX)</h4>
+                    <p>• Exchanges 3 Na⁺ for 1 Ca²⁺</p>
+                    <p>• Regulates intracellular calcium levels</p>
+                    <p>• Critical for adaptation and recovery</p>
+                    <p>• Located in outer segment membrane</p>
+                </div>
+
+                <div class="card">
+                    <h4>3. cGMP-Gated Ion Channel</h4>
+                    <p>• Allows Na⁺ and Ca²⁺ influx when cGMP binds</p>
+                    <p>• Central to phototransduction cascade</p>
+                    <p>• Cooperatively activated by cGMP</p>
+                    <p>• Located in outer segment membrane</p>
+                </div>
+            </div>
+
+            <!-- Section 3: Channel States -->
+            <div class="section" id="section3">
+                <h2>Ion Channel States</h2>
+                <p>The activity of ion channels differs dramatically between dark and light conditions.</p>
+
+                <div class="states-container">
+                    <div class="state-card dark">
+                        <h3>🌙 Dark State</h3>
+                        <img src="https://betabiosciences.github.io//Biochemistry-animations/Rod%20cell%20Dark.png" alt="Rod Cell in Dark State" class="state-image watermark">
+                        <p><strong>High cGMP levels maintain:</strong></p>
+                        <p>• <span class="highlight">cGMP-gated channels: OPEN</span></p>
+                        <p>• Continuous Na⁺/Ca²⁺ influx (~15% of channels open)</p>
+                        <p>• Membrane potential: ~-30 to -35 mV</p>
+                        <p>• <span class="highlight">Dark current</span> flows into inner segment</p>
+                        <p>• Steady glutamate release at synapse</p>
+                        <p>• Na⁺/K⁺ pump and NCX maintain ion gradients</p>
+                    </div>
+
+                    <div class="state-card light">
+                        <h3>☀️ Light State</h3>
+                        <img src="https://betabiosciences.github.io//Biochemistry-animations/Rod%20cell%20Light.png" alt="Rod Cell in Light State" class="state-image watermark">
+                        <p><strong>Low cGMP levels cause:</strong></p>
+                        <p>• <span class="highlight">cGMP-gated channels: CLOSED</span></p>
+                        <p>• Blocked Na⁺/Ca²⁺ influx</p>
+                        <p>• Membrane hyperpolarizes to ~-70 mV</p>
+                        <p>• Dark current stops</p>
+                        <p>• Reduced glutamate release</p>
+                        <p>• NCX continues, lowering [Ca²⁺]ᵢ</p>
+                    </div>
+                </div>
+
+                <p>This fundamental switch from depolarized (dark) to hyperpolarized (light) states is unique among sensory neurons and forms the basis of visual signaling.</p>
+            </div>
+
+            <!-- Section 4: Rhodopsin Structure -->
+            <div class="section" id="section4">
+                <h2>Rhodopsin Structure</h2>
+                <p>Rhodopsin is the light-sensitive protein complex that initiates phototransduction in rod cells.</p>
+
+                <div class="molecular-structure">
+                    <h3>🧬 Opsin Component</h3>
+                    <p><span class="highlight">Opsin</span> is a G-protein coupled receptor (GPCR) with seven transmembrane α-helical domains.</p>
+                    <p><strong>Key features:</strong></p>
+                    <p>• 348 amino acids in human rhodopsin</p>
+                    <p>• Molecular weight: ~39 kDa</p>
+                    <p>• Contains binding site for retinal chromophore</p>
+                    <p>• Undergoes conformational changes upon activation</p>
+                </div>
+
+                <div class="molecular-structure">
+                    <h3>👁️ Retinal Component</h3>
+                    <p><span class="highlight">11-cis-retinal</span> is the light-absorbing chromophore derived from vitamin A.</p>
+                    <p><strong>Key features:</strong></p>
+                    <p>• Covalently bound to Lys296 via Schiff base</p>
+                    <p>• Absorbs photons in visible spectrum</p>
+                    <p>• Undergoes isomerization when light hits</p>
+                    <p>• Forms the visual chromophore</p>
+                </div>
+
+                <h3>Rhodopsin Assembly</h3>
+                <p>The complete rhodopsin molecule forms when 11-cis-retinal covalently binds to the opsin apoprotein through a protonated Schiff base linkage. This creates a stable, light-sensitive complex with peak absorption at 498 nm.</p>
+
+                <div class="card">
+                    <h4>Spectral Properties</h4>
+                    <p>• Peak absorption: 498 nm (blue-green)</p>
+                    <p>• Absorption range: 400-650 nm</p>
+                    <p>• Extinction coefficient: ~40,000 M⁻¹cm⁻¹</p>
+                    <p>• Quantum efficiency: ~0.7 (very high)</p>
+                </div>
+            </div>
+
+            <!-- Section 5: Retinal Isomers -->
+            <div class="section" id="section5">
+                <h2>Retinal Isomers</h2>
+                <p>The retinal chromophore exists in two key geometric isomers that are central to vision.</p>
+                
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Retinal%20structure.jpg" alt="Retinal Isomers" class="section-image watermark">
+
+                <div class="molecular-structure">
+                    <h3>⚫ 11-cis-Retinal</h3>
+                    <p>The <span class="highlight">dark-adapted form</span> of retinal bound to opsin.</p>
+                    <p><strong>Properties:</strong></p>
+                    <p>• Bent molecular structure due to cis double bond</p>
+                    <p>• Fits perfectly in opsin binding pocket</p>
+                    <p>• Forms stable rhodopsin complex</p>
+                    <p>• Thermodynamically less stable than all-trans</p>
+                    <p>• Absorbs light maximally at 498 nm when bound</p>
+                </div>
+
+                <div class="molecular-structure">
+                    <h3>⚪ All-trans-Retinal</h3>
+                    <p>The <span class="highlight">light-activated form</span> produced by photoisomerization.</p>
+                    <p><strong>Properties:</strong></p>
+                    <p>• Straight molecular structure</p>
+                    <p>• No longer fits properly in opsin pocket</p>
+                    <p>• Triggers conformational changes in opsin</p>
+                    <p>• Thermodynamically more stable</p>
+                    <p>• Eventually dissociates from opsin</p>
+                </div>
+
+                <h3>The Isomerization Process</h3>
+                <div class="card">
+                    <h4>Photoisomerization Details</h4>
+                    <p>• Occurs within <span class="highlight">200 femtoseconds</span> of photon absorption</p>
+                    <p>• Involves rotation around C11=C12 double bond</p>
+                    <p>• Quantum efficiency: ~67%</p>
+                    <p>• Process is essentially instantaneous and irreversible</p>
+                    <p>• Drives all subsequent signaling events</p>
+                </div>
+
+                <p>This ultrafast isomerization is one of the most efficient photochemical reactions in biology and represents the primary event in vision.</p>
+            </div>
+
+            <!-- Section 6: Rhodopsin Activation Stages -->
+            <div class="section" id="section6">
+                <h2>Rhodopsin Activation Stages</h2>
+                <p>Following photoisomerization, rhodopsin passes through several intermediate states before reaching its fully active form.</p>
+                
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Rhodopsin%20cycle.jpg" alt="Rhodopsin Activation Cycle" class="section-image watermark">
+
+                <ol class="steps-list">
+                    <li>
+                        <strong>Rhodopsin (Ground State)</strong>
+                        <p>11-cis-retinal bound to opsin in dark-stable conformation. Peak absorption at 498 nm.</p>
+                    </li>
+                    <li>
+                        <strong>Photorhodopsin (Excited State)</strong>
+                        <p>Formed within femtoseconds after photon absorption. Contains excited all-trans-retinal.</p>
+                    </li>
+                    <li>
+                        <strong>Bathorhodopsin</strong>
+                        <p>First stable intermediate (~1 picosecond). All-trans-retinal still tightly bound but opsin begins conformational changes.</p>
+                    </li>
+                    <li>
+                        <strong>Lumirhodopsin</strong>
+                        <p>Formed at ~1 microsecond. Further relaxation of protein structure around isomerized retinal.</p>
+                    </li>
+                    <li>
+                        <strong>Metarhodopsin I</strong>
+                        <p>Millisecond timescale. Significant opsin conformational change. Schiff base still protonated.</p>
+                    </li>
+                    <li>
+                        <strong>Metarhodopsin II (R*)</strong>
+                        <p>The <span class="highlight">active signaling state</span>. Schiff base deprotonated, opsin adopts active GPCR conformation. Can activate transducin.</p>
+                    </li>
+                </ol>
+
+                <div class="card">
+                    <h4>Metarhodopsin II Properties</h4>
+                    <p>• Peak absorption shifts to ~380 nm</p>
+                    <p>• Lifetime: several minutes at body temperature</p>
+                    <p>• Can activate hundreds of transducin molecules</p>
+                    <p>• Eventually decays to opsin + all-trans-retinal</p>
+                </div>
+            </div>
+
+            <!-- Section 7: G-Protein Coupled Signaling -->
+            <div class="section" id="section7">
+                <h2>G-Protein Coupled Signaling</h2>
+                <p>Metarhodopsin II activates a specialized G-protein cascade that amplifies the light signal.</p>
+                
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Vision%20signaling%20pathway.png" alt="Vision Signaling Pathway" class="section-image watermark">
+
+                <h3>The Phototransduction Cascade</h3>
+                <ol class="steps-list">
+                    <li>
+                        <strong>Transducin Activation</strong>
+                        <p>R* catalyzes GDP→GTP exchange on transducin α-subunit (Gₜₐ). One R* can activate ~500 transducin molecules.</p>
+                    </li>
+                    <li>
+                        <strong>Phosphodiesterase Activation</strong>
+                        <p>Active Gₜₐ-GTP binds and activates phosphodiesterase (PDE). Each transducin activates one PDE.</p>
+                    </li>
+                    <li>
+                        <strong>cGMP Hydrolysis</strong>
+                        <p>Active PDE hydrolyzes cGMP to 5'-GMP. One PDE can hydrolyze ~4,000 cGMP molecules per second.</p>
+                    </li>
+                    <li>
+                        <strong>Channel Closure</strong>
+                        <p>Decreased [cGMP] causes cGMP-gated channels to close, reducing Na⁺/Ca²⁺ influx.</p>
+                    </li>
+                    <li>
+                        <strong>Membrane Hyperpolarization</strong>
+                        <p>Channel closure stops dark current, membrane potential shifts from -30mV to -70mV.</p>
+                    </li>
+                </ol>
+
+                <div class="card">
+                    <h4>Signal Amplification</h4>
+                    <p>The cascade provides enormous amplification:</p>
+                    <p>• 1 photon → 1 R* → 500 transducin → 500 PDE</p>
+                    <p>• ~2,000,000 cGMP molecules hydrolyzed</p>
+                    <p>• ~250 channels closed</p>
+                    <p>• Total amplification: ~10⁶-10⁷ fold</p>
+                </div>
+            </div>
+
+            <!-- Section 8: Membrane Potential and Neurotransmission -->
+            <div class="section" id="section8">
+                <h2>Membrane Potential & Neurotransmission</h2>
+                
+                <h3>Membrane Potential Changes</h3>
+                <div class="states-container">
+                    <div class="state-card dark">
+                        <h4>Dark Conditions</h4>
+                        <p>• Membrane potential: <span class="highlight">-30 to -35 mV</span></p>
+                        <p>• Partially depolarized state</p>
+                        <p>• Voltage-gated Ca²⁺ channels open</p>
+                        <p>• Continuous Ca²⁺ influx at synapse</p>
+                        <p>• High rate of glutamate release</p>
+                    </div>
+
+                    <div class="state-card light">
+                        <h4>Light Conditions</h4>
+                        <p>• Membrane potential: <span class="highlight">-70 mV</span></p>
+                        <p>• Hyperpolarized state</p>
+                        <p>• Voltage-gated Ca²⁺ channels close</p>
+                        <p>• Reduced Ca²⁺ influx</p>
+                        <p>• Decreased glutamate release</p>
+                    </div>
+                </div>
+
+                <h3>Synaptic Transmission</h3>
+                <div class="card">
+                    <h4>Glutamate Release Mechanism</h4>
+                    <p>• Rod cells release <span class="highlight">glutamate</span> as neurotransmitter</p>
+                    <p>• Release rate inversely related to light intensity</p>
+                    <p>• Dark: High glutamate release (~10⁷ vesicles/second)</p>
+                    <p>• Light: Reduced glutamate release</p>
+                    <p>• Creates graded response proportional to light intensity</p>
+                </div>
+            </div>
+
+            <!-- Section 9: Recovery and Adaptation -->
+            <div class="section" id="section9">
+                <h2>Recovery and Adaptation</h2>
+                <p>Multiple mechanisms restore rod cells to their dark-adapted state and enable adaptation to different light levels.</p>
+
+                <h3>Signal Termination</h3>
+                <ol class="steps-list">
+                    <li>
+                        <strong>Rhodopsin Phosphorylation</strong>
+                        <p>Rhodopsin kinase phosphorylates activated rhodopsin (R*), reducing its activity.</p>
+                    </li>
+                    <li>
+                        <strong>Arrestin Binding</strong>
+                        <p>Arrestin binds to phosphorylated R*, completely blocking transducin activation.</p>
+                    </li>
+                    <li>
+                        <strong>Transducin Inactivation</strong>
+                        <p>Intrinsic GTPase activity of Gₜₐ hydrolyzes GTP→GDP, inactivating transducin.</p>
+                    </li>
+                    <li>
+                        <strong>PDE Inactivation</strong>
+                        <p>Without active transducin, PDE returns to inactive state.</p>
+                    </li>
+                    <li>
+                        <strong>cGMP Synthesis</strong>
+                        <p>Guanylyl cyclase synthesizes new cGMP, restoring channel opening.</p>
+                    </li>
+                </ol>
+
+                <h3>Calcium-Mediated Adaptation</h3>
+                <div class="card">
+                    <h4>Light Adaptation Mechanism</h4>
+                    <p>• Light causes [Ca²⁺]ᵢ to decrease (NCX continues while influx stops)</p>
+                    <p>• Low Ca²⁺ activates <span class="highlight">recoverin and GCAP proteins</span></p>
+                    <p>• Recoverin: Modulates rhodopsin kinase activity</p>
+                    <p>• GCAP: Stimulates guanylyl cyclase when Ca²⁺ is low</p>
+                    <p>• Result: Faster recovery and increased sensitivity</p>
+                </div>
+
+                <h3>Visual Pigment Regeneration</h3>
+                <div class="molecular-structure">
+                    <h4>The Visual Cycle</h4>
+                    <p>• All-trans-retinal dissociates from opsin</p>
+                    <p>• Transported to retinal pigment epithelium (RPE)</p>
+                    <p>• RPE converts all-trans-retinal → 11-cis-retinal</p>
+                    <p>• 11-cis-retinal returns to outer segments</p>
+                    <p>• Recombines with opsin to regenerate rhodopsin</p>
+                    <p>• Process takes ~30-40 minutes for complete recovery</p>
+                </div>
+
+                <div class="card">
+                    <h4>Adaptation Summary</h4>
+                    <p>Rod cells employ multiple adaptation mechanisms:</p>
+                    <p>• <strong>Fast:</strong> Calcium feedback (seconds)</p>
+                    <p>• <strong>Medium:</strong> Phosphorylation/arrestin (minutes)</p>
+                    <p>• <strong>Slow:</strong> Pigment regeneration (30+ minutes)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSection(-1)">← Previous</button>
+            <div class="section-counter">
+                <span id="currentSection">1</span> of <span id="totalSections">9</span>
+            </div>
+            <button class="nav-btn" id="nextBtn" onclick="changeSection(1)">Next →</button>
+        </div>
+        
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.<br>Email: betabiosciences@gmail.com<br>Contact: +91 97 47 53 35 97</p>
+        </div>
+    </div>
+
+    <script>
+        let currentSectionNum = 1;
+        const totalSections = 9;
+
+        function updateUI() {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show current section
+            document.getElementById(`section${currentSectionNum}`).classList.add('active');
+            
+            // Update counter
+            document.getElementById('currentSection').textContent = currentSectionNum;
+            document.getElementById('totalSections').textContent = totalSections;
+            
+            // Update progress bar
+            const progress = (currentSectionNum / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSectionNum === 1;
+            nextBtn.disabled = currentSectionNum === totalSections;
+            
+            // Update button text for last section
+            if (currentSectionNum === totalSections) {
+                nextBtn.textContent = 'Complete ✓';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        function changeSection(direction) {
+            const newSection = currentSectionNum + direction;
+            
+            if (newSection >= 1 && newSection <= totalSections) {
+                currentSectionNum = newSection;
+                updateUI();
+                
+                // Smooth scroll to top of content
+                document.querySelector('.content-area').scrollTop = 0;
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                changeSection(-1);
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                changeSection(1);
+            }
+        });
+
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleGesture();
+        });
+
+        function handleGesture() {
+            const minSwipeDistance = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0) {
+                    // Swipe right - go to previous section
+                    changeSection(-1);
+                } else {
+                    // Swipe left - go to next section
+                    changeSection(1);
+                }
+            }
+        }
+
+        // Initialize
+        updateUI();
+
+        // Add some visual feedback for interactions
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            btn.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+
+        // Prevent zoom on double tap for better mobile experience
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
