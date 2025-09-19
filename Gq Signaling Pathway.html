@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gq-Coupled Signaling Pathway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a40 0%, #2d1b69 100%);
+            color: #f0f0ff;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #7ae6ff, #b490ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .pathway-container {
+            background: rgba(36, 22, 73, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(45, 27, 105, 0.6);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #7ae6ff;
+        }
+
+        .step.active {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(122, 230, 255, 0.3);
+            background: rgba(53, 31, 122, 0.8);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #7ae6ff, #b490ff);
+            color: #1a1a40;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-content {
+            margin-left: 42px;
+        }
+
+        .step p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .molecules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .molecule {
+            background: rgba(122, 230, 255, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(122, 230, 255, 0.3);
+        }
+
+        .pathway-image {
+            width: 100%;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .pathway-image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .footer-logo {
+            width: 70px;
+            margin: 0 auto 15px;
+        }
+
+        .footer-logo img {
+            width: 100%;
+        }
+
+        .footer-contact {
+            line-height: 1.8;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .step {
+                padding: 15px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gq-Coupled Protein Signaling Pathway</h1>
+        </header>
+
+        <div class="pathway-container">
+            <div class="step active" id="step1">
+                <h2><span class="step-number">1</span>Ligand Binding</h2>
+                <div class="step-content">
+                    <p>A signaling molecule (ligand) binds to the extracellular domain of a Gq protein-coupled receptor (GPCR).</p>
+                    <div class="molecules">
+                        <span class="molecule">Ligand</span>
+                        <span class="molecule">GPCR</span>
+                    </div>
+                    <p>This binding induces a conformational change in the receptor, activating it and enabling it to interact with the Gq protein.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step2">
+                <h2><span class="step-number">2</span>G Protein Activation</h2>
+                <div class="step-content">
+                    <p>The activated receptor facilitates the exchange of GDP for GTP on the Gαq subunit of the Gq protein.</p>
+                    <div class="molecules">
+                        <span class="molecule">Gαq</span>
+                        <span class="molecule">Gβγ</span>
+                        <span class="molecule">GTP</span>
+                    </div>
+                    <p>This exchange causes the Gq protein to dissociate into Gαq-GTP and Gβγ subunits, both of which can regulate downstream effectors.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step3">
+                <h2><span class="step-number">3</span>PLC Activation</h2>
+                <div class="step-content">
+                    <p>The Gαq-GTP subunit binds to and activates the enzyme phospholipase C-β (PLC-β).</p>
+                    <div class="molecules">
+                        <span class="molecule">PLC-β</span>
+                        <span class="molecule">PIP₂</span>
+                    </div>
+                    <p>Activated PLC-β hydrolyzes phosphatidylinositol 4,5-bisphosphate (PIP₂) in the plasma membrane.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step4">
+                <h2><span class="step-number">4</span>Second Messenger Generation</h2>
+                <div class="step-content">
+                    <p>Hydrolysis of PIP₂ produces two second messengers: inositol trisphosphate (IP₃) and diacylglycerol (DAG).</p>
+                    <div class="molecules">
+                        <span class="molecule">IP₃</span>
+                        <span class="molecule">DAG</span>
+                    </div>
+                    <p>These second messengers initiate two distinct signaling pathways that converge to produce the cellular response.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step5">
+                <h2><span class="step-number">5</span>Calcium Release</h2>
+                <div class="step-content">
+                    <p>IP₃ diffuses through the cytosol and binds to IP₃ receptors on the endoplasmic reticulum (ER).</p>
+                    <div class="molecules">
+                        <span class="molecule">IP₃ Receptor</span>
+                        <span class="molecule">Ca²⁺</span>
+                    </div>
+                    <p>This binding causes the release of calcium ions (Ca²⁺) from ER stores into the cytoplasm, increasing intracellular calcium concentration.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step6">
+                <h2><span class="step-number">6</span>PKC Activation</h2>
+                <div class="step-content">
+                    <p>DAG remains in the membrane and recruits protein kinase C (PKC) along with the increased calcium levels.</p>
+                    <div class="molecules">
+                        <span class="molecule">PKC</span>
+                        <span class="molecule">Ca²⁺</span>
+                    </div>
+                    <p>The combination of DAG and calcium ions activates PKC, which then phosphorylates various target proteins to alter their activity.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step7">
+                <h2><span class="step-number">7</span>Cellular Response</h2>
+                <div class="step-content">
+                    <p>The increased calcium levels and PKC activation lead to various cellular responses depending on the cell type.</p>
+                    <div class="molecules">
+                        <span class="molecule">Gene Expression</span>
+                        <span class="molecule">Secretion</span>
+                        <span class="molecule">Contraction</span>
+                        <span class="molecule">Metabolism</span>
+                    </div>
+                    <p>These responses can include muscle contraction, neurotransmitter release, hormone secretion, gene expression changes, and metabolic adjustments.</p>
+                </div>
+            </div>
+
+            <div class="step" id="step8">
+                <h2><span class="step-number">8</span>Signal Termination</h2>
+                <div class="step-content">
+                    <p>The Gαq subunit has intrinsic GTPase activity that hydrolyzes GTP to GDP.</p>
+                    <div class="molecules">
+                        <span class="molecule">GTPase</span>
+                        <span class="molecule">RGS</span>
+                    </div>
+                    <p>This hydrolysis inactivates Gαq, allowing it to reassociate with Gβγ subunits. Regulators of G protein signaling (RGS) proteins accelerate GTP hydrolysis. Calcium is pumped back into the ER and out of the cell, and second messengers are metabolized.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pathway-image">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Gq%20coupled%20signaling.png" alt="Gq-Coupled Signaling Pathway">
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo">
+            </div>
+            <div class="footer-contact">
+                <p>© 2025 BETA Biosciences. All rights reserved.</p>
+                <p>Email: betabiosciences@gmail.com</p>
+                <p>Contact: +91 97 47 53 35 97</p>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
