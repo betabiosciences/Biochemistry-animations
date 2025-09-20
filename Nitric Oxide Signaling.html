@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nitric Oxide Signaling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0033, #2d1b69, #4a148c, #6a1b9a);
+            background-attachment: fixed;
+            color: #e8eaf6;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #00bcd4, #03a9f4, #2196f3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(33, 150, 243, 0.5);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #b39ddb;
+            opacity: 0.9;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .section {
+            display: none;
+            padding: 30px 20px;
+            max-width: 100%;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section h3 {
+            font-size: 1.4rem;
+            margin: 20px 0 15px 0;
+            color: #81c784;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            text-align: justify;
+        }
+
+        .highlight {
+            background: rgba(255, 193, 7, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffeb3b;
+            font-weight: 600;
+        }
+
+        .step {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .step h4 {
+            color: #64b5f6;
+            margin-bottom: 8px;
+        }
+
+        .isoform-card {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .isoform-card h4 {
+            color: #a5d6a7;
+            margin-bottom: 10px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.4);
+            color: #64b5f6;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: rgba(33, 150, 243, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #2196f3, #03a9f4);
+            color: white;
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2196f3, #03a9f4, #00bcd4);
+            transition: width 0.3s ease;
+            z-index: 1001;
+        }
+
+        .molecule {
+            display: inline-block;
+            background: rgba(255, 87, 34, 0.2);
+            border: 1px solid rgba(255, 87, 34, 0.4);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.9rem;
+            color: #ffab91;
+            margin: 2px;
+        }
+
+        .pathway-box {
+            background: rgba(156, 39, 176, 0.1);
+            border: 2px dashed rgba(156, 39, 176, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #4fc3f7;
+            margin: 10px 0;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .footer-content {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            width: 56px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(1.2);
+        }
+
+        .footer-text {
+            color: #b39ddb;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .section h2 {
+                font-size: 1.6rem;
+            }
+            
+            .section-card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .navigation {
+                flex-wrap: wrap;
+                max-width: 90vw;
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px 10px;
+            }
+            
+            .section {
+                padding: 20px 15px;
+            }
+            
+            .section-card {
+                padding: 15px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar" id="progressBar"></div>
+        
+        <header class="header">
+            <h1>Nitric Oxide Signaling</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Section 1: Introduction & NO Synthesis -->
+            <section class="section active" id="section1">
+                <div class="section-card">
+                    <h2>Nitric Oxide: Features and Synthesis</h2>
+                    
+                    <h3>What is Nitric Oxide?</h3>
+                    <p>
+                        <span class="highlight">Nitric oxide (NO)</span> is a unique gaseous signaling molecule that serves as a critical messenger in numerous physiological processes. Unlike traditional hormones, NO is a small, lipophilic molecule that can freely diffuse across cell membranes without requiring specific receptors for transport.
+                    </p>
+
+                    <h3>Key Features of NO</h3>
+                    <p>
+                        • <strong>Short half-life:</strong> NO has an extremely brief lifespan (2-30 seconds in biological systems)<br>
+                        • <strong>Paracrine signaling:</strong> Acts locally on nearby cells rather than through systemic circulation<br>
+                        • <strong>Membrane permeability:</strong> Easily crosses cell membranes due to its small size and neutral charge<br>
+                        • <strong>Radical nature:</strong> Contains an unpaired electron, making it highly reactive
+                    </p>
+
+                    <h3>Biosynthesis of Nitric Oxide</h3>
+                    <div class="pathway-box">
+                        <span class="molecule">L-Arginine</span> + <span class="molecule">O₂</span> + <span class="molecule">NADPH</span>
+                        <div class="arrow">↓ NOS enzyme</div>
+                        <span class="molecule">L-Citrulline</span> + <span class="molecule">NO</span> + <span class="molecule">NADP⁺</span>
+                    </div>
+
+                    <p>
+                        The synthesis of NO occurs through the enzymatic conversion of <span class="highlight">L-arginine</span> by nitric oxide synthase (NOS) enzymes. This reaction requires several cofactors including NADPH, tetrahydrobiopterin (BH₄), flavin adenine dinucleotide (FAD), flavin mononucleotide (FMN), and heme.
+                    </p>
+
+                    <h3>Cellular Responses to NO</h3>
+                    <p>
+                        Once produced, NO triggers various cellular responses:
+                    </p>
+                    <div class="step">
+                        <h4>1. cGMP Pathway Activation</h4>
+                        <p>NO binds to soluble guanylyl cyclase, increasing intracellular cyclic GMP levels</p>
+                    </div>
+                    <div class="step">
+                        <h4>2. Protein Kinase G (PKG) Activation</h4>
+                        <p>Elevated cGMP activates PKG, leading to phosphorylation of target proteins</p>
+                    </div>
+                    <div class="step">
+                        <h4>3. Smooth Muscle Relaxation</h4>
+                        <p>PKG-mediated phosphorylation reduces intracellular calcium, causing muscle relaxation</p>
+                    </div>
+                    <div class="step">
+                        <h4>4. Vascular Effects</h4>
+                        <p>Vasodilation, reduced platelet aggregation, and decreased vascular smooth muscle proliferation</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: NOS Isoforms -->
+            <section class="section" id="section2">
+                <div class="section-card">
+                    <h2>Nitric Oxide Synthase Isoforms</h2>
+                    
+                    <p>
+                        There are three distinct isoforms of nitric oxide synthase (NOS), each with unique cellular localization, regulation, and physiological functions. Understanding these isoforms is crucial for comprehending the diverse roles of NO in biological systems.
+                    </p>
+
+                    <div class="isoform-card">
+                        <h4>nNOS (Neuronal NOS / NOS1)</h4>
+                        <p><strong>Location:</strong> Primarily in neurons, skeletal muscle, and some epithelial cells</p>
+                        <p><strong>Regulation:</strong> Calcium/calmodulin-dependent, constitutively expressed</p>
+                        <p><strong>Functions:</strong></p>
+                        <ul style="margin-left: 20px; color: #c8e6c9;">
+                            <li>Neurotransmission and synaptic plasticity</li>
+                            <li>Learning and memory formation</li>
+                            <li>Regulation of cerebral blood flow</li>
+                            <li>Skeletal muscle contraction regulation</li>
+                            <li>Pain perception modulation</li>
+                        </ul>
+                        <p><strong>NO Production:</strong> Moderate levels, typically for local signaling</p>
+                    </div>
+
+                    <div class="isoform-card">
+                        <h4>iNOS (Inducible NOS / NOS2)</h4>
+                        <p><strong>Location:</strong> Macrophages, neutrophils, hepatocytes, and many other cell types when induced</p>
+                        <p><strong>Regulation:</strong> Transcriptionally induced by cytokines, LPS, and inflammatory stimuli</p>
+                        <p><strong>Functions:</strong></p>
+                        <ul style="margin-left: 20px; color: #c8e6c9;">
+                            <li>Immune response and pathogen defense</li>
+                            <li>Antimicrobial and antiviral activity</li>
+                            <li>Inflammation regulation</li>
+                            <li>Wound healing processes</li>
+                            <li>Tumor surveillance</li>
+                        </ul>
+                        <p><strong>NO Production:</strong> High levels, can be cytotoxic at excessive concentrations</p>
+                    </div>
+
+                    <div class="isoform-card">
+                        <h4>eNOS (Endothelial NOS / NOS3)</h4>
+                        <p><strong>Location:</strong> Vascular endothelium, cardiac myocytes, platelets</p>
+                        <p><strong>Regulation:</strong> Calcium/calmodulin-dependent, post-translationally modified</p>
+                        <p><strong>Functions:</strong></p>
+                        <ul style="margin-left: 20px; color: #c8e6c9;">
+                            <li>Vascular tone regulation (vasodilation)</li>
+                            <li>Blood pressure control</li>
+                            <li>Inhibition of platelet aggregation</li>
+                            <li>Prevention of leukocyte adhesion</li>
+                            <li>Angiogenesis regulation</li>
+                            <li>Atherosclerosis prevention</li>
+                        </ul>
+                        <p><strong>NO Production:</strong> Moderate, physiologically regulated levels</p>
+                    </div>
+
+                    <h3>Comparative Characteristics</h3>
+                    <p>
+                        While all three isoforms catalyze the same basic reaction, their different regulatory mechanisms allow for precise control of NO production in response to specific physiological needs. <span class="highlight">nNOS and eNOS</span> are constitutively expressed and calcium-dependent, while <span class="highlight">iNOS</span> is inducible and calcium-independent once expressed.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 3: NO Signaling in Neurons -->
+            <section class="section" id="section3">
+                <div class="section-card">
+                    <h2>Nitric Oxide Signaling in Neuronal Cells</h2>
+                    
+                    <p>
+                        In neuronal cells, NO serves as an unconventional neurotransmitter, mediating various forms of synaptic plasticity and intercellular communication. The following describes the detailed step-by-step process of NO signaling in a typical neuron.
+                    </p>
+
+                    <h3>Step-by-Step NO Signaling Process</h3>
+
+                    <div class="step">
+                        <h4>Step 1: Stimulus Reception</h4>
+                        <p>
+                            The process begins when the neuron receives excitatory stimuli, typically through <span class="highlight">NMDA receptors</span> activated by glutamate. This leads to calcium influx through voltage-gated calcium channels and NMDA receptor channels.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 2: Calcium-Calmodulin Complex Formation</h4>
+                        <p>
+                            Increased intracellular Ca²⁺ concentration (from ~100 nM to 1-10 μM) binds to <span class="highlight">calmodulin</span>, forming the Ca²⁺-calmodulin complex. This complex is essential for nNOS activation.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 3: nNOS Activation</h4>
+                        <p>
+                            The Ca²⁺-calmodulin complex binds to <span class="highlight">neuronal NOS (nNOS)</span>, causing a conformational change that allows electron transfer between the enzyme's reductase and oxygenase domains, activating the enzyme.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 4: NO Synthesis</h4>
+                        <p>
+                            Activated nNOS catalyzes the conversion of L-arginine to L-citrulline and <span class="highlight">nitric oxide</span>, using molecular oxygen and NADPH as co-substrates, along with cofactors BH₄, FAD, FMN, and heme.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 5: NO Diffusion</h4>
+                        <p>
+                            Due to its lipophilic nature and small size, <span class="highlight">NO rapidly diffuses</span> across the neuronal membrane and into adjacent cells, including other neurons, glial cells, and vascular smooth muscle cells.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 6: Target Cell Interaction</h4>
+                        <p>
+                            In target cells, NO binds to the <span class="highlight">heme group</span> of soluble guanylyl cyclase (sGC), causing a conformational change that increases the enzyme's catalytic activity by 50-200 fold.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 7: cGMP Production</h4>
+                        <p>
+                            Activated sGC converts <span class="highlight">GTP to cyclic GMP (cGMP)</span>, rapidly increasing intracellular cGMP levels from nanomolar to micromolar concentrations.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 8: PKG Activation and Downstream Effects</h4>
+                        <p>
+                            Elevated cGMP activates <span class="highlight">protein kinase G (PKG)</span>, which phosphorylates various target proteins, leading to:
+                        </p>
+                        <ul style="margin-left: 20px; color: #e1f5fe;">
+                            <li>Modulation of ion channels (K⁺ and Ca²⁺ channels)</li>
+                            <li>Changes in synaptic transmission strength</li>
+                            <li>Long-term potentiation (LTP) and long-term depression (LTD)</li>
+                            <li>Gene expression changes through CREB phosphorylation</li>
+                        </ul>
+                    </div>
+
+                    <h3>Physiological Outcomes</h3>
+                    <p>
+                        The NO signaling cascade in neurons results in various physiological responses including synaptic plasticity, learning and memory formation, regulation of cerebral blood flow, and modulation of pain perception. This signaling is crucial for proper brain function and neuronal adaptation.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section 4: NO Signaling in Endothelial Cells -->
+            <section class="section" id="section4">
+                <div class="section-card">
+                    <h2>Nitric Oxide Signaling in Endothelial Cells</h2>
+                    
+                    <p>
+                        Endothelial cells line blood vessels and play a crucial role in vascular homeostasis. NO produced by endothelial cells is essential for regulating vascular tone, blood pressure, and smooth muscle relaxation. Here's the detailed mechanism:
+                    </p>
+
+                    <h3>Step-by-Step Endothelial NO Signaling</h3>
+
+                    <div class="step">
+                        <h4>Step 1: Mechanical or Chemical Stimulation</h4>
+                        <p>
+                            Endothelial cells respond to various stimuli including <span class="highlight">shear stress</span> from blood flow, acetylcholine, bradykinin, histamine, or other vasodilating substances binding to their respective receptors.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 2: Calcium Mobilization</h4>
+                        <p>
+                            Receptor activation triggers <span class="highlight">phospholipase C (PLC)</span> activation, leading to IP₃ formation and calcium release from endoplasmic reticulum stores, plus calcium influx through store-operated channels.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 3: eNOS Activation</h4>
+                        <p>
+                            Increased intracellular Ca²⁺ forms complexes with calmodulin, which then binds to and activates <span class="highlight">endothelial NOS (eNOS)</span>. Additionally, eNOS can be activated through phosphorylation by Akt/PKB at Ser1177.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 4: NO Production</h4>
+                        <p>
+                            Activated eNOS converts L-arginine to L-citrulline and <span class="highlight">nitric oxide</span>, utilizing NADPH, O₂, and cofactors. This occurs primarily at caveolae, specialized membrane microdomains.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 5: NO Diffusion to Smooth Muscle</h4>
+                        <p>
+                            <span class="highlight">NO rapidly diffuses</span> from endothelial cells across the vascular wall to reach adjacent vascular smooth muscle cells within seconds due to its high membrane permeability.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 6: sGC Activation in Smooth Muscle</h4>
+                        <p>
+                            In smooth muscle cells, NO binds to the <span class="highlight">heme iron</span> of soluble guanylyl cyclase, causing a conformational change and massive increase in enzyme activity (50-200 fold activation).
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 7: cGMP Elevation</h4>
+                        <p>
+                            Activated sGC rapidly converts <span class="highlight">GTP to cGMP</span>, increasing intracellular cGMP levels from ~5 μM to 50-100 μM within seconds to minutes.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 8: PKG-Mediated Phosphorylation</h4>
+                        <p>
+                            Elevated cGMP activates <span class="highlight">protein kinase G (PKG)</span>, which phosphorylates multiple target proteins involved in calcium handling and contractile machinery regulation.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 9: Calcium Reduction Mechanisms</h4>
+                        <p>
+                            PKG phosphorylation leads to:
+                        </p>
+                        <ul style="margin-left: 20px; color: #e1f5fe;">
+                            <li><span class="highlight">IP₃ receptor phosphorylation</span> - Reduces Ca²⁺ release from stores</li>
+                            <li><span class="highlight">SERCA pump activation</span> - Increases Ca²⁺ uptake into ER</li>
+                            <li><span class="highlight">Calcium channel inhibition</span> - Reduces Ca²⁺ influx</li>
+                            <li><span class="highlight">K⁺ channel activation</span> - Causes hyperpolarization</li>
+                        </ul>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 10: Contractile Protein Inactivation</h4>
+                        <p>
+                            Reduced intracellular Ca²⁺ leads to <span class="highlight">myosin light chain dephosphorylation</span> by myosin phosphatase, causing smooth muscle relaxation and vessel dilation.
+                        </p>
+                    </div>
+
+                    <h3>Physiological Significance</h3>
+                    <div class="pathway-box">
+                        <p><strong>Result: Vasodilation and Muscle Relaxation</strong></p>
+                        <p>This signaling cascade leads to smooth muscle relaxation, vasodilation, reduced blood pressure, improved blood flow, and prevention of platelet aggregation - all critical for cardiovascular health.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Sildenafil/Viagra Mechanism -->
+            <section class="section" id="section5">
+                <div class="section-card">
+                    <h2>Sildenafil Citrate (Viagra): Mechanism of Action</h2>
+                    
+                    <p>
+                        <span class="highlight">Sildenafil citrate</span>, commonly known as Viagra, is a potent and selective inhibitor of phosphodiesterase type 5 (PDE5). Understanding its mechanism provides insight into how it enhances NO signaling and its therapeutic applications.
+                    </p>
+
+                    <h3>Background: The Role of PDE5</h3>
+                    <p>
+                        <span class="highlight">Phosphodiesterase type 5 (PDE5)</span> is an enzyme that specifically hydrolyzes cyclic GMP (cGMP) to 5'-GMP, effectively terminating the NO-cGMP signaling pathway. PDE5 is abundantly expressed in vascular smooth muscle, particularly in the corpus cavernosum of the penis, pulmonary vessels, and systemic arteries.
+                    </p>
+
+                    <h3>Sildenafil's Mechanism of Action</h3>
+
+                    <div class="step">
+                        <h4>Step 1: Normal NO-cGMP Signaling</h4>
+                        <p>
+                            Under physiological conditions, NO activates soluble guanylyl cyclase, producing cGMP, which activates PKG and leads to smooth muscle relaxation. However, <span class="highlight">PDE5 continuously degrades cGMP</span>, limiting the duration and magnitude of the response.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 2: Sildenafil Binding</h4>
+                        <p>
+                            Sildenafil binds to the <span class="highlight">catalytic site of PDE5</span> with high affinity (IC₅₀ ~5 nM), forming a stable enzyme-inhibitor complex. The binding is competitive and reversible.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 3: PDE5 Inhibition</h4>
+                        <p>
+                            By occupying the active site, sildenafil <span class="highlight">prevents PDE5 from hydrolyzing cGMP</span>, effectively blocking the degradation pathway and allowing cGMP levels to remain elevated for extended periods.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 4: Enhanced cGMP Accumulation</h4>
+                        <p>
+                            With PDE5 inhibited, <span class="highlight">cGMP levels increase significantly</span> (5-10 fold higher than normal) and persist for longer durations, amplifying the downstream signaling cascade.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 5: Potentiated PKG Activation</h4>
+                        <p>
+                            Higher cGMP concentrations lead to <span class="highlight">sustained PKG activation</span>, resulting in enhanced phosphorylation of target proteins involved in calcium handling and smooth muscle contractility.
+                        </p>
+                    </div>
+
+                    <div class="step">
+                        <h4>Step 6: Enhanced Smooth Muscle Relaxation</h4>
+                        <p>
+                            The amplified signaling cascade produces <span class="highlight">more pronounced and prolonged smooth muscle relaxation</span>, leading to enhanced vasodilation and improved blood flow.
+                        </p>
+                    </div>
+
+                    <h3>Clinical Applications and Effects</h3>
+                    
+                    <div class="isoform-card">
+                        <h4>Erectile Dysfunction Treatment</h4>
+                        <p>
+                            In penile tissue, sexual stimulation triggers NO release from endothelial cells and nerves. Sildenafil enhances this natural response by preventing cGMP breakdown, leading to <span class="highlight">sustained corpus cavernosum relaxation</span> and improved erectile function.
+                        </p>
+                    </div>
+
+                    <div class="isoform-card">
+                        <h4>Pulmonary Arterial Hypertension</h4>
+                        <p>
+                            Sildenafil reduces pulmonary vascular resistance by enhancing NO-cGMP signaling in pulmonary arteries, <span class="highlight">lowering pulmonary arterial pressure</span> and improving exercise capacity in PAH patients.
+                        </p>
+                    </div>
+
+                    <div class="isoform-card">
+                        <h4>Cardiovascular Effects</h4>
+                        <p>
+                            Systemic vasodilation leads to modest reductions in blood pressure (~8-10 mmHg), improved endothelial function, and potential cardioprotective effects through enhanced <span class="highlight">coronary blood flow</span>.
+                        </p>
+                    </div>
+
+                    <h3>Molecular Interaction Details</h3>
+                    <p>
+                        Sildenafil's interaction with PDE5 involves hydrogen bonding with key amino acid residues in the catalytic domain, particularly <span class="highlight">Gln817</span> and metal coordination with zinc and magnesium ions. This binding pattern explains its high selectivity and potency.
+                    </p>
+
+                    <div class="pathway-box">
+                        <p><strong>Summary: Sildenafil's Impact on NO Signaling</strong></p>
+                        <p>
+                            By specifically inhibiting PDE5, sildenafil amplifies and prolongs the natural NO-cGMP signaling pathway, converting a transient physiological response into a sustained therapeutic effect. This mechanism underlies its effectiveness in treating conditions characterized by impaired smooth muscle relaxation.
+                        </p>
+                    </div>
+
+                    <h3>Side Effects and Contraindications</h3>
+                    <p>
+                        Common side effects include headaches, flushing, and visual disturbances (due to PDE6 inhibition). <span class="highlight">Contraindicated with nitrates</span> due to potentially dangerous hypotensive effects from combined NO pathway enhancement.
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+                <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.<br>Email: betabiosciences@gmail.com<br>Contact: +91 97 47 53 35 97</p>
+            </div>
+        </footer>
+
+        <nav class="navigation">
+            <button class="nav-btn" onclick="previousSection()" id="prevBtn">Previous</button>
+            <button class="nav-btn" onclick="nextSection()" id="nextBtn">Next</button>
+        </nav>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 5;
+
+        function showSection(sectionNumber) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+
+            // Update progress bar
+            const progressWidth = (sectionNumber / totalSections) * 100;
+            document.getElementById('progressBar').style.width = `${progressWidth}%`;
+
+            currentSection = sectionNumber;
+
+            // Update navigation buttons
+            updateNavigationButtons();
+
+            // Smooth scroll to top on section change
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = (currentSection === 1);
+            nextBtn.disabled = (currentSection === totalSections);
+            
+            if (currentSection === 1) {
+                prevBtn.style.opacity = '0.5';
+                prevBtn.style.cursor = 'not-allowed';
+            } else {
+                prevBtn.style.opacity = '1';
+                prevBtn.style.cursor = 'pointer';
+            }
+            
+            if (currentSection === totalSections) {
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+            } else {
+                nextBtn.style.opacity = '1';
+                nextBtn.style.cursor = 'pointer';
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft' && currentSection > 1) {
+                previousSection();
+            } else if (event.key === 'ArrowRight' && currentSection < totalSections) {
+                nextSection();
+            }
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0 && currentSection < totalSections) {
+                    // Swipe left - next section
+                    nextSection();
+                } else if (diff < 0 && currentSection > 1) {
+                    // Swipe right - previous section
+                    previousSection();
+                }
+            }
+        }
+
+        // Initialize progress bar
+        showSection(1);
+
+        // Add some interactive hover effects
+        document.querySelectorAll('.molecule').forEach(molecule => {
+            molecule.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.transition = 'transform 0.2s ease';
+            });
+            
+            molecule.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add pulse animation to highlight elements
+        document.querySelectorAll('.highlight').forEach(highlight => {
+            highlight.addEventListener('mouseover', function() {
+                this.style.textShadow = '0 0 10px rgba(255, 235, 59, 0.8)';
+                this.style.transition = 'text-shadow 0.3s ease';
+            });
+            
+            highlight.addEventListener('mouseout', function() {
+                this.style.textShadow = 'none';
+            });
+        });
+
+        // Auto-advance functionality (optional - can be enabled)
+        let autoAdvanceTimer;
+        
+        function startAutoAdvance() {
+            autoAdvanceTimer = setInterval(() => {
+                if (currentSection < totalSections) {
+                    nextSection();
+                } else {
+                    showSection(1);
+                }
+            }, 30000); // 30 seconds per section
+        }
+
+        function stopAutoAdvance() {
+            clearInterval(autoAdvanceTimer);
+        }
+
+        // Stop auto-advance on user interaction
+        document.addEventListener('click', stopAutoAdvance);
+        document.addEventListener('keydown', stopAutoAdvance);
+        document.addEventListener('touchstart', stopAutoAdvance);
+
+        // Accessibility improvements
+        document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+            btn.setAttribute('aria-label', `Navigate to section ${index + 1}`);
+            btn.setAttribute('tabindex', '0');
+        });
+
+        // Add ARIA labels to sections
+        document.querySelectorAll('.section').forEach((section, index) => {
+            section.setAttribute('aria-labelledby', `section-${index + 1}-heading`);
+            section.setAttribute('role', 'tabpanel');
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
