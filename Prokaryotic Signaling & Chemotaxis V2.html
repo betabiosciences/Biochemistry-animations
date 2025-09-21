@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prokaryotic Signaling & Chemotaxis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a1428, #1e3a8a, #1e293b);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            padding-bottom: 150px; /* Space for footer and navigation */
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(30, 58, 138, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        
+        .section {
+            display: none;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-height: 60vh;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section h2 {
+            color: #60a5fa;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .section h3 {
+            color: #34d399;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        
+        .section p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            text-align: justify;
+        }
+        
+        .highlight {
+            background: linear-gradient(45deg, rgba(96, 165, 250, 0.2), rgba(52, 211, 153, 0.2));
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #60a5fa;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.9);
+            padding: 15px;
+            border-radius: 50px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #1e40af, #0f766e);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-width: 80px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .section-indicator {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+        
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator-dot.active {
+            background: #60a5fa;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+        
+        .protein-list {
+            background: rgba(30, 58, 138, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+        
+        .protein-item {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+        
+        .protein-name {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        
+        .mutant-box {
+            background: linear-gradient(45deg, rgba(239, 68, 68, 0.1), rgba(147, 51, 234, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .footer img {
+            width: 70px;
+            margin-bottom: 10px;
+        }
+
+        .footer p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                padding-bottom: 150px;
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .section {
+                padding: 20px;
+                min-height: 50vh;
+            }
+            
+            .section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section h3 {
+                font-size: 1.2rem;
+            }
+            
+            .navigation {
+                bottom: 10px;
+                padding: 10px;
+            }
+            
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+                min-width: 60px;
+            }
+            
+            .section-indicator {
+                right: 10px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Prokaryotic Signaling & Chemotaxis</h1>
+            <p>An Interactive Guide to Bacterial Sensing and Movement</p>
+        </div>
+        
+        <!-- Section 1: General Features -->
+        <div class="section active" id="section1">
+            <h2>General Features of Prokaryotic Signaling Pathways</h2>
+            <p>Prokaryotic cells have evolved sophisticated signaling mechanisms to sense and respond to environmental changes. These pathways allow bacteria to detect nutrients, toxins, pH changes, temperature variations, and other stimuli crucial for survival.</p>
+            
+            <div class="highlight">
+                <h3>Key Characteristics:</h3>
+                <p><strong>Speed:</strong> Prokaryotic signaling systems respond rapidly to environmental changes, often within seconds to minutes.</p>
+                <p><strong>Simplicity:</strong> These systems typically involve fewer components compared to eukaryotic pathways, making them highly efficient.</p>
+                <p><strong>Specificity:</strong> Each pathway is designed to respond to specific stimuli with appropriate cellular responses.</p>
+            </div>
+            
+            <h3>Two-Component System (TCS)</h3>
+            <p>The most common signaling mechanism in prokaryotes is the two-component system, consisting of:</p>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">Sensor Histidine Kinase:</span> Detects environmental signals and undergoes autophosphorylation
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">Response Regulator:</span> Receives phosphate and mediates the cellular response
+                </div>
+            </div>
+            
+            <h3>Mechanism of Two-Component Systems</h3>
+            <p>When a stimulus is detected, the histidine kinase autophosphorylates at a conserved histidine residue using ATP. The phosphate group is then transferred to an aspartate residue on the response regulator, which becomes activated and triggers the appropriate cellular response, such as gene expression changes or enzymatic activity modulation.</p>
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Two%20componet%20system.png" alt="Mechanism of Two-Component Systems" style="width:100%; max-width:600px; margin: 20px auto; display: block; border-radius: 15px;">
+        </div>
+        
+        <!-- Section 2: Chemotaxis Introduction -->
+        <div class="section" id="section2">
+            <h2>Introduction to Chemotaxis</h2>
+            
+            <div class="highlight">
+                <h3>Definition</h3>
+                <p>Chemotaxis is the directed movement of bacteria in response to chemical gradients in their environment. Bacteria can move toward favorable chemicals (attractants) or away from harmful ones (repellents).</p>
+            </div>
+            
+            <h3>Attractants and Repellents</h3>
+            <p><strong>Attractants</strong> include nutrients like sugars (glucose, galactose), amino acids (serine, aspartate), and oxygen. These chemicals signal favorable conditions for growth and survival.</p>
+            
+            <p><strong>Repellents</strong> include toxic substances, acids, heavy metals, and other harmful chemicals that bacteria must avoid to survive.</p>
+            
+            <h3>Flagellar Rotation and Swimming Behavior</h3>
+            <p>Bacterial movement is controlled by the rotation direction of flagella:</p>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">Counterclockwise (CCW) Rotation:</span> Default state leading to smooth swimming in straight lines
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">Clockwise (CW) Rotation:</span> Causes tumbling motion, allowing bacteria to reorient randomly
+                </div>
+            </div>
+            
+            <div class="highlight">
+                <h3>Swimming Patterns</h3>
+                <p><strong>Smooth Swimming:</strong> When flagella rotate counterclockwise, they form a bundle that propels the bacterium forward in a relatively straight line.</p>
+                <p><strong>Tumbling:</strong> Clockwise rotation disrupts the flagellar bundle, causing the bacterium to tumble and change direction randomly.</p>
+            </div>
+            
+            <p>The default flagellar rotation is counterclockwise, resulting in smooth swimming. Bacteria modulate the frequency of tumbling to navigate chemical gradients effectively - reducing tumbling when moving toward attractants and increasing tumbling when moving toward repellents.</p>
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Swimming%20and%20tumbling%20of%20a%20bacterium%20V2.png" alt="Swimming and tumbling of a bacterium" style="width:100%; max-width:600px; margin: 20px auto; display: block; border-radius: 15px;">
+        </div>
+        
+        <!-- Section 3: Flagellar Structure -->
+        <div class="section" id="section3">
+            <h2>Structure of Bacterial Flagella</h2>
+            <p>The bacterial flagellum is a complex molecular machine composed of over 20 different proteins. It consists of three main parts: the basal body, hook, and filament.</p>
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Flagella-structure%20overview.png" alt="Flagella structure overview" style="width:100%; max-width:600px; margin: 20px auto; display: block; border-radius: 15px;">
+            
+            <h3>Major Structural Components</h3>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">Basal Body:</span> The motor embedded in the cell envelope
+                    <ul style="margin-top: 8px; color: #94a3b8; list-style-position: inside; padding-left: 10px;">
+                        <li>FliF: MS ring (membrane-supramembrane)</li>
+                        <li>FliG, FliM, FliN: C ring (cytoplasmic)</li>
+                        <li>FlgH, FlgI: P ring (peptidoglycan)</li>
+                        <li>FlgA: L ring (lipopolysaccharide)</li>
+                    </ul>
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">Hook (FlgE):</span> Flexible coupling connecting basal body to filament
+                     <ul style="margin-top: 8px; color: #94a3b8; list-style-position: inside; padding-left: 10px;">
+                        <li>Allows torque transmission</li>
+                        <li>Universal joint function</li>
+                    </ul>
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">Filament (FliC):</span> Long helical propeller made of flagellin subunits
+                </div>
+            </div>
+            
+            <h3>Key Functional Proteins</h3>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">MotA and MotB:</span> Form the stator complex that generates torque
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">FliG:</span> Rotor protein that interacts with MotA for rotation
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">FliM and FliN:</span> Switch proteins that control rotation direction
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">CheY:</span> Chemotaxis protein that binds to FliM to induce clockwise rotation
+                </div>
+            </div>
+            
+            <div class="highlight">
+                <h3>Assembly Process</h3>
+                <p>Flagella are assembled from the inside out, starting with the basal body, then the hook, and finally the filament. The process is highly regulated and requires a type III secretion system to transport components through the growing structure.</p>
+            </div>
+        </div>
+        
+        <!-- Section 4: Flagellar Rotation Mechanism -->
+        <div class="section" id="section4">
+            <h2>Mechanism of Flagellar Rotation</h2>
+            
+            <div class="highlight">
+                <h3>The Flagellar Motor</h3>
+                <p>The bacterial flagellar motor is a rotary engine that converts electrochemical energy into mechanical rotation. It's one of the most efficient motors known in biology.</p>
+            </div>
+            
+            <h3>Energy Source: Proton-Motive Force</h3>
+            <p>The flagellar motor is powered by the proton-motive force (PMF) across the cell membrane. This electrochemical gradient consists of:</p>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">Chemical Component (ΔpH):</span> pH difference across the membrane
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">Electrical Component (Δψ):</span> Voltage difference across the membrane
+                </div>
+            </div>
+            
+            <h3>Rotation Mechanism</h3>
+            <p>The MotA/MotB stator complex forms proton channels that allow protons to flow down the electrochemical gradient. This proton flow drives conformational changes in the stator, which interact with the rotor protein FliG to generate torque.</p>
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/MotA%20B.png" alt="MotA B protein complex" style="width:100%; max-width:400px; margin: 20px auto; display: block; border-radius: 15px;">
+            
+            <div class="highlight">
+                <h3>Rotation Control</h3>
+                <p><strong>Default State:</strong> Counterclockwise rotation occurs when CheY is not phosphorylated</p>
+                <p><strong>Switching State:</strong> Phosphorylated CheY-P binds to FliM, causing conformational changes that reverse rotation to clockwise</p>
+            </div>
+            
+            <p>The motor can rotate at speeds up to 1,700 revolutions per second and can instantly reverse direction. Multiple MotA/MotB units (typically 8-11) surround the rotor to generate sufficient torque for swimming.</p>
+            
+            <p>In some bacteria, particularly alkaliphilic species, the motor can also be driven by sodium ion gradients instead of proton gradients, demonstrating the versatility of this system.</p>
+        </div>
+        
+        <!-- Section 5: Chemotaxis Signaling Pathway -->
+        <div class="section" id="section5">
+            <h2>Chemotaxis Signaling Pathway</h2>
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Chemotaxis%20signaling.jpeg" alt="Chemotaxis signaling pathway" style="width:100%; max-width:600px; margin: 20px auto; display: block; border-radius: 15px;">
+            
+            <h3>Two-Component System in Chemotaxis</h3>
+            <p>Chemotaxis employs a sophisticated two-component system with additional regulatory proteins:</p>
+            
+            <div class="protein-list">
+                <div class="protein-item">
+                    <span class="protein-name">Chemoreceptors (MCPs):</span> Detect chemical stimuli (e.g., Tar, Tsr, Trg, Tap)
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">CheA:</span> Histidine kinase that autophosphorylates
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">CheY:</span> Response regulator controlling flagellar rotation
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">CheW:</span> Coupling protein linking receptors to CheA
+                </div>
+                <div class="protein-item">
+                    <span class="protein-name">CheR:</span> A methyltransferase that adds methyl groups to MCPs, contributing to adaptation.
+                </div>
+            </div>
+            
+            <h3>Rotation in Clear Solutions</h3>
+            <p>In the absence of chemical gradients (clear solutions), bacteria exhibit a random walk pattern:</p>
+            
+            <div class="highlight">
+                <p>• ~85% of time: Smooth swimming (CCW rotation)</p>
+                <p>• ~15% of time: Tumbling (CW rotation)</p>
+                <p>This results in no net directional movement</p>
+                <p style="margin-top: 15px; text-align: justify;">CheA is active, phosphorylating itself and then CheY. CheY-P binds to the flagellar motor, causing CW rotation (tumbling). CheZ rapidly dephosphorylates CheY-P, allowing a return to CCW rotation. This results in a balanced "run-and-tumble" motion.</p>
+            </div>
+            
+            <h3>Signaling in Presence of Attractants</h3>
+            <p><strong>Attractant Binding:</strong></p>
+            <p>1. Attractant binds to chemoreceptor</p>
+            <p>2. Receptor undergoes conformational change</p>
+            <p>3. CheA kinase activity decreases</p>
+            <p>4. Less CheY gets phosphorylated</p>
+            <p>5. Lower CheY-P levels result in more CCW rotation</p>
+            <p>6. Tumbling frequency decreases → smooth swimming increases</p>
+            
+            <div class="highlight">
+                <h3>Signaling in Presence of Repellents</h3>
+                <p><strong>Repellent Binding:</strong></p>
+                <p>1. Repellent binds to chemoreceptor</p>
+                <p>2. CheA kinase activity increases</p>
+                <p>3. More CheY gets phosphorylated</p>
+                <p>4. Higher CheY-P levels cause more CW rotation</p>
+                <p>5. Tumbling frequency increases → bacteria reorient away</p>
+            </div>
+            
+            <h3>Adaptation Mechanism</h3>
+            <p>The system adapts through methylation/demethylation of receptors by CheR (methyltransferase) and CheB (methylesterase), allowing bacteria to detect changes rather than absolute concentrations.</p>
+        </div>
+        
+        <!-- Section 6: Chemotaxis Mutants -->
+        <div class="section" id="section6">
+            <h2>Chemotaxis Mutants</h2>
+            <p>Studying chemotaxis mutants has provided crucial insights into the molecular mechanisms of bacterial motility and sensing. Three major classes of mutants are commonly studied:</p>
+            
+            <div class="mutant-box">
+                <h3>fla<sup>-</sup> Mutants (Flagella-deficient)</h3>
+                <p><strong>Phenotype:</strong> Non-motile bacteria that lack flagella or have severely defective flagellar structures.</p>
+                <p><strong>Affected Genes:</strong> Mutations in flagellar structural genes (fliC, flgE, flgG) or assembly genes (fliF, flgB).</p>
+                <p><strong>Characteristics:</strong></p>
+                <p>• Cannot swim in any direction</p>
+                <p>• May still show chemotaxis responses in swarm plate assays if partial flagellar function remains</p>
+                <p>• Used to study flagellar assembly and structure</p>
+            </div>
+            
+            <div class="mutant-box">
+                <h3>mot<sup>-</sup> Mutants (Motility-deficient)</h3>
+                <p><strong>Phenotype:</strong> Have flagella but cannot rotate them, resulting in non-motile bacteria with intact flagellar structures.</p>
+                <p><strong>Affected Genes:</strong> Mutations in motor genes (motA, motB) or switch genes (fliG, fliM, fliN).</p>
+                <p><strong>Characteristics:</strong></p>
+                <p>• Flagella are present but paralyzed</p>
+                <p>• Normal chemotaxis signaling but no physical movement</p>
+                <p>• Can be rescued by providing functional motor proteins</p>
+                <p>• Useful for studying motor function independently of flagellar assembly</p>
+            </div>
+            
+            <div class="mutant-box">
+                <h3>che<sup>-</sup> Mutants (Chemotaxis-deficient)</h3>
+                <p><strong>Phenotype:</strong> Motile bacteria that cannot perform chemotaxis - they swim but show no directional bias toward attractants or away from repellents.</p>
+                <p><strong>Affected Genes:</strong> Mutations in chemotaxis signaling genes (cheA, cheY, cheW, cheR, cheB) or receptor genes (tar, tsr, trg, tap).</p>
+                <p><strong>Characteristics:</strong></p>
+                <p>• Normal swimming ability but random movement patterns</p>
+                <p>• Cannot respond to chemical gradients</p>
+                <p>• May show constant tumbling (cheY overexpression) or smooth swimming (cheY deletion)</p>
+                <p>• Essential for understanding signal transduction mechanisms</p>
+            </div>
+            
+            <div class="highlight">
+                <h3>Experimental Applications</h3>
+                <p>These mutants are invaluable for:</p>
+                <p>• Complementation studies to identify gene functions</p>
+                <p>• Biochemical analysis of individual pathway components</p>
+                <p>• Understanding structure-function relationships</p>
+                <p>• Developing models of bacterial behavior and population dynamics</p>
+            </div>
+        </div>
+        
+        <div class="section-indicator">
+            <div class="indicator-dot active" onclick="showSection(1)"></div>
+            <div class="indicator-dot" onclick="showSection(2)"></div>
+            <div class="indicator-dot" onclick="showSection(3)"></div>
+            <div class="indicator-dot" onclick="showSection(4)"></div>
+            <div class="indicator-dot" onclick="showSection(5)"></div>
+            <div class="indicator-dot" onclick="showSection(6)"></div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="previousSection()" disabled>← Previous</button>
+            <button class="nav-btn" id="nextBtn" onclick="nextSection()">Next →</button>
+        </div>
+        
+        <footer class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo">
+            <p>© 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: betabiosciences@gmail.com Contact: +91 97 47 53 35 97</p>
+        </footer>
+    </div>
+    
+    <script>
+        let currentSection = 1;
+        const totalSections = 6;
+        
+        function showSection(sectionNumber) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById(`section${i}`).classList.remove('active');
+                document.querySelectorAll('.indicator-dot')[i - 1].classList.remove('active');
+            }
+            
+            // Show selected section
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+            document.querySelectorAll('.indicator-dot')[sectionNumber - 1].classList.add('active');
+            
+            currentSection = sectionNumber;
+            updateNavButtons();
+        }
+        
+        function nextSection() {
+            if (currentSection < totalSections) {
+                showSection(currentSection + 1);
+            }
+        }
+        
+        function previousSection() {
+            if (currentSection > 1) {
+                showSection(currentSection - 1);
+            }
+        }
+        
+        function updateNavButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+            
+            if (currentSection === totalSections) {
+                nextBtn.textContent = 'Completed ✓';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                event.preventDefault();
+                nextSection();
+            } else if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                previousSection();
+            }
+        });
+        
+        // Touch gestures for mobile
+        let startX = 0;
+        let endX = 0;
+        
+        document.addEventListener('touchstart', function(event) {
+            startX = event.changedTouches[0].screenX;
+        });
+        
+        document.addEventListener('touchend', function(event) {
+            endX = event.changedTouches[0].screenX;
+            handleGesture();
+        });
+        
+        function handleGesture() {
+            const threshold = 50;
+            if (endX < startX - threshold) {
+                nextSection(); // Swipe left to go to next section
+            }
+            if (endX > startX + threshold) {
+                previousSection(); // Swipe right to go to previous section
+            }
+        }
+        
+        // Initialize
+        updateNavButtons();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
+
