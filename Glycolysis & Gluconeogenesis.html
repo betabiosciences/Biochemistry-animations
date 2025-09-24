@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glycolysis & Gluconeogenesis Pathways</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cell-membrane: #8b5cf6;
+            --cytoplasm: #1e293b;
+            --glucose: #fcd34d;
+            --atp-cost: #f87171;
+            --atp-gain: #4ade80;
+            --nadh: #60a5fa;
+            --aerobic: #22c55e;
+            --anaerobic: #f97316;
+            --gluconeogenesis: #a78bfa;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --radiolabeling: #f472b6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .nav-button {
+            background-color: var(--cell-membrane);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #7c3aed;
+        }
+
+        .cell-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+
+        .cell-membrane {
+            border: 4px solid var(--cell-membrane);
+            border-radius: 2rem;
+            padding: 2rem;
+            background-color: var(--cytoplasm);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        .pathway-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glycolysis-step {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            color: var(--text-primary);
+        }
+
+        .glycolysis-step.visible {
+            display: block;
+        }
+
+        .glycolysis-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -5px rgba(0,0,0,0.4);
+        }
+
+        .glycolysis-step.active {
+            border-left: 5px solid var(--cell-membrane);
+            background-color: #2d3748;
+        }
+
+        .glycolysis-step::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cell-membrane), transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .glycolysis-step:hover::after {
+            transform: scaleX(1);
+        }
+
+        .step-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .step-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: none;
+        }
+
+        .glycolysis-step.active .step-description {
+            display: block;
+        }
+
+        .molecule {
+            background-color: #374151;
+            border: 1px solid #4b5563;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            font-weight: 600;
+            color: #d1fae5;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .molecule.highlight {
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .enzyme {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+
+        .energy-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .atp-cost {
+            color: var(--atp-cost);
+            background-color: rgba(248, 113, 113, 0.15);
+        }
+
+        .atp-gain {
+            color: var(--atp-gain);
+            background-color: rgba(74, 222, 128, 0.15);
+        }
+
+        .nadh-gain {
+            color: var(--nadh);
+            background-color: rgba(96, 165, 250, 0.15);
+        }
+
+        /* Styling for arrows *inside* glycolysis steps */
+        .glycolysis-step .arrow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .glycolysis-step .arrow svg {
+            width: 16px;
+            height: 16px;
+            color: #9ca3af;
+            animation: bounceArrow 1.5s infinite;
+        }
+
+        /* Styling for arrows *between* glycolysis steps */
+        .path-arrow {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .path-arrow.visible {
+            display: flex;
+        }
+
+        .path-arrow svg {
+            width: 24px;
+            height: 24px;
+            color: #9ca3af;
+            animation: bounceArrow 1.5s infinite;
+        }
+
+        @keyframes bounceArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .pyruvate-fate {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .pyruvate-fate.visible {
+            display: flex;
+        }
+
+        .fate-box {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            color: var(--text-primary);
+        }
+
+        .fate-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 20px -5px rgba(0,0,0,0.4);
+        }
+
+        .fate-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .aerobic {
+            border-top: 5px solid var(--aerobic);
+        }
+
+        .aerobic:hover {
+            background-color: rgba(34, 197, 94, 0.1);
+        }
+
+        .anaerobic {
+            border-top: 5px solid var(--anaerobic);
+        }
+
+        .anaerobic:hover {
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+
+        .fate-box .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .fate-box .destination {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .glucose-animation {
+            position: absolute;
+            top: 15%;
+            left: -100px;
+            background-color: var(--glucose);
+            border: 2px solid #fbbf24;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            color: #78350f;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 20;
+            white-space: nowrap;
+            display: none;
+        }
+
+        .glut-channel {
+            position: absolute;
+            top: 15%;
+            left: -4px;
+            transform: translateY(-50%);
+            background-color: #ef4444;
+            width: 30px;
+            height: 80px;
+            border-radius: 9999px;
+            border: 2px solid #dc2626;
+            z-index: 15;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            color: white;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            padding: 5px 0;
+            text-shadow: 0 0 3px rgba(0,0,0,0.3);
+        }
+
+        @keyframes enterCell {
+            0% { left: -100px; opacity: 0; }
+            30% { left: 0px; opacity: 1; transform: scale(1.2); }
+            50% { left: 40px; transform: scale(1); }
+            70% { left: 60px; transform: scale(1.1); }
+            100% { left: 80px; opacity: 1; transform: scale(1); }
+        }
+
+        .energy-counter {
+            margin: 20px auto;
+            width: fit-content;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+            display: flex;
+            gap: 1.5rem;
+            z-index: 100;
+            color: var(--text-primary);
+        }
+
+        .energy-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .energy-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 0.25rem;
+        }
+
+        .atp-total {
+            color: var(--atp-gain);
+        }
+
+        .nadh-total {
+            color: var(--nadh);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--background);
+            border-top: 1px solid #334155;
+            position: sticky;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .controls button {
+            background-color: var(--cell-membrane);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        .controls button:hover {
+            background-color: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -2px rgba(0,0,0,0.4);
+        }
+
+        .controls button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px -1px rgba(0,0,0,0.3);
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #1f2937;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            z-index: 1000;
+            max-width: 250px;
+            text-align: center;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+
+        /* Gluconeogenesis Section Styles */
+        .gluconeogenesis-step {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            color: var(--text-primary);
+            border-left: 3px solid var(--gluconeogenesis);
+        }
+
+        .gluconeogenesis-step.visible {
+            display: block;
+        }
+
+        .gluconeogenesis-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -5px rgba(0,0,0,0.4);
+        }
+
+        .gluconeogenesis-step.active {
+            border-left: 5px solid var(--gluconeogenesis);
+            background-color: #2d3748;
+        }
+
+        .gluconeogenesis-molecule {
+            background-color: #4c1d95;
+            border: 1px solid #7c3aed;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            font-weight: 600;
+            color: #ddd6fe;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        /* Navigation Tabs */
+        .section-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .section-nav button {
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .section-nav button.active {
+            background-color: var(--cell-membrane);
+            color: white;
+        }
+
+        .section-nav button:hover:not(.active) {
+            background-color: #374151;
+        }
+
+        /* Radiolabeling Section Styles */
+        .radiolabeling-container {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-primary);
+        }
+
+        .carbon-label {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin: 0 2px;
+            background-color: var(--radiolabeling);
+            color: white;
+        }
+
+        .carbon-label.highlight {
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
+        }
+
+        .molecule-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+        }
+
+        .pathway-diagram {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Quiz Section Styles */
+        #game-section {
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 40px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-primary);
+        }
+
+        #game-section h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        #game-section #start-game-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        #game-section #start-game-btn:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        #game-content {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border: 2px dashed #4b5563;
+            border-radius: 1rem;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #game-content h3 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        #game-content input[type="number"],
+        #game-content input[type="text"] {
+            width: 80%;
+            padding: 0.75rem;
+            border: 2px solid #4b5563;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background-color: var(--cytoplasm);
+            color: var(--text-primary);
+        }
+
+        #game-content input[type="number"]:focus,
+        #game-content input[type="text"]:focus {
+            outline: none;
+            border-color: var(--cell-membrane);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+
+        #game-content .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 1rem;
+        }
+
+        #game-content .game-option-button {
+            background-color: #4338ca;
+            color: #e0e7ff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        #game-content .game-option-button:hover {
+            background-color: #3730a3;
+            border-color: var(--cell-membrane);
+        }
+
+        #game-content .game-option-button.selected {
+            background-color: var(--cell-membrane);
+            color: white;
+            border-color: var(--cell-membrane);
+        }
+
+        #game-feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #game-feedback.correct {
+            color: var(--atp-gain);
+        }
+
+        #game-feedback.incorrect {
+            color: var(--atp-cost);
+        }
+
+        #game-buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        #game-buttons-container button {
+            background-color: var(--cell-membrane);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+        }
+
+        #game-buttons-container button:hover {
+            background-color: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        #game-score-board {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        #game-score-board span {
+            color: var(--cell-membrane);
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border-radius: 1rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-logo {
+            width: 4rem;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+
+        .footer-contact {
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .cell-membrane {
+                padding: 1rem;
+                min-height: auto;
+            }
+
+            .pathway-container {
+                gap: 0.75rem;
+            }
+
+            .glycolysis-step, .gluconeogenesis-step {
+                padding: 0.75rem;
+                max-width: 100%;
+                font-size: 0.9rem;
+            }
+            .step-title {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            .molecule, .enzyme, .energy-label {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .energy-counter {
+                margin: 10px auto;
+                bottom: auto;
+                right: auto;
+                position: static;
+                padding: 0.75rem;
+                gap: 1rem;
+            }
+            .energy-value {
+                font-size: 1.1rem;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+
+            .controls button {
+                flex-grow: 1;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .fate-box {
+                padding: 1rem;
+            }
+            .fate-box .icon {
+                font-size: 1.5rem;
+            }
+            .fate-box .text-xl {
+                font-size: 1.1rem;
+            }
+            .fate-box .destination, .fate-box .summary {
+                font-size: 0.8rem;
+            }
+
+            #game-section, .radiolabeling-container {
+                padding: 1.5rem;
+                margin-top: 20px;
+            }
+            #game-section h2, .radiolabeling-container h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            #game-section #start-game-btn {
+                font-size: 1rem;
+                padding: 0.7rem 1.5rem;
+            }
+            #game-content {
+                padding: 1rem;
+            }
+            #game-content h3 {
+                font-size: 1.1rem;
+            }
+            #game-content input {
+                font-size: 1rem;
+            }
+            #game-content .game-option-button {
+                font-size: 0.9rem;
+                padding: 0.7rem 1rem;
+            }
+            #game-feedback {
+                font-size: 1rem;
+            }
+            #game-buttons-container button {
+                font-size: 0.9rem;
+                padding: 0.7rem 1.5rem;
+            }
+            #game-score-board {
+                font-size: 1rem;
+            }
+
+            .section-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-nav button {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .footer-logo {
+                width: 10rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation Tabs -->
+    <div class="section-nav">
+        <button class="nav-tab active" data-target="glycolysis-section">Glycolysis</button>
+        <button class="nav-tab" data-target="gluconeogenesis-section">Gluconeogenesis</button>
+        <button class="nav-tab" data-target="radiolabeling-section">Radiolabeling</button>
+        <button class="nav-tab" data-target="quiz-section">Quiz</button>
+    </div>
+
+    <!-- Glycolysis Section -->
+    <div id="glycolysis-section" class="section active">
+        <div class="cell-container">
+            <div class="cell-membrane">
+                <div id="glut-channel" class="glut-channel">GLUT</div>
+                <div id="glucose" class="glucose-animation">Glucose</div>
+
+                <div class="pathway-container">
+                    <h1 class="text-3xl font-extrabold text-gray-200 mb-6 w-full text-center animate-fade-in">Glycolysis Pathway</h1>
+
+                    <!-- Step 1 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="1" data-atp="-1" data-nadh="0">
+                        <div class="step-title">1. Glucose Phosphorylation</div>
+                        <div class="step-description">Glucose enters the cell and is immediately phosphorylated by hexokinase to form glucose-6-phosphate. This step consumes one ATP molecule and traps glucose inside the cell.</div>
+                        <div class="molecule glucose-first-step" data-tooltip="6-carbon sugar, primary energy source">Glucose</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label atp-cost" data-tooltip="ATP is consumed to add phosphate group">
+                            <span>ATP → ADP</span>
+                        </div>
+                        <div class="enzyme" data-tooltip="Catalyzes the transfer of phosphate from ATP to glucose">Hexokinase</div>
+                        <div class="molecule" data-tooltip="Phosphorylated glucose, trapped in cell">Glucose-6-Phosphate (G6P)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="2" data-atp="0" data-nadh="0">
+                        <div class="step-title">2. Isomerization</div>
+                        <div class="step-description">Glucose-6-phosphate is converted to fructose-6-phosphate by phosphoglucose isomerase. This rearrangement prepares the molecule for the next phosphorylation step.</div>
+                        <div class="molecule">Glucose-6-Phosphate (G6P)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme" data-tooltip="Converts glucose isomer to fructose isomer">Phosphoglucose Isomerase</div>
+                        <div class="molecule">Fructose-6-Phosphate (F6P)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="3" data-atp="-1" data-nadh="0">
+                        <div class="step-title">3. Second Phosphorylation</div>
+                        <div class="step-description">Fructose-6-phosphate is phosphorylated by phosphofructokinase to form fructose-1,6-bisphosphate. This is the committed step of glycolysis and consumes another ATP molecule.</div>
+                        <div class="molecule">Fructose-6-Phosphate (F6P)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label atp-cost" data-tooltip="Second ATP investment, committing glucose to glycolysis">
+                            <span>ATP → ADP</span>
+                        </div>
+                        <div class="enzyme" data-tooltip="Key regulatory enzyme of glycolysis">Phosphofructokinase (PFK-1)</div>
+                        <div class="molecule">Fructose-1,6-Bisphosphate (FBP)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="4" data-atp="0" data-nadh="0">
+                        <div class="step-title">4. Cleavage</div>
+                        <div class="step-description">Fructose-1,6-bisphosphate is cleaved by aldolase into two three-carbon molecules: dihydroxyacetone phosphate (DHAP) and glyceraldehyde-3-phosphate (G3P).</div>
+                        <div class="molecule">Fructose-1,6-Bisphosphate (FBP)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme" data-tooltip="Splits 6-carbon sugar into two 3-carbon molecules">Aldolase</div>
+                        <div class="molecule">Dihydroxyacetone Phosphate (DHAP)</div>
+                        <div class="molecule">Glyceraldehyde-3-Phosphate (G3P)</div>
+                        <div class="enzyme" data-tooltip="Converts DHAP to G3P to continue pathway">(DHAP converted to G3P by Triose Phosphate Isomerase)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="5" data-atp="0" data-nadh="2">
+                        <div class="step-title">5. Oxidation and ATP Formation</div>
+                        <div class="step-description">Glyceraldehyde-3-phosphate is oxidized and phosphorylated to form 1,3-bisphosphoglycerate. This step produces NADH and sets up substrate-level phosphorylation.</div>
+                        <div class="molecule">Glyceraldehyde-3-Phosphate (G3P)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label nadh-gain" data-tooltip="NAD+ is reduced to NADH, capturing high-energy electrons">
+                            <span>NAD+ → NADH</span>
+                        </div>
+                        <div class="enzyme" data-tooltip="Catalyzes oxidation and phosphorylation of G3P">Glyceraldehyde-3-Phosphate Dehydrogenase</div>
+                        <div class="molecule">1,3-Bisphosphoglycerate (1,3-BPG)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 6 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="6" data-atp="2" data-nadh="0">
+                        <div class="step-title">6. First ATP Production</div>
+                        <div class="step-description">1,3-Bisphosphoglycerate transfers a phosphate group to ADP, forming ATP and 3-phosphoglycerate. This is the first substrate-level phosphorylation step.</div>
+                        <div class="molecule">1,3-Bisphosphoglycerate (1,3-BPG)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label atp-gain" data-tooltip="First ATP production via substrate-level phosphorylation">
+                            <span>ADP → ATP</span>
+                        </div>
+                        <div class="enzyme" data-tooltip="Transfers phosphate from 1,3-BPG to ADP">Phosphoglycerate Kinase</div>
+                        <div class="molecule">3-Phosphoglycerate (3PG)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 7 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="7" data-atp="0" data-nadh="0">
+                        <div class="step-title">7. Phosphate Transfer</div>
+                        <div class="step-description">3-Phosphoglycerate is converted to 2-phosphoglycerate by phosphoglycerate mutase. This moves the phosphate group to prepare for ATP formation.</div>
+                        <div class="molecule">3-Phosphoglycerate (3PG)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme" data-tooltip="Moves phosphate group from carbon 3 to carbon 2">Phosphoglycerate Mutase</div>
+                        <div class="molecule">2-Phosphoglycerate (2PG)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 8 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="8" data-atp="0" data-nadh="0">
+                        <div class="step-title">8. Dehydration</div>
+                        <div class="step-description">2-Phosphoglycerate is dehydrated by enolase to form phosphoenolpyruvate. This creates a high-energy phosphate bond that will be used to generate ATP.</div>
+                        <div class="molecule">2-Phosphoglycerate (2PG)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme" data-tooltip="Removes water to create high-energy phosphate bond">Enolase</div>
+                        <div class="molecule">Phosphoenolpyruvate (PEP)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <!-- Step 9 -->
+                    <div class="glycolysis-step animate-fade-in" data-step="9" data-atp="2" data-nadh="0">
+                        <div class="step-title">9. Second ATP Production</div>
+                        <div class="step-description">Phosphoenolpyruvate transfers its phosphate group to ADP, forming ATP and pyruvate. This is the second substrate-level phosphorylation step.</div>
+                        <div class="molecule">Phosphoenolpyruvate (PEP)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label atp-gain" data-tooltip="Second ATP production via substrate-level phosphorylation">
+                            <span>ADP → ATP</span>
+                        </div>
+                        <div class="enzyme" data-tooltip="Transfers phosphate from PEP to ADP">Pyruvate Kinase</div>
+                        <div class="molecule">Pyruvate</div>
+                    </div>
+
+                    <div class="pyruvate-fate">
+                        <h2 class="text-xl font-bold text-gray-200 mb-4">Pyruvate Fate</h2>
+                        <div class="fate-box aerobic">
+                            <div class="icon">🧪</div>
+                            <div class="text-xl font-bold">Aerobic Conditions</div>
+                            <div class="destination">→ Enters Mitochondria → Acetyl-CoA → Citric Acid Cycle</div>
+                            <div class="summary">Complete oxidation to CO₂ + H₂O + 30-32 ATP</div>
+                        </div>
+                        <div class="fate-box anaerobic">
+                            <div class="icon">🥛</div>
+                            <div class="text-xl font-bold">Anaerobic Conditions</div>
+                            <div class="destination">→ Lactate (in muscles) or Ethanol (in yeast)</div>
+                            <div class="summary">Regenerates NAD+ for continued glycolysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="energy-counter">
+            <div class="energy-item">
+                <div>ATP Balance</div>
+                <div class="energy-value atp-total">0</div>
+            </div>
+            <div class="energy-item">
+                <div>NADH Produced</div>
+                <div class="energy-value nadh-total">0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="prev-step">Previous Step</button>
+            <button id="next-step">Next Step</button>
+            <button id="restart">Restart</button>
+        </div>
+    </div>
+
+    <!-- Gluconeogenesis Section -->
+    <div id="gluconeogenesis-section" class="section">
+        <div class="cell-container">
+            <div class="cell-membrane">
+                <div class="pathway-container">
+                    <h1 class="text-3xl font-extrabold text-gray-200 mb-6 w-full text-center animate-fade-in">Gluconeogenesis Pathway</h1>
+                    <p class="text-gray-400 mb-6 text-center max-w-3xl mx-auto">Gluconeogenesis is the synthesis of glucose from non-carbohydrate precursors. It occurs mainly in the liver and to a lesser extent in the kidneys.</p>
+
+                    <!-- Gluconeogenesis Steps -->
+                    <div class="gluconeogenesis-step animate-fade-in" data-step="1">
+                        <div class="step-title">1. Pyruvate to Phosphoenolpyruvate</div>
+                        <div class="step-description">Pyruvate is converted to oxaloacetate by pyruvate carboxylase (requires ATP and biotin), then to phosphoenolpyruvate by PEP carboxykinase (requires GTP). This bypasses the irreversible step of glycolysis.</div>
+                        <div class="gluconeogenesis-molecule">Pyruvate</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="energy-label atp-cost" data-tooltip="ATP and GTP are consumed in this step">
+                            <span>ATP → ADP, GTP → GDP</span>
+                        </div>
+                        <div class="enzyme">Pyruvate Carboxylase, PEP Carboxykinase</div>
+                        <div class="gluconeogenesis-molecule">Phosphoenolpyruvate (PEP)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <div class="gluconeogenesis-step animate-fade-in" data-step="2">
+                        <div class="step-title">2. Reverse Glycolysis Steps</div>
+                        <div class="step-description">Phosphoenolpyruvate undergoes reversal of glycolytic steps through 2-phosphoglycerate, 3-phosphoglycerate, and 1,3-bisphosphoglycerate to glyceraldehyde-3-phosphate. These reactions are catalyzed by the same enzymes as glycolysis but in reverse.</div>
+                        <div class="gluconeogenesis-molecule">Phosphoenolpyruvate (PEP)</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme">Enolase, Phosphoglycerate Mutase, Phosphoglycerate Kinase, GAP Dehydrogenase</div>
+                        <div class="gluconeogenesis-molecule">Glyceraldehyde-3-Phosphate (G3P)</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <div class="gluconeogenesis-step animate-fade-in" data-step="3">
+                        <div class="step-title">3. Fructose-1,6-Bisphosphate to Fructose-6-Phosphate</div>
+                        <div class="step-description">Fructose-1,6-bisphosphate is converted to fructose-6-phosphate by fructose-1,6-bisphosphatase. This bypasses the phosphofructokinase step of glycolysis, which is irreversible.</div>
+                        <div class="gluconeogenesis-molecule">Fructose-1,6-Bisphosphate</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme">Fructose-1,6-Bisphosphatase</div>
+                        <div class="gluconeogenesis-molecule">Fructose-6-Phosphate</div>
+                    </div>
+
+                    <div class="arrow path-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+
+                    <div class="gluconeogenesis-step animate-fade-in" data-step="4">
+                        <div class="step-title">4. Glucose-6-Phosphate to Glucose</div>
+                        <div class="step-description">Glucose-6-phosphate is converted to glucose by glucose-6-phosphatase. This bypasses the hexokinase step of glycolysis, which is irreversible. Glucose is then released into the bloodstream.</div>
+                        <div class="gluconeogenesis-molecule">Glucose-6-Phosphate</div>
+                        <div class="arrow">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </div>
+                        <div class="enzyme">Glucose-6-Phosphatase</div>
+                        <div class="gluconeogenesis-molecule">Glucose</div>
+                    </div>
+
+                    <!-- Gluconeogenesis Features -->
+                    <div class="mt-8 p-6 bg-slate-800 rounded-xl shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-200 mb-4">Key Features of Gluconeogenesis</h2>
+                        <ul class="text-gray-300 space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Occurs primarily in the liver (90%) and kidneys (10%)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Requires 6 ATP equivalents to synthesize one glucose molecule from pyruvate</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Uses 7 of the 10 glycolytic enzymes operating in reverse</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Bypasses three irreversible steps of glycolysis with different enzymes</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Precursors include lactate, glycerol, glucogenic amino acids, and pyruvate</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Regulated by hormones (glucagon, cortisol, epinephrine) and allosteric effectors</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span>Critical for maintaining blood glucose during fasting or exercise</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="gluconeogenesis-prev">Previous Step</button>
+            <button id="gluconeogenesis-next">Next Step</button>
+            <button id="gluconeogenesis-restart">Restart</button>
+        </div>
+    </div>
+
+    <!-- Radiolabeling Section -->
+    <div id="radiolabeling-section" class="section">
+        <div class="radiolabeling-container">
+            <h2 class="text-3xl font-bold text-gray-200 mb-6">Radiolabeling Carbons in Glycolysis</h2>
+            <p class="text-gray-400 mb-6 text-center max-w-3xl mx-auto">
+                Radiolabeling experiments using <sup>14</sup>C or <sup>13</sup>C isotopes help trace the fate of individual carbon atoms 
+                through metabolic pathways. This technique is particularly useful for understanding carbon atom rearrangement in glycolysis.
+            </p>
+
+            <div class="bg-slate-800 p-6 rounded-xl mb-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Experiment Overview</h3>
+                <p class="text-gray-300 mb-4">
+                    In a typical experiment, glucose labeled with <sup>14</sup>C at a specific carbon position is introduced to a cell system. 
+                    After glycolysis, the resulting pyruvate is analyzed to determine which carbon atoms contain the radioactivity.
+                </p>
+                
+                <div class="molecule-diagram mb-6">
+                    <div class="text-center">
+                        <div class="text-lg font-semibold mb-2">Glucose with Radiolabeled Carbon</div>
+                        <div class="flex justify-center items-center">
+                            <span class="carbon-label" style="background-color: #f472b6;">1</span>
+                            <span class="carbon-label">2</span>
+                            <span class="carbon-label">3</span>
+                            <span class="carbon-label">4</span>
+                            <span class="carbon-label">5</span>
+                            <span class="carbon-label">6</span>
+                            <span class="ml-2">→ Glycolysis →</span>
+                            <span class="carbon-label">1</span>
+                            <span class="carbon-label">2</span>
+                            <span class="carbon-label">3</span>
+                            <span class="ml-2">(Pyruvate)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-200 mb-3">Key Findings</h4>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• C1 and C6 of glucose become the methyl carbon of pyruvate</li>
+                            <li>• C2 and C5 of glucose become the carbonyl carbon of pyruvate</li>
+                            <li>• C3 and C4 of glucose become the carboxyl carbon of pyruvate</li>
+                            <li>• This pattern results from the symmetric cleavage of fructose-1,6-bisphosphate</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-700 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-200 mb-3">Applications</h4>
+                        <ul class="text-gray-300 space-y-2">
+                            <li>• Tracing metabolic flux in cells</li>
+                            <li>• Studying enzyme mechanisms and carbon rearrangements</li>
+                            <li>• Investigating metabolic diseases</li>
+                            <li>• Measuring rates of glycolysis in different tissues</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pathway-diagram bg-slate-800 p-6 rounded-xl">
+                <h3 class="text-xl font-semibold text-gray-200 mb-4">Carbon Tracing in Glycolysis</h3>
+                <p class="text-gray-300 mb-4">
+                    The diagram below shows how each carbon atom in glucose is distributed to the pyruvate molecules during glycolysis:
+                </p>
+                
+                <div class="text-center mb-6">
+                    <div class="text-lg font-semibold mb-2">Glucose Carbon Atoms</div>
+                    <div class="flex justify-center space-x-1 mb-4">
+                        <span class="carbon-label highlight">1</span>
+                        <span class="carbon-label">2</span>
+                        <span class="carbon-label">3</span>
+                        <span class="carbon-label">4</span>
+                        <span class="carbon-label">5</span>
+                        <span class="carbon-label">6</span>
+                    </div>
+                    
+                    <div class="text-lg font-semibold my-4">↓ Glycolysis ↓</div>
+                    
+                    <div class="text-lg font-semibold mb-2">Pyruvate Carbon Atoms (from one glucose molecule)</div>
+                    <div class="flex justify-center space-x-4">
+                        <div>
+                            <div class="text-sm mb-1">Pyruvate 1</div>
+                            <div class="flex space-x-1">
+                                <span class="carbon-label" style="background-color: #f472b6;">1</span>
+                                <span class="carbon-label">2</span>
+                                <span class="carbon-label">3</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm mb-1">Pyruvate 2</div>
+                            <div class="flex space-x-1">
+                                <span class="carbon-label">1</span>
+                                <span class="carbon-label">2</span>
+                                <span class="carbon-label">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-700 p-4 rounded-lg mt-4">
+                    <h4 class="font-semibold text-gray-200 mb-3">Experimental Results</h4>
+                    <p class="text-gray-300">
+                        When glucose labeled at C1 is metabolized, the radioactivity appears in the methyl group (C3) of pyruvate. 
+                        Similarly, glucose labeled at C6 also labels the methyl group of pyruvate. This symmetry results from the 
+                        division of the 6-carbon fructose-1,6-bisphosphate into two 3-carbon units that are isomers of each other.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quiz-section" class="section">
+        <div id="game-section">
+            <h2>Glycolysis Quiz Challenge</h2>
+            <p class="text-gray-400 mb-6 text-center">Test your knowledge of glycolysis with this interactive quiz!</p>
+            
+            <button id="start-game-btn">Start Quiz</button>
+            
+            <div id="game-content">
+                <h3>Question <span id="question-number">1</span>/5</h3>
+                <p id="question-text">Which enzyme catalyzes the first step of glycolysis?</p>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+                
+                <div id="game-feedback"></div>
+                
+                <div id="game-buttons-container">
+                    <button id="submit-answer-btn" style="display: none;">Submit Answer</button>
+                    <button id="next-question-btn" style="display: none;">Next Question</button>
+                </div>
+                
+                <div id="game-score-board">Score: <span id="score">0</span>/5</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+        <div class="footer-contact">
+            <p>© 2025 BETA Biosciences. All rights reserved.</p>
+            <p>Email: betabiosciences@gmail.com</p>
+            <p>Contact: +91 97 47 53 35 97</p>
+        </div>
+    </div>
+
+    <!-- Tooltip Element -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Section Navigation
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const sections = document.querySelectorAll('.section');
+            
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetId = tab.getAttribute('data-target');
+                    
+                    // Hide all sections
+                    sections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Remove active class from all tabs
+                    navTabs.forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Show target section and activate tab
+                    document.getElementById(targetId).classList.add('active');
+                    tab.classList.add('active');
+                });
+            });
+
+            // Glycolysis Animation Code
+            const steps = document.querySelectorAll('.glycolysis-step');
+            const arrows = document.querySelectorAll('.path-arrow');
+            const glucose = document.getElementById('glucose');
+            const glutChannel = document.getElementById('glut-channel');
+            const pyruvateFate = document.querySelector('.pyruvate-fate');
+            const atpTotal = document.querySelector('.atp-total');
+            const nadhTotal = document.querySelector('.nadh-total');
+            const prevBtn = document.getElementById('prev-step');
+            const nextBtn = document.getElementById('next-step');
+            const restartBtn = document.getElementById('restart');
+            const tooltip = document.getElementById('tooltip');
+
+            let currentStep = 0;
+            let atpBalance = 0;
+            let nadhBalance = 0;
+
+            // Initialize
+            function init() {
+                steps.forEach(step => step.classList.remove('visible', 'active'));
+                arrows.forEach(arrow => arrow.classList.remove('visible'));
+                glucose.style.display = 'none';
+                glutChannel.style.display = 'none';
+                pyruvateFate.classList.remove('visible');
+                
+                currentStep = 0;
+                atpBalance = 0;
+                nadhBalance = 0;
+                updateEnergyCounter();
+                
+                // Show first step
+                showStep(0);
+            }
+
+            function showStep(stepIndex) {
+                // Hide all steps
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                    step.style.display = 'none';
+                });
+                
+                // Show steps up to current step
+                for (let i = 0; i <= stepIndex; i++) {
+                    steps[i].classList.add('visible');
+                    steps[i].style.display = 'block';
+                    
+                    if (i === stepIndex) {
+                        steps[i].classList.add('active');
+                    }
+                    
+                    // Show arrows between steps
+                    if (i > 0) {
+                        arrows[i-1].classList.add('visible');
+                    }
+                }
+                
+                // Special animations for specific steps
+                if (stepIndex === 0) {
+                    glucose.style.display = 'block';
+                    glutChannel.style.display = 'flex';
+                    glucose.style.animation = 'enterCell 2s forwards';
+                }
+                
+                if (stepIndex === steps.length - 1) {
+                    pyruvateFate.classList.add('visible');
+                }
+                
+                // Update energy counters based on current step
+                updateEnergyCounters(stepIndex);
+            }
+
+            function updateEnergyCounters(stepIndex) {
+                atpBalance = 0;
+                nadhBalance = 0;
+                
+                for (let i = 0; i <= stepIndex; i++) {
+                    const step = steps[i];
+                    const atpChange = parseInt(step.getAttribute('data-atp'));
+                    const nadhChange = parseInt(step.getAttribute('data-nadh'));
+                    
+                    atpBalance += atpChange;
+                    nadhBalance += nadhChange;
+                }
+                
+                updateEnergyCounter();
+            }
+
+            function updateEnergyCounter() {
+                atpTotal.textContent = atpBalance;
+                nadhTotal.textContent = nadhBalance;
+            }
+
+            // Event listeners for navigation
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            restartBtn.addEventListener('click', init);
+
+            // Tooltip functionality
+            document.querySelectorAll('[data-tooltip]').forEach(element => {
+                element.addEventListener('mouseenter', (e) => {
+                    const text = e.target.getAttribute('data-tooltip');
+                    tooltip.textContent = text;
+                    tooltip.style.opacity = '1';
+                    
+                    const rect = e.target.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + rect.width/2 - tooltip.offsetWidth/2}px`;
+                    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                });
+            });
+
+            // Initialize glycolysis animation
+            init();
+
+            // Gluconeogenesis Navigation
+            const gluconeogenesisSteps = document.querySelectorAll('.gluconeogenesis-step');
+            const gluconeogenesisPrevBtn = document.getElementById('gluconeogenesis-prev');
+            const gluconeogenesisNextBtn = document.getElementById('gluconeogenesis-next');
+            const gluconeogenesisRestartBtn = document.getElementById('gluconeogenesis-restart');
+            
+            let currentGluconeogenesisStep = 0;
+
+            function initGluconeogenesis() {
+                gluconeogenesisSteps.forEach(step => step.classList.remove('visible', 'active'));
+                currentGluconeogenesisStep = 0;
+                showGluconeogenesisStep(0);
+            }
+
+            function showGluconeogenesisStep(stepIndex) {
+                gluconeogenesisSteps.forEach(step => {
+                    step.classList.remove('active');
+                    step.style.display = 'none';
+                });
+                
+                for (let i = 0; i <= stepIndex; i++) {
+                    gluconeogenesisSteps[i].classList.add('visible');
+                    gluconeogenesisSteps[i].style.display = 'block';
+                    
+                    if (i === stepIndex) {
+                        gluconeogenesisSteps[i].classList.add('active');
+                    }
+                }
+            }
+
+            gluconeogenesisNextBtn.addEventListener('click', () => {
+                if (currentGluconeogenesisStep < gluconeogenesisSteps.length - 1) {
+                    currentGluconeogenesisStep++;
+                    showGluconeogenesisStep(currentGluconeogenesisStep);
+                }
+            });
+
+            gluconeogenesisPrevBtn.addEventListener('click', () => {
+                if (currentGluconeogenesisStep > 0) {
+                    currentGluconeogenesisStep--;
+                    showGluconeogenesisStep(currentGluconeogenesisStep);
+                }
+            });
+
+            gluconeogenesisRestartBtn.addEventListener('click', initGluconeogenesis);
+
+            // Initialize gluconeogenesis
+            initGluconeogenesis();
+
+            // Quiz Game Code
+            const startGameBtn = document.getElementById('start-game-btn');
+            const gameContent = document.getElementById('game-content');
+            const questionNumber = document.getElementById('question-number');
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const submitAnswerBtn = document.getElementById('submit-answer-btn');
+            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const gameFeedback = document.getElementById('game-feedback');
+            const scoreElement = document.getElementById('score');
+            
+            let currentQuestion = 0;
+            let score = 0;
+            let selectedOption = null;
+            
+            const questions = [
+                {
+                    question: "Which enzyme catalyzes the first step of glycolysis?",
+                    options: ["Phosphofructokinase", "Hexokinase", "Pyruvate kinase", "Aldolase"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "How many ATP molecules are net produced in glycolysis from one glucose molecule?",
+                    options: ["1 ATP", "2 ATP", "4 ATP", "6 ATP"],
+                    correctAnswer: 1
+                },
+                {
+                    question: "Which of these is NOT a product of glycolysis?",
+                    options: ["Pyruvate", "NADH", "ATP", "FADH2"],
+                    correctAnswer: 3
+                },
+                {
+                    question: "Where does glycolysis occur in the cell?",
+                    options: ["Mitochondria", "Nucleus", "Cytoplasm", "Endoplasmic reticulum"],
+                    correctAnswer: 2
+                },
+                {
+                    question: "Which glycolytic enzyme is regulated by fructose-2,6-bisphosphate?",
+                    options: ["Hexokinase", "Phosphofructokinase-1", "Pyruvate kinase", "Aldolase"],
+                    correctAnswer: 1
+                }
+            ];
+            
+            startGameBtn.addEventListener('click', startGame);
+            
+            function startGame() {
+                startGameBtn.style.display = 'none';
+                gameContent.style.display = 'block';
+                currentQuestion = 0;
+                score = 0;
+                loadQuestion();
+            }
+            
+            function loadQuestion() {
+                const question = questions[currentQuestion];
+                questionNumber.textContent = currentQuestion + 1;
+                questionText.textContent = question.question;
+                
+                optionsContainer.innerHTML = '';
+                question.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('game-option-button');
+                    button.addEventListener('click', () => selectOption(index, button));
+                    optionsContainer.appendChild(button);
+                });
+                
+                submitAnswerBtn.style.display = 'block';
+                nextQuestionBtn.style.display = 'none';
+                gameFeedback.textContent = '';
+                gameFeedback.className = '';
+                selectedOption = null;
+            }
+            
+            function selectOption(index, button) {
+                // Remove selected class from all options
+                document.querySelectorAll('.game-option-button').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                button.classList.add('selected');
+                selectedOption = index;
+            }
+            
+            submitAnswerBtn.addEventListener('click', checkAnswer);
+            
+            function checkAnswer() {
+                if (selectedOption === null) {
+                    gameFeedback.textContent = "Please select an answer!";
+                    gameFeedback.className = 'incorrect';
+                    return;
+                }
+                
+                const correct = selectedOption === questions[currentQuestion].correctAnswer;
+                
+                if (correct) {
+                    gameFeedback.textContent = "Correct! Well done.";
+                    gameFeedback.className = 'correct';
+                    score++;
+                    scoreElement.textContent = score;
+                } else {
+                    gameFeedback.textContent = `Incorrect. The right answer is: ${questions[currentQuestion].options[questions[currentQuestion].correctAnswer]}`;
+                    gameFeedback.className = 'incorrect';
+                }
+                
+                submitAnswerBtn.style.display = 'none';
+                nextQuestionBtn.style.display = 'block';
+            }
+            
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            
+            function nextQuestion() {
+                currentQuestion++;
+                
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }
+            
+            function endGame() {
+                questionText.textContent = `Quiz completed! Your score: ${score}/${questions.length}`;
+                optionsContainer.innerHTML = '';
+                nextQuestionBtn.style.display = 'none';
+                submitAnswerBtn.style.display = 'none';
+                gameFeedback.textContent = '';
+                
+                const restartButton = document.createElement('button');
+                restartButton.textContent = 'Restart Quiz';
+                restartButton.classList.add('game-option-button');
+                restartButton.addEventListener('click', startGame);
+                optionsContainer.appendChild(restartButton);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
