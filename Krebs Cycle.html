@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krebs Cycle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #64ffda;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
+        }
+
+        .header p {
+            color: #b3e5fc;
+            font-size: 1rem;
+        }
+
+        .content-area {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            min-height: 400px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .section h3 {
+            color: #4ecdc4;
+            font-size: 1.3rem;
+            margin: 20px 0 15px 0;
+            border-left: 4px solid #4ecdc4;
+            padding-left: 15px;
+        }
+
+        .section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #e1f5fe;
+            text-align: justify;
+        }
+
+        .section ul, .section ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .section li {
+            margin-bottom: 8px;
+            color: #b3e5fc;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .equation {
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid #64ffda;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            color: #64ffda;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            min-width: 120px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #64ffda, #4ecdc4);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+            width: 12.5%;
+        }
+
+        .section-indicator {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #b3e5fc;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .isotope-diagram {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .cycle-round {
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid #4ecdc4;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .cycle-round h4 {
+            color: #4ecdc4;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-logo {
+            width: 65px;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .footer-text {
+            color: #b3e5fc;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+            
+            .navigation {
+                padding: 15px;
+            }
+            
+            .footer-logo {
+                width: 120px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Acetyl CoA Synthesis & Krebs Cycle</h1>
+        </div>
+
+        <div class="content-area">
+            <div class="section-indicator">
+                Section <span id="current-section">1</span> of <span id="total-sections">8</span>
+            </div>
+
+            <!-- Section 1: Mitochondrial Membranes -->
+            <div class="section active" id="section-1">
+                <h2>Mitochondrial Membrane Structure</h2>
+                
+                <h3>Membrane Organization</h3>
+                <p>Mitochondria possess a <span class="highlight">double membrane system</span> that creates distinct compartments essential for cellular respiration:</p>
+                
+                <ul>
+                    <li><strong>Outer Mitochondrial Membrane (OMM):</strong> Smooth, permeable to molecules up to ~5 kDa</li>
+                    <li><strong>Inner Mitochondrial Membrane (IMM):</strong> Highly folded (cristae), impermeable to most ions and molecules</li>
+                </ul>
+
+                <h3>Membrane Permeability</h3>
+                <p><strong>Outer Membrane:</strong> Contains <span class="highlight">porins (VDAC)</span> that allow passage of molecules up to 5000 Da, including ATP, ADP, Pi, pyruvate, and small metabolites.</p>
+                
+                <p><strong>Inner Membrane:</strong> Highly <span class="highlight">selective barrier</span> with specific transporters. Impermeable to protons, creating the proton gradient essential for ATP synthesis.</p>
+
+                <h3>Key Membrane Proteins</h3>
+                <ul>
+                    <li><strong>Pyruvate Carrier (MPC1/MPC2):</strong> Transports pyruvate into matrix</li>
+                    <li><strong>ATP Synthase (Complex V):</strong> Synthesizes ATP using proton gradient</li>
+                    <li><strong>Electron Transport Complexes (I-IV):</strong> Create proton gradient</li>
+                    <li><strong>Adenine Nucleotide Translocator (ANT):</strong> Exchanges ATP/ADP</li>
+                </ul>
+
+                <h3>Mitochondrial Compartments</h3>
+                <ul>
+                    <li><strong>Intermembrane Space:</strong> pH ~7.0, similar to cytosol composition</li>
+                    <li><strong>Mitochondrial Matrix:</strong> pH ~8.0, contains TCA cycle enzymes, ribosomes, mtDNA</li>
+                </ul>
+            </div>
+
+            <!-- Section 2: Pyruvate Transport -->
+            <div class="section" id="section-2">
+                <h2>Pyruvate Transport to Matrix</h2>
+                
+                <h3>Transport Mechanism</h3>
+                <p>Pyruvate transport from cytosol to mitochondrial matrix occurs via the <span class="highlight">Mitochondrial Pyruvate Carrier (MPC)</span>, a heterodimeric complex of MPC1 and MPC2 subunits.</p>
+
+                <h3>Transport Properties</h3>
+                <ul>
+                    <li><strong>Stoichiometry:</strong> 1 pyruvate : 1 H+ (symport)</li>
+                    <li><strong>Driving Force:</strong> Proton gradient (ΔμH+)</li>
+                    <li><strong>Km:</strong> ~150 μM for pyruvate</li>
+                    <li><strong>Inhibitors:</strong> UK5099, α-cyano-4-hydroxycinnamate</li>
+                </ul>
+
+                <div class="equation">
+                    Pyruvate(cytosol) + H+(intermembrane) → Pyruvate(matrix) + H+(matrix)
+                </div>
+
+                <h3>Regulation of Transport</h3>
+                <p><strong>Allosteric Regulation:</strong></p>
+                <ul>
+                    <li>Inhibited by acetyl-CoA (product inhibition)</li>
+                    <li>Enhanced by CoA availability</li>
+                    <li>pH-dependent activity (optimal at physiological pH)</li>
+                </ul>
+
+                <p><strong>Metabolic Control:</strong></p>
+                <ul>
+                    <li>Coordinated with pyruvate dehydrogenase complex activity</li>
+                    <li>Responds to energy charge of the cell</li>
+                    <li>Influenced by Ca2+ levels</li>
+                </ul>
+            </div>
+
+            <!-- Section 3: Acetyl CoA Synthesis -->
+            <div class="section" id="section-3">
+                <h2>Acetyl CoA Synthesis</h2>
+                
+                <h3>Pyruvate Dehydrogenase Complex (PDC)</h3>
+                <p>The <span class="highlight">pyruvate dehydrogenase complex</span> catalyzes the irreversible oxidative decarboxylation of pyruvate to acetyl-CoA.</p>
+
+                <h3>Complex Composition</h3>
+                <ul>
+                    <li><strong>E1 (Pyruvate dehydrogenase):</strong> Contains TPP, catalyzes decarboxylation</li>
+                    <li><strong>E2 (Dihydrolipoamide acetyltransferase):</strong> Contains lipoic acid, forms acetyl-CoA</li>
+                    <li><strong>E3 (Dihydrolipoamide dehydrogenase):</strong> Contains FAD, regenerates oxidized lipoic acid</li>
+                </ul>
+
+                <div class="equation">
+                    Pyruvate + CoA + NAD+ → Acetyl-CoA + CO2 + NADH + H+<br>
+                    ΔG°' = -33.5 kJ/mol
+                </div>
+
+                <h3>Reaction Mechanism</h3>
+                <ol>
+                    <li><strong>Decarboxylation:</strong> E1-TPP forms hydroxyethyl-TPP intermediate</li>
+                    <li><strong>Oxidation:</strong> Transfer to lipoic acid on E2, forming acetyl-lipoamide</li>
+                    <li><strong>Acetyl Transfer:</strong> CoA attacks acetyl-lipoamide, forming acetyl-CoA</li>
+                    <li><strong>Regeneration:</strong> E3-FAD reoxidizes dihydrolipoamide, reducing NAD+</li>
+                </ol>
+
+                <h3>Cofactors Required</h3>
+                <ul>
+                    <li>Thiamine pyrophosphate (TPP) - E1</li>
+                    <li>Lipoic acid - E2</li>
+                    <li>Coenzyme A - substrate</li>
+                    <li>FAD - E3</li>
+                    <li>NAD+ - final electron acceptor</li>
+                </ul>
+            </div>
+
+            <!-- Section 4: Substrate Channeling -->
+            <div class="section" id="section-4">
+                <h2>Substrate Channeling Mechanism</h2>
+                
+                <h3>Concept of Channeling</h3>
+                <p><span class="highlight">Substrate channeling</span> is the direct transfer of intermediates between active sites without release to the bulk solution, preventing loss of reactive intermediates.</p>
+
+                <h3>Channeling in PDC</h3>
+                <p>The pyruvate dehydrogenase complex demonstrates sophisticated channeling mechanisms:</p>
+
+                <ul>
+                    <li><strong>Structural Basis:</strong> E2 core with radiating E1 and E3 subunits</li>
+                    <li><strong>Lipoyl Domains:</strong> Mobile arms that swing between active sites</li>
+                    <li><strong>Intermediate Protection:</strong> Reactive acetyl and reduced lipoyl groups remain protein-bound</li>
+                </ul>
+
+                <h3>Advantages of Channeling</h3>
+                <ul>
+                    <li>Prevents side reactions of unstable intermediates</li>
+                    <li>Increases local substrate concentration</li>
+                    <li>Reduces product inhibition</li>
+                    <li>Enhances overall reaction rate</li>
+                    <li>Maintains stoichiometric coupling</li>
+                </ul>
+
+                <h3>Molecular Mechanism</h3>
+                <p>The <span class="highlight">lipoyl domain</span> acts as a "swinging arm" that:</p>
+                <ol>
+                    <li>Visits E1 active site for acetyl group acceptance</li>
+                    <li>Swings to E2 core for acetyl-CoA formation</li>
+                    <li>Moves to E3 for reoxidation</li>
+                    <li>Returns to E1 to restart the cycle</li>
+                </ol>
+
+                <div class="equation">
+                    Channeling Efficiency ≈ 90-95%<br>
+                    (Minimal intermediate release to solution)
+                </div>
+            </div>
+
+            <!-- Section 5: Regulation of Acetyl CoA Synthesis -->
+            <div class="section" id="section-5">
+                <h2>Regulation of Acetyl CoA Synthesis</h2>
+                
+                <h3>Covalent Modification</h3>
+                <p><span class="highlight">Phosphorylation/dephosphorylation</span> is the primary regulatory mechanism:</p>
+                
+                <ul>
+                    <li><strong>PDK (Pyruvate Dehydrogenase Kinase):</strong> Phosphorylates and inactivates E1</li>
+                    <li><strong>PDP (Pyruvate Dehydrogenase Phosphatase):</strong> Dephosphorylates and activates E1</li>
+                </ul>
+
+                <h3>Allosteric Regulation</h3>
+                <p><strong>PDK Activation (↓ PDC activity):</strong></p>
+                <ul>
+                    <li>Acetyl-CoA (product inhibition)</li>
+                    <li>ATP (high energy state)</li>
+                    <li>NADH (reduced NAD+/NADH ratio)</li>
+                    <li>Fatty acids (metabolic preference)</li>
+                </ul>
+
+                <p><strong>PDK Inhibition (↑ PDC activity):</strong></p>
+                <ul>
+                    <li>Pyruvate (substrate activation)</li>
+                    <li>ADP (low energy state)</li>
+                    <li>Ca2+ (signaling activation)</li>
+                    <li>Mg2+ (cofactor availability)</li>
+                </ul>
+
+                <h3>Hormonal Regulation</h3>
+                <ul>
+                    <li><strong>Insulin:</strong> Activates PDP, promotes dephosphorylation</li>
+                    <li><strong>Glucagon/Epinephrine:</strong> Activates PDK via cAMP</li>
+                    <li><strong>Cortisol:</strong> Increases PDK expression</li>
+                </ul>
+
+                <div class="equation">
+                    Active PDC ⇌ Inactive PDC-PO4<br>
+                    ← PDP (Ca2+, Mg2+) | PDK (ATP, Acetyl-CoA) →
+                </div>
+
+                <h3>Metabolic Integration</h3>
+                <p>Regulation ensures coordination with:</p>
+                <ul>
+                    <li>Glycolysis flux</li>
+                    <li>Fatty acid oxidation (Randle cycle)</li>
+                    <li>TCA cycle activity</li>
+                    <li>Cellular energy state</li>
+                </ul>
+            </div>
+
+            <!-- Section 6: Krebs Cycle -->
+            <div class="section" id="section-6">
+                <h2>The Krebs Cycle (TCA Cycle)</h2>
+                
+                <h3>Cycle Overview</h3>
+                <p>The <span class="highlight">tricarboxylic acid (TCA) cycle</span> completely oxidizes acetyl-CoA to CO2, generating NADH, FADH2, and GTP.</p>
+
+                <div class="equation">
+                    Acetyl-CoA + 3NAD+ + FAD + GDP + Pi + 2H2O →<br>
+                    2CO2 + 3NADH + 3H+ + FADH2 + GTP + CoA
+                </div>
+
+                <h3>Key Enzymes and Properties</h3>
+                
+                <p><strong>1. Citrate Synthase:</strong></p>
+                <ul>
+                    <li>Catalyzes condensation of acetyl-CoA + oxaloacetate → citrate</li>
+                    <li>ΔG°' = -32.2 kJ/mol (irreversible)</li>
+                    <li>Regulated by ATP (inhibitor) and ADP (activator)</li>
+                </ul>
+
+                <p><strong>2. Aconitase:</strong></p>
+                <ul>
+                    <li>Citrate ⇌ isocitrate via cis-aconitate</li>
+                    <li>Contains [4Fe-4S] cluster</li>
+                    <li>Reversible, near equilibrium</li>
+                </ul>
+
+                <p><strong>3. Isocitrate Dehydrogenase:</strong></p>
+                <ul>
+                    <li>Isocitrate + NAD+ → α-ketoglutarate + NADH + CO2</li>
+                    <li>Rate-limiting step</li>
+                    <li>Activated by Ca2+, ADP, inhibited by ATP, NADH</li>
+                </ul>
+
+                <p><strong>4. α-Ketoglutarate Dehydrogenase:</strong></p>
+                <ul>
+                    <li>Similar to PDC mechanism</li>
+                    <li>α-KG + CoA + NAD+ → succinyl-CoA + NADH + CO2</li>
+                    <li>Inhibited by succinyl-CoA, GTP, NADH</li>
+                </ul>
+
+                <p><strong>5. Succinate Thiokinase:</strong></p>
+                <ul>
+                    <li>Succinyl-CoA + GDP + Pi → succinate + GTP + CoA</li>
+                    <li>Substrate-level phosphorylation</li>
+                    <li>Only step generating high-energy phosphate directly</li>
+                </ul>
+            </div>
+
+            <!-- Section 7: TCA Cycle Products & Regulation -->
+            <div class="section" id="section-7">
+                <h2>TCA Cycle Products & Regulation</h2>
+                
+                <h3>Remaining Enzymes</h3>
+                
+                <p><strong>6. Succinate Dehydrogenase (Complex II):</strong></p>
+                <ul>
+                    <li>Succinate + FAD → fumarate + FADH2</li>
+                    <li>Embedded in inner mitochondrial membrane</li>
+                    <li>Part of electron transport chain</li>
+                    <li>Inhibited by oxaloacetate, malonate</li>
+                </ul>
+
+                <p><strong>7. Fumarase:</strong></p>
+                <ul>
+                    <li>Fumarate + H2O ⇌ malate</li>
+                    <li>Reversible, stereospecific</li>
+                    <li>Near equilibrium reaction</li>
+                </ul>
+
+                <p><strong>8. Malate Dehydrogenase:</strong></p>
+                <ul>
+                    <li>Malate + NAD+ ⇌ oxaloacetate + NADH</li>
+                    <li>Thermodynamically unfavorable (ΔG°' = +29.7 kJ/mol)</li>
+                    <li>Driven by citrate synthase reaction</li>
+                </ul>
+
+                <h3>Overall Products per Acetyl-CoA</h3>
+                <div class="equation">
+                    3 NADH → 7.5 ATP (via ETC)<br>
+                    1 FADH2 → 1.5 ATP (via ETC)<br>
+                    1 GTP → 1 ATP<br>
+                    <strong>Total: ~10 ATP per acetyl-CoA</strong>
+                </div>
+
+                <h3>Regulation Points</h3>
+                <ul>
+                    <li><strong>Citrate Synthase:</strong> Product inhibition by citrate</li>
+                    <li><strong>Isocitrate Dehydrogenase:</strong> Primary control point</li>
+                    <li><strong>α-Ketoglutarate Dehydrogenase:</strong> Similar to PDC regulation</li>
+                </ul>
+
+                <h3>Anaplerotic Reactions</h3>
+                <p>Reactions that replenish cycle intermediates:</p>
+                <ul>
+                    <li><strong>Pyruvate Carboxylase:</strong> Pyruvate + CO2 → oxaloacetate</li>
+                    <li><strong>PEP Carboxykinase:</strong> PEP + CO2 → oxaloacetate</li>
+                    <li>Essential for gluconeogenesis and biosynthesis</li>
+                </ul>
+            </div>
+
+            <!-- Section 8: Isotope Labeling Experiment -->
+            <div class="section" id="section-8">
+                <h2>C-13 Isotope Labeling Experiment</h2>
+                
+                <h3>Experimental Design</h3>
+                <p>Two separate experiments using acetyl-CoA labeled with <span class="highlight">13C</span> at different positions to trace carbon fate through the TCA cycle.</p>
+
+                <div class="isotope-diagram">
+                    <h4>Experiment A: Methyl Carbon Labeled</h4>
+                    <p><strong>*CH3-COSCoA</strong> (methyl carbon labeled with 13C)</p>
+                </div>
+
+                <div class="cycle-round">
+                    <h4>Methyl-Labeled Results - Round 1</h4>
+                    <ul>
+                        <li><strong>Citrate Formation:</strong> Label enters at methyl position of acetyl unit</li>
+                        <li><strong>Aconitase Action:</strong> Due to prochiral nature, creates asymmetric citrate</li>
+                        <li><strong>First CO2 (Isocitrate DH):</strong> <em>0% labeled</em> - comes from original oxaloacetate</li>
+                        <li><strong>Second CO2 (α-KG DH):</strong> <em>100% labeled</em> - derived from original acetyl methyl</li>
+                        <li><strong>Succinate:</strong> Contains unlabeled carbon from acetyl carbonyl</li>
+                    </ul>
+                </div>
+
+                <div class="cycle-round">
+                    <h4>Methyl-Labeled Results - Rounds 2-3</h4>
+                    <ul>
+                        <li><strong>Round 2:</strong> No labeled CO2 released (label was lost in Round 1)</li>
+                        <li><strong>Round 3:</strong> No labeled CO2 released</li>
+                        <li><strong>Key Finding:</strong> Methyl carbon is completely lost as CO2 in first round</li>
+                    </ul>
+                </div>
+
+                <div class="isotope-diagram">
+                    <h4>Experiment B: Carbonyl Carbon Labeled</h4>
+                    <p><strong>CH3-*COSCoA</strong> (carbonyl carbon labeled with 13C)</p>
+                </div>
+
+                <div class="cycle-round">
+                    <h4>Carbonyl-Labeled Results - Round 1</h4>
+                    <ul>
+                        <li><strong>Citrate Formation:</strong> Label enters at carbonyl position</li>
+                        <li><strong>First CO2 (Isocitrate DH):</strong> <em>0% labeled</em> - from oxaloacetate</li>
+                        <li><strong>Second CO2 (α-KG DH):</strong> <em>0% labeled</em> - from original acetyl methyl</li>
+                        <li><strong>Succinate Formation:</strong> Contains the labeled carbon from acetyl carbonyl</li>
+                        <li><strong>Label Retention:</strong> 100% remains in cycle intermediates</li>
+                    </ul>
+                </div>
+
+                <div class="cycle-round">
+                    <h4>Carbonyl-Labeled Results - Round 2</h4>
+                    <ul>
+                        <li><strong>Succinate Symmetry:</strong> Label becomes equally distributed (50:50)</li>
+                        <li><strong>First CO2:</strong> <em>50% labeled</em> - statistical release from labeled oxaloacetate</li>
+                        <li><strong>Second CO2:</strong> <em>50% labeled</em> - from the same pool</li>
+                        <li><strong>Remaining Label:</strong> 50% retention in cycle</li>
+                    </ul>
+                </div>
+
+                <div class="cycle-round">
+                    <h4>Carbonyl-Labeled Results - Round 3</h4>
+                    <ul>
+                        <li><strong>Continued Dilution:</strong> Further label scrambling</li>
+                        <li><strong>CO2 Release:</strong> ~25% of each CO2 labeled</li>
+                        <li><strong>Pattern:</strong> Geometric decrease continues (25% retention)</li>
+                    </ul>
+                </div>
+
+                <h3>Key Experimental Insights</h3>
+                <ul>
+                    <li><strong>Methyl vs Carbonyl Fate:</strong> Dramatically different outcomes</li>
+                    <li><strong>Immediate vs Delayed Release:</strong> Methyl lost in Round 1, carbonyl persists</li>
+                    <li><strong>Aconitase Specificity:</strong> Demonstrates asymmetric handling of citrate</li>
+                    <li><strong>Succinate Symmetry:</strong> Creates label randomization in Round 2+</li>
+                    <li><strong>Biosynthetic Implications:</strong> Carbonyl carbon available for anabolic processes</li>
+                </ul>
+
+                <div class="equation">
+                    Methyl Label: 100% → 0% → 0%<br>
+                    Carbonyl Label: 100% → 50% → 25%<br>
+                    <em>(Complete loss vs geometric dilution)</em>
+                </div>
+
+                <h3>Biological Significance</h3>
+                <ul>
+                    <li><strong>Carbon Economy:</strong> Different fates optimize metabolic efficiency</li>
+                    <li><strong>Anabolic Precursors:</strong> Persistent carbons available for biosynthesis</li>
+                    <li><strong>Cycle Validation:</strong> Confirms intermediates are true cycle participants</li>
+                    <li><strong>Enzyme Mechanism:</strong> Reveals stereochemical specificity of TCA enzymes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- NAVIGATION SECTION -->
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn">← Previous</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            <button class="nav-btn" id="next-btn">Next →</button>
+        </div>
+
+        <!-- FOOTER SECTION -->
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <div class="footer-text">
+                © 2025 BETA Biosciences. All rights reserved.<br>
+                Email: betabiosciences@gmail.com<br>
+                Contact: +91 97 47 53 35 97
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentSection = 1;
+        const totalSections = 8;
+
+        // Navigation functions
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                updateDisplay();
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                updateDisplay();
+            }
+        }
+
+        // Update display function
+        function updateDisplay() {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show current section
+            const currentSectionEl = document.getElementById(`section-${currentSection}`);
+            if (currentSectionEl) {
+                currentSectionEl.classList.add('active');
+            }
+            
+            // Update section indicator
+            document.getElementById('current-section').textContent = currentSection;
+            document.getElementById('total-sections').textContent = totalSections;
+            
+            // Update progress bar
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+            
+            if (currentSection === totalSections) {
+                nextBtn.textContent = 'Complete ✓';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        // Initialize event listeners
+        function init() {
+            // Button event listeners
+            document.getElementById('prev-btn').onclick = previousSection;
+            document.getElementById('next-btn').onclick = nextSection;
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') previousSection();
+                if (e.key === 'ArrowRight') nextSection();
+            });
+
+            // Touch navigation
+            let startX = 0;
+            document.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+            
+            document.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) nextSection();
+                    else previousSection();
+                }
+            });
+
+            // Initial display update
+            updateDisplay();
+        }
+
+        // Initialize when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
