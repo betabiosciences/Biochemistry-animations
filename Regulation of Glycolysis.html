@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Glycolysis Regulation & Glucokinase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles from deep seeek2.html */
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --energy: #f39c12;
+            --nutrient: #27ae60;
+            --fed: #2980b9;
+            --fasting: #8e44ad;
+            --resting: #7f8c8d;
+            --exercising: #c0392b;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-light: #ecf0f1;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Combined body and general styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Container styles (from deepseek3.html, adjusted for overall layout) */
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(25, 35, 55, 0.9); /* Adjusted for consistency */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-top: 20px;
+            margin-bottom: 20px; /* Added margin-bottom */
+            position: relative;
+        }
+        
+        /* Header styles (from deep seeek2.html, adjusted for consistency) */
+        header {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 25px;
+            background: var(--glass); /* Using var for consistency */
+            border-radius: 20px; /* Rounded corners */
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--nutrient), var(--energy));
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 90%;
+            margin: 0 auto;
+            opacity: 0.85;
+        }
+        
+        .section {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 0 20px 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: none; /* Hide sections by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block; /* Show active section */
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title i {
+            background: linear-gradient(45deg, var(--secondary), var(--accent));
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+        
+        .note-box {
+            background: rgba(241, 196, 15, 0.15);
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .note-box i {
+            font-size: 1.4rem;
+            color: #f1c40f;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(90deg, var(--energy), var(--nutrient));
+            padding: 18px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* New styles for sensor descriptions */
+        .sensor-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 5px; /* Adjust spacing below the header */
+            padding: 0 10px; /* Add some horizontal padding */
+        }
+        
+        .sensor-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .sensor-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sensor-btn.energy {
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.3), transparent);
+        }
+        
+        .sensor-btn.energy:hover {
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.5), transparent);
+        }
+        
+        .sensor-btn.nutrient {
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.3), transparent);
+        }
+        
+        .sensor-btn.nutrient:hover {
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.5), transparent);
+        }
+        
+        .pathway-container {
+            position: relative;
+            height: 500px; /* Increased height again */
+            margin: 30px auto;
+            width: 90%;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .pathway-node {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+            position: absolute;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 10px;
+            transition: all 0.5s ease;
+        }
+        
+        .node-glucose {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            top: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        .node-pyruvate {
+            background: linear-gradient(135deg, #2196f3, #21cbf3);
+            bottom: 20px;
+            animation: pulse 2s infinite 0.5s;
+        }
+        
+        .arrow-container {
+            position: absolute;
+            width: 30px;
+            height: 100%;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 100px 0;
+        }
+        
+        /* Global arrow positioning for Glycolysis & Gluconeogenesis Reciprocal Regulation section */
+        .section:nth-of-type(2) .arrow-glycolysis { /* Targeting the second section's glycolysis arrow */
+            left: calc(50% - 80px); 
+        }
+        .section:nth-of-type(2) .arrow-gluconeogenesis { /* Targeting the second section's gluconeogenesis arrow */
+            left: calc(50% + 50px);
+        }
+
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            position: relative;
+            animation: moveArrow 2s linear infinite;
+        }
+        
+        .arrow-down {
+            border-top: 25px solid var(--nutrient);
+        }
+        
+        .arrow-up {
+            border-bottom: 25px solid var(--energy);
+        }
+
+        .pathway-label {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-light);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            opacity: 0; /* Hidden by default */
+            animation: fadeIn 1s forwards; /* Fade in when visible */
+            pointer-events: none; /* Do not block clicks */
+        }
+
+        /* Positioning for labels in Glycolysis & Gluconeogenesis Reciprocal Regulation section */
+        .section:nth-of-type(2) .glycolysis-label {
+            left: calc(50% - 140px); /* Position left of glycolysis arrows */
+            top: calc(50% - 15px); /* Vertically centered */
+            color: var(--nutrient); /* Greenish color */
+            animation-delay: 0.5s; /* Delay for nice effect */
+        }
+        .section:nth-of-type(2) .gluconeogenesis-label {
+            right: calc(50% - 140px); /* Position right of gluconeogenesis arrows */
+            top: calc(50% - 15px); /* Vertically centered */
+            color: var(--energy); /* Orangish color */
+            animation-delay: 0.5s; /* Delay for nice effect */
+        }
+
+        /* Specific positioning for Energy State Regulation section */
+        #energy-pathway-container .arrow-glycolysis {
+            left: calc(50% - 15px); /* Centered horizontally */
+        }
+        
+        #energy-pathway-container .glycolysis-label {
+            left: calc(50% + 15px); /* Positioned to the right of the centered arrow */
+            top: calc(50% - 15px); /* Vertically centered */
+            color: var(--nutrient);
+            animation-delay: 0.5s;
+        }
+        
+        .state-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 30px 0;
+            position: relative; /* Added for positioning the description box */
+        }
+        
+        .state-figure {
+            width: 160px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            perspective: 1000px;
+        }
+        
+        .state-figure-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .state-figure:hover .state-figure-inner {
+            transform: rotateY(10deg) rotateX(5deg);
+        }
+        
+        .figure-img {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .state-figure:hover .figure-img {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .figure-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+        }
+        
+        .fed .figure-img {
+            background: linear-gradient(135deg, var(--fed), #3498db);
+        }
+        
+        .fasting .figure-img {
+            background: linear-gradient(135deg, var(--fasting), #9b59b6);
+        }
+        
+        /* Updated resting state color to green */
+        .resting .figure-img {
+            background: linear-gradient(135deg, #27ae60, #2ecc71); /* Green */
+        }
+        
+        .exercising .figure-img {
+            background: linear-gradient(135deg, var(--exercising), #e74c3c);
+        }
+        
+        .state-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 10px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        
+        .fed .state-title {
+            background: rgba(41, 128, 185, 0.3);
+        }
+        
+        .fasting .state-title {
+            background: rgba(142, 68, 173, 0.3);
+        }
+        
+        /* Updated resting state title color to green */
+        .resting .state-title {
+            background: rgba(39, 174, 96, 0.3); /* Green */
+        }
+        
+        .exercising .state-title {
+            background: rgba(192, 57, 43, 0.3);
+        }
+
+        /* New style for when a state button is selected/clicked (grey) */
+        .state-figure.selected-state .figure-img {
+            background: linear-gradient(135deg, var(--resting), #95a5a6); /* Original grey */
+        }
+        .state-figure.selected-state .state-title {
+            background: rgba(127, 140, 141, 0.3); /* Original grey rgba */
+        }
+
+        /* Styles for the new description box */
+        .description-box {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            min-width: 200px;
+            max-width: 250px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .description-box.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        
+        .slider-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .slider-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .slider-title i {
+            font-size: 1.8rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 25px;
+            margin: 20px 0;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), var(--fed));
+            border-radius: 15px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.8);
+            border: 3px solid var(--fed);
+        }
+        
+        .glucagon-slider::-webkit-slider-thumb {
+            box-shadow: 0 0 20px rgba(155, 89, 182, 0.8);
+            border: 3px solid var(--fasting);
+        }
+        
+        .signaling-pathway {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .signaling-title {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: var(--secondary);
+        }
+        
+        .signaling-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .signaling-steps::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            height: calc(100% - 60px);
+            width: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+            z-index: 1;
+        }
+        
+        .signaling-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            z-index: 2;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .signaling-step.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .level-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .level-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .level-box.active {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .level-label {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .level-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--secondary);
+            transition: all 0.5s ease;
+        }
+        
+        .level-box.atp .level-value {
+            color: #2ecc71;
+        }
+        
+        .level-box.adp .level-value {
+            color: #f1c40f;
+        }
+        
+        .level-box.amp .level-value {
+            color: #e74c3c;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 25px;
+            padding: 35px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: scaleIn 0.5s ease;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--accent);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+            transform: rotate(90deg);
+        }
+        
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-title i {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .regulator-info {
+            padding: 20px 0;
+        }
+        
+        .role {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .activator {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        
+        .inhibitor {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        .regulator-steps {
+            margin: 20px 0;
+            padding-left: 25px;
+        }
+        
+        .regulator-steps li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 1rem;
+            opacity: 0.7;
+            width: 100%; /* Ensure footer spans full width */
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-logo {
+            width: 56px; /* w-14 in tailwind is 3.5rem = 56px */
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            opacity: 0.8;
+        }
+        
+        /* Animations from deep seeek2.html */
+        @keyframes moveArrow {
+            0% { transform: translateY(-100px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(350px); opacity: 0; }
+        }
+        
+        @keyframes moveArrowUp {
+            0% { transform: translateY(350px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0.3); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .fast {
+            animation-duration: 0.7s;
+        }
+        
+        .medium {
+            animation-duration: 1.5s;
+        }
+        
+        .slow {
+            animation-duration: 3s;
+        }
+        
+        /* Styles from deepseek3.html */
+        .animation-container {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            background: #0d1520;
+            border-bottom: 2px solid #2a3f5f;
+            border-radius: 15px;
+        }
+        
+        .cell {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            border: 2px solid #4a7b9d;
+            border-radius: 15px;
+            background: rgba(42, 63, 95, 0.3);
+            overflow: hidden;
+        }
+        
+        .membrane {
+            position: absolute;
+            top: 20%;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #3cbc8d, #2d9b78);
+            z-index: 10;
+        }
+        
+        .nucleus {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #a4c2f4;
+            border-radius: 50%;
+            background: rgba(164, 194, 244, 0.1);
+            z-index: 5;
+        }
+        
+        /* Molecule styles */
+        .molecule {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 20;
+            transition: transform 0.5s ease, opacity 0.5s ease; /* Added opacity transition */
+        }
+        
+        .glucose-mol { /* Renamed to avoid conflict with .node-glucose */
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            color: white;
+        }
+        
+        .glut2 {
+            width: 60px;
+            height: 25px;
+            background: #2ecc71;
+            border-radius: 5px;
+            color: white;
+        }
+        
+        .glucokinase {
+            width: 45px;
+            height: 45px;
+            background: #f1c40f;
+            border-radius: 50%;
+            color: #2c3e50;
+        }
+        
+        .g6p {
+            width: 40px;
+            height: 40px;
+            background: #9b59b6;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .gkpr {
+            width: 45px;
+            height: 45px;
+            background: #e74c3c;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            color: white;
+            font-size: 12px;
+        }
+        
+        .atp-mol { /* Renamed to avoid conflict with ATP modal */
+            width: 30px;
+            height: 30px;
+            background: #e67e22;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .adp-mol { /* Renamed to avoid conflict with ADP modal */
+            width: 30px;
+            height: 30px;
+            background: #95a5a6;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .pi {
+            width: 20px;
+            height: 20px;
+            background: #95a5a6;
+            border-radius: 50%;
+            color: white;
+            font-size: 10px;
+        }
+        
+        .scene-indicator {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 100;
+            border: 1px solid #4ecdc4;
+        }
+        
+        .controls {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: rgba(30, 40, 60, 0.8);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #2a3f5f;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #4ecdc4, #66ffcc);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .time-indicator {
+            position: absolute;
+            top: -25px;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: none;
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #2c3e50, #1a2a6c);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #3a4c6e, #2a3a7c);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-play {
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+        }
+        
+        .scenes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .scene-btn {
+            background: rgba(78, 205, 196, 0.2);
+            border: 1px solid #4ecdc4;
+            color: #f0f0f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .scene-btn:hover {
+            background: rgba(78, 205, 196, 0.4);
+        }
+        
+        .scene-btn.active {
+            background: #4ecdc4;
+            color: #1a2a6c;
+            font-weight: bold;
+        }
+        
+        .info-panel {
+            background: rgba(30, 40, 60, 0.8);
+            padding: 20px;
+            border-top: 2px solid #2a3f5f;
+        }
+        
+        .info-title {
+            color: #4ecdc4;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .info-content {
+            line-height: 1.6;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(30, 40, 60, 0.5);
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .glucose-legend { background: #3498db; }
+        .glut2-legend { background: #2ecc71; }
+        .glucokinase-legend { background: #f1c40f; }
+        .g6p-legend { background: #9b59b6; }
+        .gkpr-legend { background: #e74c3c; }
+        .atp-legend { background: #e67e22; }
+        
+        .floating-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 200;
+        }
+        
+        /* Summary Dialog Styles */
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .dialog-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .dialog {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            width: 90%;
+            max-width: 700px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.5s ease 0.2s;
+        }
+        
+        .dialog-overlay.active .dialog {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .dialog-header {
+            background: linear-gradient(to right, #2c3e50, #1a2a6c);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #4ecdc4;
+        }
+        
+        .dialog-header h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, #4ecdc4, #66ffcc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .dialog-content {
+            padding: 30px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .dialog-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(78, 205, 196, 0.3);
+        }
+        
+        .dialog-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .dialog-section h3 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .dialog-section p {
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+        
+        .dialog-section ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .dialog-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            position: relative;
+            padding-left: 25px;
+            list-style: none; 
+        }
+        
+        .dialog-section li:before {
+            content: "•";
+            color: #4ecdc4;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -3px;
+        }
+        
+        .significance {
+            background: rgba(78, 205, 196, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4ecdc4;
+            margin-top: 15px;
+        }
+        
+        /* New style to reduce font size and change color for 'Significance' headings */
+        .significance h3 {
+            font-size: 1.2rem; /* Reduced font size */
+            color: var(--energy); /* Changed color to yellow/orange */
+        }
+
+        .dialog-footer {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            background: rgba(30, 40, 60, 0.8);
+        }
+        
+        .dialog-btn {
+            background: linear-gradient(to right, #4ecdc4, #66ffcc);
+            border: none;
+            color: #1a2a6c;
+            padding: 12px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dialog-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Animation classes (from deepseek3.html) */
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .highlight {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+        }
+        
+        .binding {
+            transition: all 0.7s ease;
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none; /* Hide for interaction */
+        }
+        
+        .visible {
+            opacity: 1;
+        }
+
+        /* Responsive adjustments from both files */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .pathway-container {
+                height: 450px; /* Adjusted height for smaller screens */
+                width: 95%;
+            }
+            
+            .pathway-node {
+                width: 75px;
+                height: 75px;
+                font-size: 0.95rem;
+            }
+            
+            .state-container {
+                flex-direction: column; /* Stack buttons vertically */
+                align-items: center;
+                gap: 15px;
+            }
+
+            .state-figure {
+                width: 140px;
+            }
+            
+            .figure-img {
+                width: 100px;
+                height: 100px;
+                font-size: 2.8rem;
+            }
+            
+            .level-box {
+                min-width: 120px;
+                padding: 15px;
+            }
+            
+            .level-value {
+                font-size: 1.8rem;
+            }
+
+            .animation-container {
+                height: 400px;
+            }
+
+            .description-box {
+                position: static; /* Adjust positioning for small screens */
+                margin-top: 15px;
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .section {
+                padding: 20px;
+                 margin: 0 10px 10px;
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
+            
+            th {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+            
+            .sensor-btn {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            
+            .state-container {
+                gap: 15px;
+            }
+            
+            .state-figure {
+                width: 130px;
+            }
+            
+            .figure-img {
+                width: 90px;
+                height: 90px;
+                font-size: 2.5rem;
+            }
+            
+            .state-title {
+                font-size: 1.2rem;
+            }
+
+            .animation-container {
+                height: 320px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* New styles for animation labels */
+        .animation-label {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+
+        .label-membrane {
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .label-cytosol {
+            top: 40%;
+            left: 10%;
+        }
+
+        .label-nucleus {
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* New styles for section notes */
+        .section-notes {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border-left: 4px solid var(--secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        .section-notes h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        .section-notes ul {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+        .section-notes li {
+            margin-bottom: 8px;
+        }
+
+        /* New styles for navigation */
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 25px;
+            background: var(--glass);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .nav-btn {
+            background: linear-gradient(to right, #2c3e50, #1a2a6c);
+            border: 1px solid var(--secondary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+
+        .nav-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            border-color: #7f8c8d;
+            opacity: 0.6;
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header from deep seeek2.html -->
+        <header>
+            <h1><i class="fas fa-atom"></i> Glycolysis Regulation</h1>
+            <p class="subtitle">An interactive guide to metabolic control</p>
+        </header>
+        
+        <!-- Section 1 for Regulatory Sensors -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-table"></i> Regulatory Sensors</h2>
+            <div class="note-box">
+                <i class="fas fa-lightbulb"></i>
+                <div>Click on each molecule to learn about its regulatory role in glycolysis. Explore how energy and nutrient sensors control metabolic flux.</div>
+            </div>
+            
+            <table>
+                <tr>
+                    <th>
+                        Energy Sensor
+                        <p class="sensor-description">Monitors whether the organism is in resting or exercising condition.</p>
+                    </th>
+                    <th>
+                        Nutrient Sensor
+                        <p class="sensor-description">Monitors whether the organism is in fed state or fasting state.</p>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="sensor-btn energy" data-molecule="ATP">
+                            <i class="fas fa-bolt"></i> ATP
+                        </button>
+                        <button class="sensor-btn energy" data-molecule="ADP">
+                            <i class="fas fa-bolt"></i> ADP
+                        </button>
+                        <button class="sensor-btn energy" data-molecule="AMP">
+                            <i class="fas fa-bolt"></i> AMP
+                        </button>
+                    </td>
+                    <td>
+                        <button class="sensor-btn nutrient" data-molecule="F26BP">
+                            <i class="fas fa-apple-alt"></i> Fructose 2,6-Bisphosphate
+                        </button>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="section-notes">
+                <h4>How Cells Sense Their Status</h4>
+                <p>Metabolic pathways like glycolysis don't run at a constant speed. They are finely tuned based on the cell's needs. This regulation is achieved through 'sensor' molecules that signal the cell's energy and nutrient levels.</p>
+                <ul>
+                    <li><strong>Energy Sensors (ATP, ADP, AMP):</strong> The ratio of ATP to AMP/ADP is the primary indicator of the cell's "energy charge". High ATP signals energy abundance, inhibiting glycolysis. High AMP/ADP signals energy demand, activating glycolysis. This is a classic example of allosteric feedback regulation.</li>
+                    <li><strong>Nutrient Sensor (Fructose 2,6-Bisphosphate):</strong> This molecule is an extremely potent activator of glycolysis. Its levels are not part of the main pathway but are controlled by hormones (insulin/glucagon), effectively telling the cell whether it's in a 'fed' or 'fasting' state.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 2 for Glycolysis Pathway -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-project-diagram"></i> Glycolysis & Gluconeogenesis Reciprocal Regulation</h2>
+            <div class="pathway-container">
+                <div class="pathway-node node-glucose">
+                    Glucose
+                </div>
+                
+                <div class="arrow-container arrow-glycolysis">
+                    <div class="arrow arrow-down medium"></div>
+                    <div class="arrow arrow-down medium"></div>
+                    <div class="arrow arrow-down medium"></div>
+                </div>
+                
+                <div class="arrow-container arrow-gluconeogenesis">
+                    <div class="arrow arrow-up slow"></div>
+                    <div class="arrow arrow-up slow"></div>
+                    <div class="arrow arrow-up slow"></div>
+                </div>
+                
+                <div class="pathway-label glycolysis-label">Glycolysis</div>
+                <div class="pathway-label gluconeogenesis-label">Gluconeogenesis</div>
+                
+                <div class="pathway-node node-pyruvate">
+                    Pyruvate
+                </div>
+            </div>
+            
+            <div class="state-container">
+                <div class="state-figure fed" id="fed-state">
+                    <div class="state-figure-inner">
+                        <div class="figure-img">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3 class="state-title">Fed State</h3>
+                    </div>
+                </div>
+                
+                <div class="state-figure fasting" id="starving-state">
+                    <div class="state-figure-inner">
+                        <div class="figure-img">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <h3 class="state-title">Fasting State</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slider-container" id="insulin-slider">
+                <h3 class="slider-title"><i class="fas fa-seedling"></i> Insulin Level</h3>
+                <input type="range" min="0" max="100" value="0" class="slider" id="insulin-level">
+            </div>
+            
+            <div class="slider-container" id="glucagon-slider">
+                <h3 class="slider-title"><i class="fas fa-wind"></i> Glucagon Level</h3>
+                <input type="range" min="0" max="100" value="0" class="slider glucagon-slider" id="glucagon-level">
+            </div>
+            
+            <div class="signaling-pathway" id="insulin-signaling">
+                <h3 class="signaling-title">Insulin Signaling Pathway</h3>
+                <div class="signaling-steps">
+                    <div class="signaling-step">
+                        <div class="step-icon">1</div>
+                        <div>Insulin binds to RTK receptor → Autophosphorylation</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">2</div>
+                        <div>Activation of RTK pathway</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">3</div>
+                        <div>Activation of Phosphatase and activation of PFK-2 enzyme</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">4</div>
+                        <div>Increased Fructose 2,6-Bisphosphate production</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">5</div>
+                        <div>Activation of PFK-1 → Glycolysis ↑ / Gluconeogenesis ↓</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="signaling-pathway" id="glucagon-signaling">
+                <h3 class="signaling-title">Glucagon Signaling Pathway</h3>
+                <div class="signaling-steps">
+                    <div class="signaling-step">
+                        <div class="step-icon">1</div>
+                        <div>Glucagon binds to GPCR</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">2</div>
+                        <div>Activation of adenylate cyclase → Increased cAMP</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">3</div>
+                        <div>Activation of PKA</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">4</div>
+                        <div>Phosphorylation and activation of FBPase-2 enzyme</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">5</div>
+                        <div>Decreased Fructose 2,6-Bisphosphate</div>
+                    </div>
+                    <div class="signaling-step">
+                        <div class="step-icon">6</div>
+                        <div>Inhibition of PFK-1 → Glycolysis ↓ / Gluconeogenesis ↑</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-notes">
+                <h4>The Metabolic Tug-of-War: Glycolysis vs. Gluconeogenesis</h4>
+                <p>Glycolysis (breaking down glucose) and gluconeogenesis (making new glucose) are opposing pathways. To prevent them from running simultaneously in a wasteful 'futile cycle', they are reciprocally regulated, primarily by hormones.</p>
+                <ul>
+                    <li><strong>Fed State (High Insulin):</strong> After a meal, high blood sugar triggers insulin. Insulin signaling activates PFK-2, producing more Fructose 2,6-Bisphosphate (F2,6BP). F2,6BP strongly activates PFK-1 (glycolysis) and inhibits its counterpart in gluconeogenesis, directing glucose towards energy production and storage.</li>
+                    <li><strong>Fasting State (High Glucagon):</strong> When blood sugar is low, glucagon is released. This activates FBPase-2, which breaks down F2,6BP. With low F2,6BP, glycolysis is inhibited and gluconeogenesis is favored, allowing the liver to produce and release glucose to maintain blood sugar levels.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 3 for Energy State Regulation -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-running"></i> Energy State Regulation</h2>
+            
+            <div class="pathway-container" id="energy-pathway-container"> <!-- Added ID here -->
+                <div class="pathway-node node-glucose">
+                    Glucose
+                </div>
+                
+                <div class="arrow-container arrow-glycolysis">
+                    <div class="arrow arrow-down medium"></div>
+                    <div class="arrow arrow-down medium"></div>
+                    <div class="arrow arrow-down medium"></div>
+                </div>
+                
+                <div class="pathway-label glycolysis-label">Glycolysis</div>
+                
+                <div class="pathway-node node-pyruvate">
+                    Pyruvate
+                </div>
+            </div>
+            
+            <div class="state-container">
+                <div class="state-figure resting" id="resting-state">
+                    <div class="state-figure-inner">
+                        <div class="figure-img">
+                            <i class="fas fa-couch"></i>
+                        </div>
+                        <h3 class="state-title">Resting State</h3>
+                    </div>
+                </div>
+                
+                <div class="state-figure exercising" id="exercising-state">
+                    <div class="state-figure-inner">
+                        <div class="figure-img">
+                            <i class="fas fa-running"></i>
+                        </div>
+                        <h3 class="state-title">Exercising State</h3>
+                    </div>
+                </div>
+
+                <div class="description-box" id="energy-state-description"></div>
+
+            </div>
+            
+            <div class="level-display">
+                <div class="level-box atp">
+                    <div class="level-label"><i class="fas fa-battery-full"></i> ATP</div>
+                    <div class="level-value" id="atp-level">High</div>
+                </div>
+                <div class="level-box adp">
+                    <div class="level-label"><i class="fas fa-battery-half"></i> ADP</div>
+                    <div class="level-value" id="adp-level">Low</div>
+                </div>
+                <div class="level-box amp">
+                    <div class="level-label"><i class="fas fa-battery-quarter"></i> AMP</div>
+                    <div class="level-value" id="amp-level">Low</div>
+                </div>
+            </div>
+
+            <div class="section-notes">
+                <h4>Meeting Demand: Energy Regulation in Muscle</h4>
+                <p>A cell's energy needs can change dramatically, for example, when a muscle goes from rest to intense exercise. The regulation of glycolysis is crucial for meeting this fluctuating demand for ATP.</p>
+                <ul>
+                    <li><strong>Resting State:</strong> At rest, ATP levels are high. ATP itself acts as an allosteric inhibitor of key glycolytic enzymes like PFK-1 and Pyruvate Kinase. This slows down the pathway, conserving glucose fuel when energy demand is low.</li>
+                    <li><strong>Exercising State:</strong> During exercise, ATP is rapidly consumed, leading to a sharp rise in ADP and especially AMP levels. AMP is a potent activator of PFK-1, overriding the inhibition by ATP. This massively increases the rate of glycolysis to rapidly generate the ATP needed for muscle contraction.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 4 Glucokinase Regulation -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-microscope"></i> Glucose Metabolism Control in Liver and Pancreatic Cells</h2>
+            
+            <div class="animation-container">
+                <div class="scene-indicator">Scene 1: Glucose Entry</div>
+                
+                <div class="cell">
+                    <div class="membrane"></div>
+                    <div class="nucleus"></div>
+                    
+                    <div class="animation-label label-membrane">Plasma Membrane</div>
+                    <div class="animation-label label-cytosol">Cytosol</div>
+                    <div class="animation-label label-nucleus">Nucleus</div>
+
+                    <!-- Elements will be dynamically added here by JS -->
+                </div>
+                
+                <div class="floating-label" id="molecule-label"></div>
+            </div>
+            
+            <div class="controls">
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                    <div class="time-indicator" id="time-indicator">0:00</div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="btn btn-play" id="play-btn">
+                        <i class="fas fa-play"></i> Play
+                    </button>
+                    <button class="btn" id="pause-btn">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn" id="reset-btn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                
+                <div class="scenes">
+                    <button class="scene-btn active" data-scene="0">Glucose Entry</button>
+                    <button class="scene-btn" data-scene="1">Low Glucose</button>
+                    <button class="scene-btn" data-scene="2">High Glucose</button>
+                    <button class="scene-btn" data-scene="3">Phosphorylation</button>
+                    <button class="scene-btn" data-scene="4">Feedback</button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-title" id="info-title">Glucose Entry via GLUT2 Transporters</div>
+                <div class="info-content" id="info-content">Blood glucose enters the cell through GLUT2 transporters in the cell membrane. This is the first step of glycolysis regulation.</div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color glucose-legend"></div>
+                    <span>Glucose</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color glut2-legend"></div>
+                    <span>GLUT2 Transporter</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color glucokinase-legend"></div>
+                    <span>Glucokinase</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color g6p-legend"></div>
+                    <span>Glucose-6-Phosphate</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color gkpr-legend"></div>
+                    <span>GKRP (Glucokinase Regulatory Protein)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color atp-legend"></div>
+                    <span>ATP</span>
+                </div>
+            </div>
+
+            <div class="section-notes">
+                <h4>The Glucose Sensor: Glucokinase in Liver & Pancreas</h4>
+                <p>Glucokinase is a specialized enzyme (an isozyme of hexokinase) that plays a critical role in monitoring blood glucose levels. Unlike other hexokinases, it has a low affinity for glucose (meaning it only works efficiently when glucose is abundant) and is not inhibited by its product, G6P.</p>
+                <ul>
+                    <li><strong>Mechanism:</strong> In low glucose conditions, Glucokinase is held inactive in the nucleus by a regulatory protein (GKRP). When blood glucose rises after a meal, glucose enters the cell and causes GKRP to release Glucokinase into the cytoplasm.</li>
+                    <li><strong>Function:</strong> The now-active Glucokinase can phosphorylate large amounts of glucose to Glucose-6-Phosphate (G6P), trapping it in the cell. This allows the liver to effectively clear glucose from the blood for storage, and in the pancreas, this process is the signal that triggers the release of insulin.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Section 5 for Other Key Regulatory Elements -->
+        <div class="section">
+            <h2 class="section-title"><i class="fas fa-cogs"></i> Other Key Regulatory Elements</h2>
+            <div class="dialog-content" style="max-height: none; overflow-y: visible; padding: 0;">
+                <div class="dialog-section">
+                    <h3>1. Citrate as an Allosteric Inhibitor</h3>
+                    <p>Citrate inhibits PFK-1 allosterically. Citrate is a TCA (Krebs) cycle intermediate formed from acetyl-CoA and oxaloacetate.</p>
+                    <p>High cytosolic citrate indicates:</p>
+                    <ul>
+                        <li>Abundant energy (high ATP)</li>
+                        <li>Sufficient biosynthetic precursors</li>
+                        <li>Active TCA cycle and low need for glycolysis</li>
+                    </ul>
+                    <p>Citrate acts as a “metabolic brake” on glycolysis.</p>
+                </div>
+                
+                <div class="dialog-section">
+                    <h3>2. pH Inhibition of Glycolysis</h3>
+                    <ul>
+                        <li>Glycolysis produces lactic acid (via lactate) under anaerobic conditions.</li>
+                        <li>Accumulation of H⁺ ions can lower intracellular pH (acidify the cytosol).</li>
+                        <li>Cells have evolved mechanisms to inhibit glycolysis under acidic conditions to avoid cytotoxicity.</li>
+                    </ul>
+                    <p>Acidic pH reduces PFK-1 activity, leading to a slowdown of glycolysis.</p>
+                    <div class="significance">
+                        <h3>Significance</h3>
+                        <p>Protective mechanism: Inhibiting glycolysis at low pH prevents:</p>
+                        <ul>
+                            <li>Further lactic acid accumulation,</li>
+                            <li>Energy wastage, and</li>
+                            <li>Intracellular acidosis.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="dialog-section">
+                    <h3>3. Alanine as an Inhibitor</h3>
+                    <ul>
+                        <li>Alanine is formed via transamination of pyruvate (by alanine aminotransferase).</li>
+                        <li>High alanine signals sufficient pyruvate and carbon skeletons for biosynthesis.</li>
+                    </ul>
+                    <p>Alanine allosterically inhibits pyruvate kinase.</p>
+                </div>
+                
+                <div class="dialog-section">
+                    <h3>4. Acetyl-CoA as an Inhibitor</h3>
+                    <ul>
+                        <li>Acetyl-CoA is a product of pyruvate decarboxylation (via pyruvate dehydrogenase).</li>
+                        <li>Also comes from β-oxidation of fatty acids.</li>
+                    </ul>
+                    <p>Indirect inhibition of glycolysis via activation of pyruvate carboxylase (→ oxaloacetate for gluconeogenesis) and inhibition of pyruvate kinase activity, signaling that TCA cycle intermediates are sufficient.</p>
+                </div>
+            </div>
+             <div class="section-notes">
+                <h4>Integrated Control: Linking Glycolysis to Other Pathways</h4>
+                <p>Glycolysis doesn't operate in isolation. Its rate is also controlled by intermediates from other connected metabolic pathways, ensuring the cell's overall metabolic activity is coordinated.</p>
+                <ul>
+                    <li><strong>Citrate:</strong> A key intermediate of the TCA cycle. High levels of citrate in the cytoplasm signal that the TCA cycle is well-supplied with fuel. Citrate inhibits PFK-1, slowing glycolysis when downstream pathways are saturated.</li>
+                    <li><strong>Alanine & Acetyl-CoA:</strong> High levels of these molecules indicate that breakdown products of both carbohydrates and fats are plentiful. They inhibit Pyruvate Kinase to prevent the overproduction of intermediates.</li>
+                    <li><strong>pH (H+ ions):</strong> Intense anaerobic glycolysis can lead to lactic acid buildup, lowering cellular pH. To prevent damage from acidosis, a low pH directly inhibits PFK-1, providing a crucial protective feedback loop.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-controls">
+            <button class="nav-btn" id="prev-btn"><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="nav-btn" id="next-btn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+             <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <p>© 2025 BETA Biosciences. All rights reserved.<br>
+            Email: betabiosciences@gmail.com<br>
+            Contact: +91 97 47 53 35 97</p>
+        </div>
+    </div>
+    
+    <!-- Modals for regulatory molecules from deep seeek2.html -->
+    <div class="modal" id="atp-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 class="modal-title"><i class="fas fa-bolt"></i> ATP - Energy Sensor</h3>
+            <div class="regulator-info">
+                <div class="role inhibitor">INHIBITOR</div>
+                <p>ATP serves as a key energy sensor in glycolysis regulation. High ATP levels indicate sufficient cellular energy, leading to feedback inhibition of glycolytic enzymes.</p>
+                
+                <p><strong>Regulated Steps:</strong></p>
+                <ul class="regulator-steps">
+                    <li><strong>Hexokinase:</strong> ATP inhibits hexokinase to prevent glucose phosphorylation when energy is abundant</li>
+                    <li><strong>Phosphofructokinase-1 (PFK-1):</strong> ATP acts as an allosteric inhibitor, reducing enzyme affinity for fructose-6-phosphate</li>
+                    <li><strong>Pyruvate kinase:</strong> ATP inhibits the final step of glycolysis to regulate pyruvate production</li>
+                </ul>
+                <p>This feedback mechanism prevents unnecessary glycolysis when cellular energy status is high.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="adp-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 class="modal-title"><i class="fas fa-bolt"></i> ADP - Energy Sensor</h3>
+            <div class="regulator-info">
+                <div class="role activator">ACTIVATOR</div>
+                <p>ADP concentration rises when ATP is consumed, signaling energy depletion. Increased ADP levels activate key glycolytic enzymes to restore energy balance.</p>
+                
+                <p><strong>Regulated Steps:</strong></p>
+                <ul class="regulator-steps">
+                    <li><strong>Phosphofructokinase-1 (PFK-1):</strong> ADP acts as an allosteric activator, increasing enzyme affinity for fructose-6-phosphate</li>
+                    <li><strong>Pyruvate kinase:</strong> ADP activates the enzyme to enhance pyruvate production</li>
+                </ul>
+                <p>ADP-mediated activation accelerates glycolysis to replenish cellular ATP stores during energy demand.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="amp-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 class="modal-title"><i class="fas fa-bolt"></i> AMP - Energy Sensor</h3>
+            <div class="regulator-info">
+                <div class="role activator">ACTIVATOR</div>
+                <p>AMP is the most sensitive indicator of cellular energy status. Small changes in ATP levels result in large changes in AMP concentration due to adenylate kinase equilibrium.</p>
+                
+                <p><strong>Regulated Steps:</strong></p>
+                <ul class="regulator-steps">
+                    <li><strong>Phosphofructokinase-1 (PFK-1):</strong> AMP is a potent allosteric activator that overcomes ATP inhibition</li>
+                    <li><strong>Glycogen phosphorylase:</strong> AMP activates glycogen breakdown to provide more glucose for glycolysis</li>
+                </ul>
+                <p>AMP activates AMP-activated protein kinase (AMPK), which stimulates catabolic pathways including glycolysis.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="f26bp-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3 class="modal-title"><i class="fas fa-apple-alt"></i> Fructose 2,6-Bisphosphate - Nutrient Sensor</h3>
+            <div class="regulator-info">
+                <div class="role activator">ACTIVATOR</div>
+                <p>Fructose 2,6-bisphosphate (F2,6BP) is a powerful regulator that integrates hormonal and nutritional signals to control glycolysis and gluconeogenesis.</p>
+                
+                <p><strong>Regulated Steps:</strong></p>
+                <ul class="regulator-steps">
+                    <li><strong>Phosphofructokinase-1 (PFK-1):</strong> F2,6BP is the most potent activator, increasing enzyme affinity for fructose-6-phosphate and decreasing inhibition by ATP</li>
+                    <li><strong>Fructose-1,6-bisphosphatase:</strong> F2,6BP inhibits this gluconeogenic enzyme</li>
+                </ul>
+                <p>F2,6BP concentration is regulated by the bifunctional enzyme PFK-2/FBPase-2, whose activity is controlled by insulin and glucagon signaling.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Dialog (from deepseek3.html) -->
+    <div class="dialog-overlay" id="summary-dialog">
+        <div class="dialog">
+            <div class="dialog-header">
+                <h2>Glucokinase Regulation Summary</h2>
+            </div>
+            <div class="dialog-content">
+                <div class="dialog-section">
+                    <h3>Overview of Glucokinase Regulation</h3>
+                    <p>Glucokinase (hexokinase IV) is a key regulatory enzyme in glycolysis with a unique mechanism that allows the liver and pancreas to respond to blood glucose levels. Unlike other hexokinases, glucokinase is not inhibited by its product glucose-6-phosphate, enabling it to continue phosphorylating glucose when concentrations are high.</p>
+                </div>
+                
+                <div class="dialog-section">
+                    <h3>Key Regulatory Events</h3>
+                    <ul>
+                        <li><strong>Glucose Entry</strong> - Glucose enters hepatocytes and pancreatic β-cells via GLUT2 transporters</li>
+                        <li><strong>Low Glucose State</strong> - GKRP binds glucokinase, sequestering it in the nucleus</li>
+                        <li><strong>High Glucose State</strong> - Elevated glucose binds GKRP, triggering glucokinase release into the cytoplasm</li>
+                        <li><strong>Phosphorylation</strong> - Glucokinase phosphorylates glucose to G6P using ATP</li>
+                        <li><strong>Feedback Regulation</strong> - G6P activates GKRP to rebind glucokinase</li>
+                    </ul>
+                </div>
+                
+                <div class="dialog-section">
+                    <h3>Significance in Metabolic Regulation</h3>
+                    <div class="significance">
+                        <h3>Significance</h3>
+                        <p><strong>Glucose Sensing:</strong> Glucokinase serves as a glucose sensor in pancreatic β-cells, triggering insulin release when glucose levels rise.</p>
+                        <p><strong>Hepatic Glucose Uptake:</strong> In the liver, this mechanism ensures glucose is only phosphorylated and stored when blood glucose is elevated.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-btn" id="close-dialog">Continue Learning</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // SCRIPT FROM deep seeek2.html - START
+        // Modal functionality
+        const modals = {
+            'ATP': document.getElementById('atp-modal'),
+            'ADP': document.getElementById('adp-modal'),
+            'AMP': document.getElementById('amp-modal'),
+            'F26BP': document.getElementById('f26bp-modal')
+        };
+        
+        const closeButtons = document.querySelectorAll('.close-btn');
+        const sensorButtons = document.querySelectorAll('.sensor-btn');
+        
+        // Open modals when sensor buttons are clicked
+        sensorButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const molecule = button.getAttribute('data-molecule');
+                if (modals[molecule]) {
+                    modals[molecule].style.display = 'flex';
+                }
+            });
+        });
+        
+        // Close modals when close button is clicked
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.modal').style.display = 'none';
+            });
+        });
+        
+        // Close modal when clicking outside of it
+        window.addEventListener('click', (e) => {
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // State figure functionality
+        const fedState = document.getElementById('fed-state');
+        const starvingState = document.getElementById('starving-state');
+        const restingState = document.getElementById('resting-state');
+        const exercisingState = document.getElementById('exercising-state');
+        
+        const insulinSlider = document.getElementById('insulin-slider');
+        const glucagonSlider = document.getElementById('glucagon-slider');
+        const insulinLevel = document.getElementById('insulin-level');
+        const glucagonLevel = document.getElementById('glucagon-level');
+        
+        const insulinSignaling = document.getElementById('insulin-signaling');
+        const glucagonSignaling = document.getElementById('glucagon-signaling');
+        
+        const glycolysisArrows = document.querySelectorAll('.arrow-glycolysis .arrow');
+        const gluconeogenesisArrows = document.querySelectorAll('.arrow-gluconeogenesis .arrow');
+        
+        // Energy levels display
+        const atpLevel = document.getElementById('atp-level');
+        const adpLevel = document.getElementById('adp-level');
+        const ampLevel = document.getElementById('amp-level');
+        
+        // Pathway containers (used in both scripts, defining here for clarity)
+        const pathwayContainers = document.querySelectorAll('.pathway-container');
+
+        // Description box for energy states
+        const energyStateDescriptionBox = document.getElementById('energy-state-description');
+        let currentActiveEnergyStateButton = null; // Track which button is active
+        
+        // Reset function for deep seeek2.html specific elements
+        function resetGlycolysisStates() {
+            // Hide sliders and signaling
+            insulinSlider.style.display = 'none';
+            glucagonSlider.style.display = 'none';
+            insulinSignaling.style.display = 'none';
+            glucagonSignaling.style.display = 'none';
+            
+            // Reset pathway animations
+            updatePathwaySpeed('glycolysis', 'medium');
+            updatePathwaySpeed('gluconeogenesis', 'slow');
+            
+            // Reset signaling steps
+            document.querySelectorAll('.signaling-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Reset energy levels
+            atpLevel.textContent = 'High';
+            adpLevel.textContent = 'Low';
+            ampLevel.textContent = 'Low';
+            
+            // Reset level boxes
+            document.querySelectorAll('.level-box').forEach(box => {
+                box.classList.remove('active');
+            });
+
+            // Remove selected-state from all state figures
+            document.querySelectorAll('.state-figure').forEach(fig => fig.classList.remove('selected-state'));
+
+            // Hide the energy state description box
+            hideEnergyStateDescription();
+        }
+
+        // Function to show and position the description box
+        function showEnergyStateDescription(button, message) {
+            // Get the bounding rectangle of the clicked button
+            const rect = button.getBoundingClientRect();
+            // Get the bounding rectangle of the parent container to calculate relative positions
+            const containerRect = button.closest('.state-container').getBoundingClientRect();
+
+            energyStateDescriptionBox.textContent = message;
+
+            // Reset positioning properties
+            energyStateDescriptionBox.style.left = '';
+            energyStateDescriptionBox.style.right = '';
+
+            if (button.id === 'resting-state') {
+                energyStateDescriptionBox.style.right = `${containerRect.width - (rect.left - containerRect.left) + 20}px`; 
+                energyStateDescriptionBox.style.transform = 'translateX(20px)';
+            } else if (button.id === 'exercising-state') {
+                energyStateDescriptionBox.style.left = `${(rect.right - containerRect.left) + 20}px`;
+                energyStateDescriptionBox.style.transform = 'translateX(-20px)';
+            }
+
+            // Vertically center the box relative to the button
+            energyStateDescriptionBox.style.top = `${(rect.top - containerRect.top) + rect.height / 2 - energyStateDescriptionBox.offsetHeight / 2}px`;
+
+            energyStateDescriptionBox.classList.add('visible');
+            setTimeout(() => {
+                energyStateDescriptionBox.style.transform = 'translateX(0)';
+            }, 10);
+        }
+
+        function hideEnergyStateDescription() {
+            energyStateDescriptionBox.classList.remove('visible');
+            energyStateDescriptionBox.style.transform = 'translateY(0)';
+        }
+        
+        // Initialize deep seeek2.html specific animations
+        resetGlycolysisStates();
+        
+        // Fed state functionality
+        fedState.addEventListener('click', function() {
+            resetGlycolysisStates();
+            this.classList.add('selected-state');
+            currentActiveEnergyStateButton = null;
+            
+            insulinSlider.style.display = 'block';
+            insulinLevel.value = 0;
+            
+            let value = 0;
+            const interval = setInterval(() => {
+                if (value >= 100) {
+                    clearInterval(interval);
+                    insulinSignaling.style.display = 'block';
+                    const steps = insulinSignaling.querySelectorAll('.signaling-step');
+                    steps.forEach((step, index) => {
+                        setTimeout(() => {
+                            step.classList.add('active');
+                        }, index * 800);
+                    });
+                    
+                    setTimeout(() => {
+                        updatePathwaySpeed('glycolysis', 'fast');
+                        updatePathwaySpeed('gluconeogenesis', 'slow');
+                    }, 4000);
+                } else {
+                    value += 5;
+                    insulinLevel.value = value;
+                }
+            }, 100);
+        });
+        
+        // Starving state functionality
+        starvingState.addEventListener('click', function() {
+            resetGlycolysisStates();
+            this.classList.add('selected-state');
+            currentActiveEnergyStateButton = null;
+            
+            glucagonSlider.style.display = 'block';
+            glucagonLevel.value = 0;
+            
+            let value = 0;
+            const interval = setInterval(() => {
+                if (value >= 100) {
+                    clearInterval(interval);
+                    glucagonSignaling.style.display = 'block';
+                    const steps = glucagonSignaling.querySelectorAll('.signaling-step');
+                    steps.forEach((step, index) => {
+                        setTimeout(() => {
+                            step.classList.add('active');
+                        }, index * 800);
+                    });
+                    
+                    setTimeout(() => {
+                        updatePathwaySpeed('glycolysis', 'slow');
+                        updatePathwaySpeed('gluconeogenesis', 'fast');
+                    }, 5000);
+                } else {
+                    value += 5;
+                    glucagonLevel.value = value;
+                }
+            }, 100);
+        });
+        
+        // Resting state functionality
+        restingState.addEventListener('click', function() {
+            if (this === currentActiveEnergyStateButton) {
+                resetGlycolysisStates();
+                currentActiveEnergyStateButton = null;
+                return;
+            }
+
+            resetGlycolysisStates();
+            this.classList.add('selected-state');
+            currentActiveEnergyStateButton = this;
+            
+            document.querySelector('.level-box.atp').classList.add('active');
+            document.querySelector('.level-box.adp').classList.add('active');
+            document.querySelector('.level-box.amp').classList.add('active');
+            
+            setTimeout(() => {
+                atpLevel.textContent = 'High';
+                adpLevel.textContent = 'Low';
+                ampLevel.textContent = 'Low';
+                updatePathwaySpeed('glycolysis', 'slow');
+            }, 500);
+
+            showEnergyStateDescription(this, 'Glycolysis: Slows down');
+        });
+        
+        // Exercising state functionality
+        exercisingState.addEventListener('click', function() {
+            if (this === currentActiveEnergyStateButton) {
+                resetGlycolysisStates();
+                currentActiveEnergyStateButton = null;
+                return;
+            }
+
+            resetGlycolysisStates();
+            this.classList.add('selected-state');
+            currentActiveEnergyStateButton = this;
+            
+            document.querySelector('.level-box.atp').classList.add('active');
+            document.querySelector('.level-box.adp').classList.add('active');
+            document.querySelector('.level-box.amp').classList.add('active');
+            
+            setTimeout(() => {
+                atpLevel.textContent = 'Low';
+                adpLevel.textContent = 'High';
+                ampLevel.textContent = 'High';
+                updatePathwaySpeed('glycolysis', 'fast');
+            }, 500);
+
+            showEnergyStateDescription(this, 'Glycolysis: Speeds up');
+        });
+        
+        function updatePathwaySpeed(pathway, speed) {
+            pathwayContainers.forEach(container => {
+                const isEnergyPathway = container.id === 'energy-pathway-container';
+                const arrows = container.querySelectorAll(`${pathway === 'glycolysis' ? '.arrow-glycolysis' : '.arrow-gluconeogenesis'} .arrow`);
+                
+                arrows.forEach(arrow => {
+                    arrow.classList.remove('fast', 'medium', 'slow');
+                    arrow.classList.add(speed);
+                    arrow.style.animationName = (pathway === 'gluconeogenesis') ? 'moveArrowUp' : 'moveArrow';
+                });
+
+                const glycolysisLabel = container.querySelector('.glycolysis-label');
+                const gluconeogenesisLabel = container.querySelector('.gluconeogenesis-label');
+
+                if (pathway === 'glycolysis' && glycolysisLabel) {
+                    glycolysisLabel.style.animation = (speed === 'slow') ? 'none' : 'fadeIn 1s forwards';
+                    glycolysisLabel.style.opacity = (speed === 'slow') ? '0.5' : '1';
+                } else if (pathway === 'gluconeogenesis' && gluconeogenesisLabel) {
+                    gluconeogenesisLabel.style.animation = 'fadeIn 1s forwards';
+                    gluconeogenesisLabel.style.opacity = '1';
+                }
+            });
+        }
+        
+        setInterval(() => {
+            document.querySelectorAll('.node-glucose').forEach(node => {
+                node.style.animation = 'pulse 2s infinite';
+            });
+            setTimeout(() => {
+                document.querySelectorAll('.node-pyruvate').forEach(node => {
+                    node.style.animation = 'pulse 2s infinite';
+                });
+            }, 500);
+        }, 4000);
+        // SCRIPT FROM deep seeek2.html - END
+
+        // SCRIPT FROM deepseek3.html - START
+        const glucokinaseAnimation = {
+            currentScene: 0,
+            totalScenes: 5,
+            isPlaying: false,
+            currentTime: 0,
+            totalTime: 60,
+            interval: null,
+            elements: {},
+            sceneInfo: [
+                { title: "Glucose Entry via GLUT2", description: "Blood glucose enters the cell through GLUT2 transporters.", duration: 10 },
+                { title: "Low Glucose - Inactive GK", description: "When glucose is low, GKRP binds glucokinase, sequestering it in the nucleus.", duration: 10 },
+                { title: "High Glucose - Activation", description: "Elevated glucose binds GKRP, triggering glucokinase release into the cytoplasm.", duration: 15 },
+                { title: "Phosphorylation Reaction", description: "Glucokinase phosphorylates glucose into glucose 6-phosphate.", duration: 15 },
+                { title: "Feedback Inhibition", description: "Accumulated G6P reactivates GKRP, ensuring feedback control.", duration: 10 }
+            ],
+            summaryShown: false
+        };
+        
+        const gkPlayBtn = document.getElementById('play-btn');
+        const gkPauseBtn = document.getElementById('pause-btn');
+        const gkResetBtn = document.getElementById('reset-btn');
+        const gkProgressBar = document.getElementById('progress-bar');
+        const gkProgressContainer = document.getElementById('progress-container');
+        const gkTimeIndicator = document.getElementById('time-indicator');
+        const gkSceneIndicator = document.querySelector('.scene-indicator');
+        const gkInfoTitle = document.getElementById('info-title');
+        const gkInfoContent = document.getElementById('info-content');
+        const gkSceneBtns = document.querySelectorAll('.scene-btn');
+        const gkMoleculeLabel = document.getElementById('molecule-label');
+        const gkCell = document.querySelector('.cell');
+        const summaryDialog = document.getElementById('summary-dialog');
+        const closeDialogBtn = document.getElementById('close-dialog');
+        
+        function initGlucokinaseAnimation() {
+            createSceneElements();
+            setupGlucokinaseEventListeners();
+            updateGlucokinaseSceneInfo();
+            updateGlucokinaseSceneIndicator();
+        }
+        
+        function createSceneElements() {
+            const elementsToCreate = {
+                glut2: { count: 3, html: 'GLUT2', class: 'glut2' },
+                glucose: { count: 8, html: 'Glc', class: 'glucose-mol' },
+                glucokinase: { count: 2, html: 'GK', class: 'glucokinase' },
+                gkpr: { count: 2, html: 'GKRP', class: 'gkpr' },
+                g6p: { count: 5, html: '<span>Glc</span><span>6P</span>', class: 'g6p' },
+                atp: { count: 3, html: 'ATP', class: 'atp-mol' },
+                adp: { count: 3, html: 'ADP', class: 'adp-mol' },
+                pi: { count: 3, html: 'Pi', class: 'pi' }
+            };
+            
+            glucokinaseAnimation.elements = {};
+            for (const type in elementsToCreate) {
+                glucokinaseAnimation.elements[type] = [];
+                for (let i = 0; i < elementsToCreate[type].count; i++) {
+                    const el = document.createElement('div');
+                    el.className = `molecule ${elementsToCreate[type].class} hidden`;
+                    el.innerHTML = elementsToCreate[type].html;
+                    el.dataset.type = type;
+                    gkCell.appendChild(el);
+                    glucokinaseAnimation.elements[type].push(el);
+                }
+            }
+        }
+        
+        function setupGlucokinaseEventListeners() {
+            gkPlayBtn.addEventListener('click', playGlucokinaseAnimation);
+            gkPauseBtn.addEventListener('click', pauseGlucokinaseAnimation);
+            gkResetBtn.addEventListener('click', resetGlucokinaseAnimation);
+            
+            gkSceneBtns.forEach(btn => {
+                btn.addEventListener('click', () => goToGlucokinaseScene(parseInt(btn.dataset.scene)));
+            });
+            
+            gkProgressContainer.addEventListener('mousemove', showGlucokinaseTimeTooltip);
+            gkProgressContainer.addEventListener('mouseout', hideGlucokinaseTimeTooltip);
+            gkProgressContainer.addEventListener('click', seekGlucokinaseAnimation);
+            
+            document.querySelectorAll('.molecule').forEach(mol => {
+                mol.addEventListener('mouseenter', showGlucokinaseMoleculeLabel);
+                mol.addEventListener('mouseleave', hideGlucokinaseMoleculeLabel);
+            });
+            
+            closeDialogBtn.addEventListener('click', () => summaryDialog.classList.remove('active'));
+        }
+        
+        function playGlucokinaseAnimation() {
+            if (glucokinaseAnimation.isPlaying) return;
+            glucokinaseAnimation.isPlaying = true;
+            gkPlayBtn.innerHTML = '<i class="fas fa-play"></i> Playing';
+            gkPlayBtn.disabled = true;
+            gkPauseBtn.disabled = false;
+            
+            const startTime = Date.now() - (glucokinaseAnimation.currentTime * 1000);
+            glucokinaseAnimation.interval = setInterval(() => {
+                glucokinaseAnimation.currentTime = (Date.now() - startTime) / 1000;
+                
+                if (glucokinaseAnimation.currentTime >= glucokinaseAnimation.totalTime) {
+                    resetGlucokinaseAnimation();
+                    if (!glucokinaseAnimation.summaryShown) {
+                        showSummaryDialog();
+                        glucokinaseAnimation.summaryShown = true;
+                    }
+                    return;
+                }
+                
+                updateGlucokinaseProgressBar();
+                updateGlucokinaseScene();
+            }, 100);
+        }
+        
+        function pauseGlucokinaseAnimation() {
+            if (!glucokinaseAnimation.isPlaying) return;
+            glucokinaseAnimation.isPlaying = false;
+            clearInterval(glucokinaseAnimation.interval);
+            gkPlayBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+            gkPlayBtn.disabled = false;
+        }
+        
+        function resetGlucokinaseAnimation() {
+            pauseGlucokinaseAnimation();
+            goToGlucokinaseScene(0);
+            glucokinaseAnimation.summaryShown = false;
+        }
+        
+        function goToGlucokinaseScene(sceneIndex) {
+            pauseGlucokinaseAnimation();
+            let time = 0;
+            for (let i = 0; i < sceneIndex; i++) time += glucokinaseAnimation.sceneInfo[i].duration;
+            glucokinaseAnimation.currentTime = time;
+            glucokinaseAnimation.currentScene = sceneIndex;
+            updateGlucokinaseProgressBar();
+            updateGlucokinaseSceneAnimation();
+            updateGlucokinaseSceneInfo();
+            updateGlucokinaseSceneIndicator();
+            updateGlucokinaseSceneBtns();
+        }
+        
+        function updateGlucokinaseProgressBar() {
+            gkProgressBar.style.width = `${(glucokinaseAnimation.currentTime / glucokinaseAnimation.totalTime) * 100}%`;
+        }
+        
+        function updateGlucokinaseScene() {
+            let elapsed = 0, newScene = 0;
+            for (let i = 0; i < glucokinaseAnimation.sceneInfo.length; i++) {
+                elapsed += glucokinaseAnimation.sceneInfo[i].duration;
+                if (glucokinaseAnimation.currentTime < elapsed) {
+                    newScene = i;
+                    break;
+                }
+            }
+            if (newScene !== glucokinaseAnimation.currentScene) {
+                glucokinaseAnimation.currentScene = newScene;
+                updateGlucokinaseSceneInfo();
+                updateGlucokinaseSceneIndicator();
+                updateGlucokinaseSceneBtns();
+            }
+            updateGlucokinaseSceneAnimation();
+        }
+        
+        function updateGlucokinaseSceneAnimation() {
+            Object.values(glucokinaseAnimation.elements).forEach(group => group.forEach(el => {
+                el.classList.add('hidden');
+                el.style.cssText = '';
+                el.classList.remove('animate-float', 'animate-pulse', 'highlight', 'binding');
+            }));
+            
+            const scene = glucokinaseAnimation.currentScene;
+            if (scene === 0) {
+                glucokinaseAnimation.elements.glut2.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('animate-pulse'); el.style.cssText = `left: ${20 + i * 30}%; top: 20%;`; });
+                glucokinaseAnimation.elements.glucose.slice(0, 3).forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('animate-float'); el.style.cssText = `left: ${15 + i * 30}%; top: ${10 + i * 2}%;`; });
+            } else if (scene === 1) {
+                glucokinaseAnimation.elements.glucokinase.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('binding'); el.style.cssText = `left: ${45 + i * 10}%; top: 65%;`; });
+                glucokinaseAnimation.elements.gkpr.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('binding'); el.style.cssText = `left: ${47 + i * 10}%; top: ${68 + i * 2}%;`; });
+                glucokinaseAnimation.elements.glucose.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${20 + i * 30}%; top: ${40 + i * 5}%;`; });
+            } else if (scene === 2) {
+                glucokinaseAnimation.elements.glucokinase.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('animate-float'); el.style.cssText = `left: ${45 + i * 10}%; top: ${45 - i * 5}%;`; });
+                glucokinaseAnimation.elements.glucose.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('animate-float'); el.style.cssText = `left: ${10 + (i % 5) * 18}%; top: ${30 + Math.floor(i / 5) * 15}%;`; });
+                glucokinaseAnimation.elements.gkpr.forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${47 + i * 10}%; top: 70%;`; });
+                const glucose7 = glucokinaseAnimation.elements.glucose[7];
+                if (glucose7) { glucose7.classList.remove('hidden'); glucose7.classList.add('highlight'); glucose7.style.cssText = `left: 50%; top: 70%;`; }
+            } else if (scene === 3) {
+                glucokinaseAnimation.elements.glucokinase.forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${35 + i * 20}%; top: ${40 - i * 5}%;`; });
+                glucokinaseAnimation.elements.glucose.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${35 + i * 20}%; top: ${40 - i * 5}%; transform: translate(25px, -10px);`; });
+                glucokinaseAnimation.elements.atp.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${32 + i * 20}%; top: ${37 - i * 5}%;`; });
+                glucokinaseAnimation.elements.g6p.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${35 + i * 20}%; top: ${40 - i * 5}%; transform: translate(25px, -10px);`; });
+                glucokinaseAnimation.elements.adp.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${25 + i * 20}%; top: ${45 - i * 5}%;`; });
+                glucokinaseAnimation.elements.pi.slice(0, 2).forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${30 + i * 20}%; top: ${45 - i * 5}%;`; });
+            } else if (scene === 4) {
+                glucokinaseAnimation.elements.g6p.forEach((el, i) => { el.classList.remove('hidden'); el.classList.add('animate-float'); el.style.cssText = `left: ${15 + (i % 4) * 20}%; top: ${30 + Math.floor(i / 4) * 15}%;`; });
+                const g6p4 = glucokinaseAnimation.elements.g6p[4];
+                if(g6p4) { g6p4.classList.remove('hidden'); g6p4.style.cssText = `left: 45%; top: 60%;`; }
+                glucokinaseAnimation.elements.glucokinase.forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${45 + i * 10}%; top: ${55 + i * 5}%;`; });
+                glucokinaseAnimation.elements.gkpr.forEach((el, i) => { el.classList.remove('hidden'); el.style.cssText = `left: ${47 + i * 10}%; top: ${65 + i * 2}%;`; });
+            }
+        }
+        
+        function showSummaryDialog() { summaryDialog.classList.add('active'); }
+        function updateGlucokinaseSceneInfo() {
+            const scene = glucokinaseAnimation.sceneInfo[glucokinaseAnimation.currentScene];
+            gkInfoTitle.textContent = scene.title;
+            gkInfoContent.textContent = scene.description;
+        }
+        function updateGlucokinaseSceneIndicator() {
+            gkSceneIndicator.textContent = `Scene ${glucokinaseAnimation.currentScene + 1}: ${glucokinaseAnimation.sceneInfo[glucokinaseAnimation.currentScene].title}`;
+        }
+        function updateGlucokinaseSceneBtns() {
+            gkSceneBtns.forEach((btn, i) => btn.classList.toggle('active', i === glucokinaseAnimation.currentScene));
+        }
+        function showGlucokinaseTimeTooltip(e) {
+            const rect = gkProgressContainer.getBoundingClientRect();
+            const time = ((e.clientX - rect.left) / rect.width) * glucokinaseAnimation.totalTime;
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            gkTimeIndicator.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            gkTimeIndicator.style.display = 'block';
+            gkTimeIndicator.style.left = `${e.clientX - rect.left}px`;
+        }
+        function hideGlucokinaseTimeTooltip() { gkTimeIndicator.style.display = 'none'; }
+        function seekGlucokinaseAnimation(e) {
+            const rect = gkProgressContainer.getBoundingClientRect();
+            glucokinaseAnimation.currentTime = ((e.clientX - rect.left) / rect.width) * glucokinaseAnimation.totalTime;
+            updateGlucokinaseProgressBar();
+            updateGlucokinaseScene();
+            if (glucokinaseAnimation.isPlaying) { pauseGlucokinaseAnimation(); playGlucokinaseAnimation(); }
+        }
+        function showGlucokinaseMoleculeLabel(e) {
+            const type = e.target.dataset.type;
+            const labels = { glucose: 'Glucose', glut2: 'GLUT2 Transporter', glucokinase: 'Glucokinase', g6p: 'Glucose-6-Phosphate', gkpr: 'GKRP', atp: 'ATP', adp: 'ADP', pi: 'Phosphate' };
+            gkMoleculeLabel.textContent = labels[type] || '';
+            gkMoleculeLabel.style.left = `${e.clientX + 10}px`;
+            gkMoleculeLabel.style.top = `${e.clientY + 10}px`;
+            gkMoleculeLabel.style.opacity = '1';
+        }
+        function hideGlucokinaseMoleculeLabel() { gkMoleculeLabel.style.opacity = '0'; }
+        
+        // --- NEW SCRIPT FOR TAB NAVIGATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.container > .section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            let currentSectionIndex = 0;
+
+            function showSection(index) {
+                sections.forEach(section => section.classList.remove('active'));
+                if (sections[index]) {
+                    sections[index].classList.add('active');
+                }
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === sections.length - 1;
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSectionIndex < sections.length - 1) {
+                    currentSectionIndex++;
+                    showSection(currentSectionIndex);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    showSection(currentSectionIndex);
+                }
+            });
+
+            // Initialize Glucokinase animation and show first section
+            initGlucokinaseAnimation();
+            showSection(0);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
+
