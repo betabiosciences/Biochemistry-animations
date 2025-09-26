@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electron Transport Chain</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a237e 50%, #0d47a1 100%);
+            color: #e8eaf6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100vw;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            color: #64b5f6;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .header p {
+            color: #bbdefb;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .section {
+            display: none;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h2 {
+            color: #81c784;
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .section h3 {
+            color: #ffb74d;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin: 20px 0 15px 0;
+            border-left: 4px solid #ffb74d;
+            padding-left: 15px;
+        }
+
+        .section p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            color: #e3f2fd;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ff4081 0%, #e91e63 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .complex-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #4fc3f7;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .complex-card h4 {
+            color: #4fc3f7;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .redox-list {
+            background: rgba(129, 199, 132, 0.2);
+            border-left: 4px solid #81c784;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .proton-info {
+            background: rgba(255, 183, 77, 0.2);
+            border: 2px solid #ffb74d;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .equation {
+            background: rgba(156, 39, 176, 0.2);
+            border: 2px solid #ab47bc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: #ce93d8;
+            font-size: clamp(0.8rem, 2.2vw, 1rem);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.6);
+        }
+
+        .nav-btn:disabled {
+            background: #424242;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1001;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50 0%, #81c784 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .section-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #81c784;
+            font-weight: 600;
+            z-index: 1000;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+        }
+
+        .q-cycle {
+            background: rgba(233, 30, 99, 0.1);
+            border: 2px solid #e91e63;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .q-cycle h4 {
+            color: #f48fb1;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .footer-text {
+            color: #bbdefb;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .etc-image {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            margin: 25px auto;
+            display: block;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .image-caption {
+            text-align: center;
+            color: #bbdefb;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .navigation {
+                bottom: 15px;
+                padding: 12px 20px;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 10px 16px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .footer {
+                padding: 20px 15px;
+            }
+            
+            .footer-logo {
+                width: 120px;
+            }
+            
+            .footer-text {
+                font-size: 0.8rem;
+            }
+            
+            .etc-image {
+                margin: 20px auto;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="section-indicator" id="sectionIndicator">
+        Section 1 of 7
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Electron Transport Chain</h1>
+        </div>
+
+        <!-- Section 1: Reduction Potential -->
+        <div class="section active" id="section1">
+            <h2>Reduction Potential & Its Significance</h2>
+            
+            <p>The <span class="highlight">reduction potential (E°)</span> is a measure of the tendency of a chemical species to acquire electrons and be reduced. In the electron transport chain, this concept is fundamental to understanding how electrons flow from one carrier to another.</p>
+
+            <h3>Key Concepts:</h3>
+            <p><strong>Standard Reduction Potential:</strong> Measured under standard conditions (25°C, 1 atm, 1M concentrations) and expressed in volts (V). More positive values indicate a greater tendency to be reduced.</p>
+
+            <div class="equation">
+                E°cell = E°cathode - E°anode
+            </div>
+
+            <h3>Significance in ETC:</h3>
+            <p>Electrons flow spontaneously from carriers with <span class="highlight">lower (more negative)</span> reduction potentials to those with <span class="highlight">higher (more positive)</span> reduction potentials. This creates a "waterfall" of electron flow that releases energy.</p>
+
+            <div class="redox-list">
+                <h4>ETC Reduction Potential Gradient:</h4>
+                <p>• NADH/NAD+ = -0.32 V</p>
+                <p>• Complex I = -0.30 V</p>
+                <p>• CoQ/CoQH₂ = +0.04 V</p>
+                <p>• Complex III = +0.22 V</p>
+                <p>• Cytochrome c = +0.25 V</p>
+                <p>• Complex IV = +0.35 V</p>
+                <p>• O₂/H₂O = +0.82 V</p>
+            </div>
+
+            <p>This gradient ensures that electron flow is thermodynamically favorable and provides the driving force for ATP synthesis.</p>
+        </div>
+
+        <!-- Section 2: Electron Carriers -->
+        <div class="section" id="section2">
+            <h2>Bound vs Mobile Electron Carriers</h2>
+
+            <h3>Bound Electron Carriers</h3>
+            <p>These carriers are <span class="highlight">permanently attached</span> to protein complexes and cannot move freely within the membrane.</p>
+
+            <div class="complex-card">
+                <h4>Examples of Bound Carriers:</h4>
+                <p><strong>FMN (Flavin Mononucleotide):</strong> Found in Complex I, accepts 2 electrons and 2 protons</p>
+                <p><strong>Iron-Sulfur Clusters:</strong> Present in Complexes I, II, and III, contain iron atoms coordinated with sulfur</p>
+                <p><strong>Heme Groups:</strong> Found in Complexes III and IV, contain iron atoms in porphyrin rings</p>
+                <p><strong>Copper Centers:</strong> Located in Complex IV, participate in oxygen reduction</p>
+            </div>
+
+            <h3>Mobile Electron Carriers</h3>
+            <p>These carriers can <span class="highlight">move freely</span> within the inner mitochondrial membrane, shuttling electrons between complexes.</p>
+
+            <div class="complex-card">
+                <h4>Key Mobile Carriers:</h4>
+                <p><strong>Coenzyme Q (Ubiquinone/Ubiquinol):</strong></p>
+                <p>• Lipid-soluble molecule that shuttles between Complexes I/II and III</p>
+                <p>• Exists in oxidized (ubiquinone) and reduced (ubiquinol) forms</p>
+                <p>• Can accept 1 or 2 electrons, forming semiquinone intermediate</p>
+
+                <p><strong>Cytochrome c:</strong></p>
+                <p>• Small, water-soluble protein in the intermembrane space</p>
+                <p>• Shuttles electrons between Complexes III and IV</p>
+                <p>• Contains a heme group that alternates between Fe³⁺ and Fe²⁺</p>
+            </div>
+
+            <p>The combination of bound and mobile carriers creates an efficient electron transfer system that spans the entire inner mitochondrial membrane.</p>
+
+            <!-- Added ETC Summary Image -->
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/ETC%20summary.png" alt="Electron Transport Chain Summary" class="etc-image">
+            <p class="image-caption">Overview of the Electron Transport Chain showing electron flow and proton pumping</p>
+        </div>
+
+        <!-- Section 3: Complex I -->
+        <div class="section" id="section3">
+            <h2>Complex I - NADH Dehydrogenase</h2>
+
+            <p>Complex I is the largest protein complex in the ETC, containing <span class="highlight">45 subunits</span> and serving as the entry point for electrons from NADH.</p>
+
+            <h3>Electron Flow Route:</h3>
+            <div class="equation">
+                NADH → FMN → Fe-S clusters → CoQ → CoQH₂
+            </div>
+
+            <h3>Redox Centers in Complex I:</h3>
+            <div class="redox-list">
+                <p><strong>1. FMN (Flavin Mononucleotide):</strong> Initial electron acceptor from NADH</p>
+                <p><strong>2. Iron-Sulfur Clusters (7 clusters):</strong></p>
+                <p>• N1a, N1b: [2Fe-2S] clusters</p>
+                <p>• N2, N3, N4, N5, N6a, N6b: [4Fe-4S] clusters</p>
+                <p><strong>3. Ubiquinone Binding Site:</strong> Final electron acceptor</p>
+            </div>
+
+            <h3>Proton Pumping Mechanism:</h3>
+            <div class="proton-info">
+                <h4>Conformational Coupling Model:</h4>
+                <p>• Electron transfer through Fe-S clusters induces conformational changes</p>
+                <p>• These changes alter the pKa of ionizable groups</p>
+                <p>• Protons are picked up from the matrix and released to the intermembrane space</p>
+                <p>• The process is driven by the energy released from electron transfer</p>
+            </div>
+
+            <p><strong>Stoichiometry:</strong> For each NADH oxidized, Complex I pumps <span class="highlight">4 protons</span> across the membrane while transferring 2 electrons to CoQ.</p>
+
+            <div class="equation">
+                NADH + H⁺ + CoQ + 4H⁺(matrix) → NAD⁺ + CoQH₂ + 4H⁺(intermembrane space)
+            </div>
+        </div>
+
+        <!-- Section 4: Complex II -->
+        <div class="section" id="section4">
+            <h2>Complex II - Succinate Dehydrogenase</h2>
+
+            <p>Complex II is unique as it serves dual roles: it's both part of the citric acid cycle and the ETC. It <span class="highlight">does not pump protons</span>.</p>
+
+            <h3>Electron Flow Route:</h3>
+            <div class="equation">
+                FADH₂ → FAD → Fe-S clusters → Heme b → CoQ → CoQH₂
+            </div>
+
+            <h3>Redox Centers in Complex II:</h3>
+            <div class="redox-list">
+                <p><strong>1. FAD (Flavin Adenine Dinucleotide):</strong> Covalently bound to succinate dehydrogenase</p>
+                <p><strong>2. Iron-Sulfur Clusters (3 clusters):</strong></p>
+                <p>• [2Fe-2S] cluster</p>
+                <p>• Two [4Fe-4S] clusters</p>
+                <p><strong>3. Heme b:</strong> Low-potential heme group</p>
+                <p><strong>4. Ubiquinone Binding Sites:</strong> Two distinct binding sites (QP and QD)</p>
+            </div>
+
+            <h3>No Proton Pumping:</h3>
+            <div class="proton-info">
+                <h4>Why Complex II Doesn't Pump Protons:</h4>
+                <p>• Lower energy yield from FADH₂ oxidation compared to NADH</p>
+                <p>• Insufficient free energy change to drive proton translocation</p>
+                <p>• Functions primarily as an entry point for electrons from succinate oxidation</p>
+            </div>
+
+            <p><strong>Function:</strong> Complex II channels electrons from FADH₂ directly into the CoQ pool, bypassing the proton-pumping step of Complex I.</p>
+
+            <div class="equation">
+                FADH₂ + CoQ → FAD + CoQH₂
+            </div>
+        </div>
+
+        <!-- Section 5: Complex III -->
+        <div class="section" id="section5">
+            <h2>Complex III - Cytochrome bc₁ Complex</h2>
+
+            <p>Complex III facilitates electron transfer from CoQH₂ to cytochrome c through the famous <span class="highlight">Q-cycle mechanism</span>.</p>
+
+            <h3>Electron Flow Route:</h3>
+            <div class="equation">
+                CoQH₂ → Rieske Fe-S → Cytochrome c₁ → Cytochrome c
+            </div>
+
+            <h3>Redox Centers in Complex III:</h3>
+            <div class="redox-list">
+                <p><strong>1. Cytochrome b:</strong> Contains two heme groups (bL and bH)</p>
+                <p><strong>2. Rieske Iron-Sulfur Protein:</strong> [2Fe-2S] cluster with histidine ligands</p>
+                <p><strong>3. Cytochrome c₁:</strong> Contains heme c group</p>
+                <p><strong>4. Two CoQ Binding Sites:</strong></p>
+                <p>• Qo site (near intermembrane space)</p>
+                <p>• Qi site (near matrix)</p>
+            </div>
+
+            <div class="q-cycle">
+                <h4>Q-Cycle Mechanism (Detailed)</h4>
+                <p><strong>First Half of Q-Cycle:</strong></p>
+                <p>1. CoQH₂ binds to Qo site and releases 2H⁺ to intermembrane space</p>
+                <p>2. First electron: CoQH₂ → Rieske Fe-S → cyt c₁ → cyt c</p>
+                <p>3. Second electron: CoQ•⁻ → cyt bL → cyt bH → CoQ at Qi site</p>
+                <p>4. CoQ at Qi site becomes CoQ•⁻ (semiquinone)</p>
+
+                <p><strong>Second Half of Q-Cycle:</strong></p>
+                <p>5. Another CoQH₂ repeats the process at Qo site</p>
+                <p>6. The second electron reduces CoQ•⁻ at Qi site to CoQH₂</p>
+                <p>7. 2H⁺ from matrix are consumed to form CoQH₂ at Qi site</p>
+
+                <p><strong>Net Result:</strong></p>
+                <div class="equation">
+                    CoQH₂ + 2cyt c(Fe³⁺) + 2H⁺(matrix) → CoQ + 2cyt c(Fe²⁺) + 4H⁺(intermembrane space)
+                </div>
+            </div>
+
+            <p><strong>Proton Pumping:</strong> Complex III pumps <span class="highlight">4 protons</span> for every 2 electrons transferred, with 2H⁺ coming from CoQH₂ oxidation and 2H⁺ consumed from the matrix.</p>
+        </div>
+
+        <!-- Section 6: Complex IV -->
+        <div class="section" id="section6">
+            <h2>Complex IV - Cytochrome c Oxidase</h2>
+
+            <p>Complex IV is the terminal oxidase that catalyzes the reduction of oxygen to water, completing the electron transport chain.</p>
+
+            <h3>Electron Flow Route:</h3>
+            <div class="equation">
+                Cytochrome c → CuA → Heme a → Heme a₃-CuB → O₂ → H₂O
+            </div>
+
+            <h3>Redox Centers in Complex IV:</h3>
+            <div class="redox-list">
+                <p><strong>1. CuA Center:</strong> Binuclear copper center, initial electron acceptor</p>
+                <p><strong>2. Heme a:</strong> Low-spin heme group</p>
+                <p><strong>3. Binuclear Center:</strong></p>
+                <p>• Heme a₃: High-spin heme with iron</p>
+                <p>• CuB: Copper center coupled to heme a₃</p>
+                <p>• This is where O₂ binding and reduction occurs</p>
+            </div>
+
+            <h3>Proton Pumping Mechanism:</h3>
+            <div class="proton-info">
+                <h4>Electrostatic Coupling Model:</h4>
+                <p>• Electron transfer creates charge separation</p>
+                <p>• Conformational changes open and close proton channels</p>
+                <p>• Two types of protons:</p>
+                <p>&nbsp;&nbsp;- Chemical protons: Used for water formation</p>
+                <p>&nbsp;&nbsp;- Pumped protons: Translocated across membrane</p>
+            </div>
+
+            <h3>Oxygen Reduction:</h3>
+            <div class="equation">
+                O₂ + 4e⁻ + 4H⁺ → 2H₂O
+            </div>
+
+            <p><strong>Stoichiometry:</strong> Complex IV pumps <span class="highlight">2 protons</span> for every 2 electrons transferred (4 electrons total for complete O₂ reduction).</p>
+
+            <div class="equation">
+                4cyt c(Fe²⁺) + O₂ + 8H⁺(matrix) → 4cyt c(Fe³⁺) + 2H₂O + 4H⁺(intermembrane space)
+            </div>
+        </div>
+
+        <!-- Section 7: Proton Pumping Summary & Electrochemical Gradient -->
+        <div class="section" id="section7">
+            <h2>Proton Pumping Summary & Electrochemical Gradient</h2>
+
+            <h3>Proton Pumping Stoichiometry:</h3>
+            
+            <div class="proton-info">
+                <h4>NADH Oxidation (per NADH):</h4>
+                <p>• Complex I: <span class="highlight">4 H⁺</span></p>
+                <p>• Complex III: <span class="highlight">4 H⁺</span></p>
+                <p>• Complex IV: <span class="highlight">2 H⁺</span></p>
+                <p><strong>Total: 10 H⁺ pumped per NADH</strong></p>
+            </div>
+
+            <div class="proton-info">
+                <h4>FADH₂ Oxidation (per FADH₂):</h4>
+                <p>• Complex II: <span class="highlight">0 H⁺</span> (no pumping)</p>
+                <p>• Complex III: <span class="highlight">4 H⁺</span></p>
+                <p>• Complex IV: <span class="highlight">2 H⁺</span></p>
+                <p><strong>Total: 6 H⁺ pumped per FADH₂</strong></p>
+            </div>
+
+            <h3>The Electrochemical Gradient (Proton-Motive Force):</h3>
+            
+            <p>The pumping of protons creates an <span class="highlight">electrochemical gradient</span> across the inner mitochondrial membrane, consisting of two components:</p>
+
+            <div class="complex-card">
+                <h4>1. Chemical Gradient (ΔpH):</h4>
+                <p>• Higher H⁺ concentration in intermembrane space</p>
+                <p>• Lower H⁺ concentration in matrix</p>
+                <p>• Typical ΔpH ≈ 0.5-1.0 units</p>
+                <p>• Matrix pH ≈ 7.8, intermembrane space pH ≈ 7.0</p>
+            </div>
+
+            <div class="complex-card">
+                <h4>2. Electrical Gradient (Δψ):</h4>
+                <p>• Positive charge accumulation in intermembrane space</p>
+                <p>• Negative charge in matrix (due to H⁺ removal)</p>
+                <p>• Typical membrane potential ≈ -180 to -200 mV</p>
+                <p>• Matrix is negative relative to intermembrane space</p>
+            </div>
+
+           
+            <h3>Biological Significance:</h3>
+            <p>This electrochemical gradient serves as the <span class="highlight">driving force for ATP synthesis</span> through ATP synthase (Complex V). The stored energy is equivalent to approximately 50-60 kJ/mol, providing ample energy for ATP formation from ADP and Pi.</p>
+
+            <div class="equation">
+                ADP + Pi + nH⁺(intermembrane space) → ATP + H₂O + nH⁺(matrix)
+            </div>
+            <p style="text-align: center; margin-top: 10px;">Where n ≈ 3-4 protons per ATP</p>
+
+            <p>This completes our journey through the electron transport chain - from the initial reduction potentials to the final electrochemical gradient that powers life!</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <div class="footer-text">
+                <p>© 2025 BETA Biosciences. All rights reserved.</p>
+                <p>Email: betabiosciences@gmail.com</p>
+                <p>Contact: +91 97 47 53 35 97</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSection(-1)">Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSection(1)">Next</button>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 7;
+
+        function changeSection(direction) {
+            const current = document.getElementById(`section${currentSection}`);
+            current.classList.remove('active');
+            
+            currentSection += direction;
+            
+            if (currentSection > totalSections) currentSection = totalSections;
+            if (currentSection < 1) currentSection = 1;
+            
+            const next = document.getElementById(`section${currentSection}`);
+            next.classList.add('active');
+            
+            updateNavigation();
+            updateProgress();
+            updateSectionIndicator();
+            
+            // Smooth scroll to top on mobile
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progress = (currentSection / totalSections) * 100;
+            progressFill.style.width = `${progress}%`;
+        }
+
+        function updateSectionIndicator() {
+            const indicator = document.getElementById('sectionIndicator');
+            indicator.textContent = `Section ${currentSection} of ${totalSections}`;
+        }
+
+        // Initialize
+        updateNavigation();
+        updateProgress();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSection(-1);
+            if (e.key === 'ArrowRight') changeSection(1);
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    changeSection(1); // Swipe left - next section
+                } else {
+                    changeSection(-1); // Swipe right - previous section
+                }
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
