@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metabolic Cycles Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #283593 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Glossy overlay effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            background: linear-gradient(45deg, #64ffda, #00bcd4, #03a9f4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+        }
+
+        .header p {
+            color: #b0bec5;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #1565c0, #1976d2);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            min-width: 120px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(21, 101, 192, 0.6);
+            background: linear-gradient(45deg, #1976d2, #2196f3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #00bcd4, #26c6da);
+            box-shadow: 0 6px 25px rgba(0, 188, 212, 0.6);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            flex: 1;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cycle-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .cycle-title {
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            color: #64ffda;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(100, 255, 218, 0.5);
+        }
+
+        .cycle-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #e8eaf6;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .steps-container {
+            margin-top: 25px;
+        }
+
+        .steps-title {
+            font-size: 1.2rem;
+            color: #81c784;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .step {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border-left: 4px solid #64ffda;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .step-number {
+            font-weight: bold;
+            color: #64ffda;
+            margin-right: 10px;
+        }
+
+        .step-text {
+            color: #cfd8dc;
+            line-height: 1.5;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(129, 199, 132, 0.1));
+            border: 1px solid rgba(129, 199, 132, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-title {
+            color: #a5d6a7;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .highlight-text {
+            color: #e8f5e8;
+            line-height: 1.5;
+        }
+
+        .key-points {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .key-points-title {
+            color: #ffcc02;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .key-point {
+            color: #fff8e1;
+            margin: 8px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .key-point::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #ffcc02;
+            font-weight: bold;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 10px;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-text {
+            color: #b0bec5;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .cycle-card {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 0.8rem;
+                min-width: 100px;
+            }
+
+            .step {
+                padding: 12px;
+            }
+            
+            .footer {
+                padding: 15px;
+                margin-top: 20px;
+            }
+            
+            .footer-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                gap: 8px;
+            }
+
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.7rem;
+                min-width: 90px;
+            }
+
+            .cycle-card {
+                padding: 15px;
+            }
+            
+            .footer {
+                padding: 12px;
+            }
+            
+            .footer-text {
+                font-size: 0.75rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Metabolic Cycles Explorer</h1>
+            <p>Discover the essential biochemical pathways that power cellular metabolism</p>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn active" onclick="showSection('glyoxylate')">Glyoxylate Cycle</button>
+            <button class="nav-btn" onclick="showSection('cori')">Cori Cycle</button>
+            <button class="nav-btn" onclick="showSection('glucose-alanine')">Glucose-Alanine Cycle</button>
+        </div>
+
+        <!-- Glyoxylate Cycle Section -->
+        <div id="glyoxylate" class="content-section active">
+            <div class="cycle-card">
+                <h2 class="cycle-title">🔄 Glyoxylate Cycle</h2>
+                <div class="cycle-description">
+                    The glyoxylate cycle is a metabolic pathway that allows organisms to convert acetyl-CoA into succinate and glyoxylate, bypassing the decarboxylation steps of the citric acid cycle. This pathway is crucial for converting fatty acids into carbohydrates, particularly in plants, bacteria, and fungi.
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-title">🎯 Primary Function</div>
+                    <div class="highlight-text">
+                        Enables the net conversion of acetyl-CoA (from fatty acid oxidation) into four-carbon compounds that can be used for gluconeogenesis, allowing organisms to synthesize glucose from fats.
+                    </div>
+                </div>
+
+                <div class="steps-container">
+                    <h3 class="steps-title">Key Steps</h3>
+                    
+                    <div class="step">
+                        <span class="step-number">1.</span>
+                        <span class="step-text">Acetyl-CoA condenses with oxaloacetate to form citrate (via citrate synthase)</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">2.</span>
+                        <span class="step-text">Citrate is converted to isocitrate (via aconitase)</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">3.</span>
+                        <span class="step-text">Isocitrate is cleaved into succinate and glyoxylate (via isocitrate lyase)</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">4.</span>
+                        <span class="step-text">Glyoxylate condenses with another acetyl-CoA to form malate (via malate synthase)</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">5.</span>
+                        <span class="step-text">Malate is oxidized to oxaloacetate (via malate dehydrogenase)</span>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">Key Features</div>
+                    <div class="key-point">Bypasses CO₂-producing steps of citric acid cycle</div>
+                    <div class="key-point">Net production of succinate from two acetyl-CoA molecules</div>
+                    <div class="key-point">Essential for seed germination in plants</div>
+                    <div class="key-point">Occurs in specialized organelles called glyoxysomes</div>
+                    <div class="key-point">Absent in most animals, including mammals</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cori Cycle Section -->
+        <div id="cori" class="content-section">
+            <div class="cycle-card">
+                <h2 class="cycle-title">🔄 Cori Cycle</h2>
+                <div class="cycle-description">
+                    The Cori cycle is a metabolic pathway that connects muscle and liver metabolism during periods of high energy demand. It allows the conversion of lactate produced in muscles back to glucose in the liver, which can then return to muscles for energy production.
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-title">🎯 Primary Function</div>
+                    <div class="highlight-text">
+                        Prevents lactate accumulation in muscles during intense exercise and maintains blood glucose levels by recycling lactate through the liver via gluconeogenesis.
+                    </div>
+                </div>
+
+                <div class="steps-container">
+                    <h3 class="steps-title">Cycle Process</h3>
+                    
+                    <div class="step">
+                        <span class="step-number">1.</span>
+                        <span class="step-text">Muscle glycolysis produces lactate during anaerobic respiration</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">2.</span>
+                        <span class="step-text">Lactate is released into bloodstream and transported to liver</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">3.</span>
+                        <span class="step-text">Liver converts lactate back to pyruvate (via lactate dehydrogenase)</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">4.</span>
+                        <span class="step-text">Pyruvate undergoes gluconeogenesis to form glucose</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">5.</span>
+                        <span class="step-text">Glucose is released into blood and returns to muscles</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">6.</span>
+                        <span class="step-text">Muscles can use glucose for energy via glycolysis</span>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">Clinical Significance</div>
+                    <div class="key-point">Prevents lactic acidosis during intense exercise</div>
+                    <div class="key-point">Maintains glucose homeostasis</div>
+                    <div class="key-point">Energy cost: 6 ATP to convert 2 lactate to 1 glucose</div>
+                    <div class="key-point">Critical during fasting states</div>
+                    <div class="key-point">Impaired in liver disease</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Glucose-Alanine Cycle Section -->
+        <div id="glucose-alanine" class="content-section">
+            <div class="cycle-card">
+                <h2 class="cycle-title">🔄 Glucose-Alanine Cycle</h2>
+                <div class="cycle-description">
+                    The glucose-alanine cycle is a metabolic pathway that transports amino groups from muscle to liver while simultaneously providing glucose back to muscle. This cycle plays a crucial role in nitrogen disposal and glucose homeostasis during periods of protein catabolism.
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-title">🎯 Primary Function</div>
+                    <div class="highlight-text">
+                        Safely transports ammonia from peripheral tissues (especially muscle) to the liver for urea synthesis while providing glucose to maintain energy metabolism in muscles.
+                    </div>
+                </div>
+
+                <div class="steps-container">
+                    <h3 class="steps-title">Cycle Mechanism</h3>
+                    
+                    <div class="step">
+                        <span class="step-number">1.</span>
+                        <span class="step-text">Muscle proteins are catabolized, producing amino acids</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">2.</span>
+                        <span class="step-text">Amino acids undergo transamination with pyruvate to form alanine</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">3.</span>
+                        <span class="step-text">Alanine is released into bloodstream and transported to liver</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">4.</span>
+                        <span class="step-text">Liver deaminates alanine, producing pyruvate and ammonia</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">5.</span>
+                        <span class="step-text">Ammonia enters urea cycle for safe nitrogen disposal</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">6.</span>
+                        <span class="step-text">Pyruvate undergoes gluconeogenesis to produce glucose</span>
+                    </div>
+                    
+                    <div class="step">
+                        <span class="step-number">7.</span>
+                        <span class="step-text">Glucose returns to muscle via bloodstream</span>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-points-title">Physiological Importance</div>
+                    <div class="key-point">Major pathway during fasting and starvation</div>
+                    <div class="key-point">Prevents ammonia toxicity in peripheral tissues</div>
+                    <div class="key-point">Alanine is the major gluconeogenic amino acid</div>
+                    <div class="key-point">Enhanced during muscle wasting conditions</div>
+                    <div class="key-point">Links protein and carbohydrate metabolism</div>
+                    <div class="key-point">Critical for maintaining blood glucose during prolonged exercise</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <div class="footer-text">
+                © 2025 BETA Biosciences. All rights reserved.<br>
+                Email: betabiosciences@gmail.com<br>
+                Contact: +91 97 47 53 35 97
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav buttons
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Smooth scroll to top on mobile
+            if (window.innerWidth <= 768) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Add touch-friendly interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach(step => {
+                step.addEventListener('touchstart', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                step.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = 'translateX(0)';
+                    }, 150);
+                });
+            });
+        });
+
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 100);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
