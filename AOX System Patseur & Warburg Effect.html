@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOX Pasteur & Warburg</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e8f4f8;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 70%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            padding-bottom: 120px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .section-content {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .subsection {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .subsection h3 {
+            color: #60a5fa;
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .subsection p, .subsection li {
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 12px;
+        }
+
+        .subsection ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .subsection li {
+            margin-bottom: 8px;
+        }
+
+        .mechanism-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .mechanism-title {
+            color: #34d399;
+            font-weight: 600;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            margin-bottom: 10px;
+        }
+
+        .mechanism-box p, .mechanism-box li {
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 12px;
+        }
+
+        .mechanism-box ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .significance-box {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .significance-title {
+            color: #a78bfa;
+            font-weight: 600;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            margin-bottom: 10px;
+        }
+
+        .significance-box p, .significance-box li {
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 12px;
+        }
+
+        .significance-box ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+            transition: width 0.5s ease;
+            z-index: 1001;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        .footer-text {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                padding-bottom: 120px;
+            }
+
+            .section-content {
+                padding: 20px;
+            }
+
+            .navigation {
+                bottom: 15px;
+                padding: 12px 20px;
+                gap: 10px;
+            }
+
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+
+            .footer {
+                padding: 15px;
+            }
+
+            .footer-logo {
+                width: 120px;
+            }
+
+            .footer-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-btn {
+                flex: 1;
+                min-width: 80px;
+            }
+
+            .footer-logo {
+                width: 100px;
+            }
+
+            .footer-text {
+                font-size: 0.75rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>AOX Pathway Pasteur & Warburg Effect</h1>
+        </div>
+
+        <!-- AOX Section -->
+        <div class="section active" id="aox-section">
+            <div class="section-content">
+                <h2 class="section-title">Alternative Oxidase (AOX) Pathway in Plants</h2>
+                
+                <div class="subsection">
+                    <h3>Overview</h3>
+                    <p>The Alternative Oxidase (AOX) pathway is a unique respiratory mechanism found in plants, fungi, and some protists. Unlike the conventional cytochrome oxidase pathway, AOX provides a non-phosphorylating bypass route in the mitochondrial electron transport chain.</p>
+                    <p>This pathway represents an evolutionary adaptation that allows organisms to maintain cellular respiration under adverse conditions while sacrificing ATP efficiency for metabolic flexibility. AOX enzymes are encoded by nuclear genes but function within the mitochondrial matrix.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3>Structural Organization</h3>
+                    <p>AOX is a monotopic membrane protein embedded in the inner mitochondrial membrane, facing the matrix side. It contains:</p>
+                    <ul>
+                        <li><strong>Active site:</strong> Di-iron center that reduces oxygen to water</li>
+                        <li><strong>Hydrophobic domains:</strong> Anchor the protein to the membrane</li>
+                        <li><strong>Regulatory domains:</strong> Sites for α-keto acid binding and cysteine residues for disulfide bonding</li>
+                        <li><strong>Multiple isoforms:</strong> AOX1 (stress-induced) and AOX2 (constitutive) with tissue-specific expression</li>
+                    </ul>
+                </div>
+
+                <div class="mechanism-box">
+                    <div class="mechanism-title">🔬 Detailed Mechanism</div>
+                    <p><strong>Electron Transport Bypass:</strong> AOX accepts electrons directly from ubiquinol (reduced coenzyme Q) and transfers them to oxygen, bypassing Complex IV.</p>
+                    <ul>
+                        <li><strong>Normal pathway:</strong> NADH → Complex I → CoQ → Complex III → Cytochrome c → Complex IV → O₂</li>
+                        <li><strong>AOX pathway:</strong> NADH → Complex I → CoQ → AOX → O₂</li>
+                        <li><strong>Proton pumping:</strong> Only occurs at Complex I (not at AOX), reducing ATP synthesis from 2.5 to 1 ATP per NADH</li>
+                        <li><strong>Energy dissipation:</strong> Excess energy released as heat (up to 30°C temperature increase in some plants)</li>
+                        <li><strong>Cyanide resistance:</strong> AOX activity unaffected by Complex IV inhibitors like cyanide, azide, or carbon monoxide</li>
+                        <li><strong>Oxygen affinity:</strong> Higher Km for O₂ than cytochrome oxidase, activated under high oxygen tensions</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Regulation Mechanisms</h3>
+                    <p>AOX activity is controlled at multiple levels to ensure appropriate metabolic responses:</p>
+                    <ul>
+                        <li><strong>Transcriptional regulation:</strong> Gene expression induced by cold, drought, salinity, pathogen attack, and mitochondrial dysfunction</li>
+                        <li><strong>Post-translational control:</strong> 
+                            <ul>
+                                <li>Formation of disulfide bonds between cysteine residues inactivates the enzyme</li>
+                                <li>Reduction of disulfide bonds by DTT or reducing conditions activates AOX</li>
+                                <li>α-keto acids (pyruvate, α-ketoglutarate) bind and activate the enzyme</li>
+                            </ul>
+                        </li>
+                        <li><strong>Metabolic feedback:</strong> High ATP/ADP ratios can influence AOX engagement</li>
+                        <li><strong>Redox regulation:</strong> Cellular reducing power (NADH/NAD⁺ ratio) affects pathway selection</li>
+                    </ul>
+                </div>
+
+                <div class="significance-box">
+                    <div class="significance-title">🌟 Biological Significance & Applications</div>
+                    <ul>
+                        <li><strong>Thermogenesis:</strong> Heat production in thermogenic plants like Arum lilies, skunk cabbage, and sacred lotus allows:
+                            <ul>
+                                <li>Early flowering in cold conditions</li>
+                                <li>Volatilization of attractant compounds for pollinators</li>
+                                <li>Maintenance of optimal temperature for enzyme function</li>
+                            </ul>
+                        </li>
+                        <li><strong>Stress tolerance:</strong> Maintains cellular respiration when conventional pathway is inhibited or saturated</li>
+                        <li><strong>Metabolic homeostasis:</strong> Prevents over-reduction of electron transport chain components that could lead to ROS formation</li>
+                        <li><strong>Energy balance:</strong> Dissipates excess reducing equivalents when ATP demand is low</li>
+                        <li><strong>Agricultural applications:</strong> Understanding AOX can improve crop stress tolerance and post-harvest storage</li>
+                        <li><strong>Pharmaceutical interest:</strong> AOX inhibitors are being studied as potential antifungal agents</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pasteur Effect Section -->
+        <div class="section" id="pasteur-section">
+            <div class="section-content">
+                <h2 class="section-title">Pasteur Effect</h2>
+                
+                <div class="subsection">
+                    <h3>Historical Context & Definition</h3>
+                    <p>The Pasteur Effect, discovered by Louis Pasteur in 1857, describes the fundamental metabolic phenomenon where the presence of oxygen inhibits fermentation in living cells. This effect demonstrates how cells prioritize aerobic respiration over fermentation when oxygen is available, representing one of the most important regulatory mechanisms in cellular metabolism.</p>
+                    <p>The effect is quantitatively measured as the decrease in glucose consumption rate when cells shift from anaerobic to aerobic conditions, typically showing a 10-20 fold reduction in glucose utilization while dramatically increasing ATP production efficiency.</p>
+                </div>
+
+                <div class="mechanism-box">
+                    <div class="mechanism-title">🔬 Detailed Mechanism</div>
+                    <p><strong>Metabolic Switch Cascade:</strong> Oxygen availability triggers a complex regulatory cascade affecting multiple metabolic pathways.</p>
+                    <ul>
+                        <li><strong>Anaerobic pathway:</strong> 
+                            <ul>
+                                <li>Glucose → Glucose-6-P → Fructose-6-P → Fructose-1,6-bisP → Pyruvate</li>
+                                <li>Pyruvate → Lactate (animals) or Ethanol + CO₂ (yeast)</li>
+                                <li>Net yield: 2 ATP + 2 NADH per glucose</li>
+                                <li>NAD⁺ regeneration through fermentation reactions</li>
+                            </ul>
+                        </li>
+                        <li><strong>Aerobic pathway:</strong>
+                            <ul>
+                                <li>Glycolysis: Glucose → Pyruvate (2 ATP, 2 NADH)</li>
+                                <li>Pyruvate oxidation: Pyruvate → Acetyl-CoA (2 NADH, 2 CO₂)</li>
+                                <li>TCA cycle: Acetyl-CoA → CO₂ (2 ATP, 6 NADH, 2 FADH₂)</li>
+                                <li>Electron transport: NADH/FADH₂ → ATP (~28 ATP)</li>
+                                <li>Total yield: ~32 ATP per glucose</li>
+                            </ul>
+                        </li>
+                        <li><strong>Key regulation:</strong> ATP/ADP ratio increases dramatically, inhibiting phosphofructokinase-1 (PFK-1)</li>
+                        <li><strong>Allosteric control:</strong> Citrate also inhibits PFK-1, creating metabolic coordination</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Key Regulatory Enzymes</h3>
+                    <ul>
+                        <li><strong>Phosphofructokinase-1 (PFK-1):</strong>
+                            <ul>
+                                <li>Rate-limiting enzyme of glycolysis</li>
+                                <li>Inhibited by ATP, citrate, and low pH</li>
+                                <li>Activated by AMP, ADP, and fructose-2,6-bisphosphate</li>
+                                <li>Primary site of Pasteur Effect regulation</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hexokinase:</strong> Product inhibition by glucose-6-phosphate when downstream flux is reduced</li>
+                        <li><strong>Pyruvate kinase:</strong> Allosteric regulation by ATP (negative) and fructose-1,6-bisphosphate (positive)</li>
+                    </ul>
+                </div>
+
+                <div class="significance-box">
+                    <div class="significance-title">🌟 Biological Significance & Applications</div>
+                    <ul>
+                        <li><strong>Energy efficiency:</strong> Maximizes ATP yield per glucose molecule (32 vs 2 ATP), reducing glucose consumption by 90-95%</li>
+                        <li><strong>Metabolic adaptation:</strong> Rapid response to environmental oxygen changes, maintaining energy production under varying conditions</li>
+                        <li><strong>Industrial biotechnology:</strong> Fermentation control in brewing, winemaking, bread production, and biofuel production strategies</li>
+                        <li><strong>Medical relevance:</strong> Understanding ischemia-reperfusion injury, tissue metabolism in hypoxic conditions, and exercise physiology</li>
+                        <li><strong>Evolutionary significance:</strong> Critical for aerobic life development and metabolic complexity</li>
+                        <li><strong>Diagnostic applications:</strong> Metabolic profiling and disease diagnosis</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warburg Effect Section -->
+        <div class="section" id="warburg-section">
+            <div class="section-content">
+                <h2 class="section-title">Warburg Effect</h2>
+                
+                <div class="subsection">
+                    <h3>Historical Context & Definition</h3>
+                    <p>The Warburg Effect, discovered by Otto Warburg in the 1920s, describes the counterintuitive tendency of cancer cells to rely heavily on glycolysis for energy production, even in oxygen-rich environments where aerobic respiration would be far more efficient. This phenomenon, also called "aerobic glycolysis," represents a fundamental hallmark of cancer metabolism.</p>
+                    <p>Unlike the Pasteur Effect where oxygen inhibits fermentation, cancer cells maintain high glycolytic rates despite oxygen availability, producing lactate as the end product. This occurs in approximately 80% of human cancers.</p>
+                </div>
+
+                <div class="subsection">
+                    <h3>Metabolic Characteristics</h3>
+                    <ul>
+                        <li><strong>Glucose consumption:</strong> 10-100 times higher than normal cells</li>
+                        <li><strong>Lactate production:</strong> Continues even under normoxic conditions (>20% O₂)</li>
+                        <li><strong>Mitochondrial function:</strong> Often impaired or reprogrammed, not completely absent</li>
+                        <li><strong>ATP production:</strong> Lower efficiency per glucose molecule but higher overall flux</li>
+                        <li><strong>Metabolic flexibility:</strong> Can switch between different fuel sources when needed</li>
+                    </ul>
+                </div>
+
+                <div class="mechanism-box">
+                    <div class="mechanism-title">🔬 Molecular Mechanisms</div>
+                    <p><strong>Metabolic Reprogramming:</strong> Multiple interconnected mechanisms drive the Warburg Effect in cancer cells.</p>
+                    <ul>
+                        <li><strong>Enhanced glucose uptake:</strong>
+                            <ul>
+                                <li>Overexpression of GLUT1 and GLUT3 glucose transporters</li>
+                                <li>Increased hexokinase II activity and mitochondrial association</li>
+                                <li>Reduced glucose-6-phosphatase activity</li>
+                            </ul>
+                        </li>
+                        <li><strong>Glycolytic enzyme upregulation:</strong>
+                            <ul>
+                                <li>Phosphofructokinase (PFK): Increased expression and activity</li>
+                                <li>Pyruvate kinase M2 (PKM2): Splice variant with altered kinetics</li>
+                                <li>Lactate dehydrogenase A (LDHA): Enhanced conversion of pyruvate to lactate</li>
+                            </ul>
+                        </li>
+                        <li><strong>Oncogene activation:</strong>
+                            <ul>
+                                <li>c-Myc: Transcriptional upregulation of glycolytic genes</li>
+                                <li>HIF-1α: Promotes glycolytic enzyme expression even under normoxia</li>
+                                <li>PI3K/AKT pathway: Enhances glucose uptake and glycolysis</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>Tumor Microenvironment Impact</h3>
+                    <ul>
+                        <li><strong>Acidification:</strong> Lactate export lowers extracellular pH to 6.5-7.0</li>
+                        <li><strong>Immune evasion:</strong> Acidic environment impairs T-cell and NK cell function</li>
+                        <li><strong>Angiogenesis:</strong> Lactate and low pH promote blood vessel formation</li>
+                        <li><strong>Metastasis:</strong> Acidic pH activates matrix metalloproteinases for invasion</li>
+                        <li><strong>Drug resistance:</strong> Altered pH affects drug uptake and efficacy</li>
+                    </ul>
+                </div>
+
+                <div class="significance-box">
+                    <div class="significance-title">🌟 Clinical Significance & Therapeutic Implications</div>
+                    <ul>
+                        <li><strong>Diagnostic applications:</strong>
+                            <ul>
+                                <li>PET scans with ¹⁸F-fluorodeoxyglucose (FDG-PET) exploit high glucose uptake</li>
+                                <li>Metabolic imaging for tumor detection and monitoring</li>
+                                <li>Lactate/pyruvate ratios as biomarkers</li>
+                            </ul>
+                        </li>
+                        <li><strong>Therapeutic targets:</strong>
+                            <ul>
+                                <li>Glycolytic enzymes: Hexokinase II, PKM2, LDHA inhibitors</li>
+                                <li>Glucose transporters: GLUT1/3 targeting strategies</li>
+                                <li>Metabolic modulators: Dichloroacetate, 2-deoxy-D-glucose</li>
+                            </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.<br>Email: betabiosciences@gmail.com<br>Contact: +91 97 47 53 35 97</p>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn active" onclick="showSection(0)">AOX Pathway</button>
+        <button class="nav-btn" onclick="showSection(1)">Pasteur Effect</button>
+        <button class="nav-btn" onclick="showSection(2)">Warburg Effect</button>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const sections = ['aox-section', 'pasteur-section', 'warburg-section'];
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const progressBar = document.getElementById('progressBar');
+
+        function showSection(index) {
+            // Hide all sections
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                section.classList.remove('active');
+            });
+
+            // Show target section
+            setTimeout(() => {
+                const targetSection = document.getElementById(sections[index]);
+                targetSection.classList.add('active');
+            }, 150);
+
+            // Update navigation buttons
+            navBtns.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            // Update progress bar
+            const progress = ((index + 1) / sections.length) * 100;
+            progressBar.style.width = progress + '%';
+
+            currentSection = index;
+
+            // Scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection(0);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' && currentSection > 0) {
+                showSection(currentSection - 1);
+            } else if (e.key === 'ArrowRight' && currentSection < sections.length - 1) {
+                showSection(currentSection + 1);
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0 && currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                } else if (diff < 0 && currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
