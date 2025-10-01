@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthetic Pigments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax CDN for rendering LaTeX formulas -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* Base styles for all screen sizes */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --primary: #5c6bc0;
+            --primary-dark: #3949ab;
+            --secondary: #ff8f00;
+            --accent: #42a5f5;
+            --light: #1e1e2f;
+            --dark: #121212;
+            --gray: #b0b0b0;
+            --text: #e0e0e0;
+            --card-bg: #2d2d44;
+        }
+
+        body {
+            background: linear-gradient(135deg, #121212, #1a1a2e);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 100% 100%;
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+            padding: 0 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            flex: 1;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            color: var(--accent);
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            word-wrap: break-word;
+        }
+
+        .section-title i {
+            margin-right: 10px;
+            background: var(--primary);
+            color: white;
+            width: clamp(30px, 8vw, 40px);
+            height: clamp(30px, 8vw, 40px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            flex-shrink: 0;
+        }
+
+        .columns {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: min(100%, 300px);
+        }
+
+        .card {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid var(--primary);
+            word-wrap: break-word;
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+        }
+
+        .card ul {
+            list-style-type: disc;
+            padding-left: 1.2rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .chart-container {
+            height: clamp(250px, 40vh, 400px);
+            margin: 1.5rem 0;
+            position: relative;
+            background-color: var(--light);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 10px;
+            touch-action: manipulation;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            min-width: min(100%, 600px);
+        }
+
+        .comparison-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 2px solid var(--primary-dark);
+            white-space: nowrap;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+        }
+
+        .comparison-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #444;
+            white-space: normal;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            word-wrap: break-word;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .structure-diagram {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .molecule {
+            display: inline-block;
+            text-align: center;
+            margin: 0.5rem;
+            vertical-align: top;
+            max-width: 100%;
+        }
+
+        .molecule img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            max-height: min(250px, 40vh);
+        }
+
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0;
+        }
+
+        .key-point {
+            background: linear-gradient(to bottom right, #2d2d44, #3d3d5c);
+            border-radius: 10px;
+            padding: 1.2rem;
+            border: 1px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .key-point h3 {
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+        }
+
+        .key-point h3 i {
+            margin-right: 8px;
+            color: var(--primary);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+        }
+
+        .formula {
+            text-align: center;
+            font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .emerson-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .emerson-buttons button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            min-height: 44px;
+            flex: 1;
+            min-width: min(150px, 100%);
+            touch-action: manipulation;
+        }
+
+        .emerson-buttons button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .emerson-buttons button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .emerson-buttons button#resetEmerson {
+            background-color: var(--accent);
+        }
+
+        .emerson-buttons button#resetEmerson:hover {
+            background-color: #0d47a1;
+        }
+
+        /* Quiz styles */
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .quiz-question p {
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+        }
+        .quiz-options label {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            padding: 0.8rem;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+        .quiz-options label:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        .quiz-options input[type="radio"] {
+            margin-right: 0.8rem;
+            transform: scale(1.2);
+        }
+        .quiz-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .quiz-buttons button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: white;
+            min-height: 44px;
+            flex: 1;
+            min-width: min(150px, 100%);
+            touch-action: manipulation;
+        }
+        .quiz-buttons button#submitQuiz {
+            background-color: var(--primary);
+        }
+        .quiz-buttons button#submitQuiz:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .quiz-buttons button#resetQuiz {
+            background-color: var(--accent);
+        }
+        .quiz-buttons button#resetQuiz:hover {
+            background-color: #0d47a1;
+            transform: translateY(-2px);
+        }
+
+        .correct-answer {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .incorrect-answer {
+            color: #F44336;
+            font-weight: bold;
+        }
+
+        /* Navigation buttons */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            min-height: 44px;
+            flex: 1;
+            min-width: min(120px, 100%);
+            touch-action: manipulation;
+        }
+
+        .nav-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Energy states diagram - MOBILE OPTIMIZED */
+        .energy-diagram {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .energy-levels {
+            display: inline-block;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: clamp(300px, 50vh, 400px);
+            background: var(--light);
+            border-radius: 10px;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .energy-level {
+            position: absolute;
+            width: 80%;
+            height: clamp(30px, 6vh, 35px);
+            background: var(--primary);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            left: 10%;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            padding: 0 5px;
+            text-align: center;
+        }
+
+        .energy-transition {
+            position: absolute;
+            width: 2px;
+            background: var(--secondary);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .energy-label {
+            position: absolute;
+            font-size: clamp(0.6rem, 1.8vw, 0.8rem);
+            font-weight: bold;
+            color: var(--text);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 3px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0 2rem;
+            padding: 0 1rem;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .progress-dot {
+            width: clamp(10px, 3vw, 12px);
+            height: clamp(10px, 3vw, 12px);
+            border-radius: 50%;
+            background-color: #555;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .progress-dot.active {
+            background-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.5;
+        }
+
+        /* Mobile-specific optimizations */
+        @media only screen and (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            .chart-container {
+                height: clamp(200px, 35vh, 300px);
+                padding: 5px;
+                margin: 1rem 0;
+            }
+            
+            .emerson-buttons, .quiz-buttons, .navigation {
+                gap: 0.5rem;
+            }
+            
+            .energy-levels {
+                height: clamp(250px, 45vh, 350px);
+                padding: 10px;
+            }
+            
+            .progress-dots {
+                gap: 0.3rem;
+            }
+        }
+
+        /* Prevent text size adjustment on orientation change */
+        @media screen and (max-width: 768px) {
+            body {
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+        }
+
+        /* High-resolution displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .energy-level, .nav-button, .emerson-buttons button, .quiz-buttons button {
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-leaf"></i> Photosynthetic Pigments</h1>
+        <p class="subtitle">Comprehensive coverage of structure, absorption spectra, quantum yield, and photochemical phenomena.</p>
+    </header>
+
+    <div class="container">
+        <!-- Progress indicator -->
+        <div class="progress-container">
+            <div class="progress-dots">
+                <div class="progress-dot active" data-section="0"></div>
+                <div class="progress-dot" data-section="1"></div>
+                <div class="progress-dot" data-section="2"></div>
+                <div class="progress-dot" data-section="3"></div>
+                <div class="progress-dot" data-section="4"></div>
+                <div class="progress-dot" data-section="5"></div>
+                <div class="progress-dot" data-section="6"></div>
+            </div>
+        </div>
+
+        <!-- New section for energy states -->
+        <section id="energy-states" class="section active">
+            <h2 class="section-title"><i class="fas fa-atom"></i> Energy States of Photosynthetic Pigments</h2>
+            
+            <div class="card">
+                <h3>Electronic States in Photosynthetic Pigments</h3>
+                <p>Photosynthetic pigments exist in different electronic energy states that determine their light absorption and emission properties:</p>
+                <ul>
+                    <li><strong>Singlet Ground State (S₀)</strong>: The lowest energy state where electrons are paired with opposite spins.</li>
+                    <li><strong>Singlet Excited States (S₁, S₂)</strong>: Higher energy states created when pigments absorb photons.</li>
+                    <li><strong>Triplet State (T₁)</strong>: A metastable state with unpaired electron spins that can be reached through intersystem crossing.</li>
+                </ul>
+            </div>
+            
+            <div class="energy-diagram">
+                <h3>Energy Level Diagram</h3>
+                <div class="structure-diagram">
+                    <div class="molecule">
+                        <img src="https://betabiosciences.github.io//Biochemistry-animations/Pigment%20excitation%20&%20relaxation.png" 
+                             alt="Energy states diagram showing S1, Internal conversion, Fluorescence, T1, RET (Exciton transfer), Photooxidation, Phosphorescence, and Ground state">
+                        <p>Energy states diagram showing transitions between different electronic states</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="columns">
+                <div class="col">
+                    <div class="card">
+                        <h3>Decay from Singlet Excited States</h3>
+                        <p>When pigments decay from excited singlet states to the ground state, several phenomena can occur:</p>
+                        <ul>
+                            <li><strong>Fluorescence</strong>: Emission of light as electrons return from S₁ to S₀</li>
+                            <li><strong>Internal Conversion</strong>: Non-radiative transition between excited states (S₂→S₁)</li>
+                            <li><strong>Photochemistry</strong>: Energy transfer to reaction centers for photosynthesis</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <h3>Decay from Triplet States</h3>
+                        <p>Triplet states have longer lifetimes and different decay pathways:</p>
+                        <ul>
+                            <li><strong>Phosphorescence</strong>: Delayed light emission as electrons return from T₁ to S₀</li>
+                            <li><strong>Triplet-Triplet Energy Transfer</strong>: Energy transfer to other molecules</li>
+                            <li><strong>Reactive Oxygen Species Formation</strong>: Can generate singlet oxygen through energy transfer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevEnergy" disabled>Previous</button>
+                <button class="nav-button" id="nextEnergy">Next</button>
+            </div>
+        </section>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="section">
+            <h2 class="section-title"><i class="fas fa-seedling"></i> Introduction</h2>
+            <p>Photosynthetic pigments are specialized molecules that absorb light energy and drive electron transport in photosynthesis. These pigments are classified into three main categories: <strong>chlorophylls</strong>, <strong>carotenoids</strong>, and <strong>phycobilins</strong>. Each class has distinct structural features and absorption properties that enable plants, algae, and cyanobacteria to capture solar energy efficiently across the visible spectrum.</p>
+            
+            <div class="key-points">
+                <div class="key-point">
+                    <h3><i class="fas fa-lightbulb"></i> Core Function</h3>
+                    <p>Absorb photons and transfer energy to reaction centers where photochemistry occurs, initiating the electron transport chain.</p>
+                </div>
+                <div class="key-point">
+                    <h3><i class="fas fa-sun"></i> Energy Capture</h3>
+                    <p>Pigments absorb specific wavelengths of light, converting solar energy into chemical energy with high efficiency.</p>
+                </div>
+                <div class="key-point">
+                    <h3><i class="fas fa-shield-alt"></i> Photoprotection</h3>
+                    <p>Accessory pigments protect photosynthetic apparatus from photooxidative damage by dissipating excess energy.</p>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevIntro">Previous</button>
+                <button class="nav-button" id="nextIntro">Next</button>
+            </div>
+        </section>
+
+        <!-- Pigment Structures Section -->
+        <section id="pigment-structures" class="section">
+            <h2 class="section-title"><i class="fas fa-atom"></i> Pigment Structures</h2>
+            
+            <div class="columns">
+                <div class="col">
+                    <div class="card">
+                        <h3>Chlorophylls</h3>
+                        <p>Chlorophylls feature a <strong>porphyrin ring</strong> (tetrapyrrole structure) with a central Mg²⁺ ion coordinated by four nitrogen atoms. The molecule has:</p>
+                        <ul>
+                            <li>A hydrophobic <strong>phytol tail</strong> (C₂₀H₃₉) that anchors it to thylakoid membranes</li>
+                            <li>A conjugated double-bond system that enables light absorption</li>
+                            <li>Peripheral substituents that differ between types:
+                                <ul>
+                                    <li><strong>Chlorophyll a</strong>: Methyl group (-CH₃) at C-7 position</li>
+                                    <li><strong>Chlorophyll b</strong>: Formyl group (-CHO) at C-7 position</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="structure-diagram">
+                        <h3>Chlorophyll a Molecular Structure</h3>
+                        <div class="molecule">
+                            <img src="https://betabiosciences.github.io/Biochemistry-animations/Chlorophyll%20structure.png" 
+                                 alt="Chlorophyll a structure showing porphyrin ring with Mg²⁺ center and phytol tail">
+                            <p>Chlorophyll a structure showing porphyrin ring with Mg²⁺ center and phytol tail</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card">
+                        <h3>Carotenoids</h3>
+                        <p>Carotenoids consist of <strong>polyene chains</strong> with conjugated double bonds and ionone rings. They are classified as:</p>
+                        <ul>
+                            <li><strong>Carotenes</strong>: Hydrocarbons (e.g., β-carotene)</li>
+                            <li><strong>Xanthophylls</strong>: Oxygenated derivatives (e.g., lutein, violaxanthin)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Phycobilins</h3>
+                        <p>Phycobilins are <strong>linear tetrapyrroles</strong> without Mg²⁺ or phytol tail. Examples include:</p>
+                        <ul>
+                            <li><strong>Phycoerythrobilin</strong> (red pigment in red algae)</li>
+                            <li><strong>Phycocyanobilin</strong> (blue pigment in cyanobacteria)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevStructures">Previous</button>
+                <button class="nav-button" id="nextStructures">Next</button>
+            </div>
+        </section>
+
+        <!-- Absorption Spectra Section -->
+        <section id="absorption-spectra" class="section">
+            <h2 class="section-title"><i class="fas fa-chart-line"></i> Absorption Spectra</h2>
+            
+            <div class="card">
+                <h3>Key Absorption Bands</h3>
+                <ul>
+                    <li><strong>Soret (B) Band</strong>: High-energy absorption in blue-violet region (400-500 nm)</li>
+                    <li><strong>Q-Band</strong>: Lower-energy absorption in red region (600-700 nm), consisting of:
+                        <ul>
+                            <li><strong>Qx band</strong>: Results when chlorophylls excite to Singlet state S2</li>
+                            <li><strong>Qy band</strong>: Results when chlorophylls excite to Singlet state S1</li>
+                        </ul>
+                    </li>
+                    <li><strong>Green Gap</strong>: Minimal absorption at 500-600 nm (causes green appearance of plants)</li>
+                    <li><strong>Soret band of Chlorophyll b is Red shifted (longer wavelength) and Q-band Blue shifted (shorter wavelength) when compared to Chlorophyll a</strong></li>
+                </ul>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="absorptionChart"></canvas>
+            </div>
+            
+            <div class="card">
+                <h3>Soret Band Comparison: Chlorophyll a vs b</h3>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Chlorophyll a</th>
+                                <th>Chlorophyll b</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Peak Wavelength</td>
+                                <td>428-432 nm</td>
+                                <td>452-457 nm</td>
+                            </tr>
+                            <tr>
+                                <td>Molar Extinction Coefficient</td>
+                                <td>~120,000 M⁻¹cm⁻¹</td>
+                                <td>~90,000 M⁻¹cm⁻¹</td>
+                            </tr>
+                            <tr>
+                                <td>Structural Cause</td>
+                                <td>Methyl group at C-7</td>
+                                <td>Formyl group at C-7</td>
+                            </tr>
+                            <tr>
+                                <td>Energy Level</td>
+                                <td>Higher energy absorption</td>
+                                <td>Lower energy absorption</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevAbsorption">Previous</button>
+                <button class="nav-button" id="nextAbsorption">Next</button>
+            </div>
+        </section>
+
+        <!-- Action Spectra Section -->
+        <section id="action-spectra" class="section">
+            <h2 class="section-title"><i class="fas fa-wave-square"></i> Action Spectra & Quantum Yield</h2>
+            
+            <div class="columns">
+                <div class="col">
+                    <div class="card">
+                        <h3>Action Spectrum vs Absorption Spectrum</h3>
+                        <ul>
+                            <li><strong>Absorption Spectrum</strong>: Measures wavelengths absorbed by pigments</li>
+                            <li><strong>Action Spectrum</strong>: Measures photosynthetic rate at different wavelength of light</li>
+                            <li>Action spectra of photosynthesis will absolutely correlate the Absorption spectra of chlorophylls</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="actionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card">
+                        <h3>Quantum Yield (Φ)</h3>
+                        <p>Quantum yield measures the efficiency of photosynthesis:</p>
+                        <div class="formula">
+                            $$\Phi = \frac{\text{Number of O₂ molecules produced}}{\text{Number of photons absorbed}}$$
+                        </div>
+                        <ul>
+                            <li>Maximum Φ: 0.10-0.125 (8-10 photons per O₂ molecule)</li>
+                            <li>Peak efficiency at 680 nm</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Red Drop Effect</h3>
+                        <p>Sharp decline in quantum yield beyond 680 nm due to:</p>
+                        <ul>
+                            <li>Imbalance in energy supply to PSII and PSI</li>
+                            <li>PSII absorption decreases above 680 nm</li>
+                            <li>PSI absorbs far-red light but can't function alone</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="redDropChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevAction">Previous</button>
+                <button class="nav-button" id="nextAction">Next</button>
+            </div>
+        </section>
+
+        <!-- Emerson Effect Section -->
+        <section id="emerson-effect" class="section">
+            <h2 class="section-title"><i class="fas fa-magic"></i> Emerson Enhancement Effect</h2>
+            <div class="card">
+                <h3>Understanding the Enhancement Effect</h3>
+                <p>The Emerson Enhancement Effect demonstrates that the efficiency of photosynthesis significantly increases when plants are exposed simultaneously to both red light (around 680 nm) and far-red light (above 700 nm), compared to the sum of the photosynthetic rates achieved when exposed to each wavelength individually.</p>
+                <ul>
+                    <li>This effect revealed the existence of two distinct photosystems, Photosystem I (PSI) and Photosystem II (PSII), which work synergistically.</li>
+                    <li>PSII absorbs effectively at 680 nm, while PSI absorbs effectively at wavelengths greater than 680 nm (far-red light).</li>
+                    <li>For optimal photosynthesis, both photosystems must be excited; a single wavelength alone is insufficient beyond the red drop.</li>
+                </ul>
+            </div>
+            <div class="chart-container">
+                <canvas id="emersonEnhancementChart"></canvas>
+            </div>
+            <div class="emerson-buttons">
+                <button id="showRed">Show Red Light (680nm Only)</button>
+                <button id="showFarRed">Show Far-Red Light (700nm Only)</button>
+                <button id="showIndividualSum">Show Individual Sum (Red + Far-Red)</button>
+                <button id="showCombined">Show Observed Combined (Red + Far-Red)</button>
+                <button id="resetEmerson">Reset Graph</button>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevEmerson">Previous</button>
+                <button class="nav-button" id="nextEmerson">Next</button>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <h2 class="section-title"><i class="fas fa-question-circle"></i> Review Quiz</h2>
+            <div id="quizContainer">
+                <!-- Quiz questions will be rendered here by JavaScript -->
+            </div>
+            <div class="quiz-buttons">
+                <button id="submitQuiz">Submit Answers</button>
+                <button id="resetQuiz">Reset Quiz</button>
+            </div>
+            
+            <div class="navigation">
+                <button class="nav-button" id="prevQuiz">Previous</button>
+                <button class="nav-button" id="nextQuiz" disabled>Next</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <div class="footer-text">
+                <p>© 2025 BETA Biosciences. All rights reserved.</p>
+                <p>Email: betabiosciences@gmail.com</p>
+                <p>Contact: +91 97 47 53 35 97</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chart.js and plugin scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+
+    <script>
+        // Mobile-friendly touch event handling
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prevent zoom on double tap
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function (event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+
+            // Improved touch handling for buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                
+                button.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+
+            // Section navigation logic
+            const sections = [
+                'energy-states', 'introduction', 'pigment-structures', 
+                'absorption-spectra', 'action-spectra', 'emerson-effect', 'quiz'
+            ];
+            
+            let currentSectionIndex = 0;
+            
+            function showSection(index) {
+                sections.forEach(sectionId => {
+                    document.getElementById(sectionId).classList.remove('active');
+                });
+                
+                document.getElementById(sections[index]).classList.add('active');
+                updateNavigationButtons();
+                updateProgressDots(index);
+                
+                // Scroll to top when changing sections on mobile
+                if (window.innerWidth <= 768) {
+                    window.scrollTo(0, 0);
+                }
+            }
+            
+            function updateNavigationButtons() {
+                const prevButtons = document.querySelectorAll('.nav-button[id^="prev"]');
+                const nextButtons = document.querySelectorAll('.nav-button[id^="next"]');
+                
+                prevButtons.forEach(button => {
+                    button.disabled = currentSectionIndex === 0;
+                });
+                
+                nextButtons.forEach(button => {
+                    button.disabled = currentSectionIndex === sections.length - 1;
+                });
+            }
+            
+            function updateProgressDots(index) {
+                const dots = document.querySelectorAll('.progress-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i <= index);
+                });
+            }
+            
+            function navigateToNext() {
+                if (currentSectionIndex < sections.length - 1) {
+                    currentSectionIndex++;
+                    showSection(currentSectionIndex);
+                }
+            }
+            
+            function navigateToPrev() {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    showSection(currentSectionIndex);
+                }
+            }
+            
+            // Set up navigation
+            document.querySelectorAll('.nav-button[id^="next"]').forEach(button => {
+                button.addEventListener('click', navigateToNext);
+            });
+            
+            document.querySelectorAll('.nav-button[id^="prev"]').forEach(button => {
+                button.addEventListener('click', navigateToPrev);
+            });
+            
+            document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSectionIndex = index;
+                    showSection(currentSectionIndex);
+                });
+            });
+            
+            // Initialize
+            showSection(currentSectionIndex);
+            initializeCharts();
+            initializeQuiz();
+        });
+
+        // Chart initialization - using the exact same code from the original HTML
+        function initializeCharts() {
+            // Function to generate data for absorption charts based on wavelength
+            const generateAbsorptionData = (start, end, func) => {
+                const data = [];
+                for (let i = start; i <= end; i += 5) {
+                    data.push(func(i));
+                }
+                return data;
+            };
+
+            // Absorption Spectra Chart
+            const absorptionCtx = document.getElementById('absorptionChart').getContext('2d');
+            new Chart(absorptionCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 71}, (_, i) => 400 + i * 5),
+                    datasets: [
+                        {
+                            label: 'Chlorophyll a',
+                            data: generateAbsorptionData(400, 750, (x) => {
+                                return (
+                                    Math.exp(-Math.pow(x - 430, 2) / 500) * 0.9 +
+                                    Math.exp(-Math.pow(x - 662, 2) / 2000) * 0.7
+                                );
+                            }),
+                            borderColor: '#388E3C',
+                            backgroundColor: 'rgba(56, 142, 60, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Chlorophyll b',
+                            data: generateAbsorptionData(400, 750, (x) => {
+                                return (
+                                    Math.exp(-Math.pow(x - 453, 2) / 500) * 0.7 +
+                                    Math.exp(-Math.pow(x - 643, 2) / 2000) * 0.6
+                                );
+                            }),
+                            borderColor: '#7CB342',
+                            backgroundColor: 'rgba(124, 179, 66, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Absorption Spectra of Chlorophyll a and b',
+                            font: { size: 16 },
+                            color: '#e0e0e0'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return `Wavelength: ${tooltipItems[0].label} nm`;
+                                },
+                                label: function(tooltipItem) {
+                                    return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Wavelength (nm)',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Relative Absorbance',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            min: 0,
+                            max: 1,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Action Spectrum Chart
+            const actionCtx = document.getElementById('actionChart').getContext('2d');
+            new Chart(actionCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 71}, (_, i) => 400 + i * 5),
+                    datasets: [
+                        {
+                            label: 'Absorption Spectrum (Chl a)',
+                            data: generateAbsorptionData(400, 750, (x) => {
+                                return (
+                                    Math.exp(-Math.pow(x - 430, 2) / 500) * 0.9 +
+                                    Math.exp(-Math.pow(x - 662, 2) / 2000) * 0.7
+                                );
+                            }),
+                            borderColor: '#388E3C',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Action Spectrum (Photosynthesis)',
+                            data: generateAbsorptionData(400, 750, (x) => {
+                                return (
+                                    (Math.exp(-Math.pow(x - 430, 2) / 500) * 0.9 +
+                                    Math.exp(-Math.pow(x - 662, 2) / 2000) * 0.7) * 1.1 +
+                                    Math.exp(-Math.pow(x - 470, 2) / 1000) * 0.2 +
+                                    Math.exp(-Math.pow(x - 550, 2) / 2000) * 0.1
+                                );
+                            }),
+                            borderColor: '#D32F2F',
+                            backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Action Spectrum vs. Absorption Spectrum',
+                            font: { size: 16 },
+                            color: '#e0e0e0'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return `Wavelength: ${tooltipItems[0].label} nm`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Wavelength (nm)',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Relative Rate',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            min: 0,
+                            max: 1.2,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Red Drop Effect Chart
+            const redDropCtx = document.getElementById('redDropChart').getContext('2d');
+            new Chart(redDropCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 41}, (_, i) => 600 + i * 5),
+                    datasets: [
+                        {
+                            label: 'Quantum Yield (Φ)',
+                            data: generateAbsorptionData(600, 800, (x) => {
+                                if (x <= 680) {
+                                    return 0.125;
+                                } else if (x > 680 && x <= 720) {
+                                    return 0.125 * Math.exp(-(x - 680) / 40);
+                                } else {
+                                    return 0.125 * Math.exp(-(x - 680) / 40) * 0.5;
+                                }
+                            }),
+                            borderColor: '#7B1FA2',
+                            backgroundColor: 'rgba(123, 31, 162, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Red Drop Effect in Quantum Yield',
+                            font: { size: 16 },
+                            color: '#e0e0e0'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return `Wavelength: ${tooltipItems[0].label} nm`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                color: '#e0e0e0'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Wavelength (nm)',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Quantum Yield (Φ)',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            min: 0,
+                            max: 0.14,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Emerson Enhancement Effect Chart
+            const emersonCtx = document.getElementById('emersonEnhancementChart').getContext('2d');
+            const emersonChartData = {
+                labels: ['Red Light (680nm)', 'Far-Red Light (700nm)', 'Individual Sum (Red + Far-Red)', 'Observed Combined (Red + Far-Red)'],
+                originalData: [5, 2, 7, 15]
+            };
+
+            const emersonEnhancementChart = new Chart(emersonCtx, {
+                type: 'bar',
+                data: {
+                    labels: emersonChartData.labels,
+                    datasets: [{
+                        label: 'Photosynthetic Rate',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(244, 67, 54, 0.7)',
+                            'rgba(123, 31, 162, 0.7)',
+                            'rgba(96, 125, 139, 0.7)',
+                            'rgba(56, 142, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(244, 67, 54, 1)',
+                            'rgba(123, 31, 162, 1)',
+                            'rgba(96, 125, 139, 1)',
+                            'rgba(56, 142, 60, 1)'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Emerson Enhancement Effect',
+                            font: { size: 16 },
+                            color: '#e0e0e0'
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return tooltipItems[0].label;
+                                },
+                                label: function(tooltipItem) {
+                                    return `Rate: ${tooltipItem.formattedValue}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Light Condition',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Photosynthetic Rate (arbitrary units)',
+                                font: { size: 12, weight: 'bold' },
+                                color: '#e0e0e0'
+                            },
+                            beginAtZero: true,
+                            max: 18,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                font: { size: 10 },
+                                color: '#e0e0e0'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 800
+                    }
+                }
+            });
+
+            // Event Listeners for Emerson buttons
+            document.getElementById('showRed').addEventListener('click', () => {
+                emersonEnhancementChart.data.datasets[0].data = [emersonChartData.originalData[0], 0, 0, 0];
+                emersonEnhancementChart.update();
+            });
+
+            document.getElementById('showFarRed').addEventListener('click', () => {
+                emersonEnhancementChart.data.datasets[0].data = [0, emersonChartData.originalData[1], 0, 0];
+                emersonEnhancementChart.update();
+            });
+
+            document.getElementById('showIndividualSum').addEventListener('click', () => {
+                emersonEnhancementChart.data.datasets[0].data = [0, 0, emersonChartData.originalData[2], 0];
+                emersonEnhancementChart.update();
+            });
+
+            document.getElementById('showCombined').addEventListener('click', () => {
+                emersonEnhancementChart.data.datasets[0].data = [0, 0, 0, emersonChartData.originalData[3]];
+                emersonEnhancementChart.update();
+            });
+
+            document.getElementById('resetEmerson').addEventListener('click', () => {
+                emersonEnhancementChart.data.datasets[0].data = [0, 0, 0, 0];
+                emersonEnhancementChart.update();
+            });
+
+            // Initially show no bars
+            emersonEnhancementChart.data.datasets[0].data = [0, 0, 0, 0];
+            emersonEnhancementChart.update();
+        }
+
+        // Quiz functionality
+        function initializeQuiz() {
+            const quizData = [
+                {
+                    question: "Which of the following structural features distinguishes chlorophyll b from chlorophyll a?",
+                    options: [
+                        "A. Presence of a central Fe²⁺ ion",
+                        "B. Replacement of –CH₃ with –CHO at C7 position",
+                        "C. Absence of the phytol tail",
+                        "D. Substitution of Mg²⁺ with Zn²⁺"
+                    ],
+                    correctAnswerIndex: 1
+                },
+                {
+                    question: "What is the function of carotenoids in the photosynthetic apparatus?",
+                    options: [
+                        "A. Catalyze the splitting of water",
+                        "B. Reduce NADP⁺ to NADPH",
+                        "C. Harvest green light for Photosystem II",
+                        "D. Prevent oxidative damage and extend light absorption"
+                    ],
+                    correctAnswerIndex: 3
+                },
+                {
+                    question: "Which of the following best explains the “red drop effect”?",
+                    options: [
+                        "A. Decrease in chlorophyll fluorescence beyond 700 nm",
+                        "B. Reduced ATP synthesis above 600 nm",
+                        "C. Sharp drop in quantum yield of photosynthesis beyond 680 nm",
+                        "D. Sudden enhancement in CO₂ fixation beyond 700 nm"
+                    ],
+                    correctAnswerIndex: 2
+                },
+                {
+                    question: "In an action spectrum of photosynthesis in plants, which regions show peak activity?",
+                    options: [
+                        "A. 400–450 nm and 680–700 nm",
+                        "B. 500–600 nm only",
+                        "C. 450–550 nm and 620–640 nm",
+                        "D. 700–800 nm only"
+                    ],
+                    correctAnswerIndex: 0
+                },
+                {
+                    question: "Which transition is associated with the Soret band in chlorophyll?",
+                    options: [
+                        "A) π→π* transition in the porphyrin ring",
+                        "B) n→π* transition of the phytol tail",
+                        "C) Mg²⁺ ionization",
+                        "D) Singlet-to-triplet transition"
+                    ],
+                    correctAnswerIndex: 0
+                },
+                {
+                    question: "The quantum yield (Φ) of photosynthesis is calculated as:",
+                    options: [
+                        "A) CO₂ fixed per photon absorbed",
+                        "B) O₂ evolved per photon absorbed",
+                        "C) ATP synthesized per photon absorbed",
+                        "D) NADPH produced per photon absorbed"
+                    ],
+                    correctAnswerIndex: 1
+                }
+            ];
+
+            const quizContainer = document.getElementById('quizContainer');
+            const submitQuizBtn = document.getElementById('submitQuiz');
+            const resetQuizBtn = document.getElementById('resetQuiz');
+
+            function renderQuiz() {
+                quizContainer.innerHTML = '';
+                quizData.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.classList.add('quiz-question');
+                    questionDiv.innerHTML = `<p>${index + 1}. ${q.question}</p>`;
+
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('quiz-options');
+
+                    q.options.forEach((option, optionIndex) => {
+                        const label = document.createElement('label');
+                        label.innerHTML = `
+                            <input type="radio" name="question${index}" value="${optionIndex}">
+                            ${option}
+                        `;
+                        optionsDiv.appendChild(label);
+                    });
+                    questionDiv.appendChild(optionsDiv);
+                    quizContainer.appendChild(questionDiv);
+                });
+            }
+
+            function submitQuiz() {
+                quizData.forEach((q, index) => {
+                    const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+                    const questionDiv = quizContainer.children[index];
+                    const optionsLabels = questionDiv.querySelectorAll('label');
+
+                    questionDiv.querySelectorAll('input[type="radio"]').forEach(radio => radio.disabled = true);
+
+                    if (selectedOption) {
+                        const userAnswerIndex = parseInt(selectedOption.value);
+                        if (userAnswerIndex === q.correctAnswerIndex) {
+                            optionsLabels[userAnswerIndex].classList.add('correct-answer');
+                        } else {
+                            optionsLabels[userAnswerIndex].classList.add('incorrect-answer');
+                            optionsLabels[q.correctAnswerIndex].classList.add('correct-answer');
+                        }
+                    } else {
+                        optionsLabels[q.correctAnswerIndex].classList.add('correct-answer');
+                    }
+                });
+            }
+
+            function resetQuiz() {
+                quizData.forEach((q, index) => {
+                    const questionDiv = quizContainer.children[index];
+                    const optionsLabels = questionDiv.querySelectorAll('label');
+
+                    optionsLabels.forEach(label => {
+                        label.classList.remove('correct-answer', 'incorrect-answer');
+                    });
+
+                    questionDiv.querySelectorAll('input[type="radio"]').forEach(radio => {
+                        radio.checked = false;
+                        radio.disabled = false;
+                    });
+                });
+            }
+
+            renderQuiz();
+
+            submitQuizBtn.addEventListener('click', submitQuiz);
+            resetQuizBtn.addEventListener('click', resetQuiz);
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
