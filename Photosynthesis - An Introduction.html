@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis - An Introduction</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: linear-gradient(45deg, #22c55e, #10b981, #06d6a0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+        }
+
+        .section {
+            display: none;
+            flex: 1;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h2 {
+            color: #22c55e;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .equation {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .equation .formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3rem;
+            color: #fbbf24;
+            margin: 10px 0;
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .stage-card {
+            background: linear-gradient(135deg, #1e293b, #475569);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #22c55e;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+        }
+
+        .stage-card h3 {
+            color: #fbbf24;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .organelle-feature {
+            background: rgba(51, 65, 85, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 12px 0;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .organelle-feature h4 {
+            color: #06d6a0;
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            margin-top: auto;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            min-width: 80px;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .nav-btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-indicator {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: #22c55e;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+            transform: scale(1.2);
+        }
+
+        .highlight {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .comparison-box {
+            background: linear-gradient(135deg, #374151, #4b5563);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* Mobile-optimized image */
+        .mobile-optimized-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-text {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .equation .formula {
+                font-size: 1.1rem;
+            }
+            
+            .nav-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+                min-width: 70px;
+            }
+            
+            .footer-text {
+                font-size: 0.8rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Photosynthesis - An Introduction</h1>
+        </div>
+
+        <!-- Section 1: Equation -->
+        <div class="section active" id="section-1">
+            <h2>The Photosynthesis Equation</h2>
+            <div class="equation">
+                <p><strong>The fundamental equation for photosynthesis:</strong></p>
+                <div class="formula">6CO₂ + 6H₂O + Light Energy → C₆H₁₂O₆ + 6O₂</div>
+                <p style="margin-top: 15px;">
+                    <span class="highlight">Carbon Dioxide</span> + <span class="highlight">Water</span> + <span class="highlight">Light Energy</span> 
+                    → <span class="highlight">Glucose</span> + <span class="highlight">Oxygen</span>
+                </p>
+            </div>
+            <p>This remarkable process converts inorganic molecules (CO₂ and H₂O) into organic sugar (glucose) using light energy, releasing oxygen as a byproduct. This equation represents one of the most important biological processes on Earth, providing energy for virtually all life forms and maintaining atmospheric oxygen levels.</p>
+            <p>The glucose produced serves as both an energy source and building material for plant growth, while the oxygen released supports aerobic life on our planet.</p>
+        </div>
+
+        <!-- Section 2: Two Stages -->
+        <div class="section" id="section-2">
+            <h2>The Two Stages of Photosynthesis</h2>
+            <p>Photosynthesis occurs in two interconnected stages, each with distinct functions and locations within the chloroplast:</p>
+            
+            <div class="stage-card">
+                <h3>🌞 Light Reactions (Photo-dependent)</h3>
+                <p><strong>Location:</strong> Thylakoid membranes</p>
+                <p><strong>Function:</strong> Capture light energy and convert it into chemical energy (ATP and NADPH) while splitting water molecules to release oxygen.</p>
+                <p><strong>Key processes:</strong></p>
+                <ul>
+                    <li>Light absorption by chlorophyll</li>
+                    <li>Water photolysis (H₂O → 2H⁺ + ½O₂ + 2e⁻)</li>
+                    <li>ATP and NADPH production</li>
+                    <li>Oxygen release</li>
+                </ul>
+            </div>
+
+            <div class="stage-card">
+                <h3>🌙 Dark Reactions (Calvin Cycle)</h3>
+                <p><strong>Location:</strong> Chloroplast stroma</p>
+                <p><strong>Function:</strong> Use the ATP and NADPH from light reactions to fix carbon dioxide into glucose through a series of enzyme-catalyzed reactions.</p>
+                <p><strong>Key processes:</strong></p>
+                <ul>
+                    <li>CO₂ fixation by RuBisCO enzyme</li>
+                    <li>Carbon reduction using NADPH</li>
+                    <li>ATP consumption for energy</li>
+                    <li>Glucose synthesis</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Chloroplast Structure -->
+        <div class="section" id="section-3">
+            <h2>Chloroplast Structure & Function</h2>
+            <p>A chloroplast has <span class="highlight">three separate membrane systems</span> and <span class="highlight">three distinct aqueous spaces</span> that are vital for its function. This complex internal structure allows it to perform photosynthesis by dividing the organelle into functional compartments.</p>
+            
+            <!-- Mobile-optimized image -->
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Chloroplast.png" alt="Chloroplast Structure" class="mobile-optimized-image">
+
+            <div class="organelle-feature">
+                <h4>🧬 Chloroplast Membrane Systems</h4>
+                <p><strong>Outer membrane:</strong> The outermost layer of the chloroplast envelope. It is highly permeable, containing channel proteins called porins that allow small organic molecules and ions to pass through freely.</p>
+                <p><strong>Inner membrane:</strong> This membrane is situated just inside the outer membrane. Unlike the outer membrane, it is much less permeable and contains specialized transport proteins that regulate the passage of specific substances into and out of the stroma.</p>
+                <p><strong>Thylakoid membrane:</strong> The internal membrane system suspended within the stroma. It is a network of flattened, disc-like sacs called thylakoids. The thylakoid membrane is the site of the light-dependent reactions of photosynthesis and contains important components like chlorophyll, photosystems, and ATP synthase.</p>
+            </div>
+
+            <div class="organelle-feature">
+                <h4>💧 Chloroplast Spaces</h4>
+                <p><strong>Intermembrane space:</strong> The narrow space (10–20 nm) between the outer and inner chloroplast membranes. Its composition is similar to the cytosol because the outer membrane is permeable to small molecules.</p>
+                <p><strong>Stroma:</strong> The fluid-filled space enclosed by the inner membrane and surrounding the thylakoid system. The stroma is the location for the Calvin cycle (light-independent reactions) of photosynthesis. It contains key metabolic enzymes, chloroplast DNA, and ribosomes.</p>
+                <p><strong>Thylakoid lumen:</strong> The aqueous space enclosed within the thylakoid membrane. Protons are pumped into the lumen during the light reactions, creating a proton motive force that drives ATP synthesis as they flow back into the stroma.</p>
+            </div>
+
+            <div class="organelle-feature">
+                <h4>🔗 The Relationship Between Membranes and Spaces</h4>
+                <p>The complex arrangement of these three membrane systems creates three functionally distinct aqueous compartments:</p>
+                <ul>
+                    <li>The outer and inner membranes form the chloroplast envelope, separating the internal environment from the cytoplasm of the cell.</li>
+                    <li>The thylakoid membrane forms a separate, continuous internal network within the stroma, creating the third space, the thylakoid lumen.</li>
+                    <li>Unlike mitochondria, the inner membrane of the chloroplast does not contain the electron transport chain; this function is instead carried out by the thylakoid membrane.</li>
+                </ul>
+            </div>
+
+            <div class="organelle-feature">
+                <h4>🌱 Chloroplast Development</h4>
+                <p>During the development of chloroplasts from proplastids, some transient connections may be observed between the inner envelope and forming thylakoids. Research suggests that lipids and proteins required to build the thylakoids are synthesized at the inner envelope and transported to the growing thylakoid network via vesicles that bud off and fuse with the thylakoids.</p>
+                <p>This process ensures the two membrane systems remain separate. The thylakoid system is a discrete internal membrane network suspended in the stroma.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" alt="BETA Biosciences Logo" class="footer-logo">
+            <div class="footer-text">
+                © 2025 BETA Biosciences. All rights reserved.<br>
+                Email: betabiosciences@gmail.com<br>
+                Contact: +91 97 47 53 35 97
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn" onclick="previousSection()" disabled>Previous</button>
+            <div class="progress-indicator">
+                <div class="progress-dot active" id="dot-1"></div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-dot" id="dot-3"></div>
+            </div>
+            <button class="nav-btn" id="next-btn" onclick="nextSection()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 3;
+
+        function showSection(sectionNumber) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById(`section-${i}`).classList.remove('active');
+                document.getElementById(`dot-${i}`).classList.remove('active');
+            }
+            
+            // Show current section
+            document.getElementById(`section-${sectionNumber}`).classList.add('active');
+            document.getElementById(`dot-${sectionNumber}`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = sectionNumber === 1;
+            document.getElementById('next-btn').disabled = sectionNumber === totalSections;
+            
+            // Update button text for last section
+            if (sectionNumber === totalSections) {
+                document.getElementById('next-btn').textContent = 'Complete';
+            } else {
+                document.getElementById('next-btn').textContent = 'Next';
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        // Touch/swipe support for mobile
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            if (!startX || !startY) return;
+            
+            let endX = e.changedTouches[0].clientX;
+            let endY = e.changedTouches[0].clientY;
+            
+            let diffX = startX - endX;
+            let diffY = startY - endY;
+            
+            // Only trigger if horizontal swipe is more significant than vertical
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left - next section
+                    nextSection();
+                } else {
+                    // Swipe right - previous section
+                    previousSection();
+                }
+            }
+            
+            startX = 0;
+            startY = 0;
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSection();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSection();
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
