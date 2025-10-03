@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Reactions of Photosynthesis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            min-height: 100vh;
+            color: #e0d4f7;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(45, 27, 78, 0.6);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        h1 {
+            color: #a78bfa;
+            font-size: 2em;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        h2 {
+            color: #c4b5fd;
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #7c3aed;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #ddd6fe;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .equation {
+            background: rgba(124, 58, 237, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            color: #fcd34d;
+            border-left: 4px solid #a78bfa;
+            overflow-x: auto;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: rgba(124, 58, 237, 0.3);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .progress {
+            text-align: center;
+            margin-top: 15px;
+            color: #c4b5fd;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(124, 58, 237, 0.3);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed 0%, #a78bfa 100%);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        ul {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #e0d4f7;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.5;
+        }
+
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 0.95em;
+            }
+
+            .equation {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dark Reactions of Photosynthesis</h1>
+        
+        <!-- Progress indicator -->
+        <div class="progress">
+            <span id="current-section">1</span> of <span id="total-sections">6</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 16.67%"></div>
+        </div>
+        
+        <!-- Section 1: Overview -->
+        <div class="section active" id="section1">
+            <h2>The Calvin Cycle: An Overview</h2>
+            
+            <p>The <span class="highlight">Calvin cycle</span>, also known as the <span class="highlight">Calvin-Benson-Bassham (CBB) cycle</span>, represents the light-independent reactions of photosynthesis. Despite being termed "dark reactions," these processes can occur in light or darkness, provided the necessary ATP and NADPH from light reactions are available.</p>
+
+            <h3>Location and Significance</h3>
+            <p>The Calvin cycle occurs in the <span class="highlight">stroma of chloroplasts</span> in eukaryotic plants and in the cytoplasm of cyanobacteria. This cycle is the primary mechanism for carbon fixation in most photosynthetic organisms, converting inorganic CO₂ into organic compounds that serve as the foundation for all life on Earth.</p>
+
+            <h3>Three Major Stages</h3>
+            <p>The Calvin cycle consists of three interconnected phases:</p>
+            <ul>
+                <li><span class="highlight">Carboxylation (Carbon Fixation):</span> CO₂ is attached to ribulose-1,5-bisphosphate (RuBP), a 5-carbon sugar, catalyzed by the enzyme RuBisCO</li>
+                <li><span class="highlight">Reduction:</span> 3-phosphoglycerate (3-PGA) is reduced to glyceraldehyde-3-phosphate (G3P) using ATP and NADPH</li>
+                <li><span class="highlight">Regeneration:</span> RuBP is regenerated from G3P to continue the cycle</li>
+            </ul>
+
+            <h3>Products of the Calvin Cycle</h3>
+            <p>For every three CO₂ molecules fixed, the cycle produces:</p>
+            <ul>
+                <li>One molecule of <span class="highlight">glyceraldehyde-3-phosphate (G3P)</span> - a triose phosphate that exits the cycle</li>
+                <li>This G3P can be used to synthesize glucose, sucrose, starch, and other organic compounds</li>
+            </ul>
+
+            <h3>Overall Reaction</h3>
+            <div class="equation">
+                3 CO₂ + 6 NADPH + 9 ATP + 5 H₂O → G3P + 6 NADP⁺ + 9 ADP + 8 Pi
+            </div>
+
+            <p>To produce one glucose molecule (6 carbons), the cycle must turn <span class="highlight">six times</span>, fixing six CO₂ molecules and consuming 18 ATP and 12 NADPH molecules.</p>
+
+            <h3>Stoichiometry for Glucose Production</h3>
+            <div class="equation">
+                6 CO₂ + 12 NADPH + 18 ATP → C₆H₁₂O₆ + 12 NADP⁺ + 18 ADP + 17 Pi
+            </div>
+        </div>
+
+        <!-- Section 2: Detailed Phases and RuBisCO -->
+        <div class="section" id="section2">
+            <h2>Detailed Calvin Cycle Phases</h2>
+
+            <h3>Phase 1: Carboxylation (Carbon Fixation)</h3>
+            <p>The carboxylation phase is the entry point for atmospheric CO₂ into organic molecules. The enzyme <span class="highlight">ribulose-1,5-bisphosphate carboxylase/oxygenase (RuBisCO)</span> catalyzes the reaction between CO₂ and RuBP (a 5-carbon molecule) to form two molecules of 3-phosphoglycerate (3-PGA), each containing 3 carbons.</p>
+
+            <div class="equation">
+                RuBP (C₅) + CO₂ → 2 × 3-PGA (C₃)
+            </div>
+
+            <p>This is the rate-limiting step of the Calvin cycle and the slowest enzymatic reaction in nature, yet it is responsible for fixing approximately <span class="highlight">100 billion tons of carbon annually</span>.</p>
+
+            <h3>Phase 2: Reduction</h3>
+            <p>The reduction phase converts 3-PGA into glyceraldehyde-3-phosphate (G3P) through two sequential reactions:</p>
+            <ul>
+                <li><span class="highlight">Phosphorylation:</span> 3-PGA is phosphorylated by ATP to form 1,3-bisphosphoglycerate (1,3-BPG), catalyzed by phosphoglycerate kinase</li>
+                <li><span class="highlight">Reduction:</span> 1,3-BPG is reduced by NADPH to form G3P, catalyzed by glyceraldehyde-3-phosphate dehydrogenase</li>
+            </ul>
+
+            <div class="equation">
+                3-PGA + ATP → 1,3-BPG + ADP<br>
+                1,3-BPG + NADPH + H⁺ → G3P + NADP⁺ + Pi
+            </div>
+
+            <p>For every three CO₂ molecules fixed, six molecules of G3P are produced, but only one exits the cycle to be used for sugar synthesis.</p>
+
+            <h3>Phase 3: Regeneration</h3>
+            <p>The regeneration phase is a complex series of reactions that converts five G3P molecules (C₃) back into three RuBP molecules (C₅), requiring ATP. This phase involves several enzymes including transketolase, aldolase, and phosphoribulokinase.</p>
+
+            <div class="equation">
+                5 G3P (C₃) + 3 ATP → 3 RuBP (C₅) + 3 ADP
+            </div>
+
+            <h2>RuBisCO: The Most Abundant Protein on Earth</h2>
+
+            <h3>Structure of RuBisCO</h3>
+            <p>RuBisCO exists in two major forms:</p>
+            <ul>
+                <li><span class="highlight">Form I:</span> Found in plants, algae, and cyanobacteria. Composed of 8 large subunits (L, ~55 kDa each) and 8 small subunits (S, ~15 kDa each), forming an L₈S₈ hexadecamer with a total molecular weight of ~540 kDa</li>
+                <li><span class="highlight">Form II:</span> Found in some bacteria. Composed only of large subunits in various oligomeric states (L₂, L₆, L₈)</li>
+            </ul>
+
+            <p>The large subunit contains the <span class="highlight">catalytic active site</span>, while the small subunit plays a regulatory role and enhances catalytic efficiency. Each active site contains a magnesium ion (Mg²⁺) that is essential for catalysis.</p>
+
+            <h3>Genes and Synthesis</h3>
+            <p>In plants, RuBisCO has a unique genetic origin:</p>
+            <ul>
+                <li><span class="highlight">Large subunit (rbcL gene):</span> Encoded by the chloroplast genome. The rbcL gene is highly conserved and commonly used in phylogenetic studies</li>
+                <li><span class="highlight">Small subunit (rbcS gene):</span> Encoded by the nuclear genome as a multigene family (typically 2-8 copies in different plant species)</li>
+            </ul>
+
+            <p>The small subunit is synthesized in the cytoplasm as a precursor protein with an N-terminal transit peptide. After import into the chloroplast, the transit peptide is cleaved, and the small subunits combine with large subunits to form the holoenzyme. This assembly process requires molecular chaperones, particularly <span class="highlight">RuBisCO activase</span> and the chaperonin complex.</p>
+
+            <h3>RuBisCO Reactions</h3>
+            
+            <p><span class="highlight">1. Carboxylase Reaction (Desired):</span></p>
+            <p>RuBisCO catalyzes the addition of CO₂ to RuBP, forming two molecules of 3-PGA. This reaction requires the enzyme to be in its activated form with carbamylated lysine-201 and bound Mg²⁺.</p>
+
+            <div class="equation">
+                RuBP + CO₂ + H₂O → 2 × 3-PGA
+            </div>
+
+            <p><span class="highlight">2. Oxygenase Reaction (Photorespiration):</span></p>
+            <p>RuBisCO can also catalyze the reaction between O₂ and RuBP, producing one molecule of 3-PGA and one molecule of 2-phosphoglycolate. This is the first step of photorespiration, an energetically wasteful process.</p>
+
+            <div class="equation">
+                RuBP + O₂ → 3-PGA + 2-phosphoglycolate
+            </div>
+
+            <p>The ratio of carboxylase to oxygenase activity depends on the relative concentrations of CO₂ and O₂, as both gases compete for the same active site. At current atmospheric conditions (21% O₂, 0.04% CO₂), oxygenase activity occurs at about 25% the rate of carboxylase activity, significantly reducing photosynthetic efficiency.</p>
+
+            <p>The <span class="highlight">specificity factor (Sc/o)</span> describes RuBisCO's preference for CO₂ over O₂, typically ranging from 80-100 in C₃ plants. Despite billions of years of evolution, RuBisCO remains relatively inefficient, making it a prime target for bioengineering efforts to improve crop productivity.</p>
+        </div>
+
+        <!-- Section 3: Regulation -->
+        <div class="section" id="section3">
+            <h2>Regulation of the Calvin Cycle</h2>
+
+            <p>The Calvin cycle is tightly regulated to ensure efficient carbon fixation and to coordinate with the light reactions. Regulation occurs at multiple levels, including light-dependent mechanisms and metabolite-mediated control.</p>
+
+            <h3>Light-Dependent Regulation</h3>
+
+            <p><span class="highlight">1. Ferredoxin-Thioredoxin System:</span></p>
+            <p>This is the primary mechanism for light activation of Calvin cycle enzymes. The system works as follows:</p>
+            <ul>
+                <li>Light reactions reduce ferredoxin (Fd) in photosystem I</li>
+                <li>Reduced ferredoxin transfers electrons to <span class="highlight">ferredoxin-thioredoxin reductase (FTR)</span></li>
+                <li>FTR reduces thioredoxin (Trx), converting it from its oxidized (Trx-S₂) to reduced form (Trx-(SH)₂)</li>
+                <li>Reduced thioredoxin activates several Calvin cycle enzymes by reducing specific disulfide bonds</li>
+            </ul>
+
+            <p>Key enzymes activated by the ferredoxin-thioredoxin system include:</p>
+            <ul>
+                <li><span class="highlight">Fructose-1,6-bisphosphatase (FBPase):</span> Catalyzes an irreversible step in the regeneration phase</li>
+                <li><span class="highlight">Sedoheptulose-1,7-bisphosphatase (SBPase):</span> Another key regulatory enzyme in regeneration</li>
+                <li><span class="highlight">Phosphoribulokinase (PRK):</span> Catalyzes the ATP-dependent phosphorylation of ribulose-5-phosphate to RuBP</li>
+                <li><span class="highlight">Glyceraldehyde-3-phosphate dehydrogenase (GAPDH):</span> Catalyzes reduction in the reduction phase</li>
+            </ul>
+
+            <p>In darkness, these enzymes are oxidized and inactivated, preventing wasteful carbon fixation when ATP and NADPH are not being produced.</p>
+
+            <p><span class="highlight">2. pH and Mg²⁺ Changes:</span></p>
+            <p>Light-driven proton pumping during photosynthesis causes:</p>
+            <ul>
+                <li>Stromal pH increases from ~7.0 to ~8.0 (alkalinization)</li>
+                <li>Mg²⁺ concentration increases in the stroma (released from thylakoids)</li>
+            </ul>
+            <p>These changes activate Calvin cycle enzymes, as most function optimally at higher pH and require Mg²⁺ as a cofactor.</p>
+
+            <h3>Light-Independent Regulation of RuBisCO</h3>
+
+            <p><span class="highlight">RuBisCO Activation:</span></p>
+            <p>RuBisCO requires activation before it can catalyze carbon fixation. The activation process involves:</p>
+            <ul>
+                <li><span class="highlight">Carbamylation:</span> A CO₂ molecule (not the substrate CO₂) reacts with the ε-amino group of lysine-201 in the active site, forming a carbamate</li>
+                <li><span class="highlight">Mg²⁺ binding:</span> A magnesium ion binds to the carbamate, stabilizing the activated form</li>
+            </ul>
+
+            <div class="equation">
+                Enzyme-Lys + CO₂ + Mg²⁺ ⇌ Enzyme-Lys-COO⁻-Mg²⁺ + H⁺
+            </div>
+
+            <p><span class="highlight">RuBisCO Activase:</span></p>
+            <p>This ATP-dependent chaperone protein facilitates RuBisCO activation by:</p>
+            <ul>
+                <li>Removing inhibitory sugar phosphates from the active site (particularly xylulose-1,5-bisphosphate and other misfire products)</li>
+                <li>Promoting conformational changes that allow carbamylation</li>
+                <li>Acting as a regulatory point responding to ATP/ADP ratios</li>
+            </ul>
+
+            <p>RuBisCO activase itself is regulated by the stromal ATP/ADP ratio, providing a link between the energy status of the chloroplast and Calvin cycle activity.</p>
+
+            <h3>Metabolic Regulation</h3>
+
+            <p>Several Calvin cycle intermediates and products act as allosteric regulators:</p>
+            <ul>
+                <li><span class="highlight">3-PGA accumulation:</span> Activates enzymes when CO₂ fixation exceeds reduction capacity</li>
+                <li><span class="highlight">NADPH/NADP⁺ ratio:</span> High NADPH promotes reduction phase activity</li>
+                <li><span class="highlight">ATP/ADP ratio:</span> High ATP levels activate key enzymes like phosphoribulokinase</li>
+                <li><span class="highlight">Fructose-2,6-bisphosphate:</span> In cytosol, this inhibits FBPase, coordinating Calvin cycle with sucrose synthesis</li>
+            </ul>
+
+            <p>This multi-level regulation ensures the Calvin cycle operates efficiently only when light reactions provide sufficient ATP and NADPH, and when environmental conditions favor photosynthesis.</p>
+        </div>
+
+        <!-- Section 4: Hill Reaction -->
+        <div class="section" id="section4">
+            <h2>The Hill Reaction and Its Significance</h2>
+
+            <h3>Discovery and Definition</h3>
+            <p>In 1937, British biochemist <span class="highlight">Robert Hill</span> demonstrated that isolated chloroplasts could produce oxygen when illuminated in the presence of an artificial electron acceptor, even without CO₂. This groundbreaking discovery became known as the <span class="highlight">Hill Reaction</span>.</p>
+
+            <p>The Hill reaction proved that light reactions and dark reactions (Calvin cycle) are separate processes, and that oxygen evolution is associated with the light-dependent phase of photosynthesis, not CO₂ fixation.</p>
+
+            <h3>The Reaction</h3>
+            <p>In Hill's original experiments, he used oxidized iron compounds (ferric oxalate) as electron acceptors. The general equation for the Hill reaction is:</p>
+
+            <div class="equation">
+                2 H₂O + 4 A → O₂ + 4 AH₂
+            </div>
+
+            <p>Where A represents an artificial electron acceptor (Hill reagent). Common Hill reagents include:</p>
+            <ul>
+                <li><span class="highlight">DCPIP (2,6-dichlorophenolindophenol):</span> Changes from blue to colorless when reduced</li>
+                <li><span class="highlight">Ferricyanide [Fe(CN)₆]³⁻:</span> Reduced to ferrocyanide [Fe(CN)₆]⁴⁻</li>
+                <li><span class="highlight">NADP⁺:</span> The natural electron acceptor, reduced to NADPH</li>
+            </ul>
+
+            <h3>Mechanism</h3>
+            <p>The Hill reaction demonstrates the <span class="highlight">photolysis of water</span> (water-splitting) that occurs at photosystem II:</p>
+            <ul>
+                <li>Light energy excites chlorophyll in PSII</li>
+                <li>Electrons are removed from the reaction center (P680)</li>
+                <li>The oxygen-evolving complex (OEC) extracts electrons from water to replenish P680</li>
+                <li>This process releases O₂ as a byproduct</li>
+                <li>Electrons flow through the electron transport chain</li>
+                <li>In the absence of NADP⁺, artificial acceptors can receive these electrons</li>
+            </ul>
+
+            <div class="equation">
+                2 H₂O → 4 H⁺ + 4 e⁻ + O₂
+            </div>
+
+            <h3>Significance of the Hill Reaction</h3>
+
+            <p><span class="highlight">1. Proof of Separate Light and Dark Reactions:</span></p>
+            <p>The Hill reaction demonstrated that O₂ evolution could occur independently of CO₂ fixation, establishing that photosynthesis consists of two distinct phases. This was crucial for understanding photosynthetic mechanisms.</p>
+
+            <p><span class="highlight">2. Source of Oxygen:</span></p>
+            <p>Combined with isotope tracer experiments using H₂¹⁸O, the Hill reaction helped prove that the oxygen released during photosynthesis comes from water, not CO₂. This resolved a long-standing debate in plant physiology.</p>
+
+            <p><span class="highlight">3. Experimental Tool:</span></p>
+            <p>The Hill reaction remains a valuable experimental technique for:</p>
+            <ul>
+                <li>Measuring photosystem II activity in isolated chloroplasts</li>
+                <li>Studying electron transport chain components</li>
+                <li>Testing the effects of inhibitors on light reactions</li>
+                <li>Assessing chloroplast integrity and functionality</li>
+            </ul>
+
+            <p><span class="highlight">4. Understanding Photosystem Organization:</span></p>
+            <p>The Hill reaction provided early evidence for the existence of two photosystems working in series (the Z-scheme), as artificial acceptors could intercept electrons at different points in the electron transport chain.</p>
+
+            <p><span class="highlight">5. Biochemical Research:</span></p>
+            <p>The ability to measure light-driven electron transport independently from carbon fixation allowed researchers to dissect and understand each component of photosynthesis, leading to the elucidation of the entire photosynthetic mechanism.</p>
+
+            <p><span class="highlight">6. Educational Importance:</span></p>
+            <p>The Hill reaction is commonly used in teaching laboratories to demonstrate light-dependent reactions, as the reduction of colored dyes like DCPIP provides a visible indication of photosynthetic activity.</p>
+        </div>
+
+        <!-- Section 5: Inhibitors -->
+        <div class="section" id="section5">
+            <h2>Inhibitors of Light Reactions</h2>
+
+            <p>Various compounds can inhibit photosynthetic light reactions by interfering with specific components of the electron transport chain, photosystems, or ATP synthesis. Understanding these inhibitors has been crucial for elucidating photosynthetic mechanisms and has practical applications in herbicide development.</p>
+
+            <h3>Photosystem II Inhibitors</h3>
+
+            <p><span class="highlight">1. DCMU (3-(3,4-dichlorophenyl)-1,1-dimethylurea) / Diuron:</span></p>
+            <ul>
+                <li>Binds to the QB binding site on the D1 protein of PSII</li>
+                <li>Blocks electron transfer from QA to QB, preventing plastoquinone reduction</li>
+                <li>Causes electron accumulation at QA, leading to charge recombination and fluorescence</li>
+                <li>Widely used as a herbicide in agriculture</li>
+                <li>Also used experimentally to measure PSII activity through chlorophyll fluorescence</li>
+            </ul>
+
+            <p><span class="highlight">2. Atrazine and Other Triazines:</span></p>
+            <ul>
+                <li>Similar mechanism to DCMU, binding to the QB site</li>
+                <li>Common herbicides that selectively inhibit photosynthesis in susceptible plants</li>
+                <li>Some plants have developed resistance through mutations in the D1 protein</li>
+            </ul>
+
+            <p><span class="highlight">3. Hydroxylamine (NH₂OH):</span></p>
+            <ul>
+                <li>Inhibits the oxygen-evolving complex (OEC) by disrupting the Mn₄CaO₅ cluster</li>
+                <li>Prevents water oxidation and O₂ evolution</li>
+                <li>Used experimentally to study PSII function</li>
+            </ul>
+
+            <h3>Electron Transport Chain Inhibitors</h3>
+
+            <p><span class="highlight">4. DBMIB (2,5-dibromo-3-methyl-6-isopropyl-benzoquinone):</span></p>
+            <ul>
+                <li>Blocks electron transfer from plastoquinol to the cytochrome b₆f complex</li>
+                <li>Specifically inhibits the plastoquinol oxidation site</li>
+                <li>Used to study the connection between PSII and PSI</li>
+            </ul>
+
+            <p><span class="highlight">5. Antimycin A:</span></p>
+            <ul>
+                <li>Inhibits the cytochrome b₆f complex</li>
+                <li>Blocks cyclic electron flow around PSI</li>
+                <li>Originally discovered as a mitochondrial complex III inhibitor</li>
+            </ul>
+
+            <h3>Photosystem I Inhibitors</h3>
+
+            <p><span class="highlight">6. Paraquat (Methyl Viologen):</span></p>
+            <ul>
+                <li>Accepts electrons from PSI, reducing paraquat to a radical form</li>
+                <li>The paraquat radical rapidly reacts with O₂, forming superoxide (O₂⁻)</li>
+                <li>Causes oxidative damage through reactive oxygen species (ROS) production</li>
+                <li>Highly effective and fast-acting herbicide</li>
+                <li>Depletes NADPH and disrupts cellular redox balance</li>
+            </ul>
+
+            <h3>ATP Synthase Inhibitors</h3>
+
+            <p><span class="highlight">7. DCCD (N,N'-dicyclohexylcarbodiimide):</span></p>
+            <ul>
+                <li>Binds covalently to the c subunit of the CF₀ portion of ATP synthase</li>
+                <li>Blocks proton translocation through the enzyme</li>
+                <li>Prevents ATP synthesis but allows electron transport to continue</li>
+                <li>Causes thylakoid membrane hyperpolarization</li>
+            </ul>
+
+            <p><span class="highlight">8. Tentoxin:</span></p>
+            <ul>
+                <li>Fungal toxin that inhibits the CF₁ portion of ATP synthase</li>
+                <li>Particularly effective in dicots but not monocots</li>
+                <li>Blocks ATP synthesis by preventing conformational changes</li>
+            </ul>
+
+            <h3>Applications of Inhibitor Studies</h3>
+            <ul>
+                <li><span class="highlight">Herbicide Development:</span> Many commercial herbicides target specific steps in photosynthetic light reactions</li>
+                <li><span class="highlight">Mechanistic Studies:</span> Inhibitors help identify and characterize individual components of the electron transport chain</li>
+                <li><span class="highlight">Site-Directed Studies:</span> By blocking specific sites, researchers can study electron flow pathways</li>
+                <li><span class="highlight">Fluorescence Analysis:</span> PSII inhibitors are used to measure maximum fluorescence and quantum yield</li>
+                <li><span class="highlight">Agricultural Management:</span> Understanding inhibitor mechanisms helps in weed control and resistance management</li>
+            </ul>
+        </div>
+
+        <!-- Section 6: Fate of Triose Phosphates -->
+        <div class="section" id="section6">
+            <h2>Fate of Triose Phosphates in the Calvin Cycle</h2>
+
+            <p>Triose phosphates, primarily <span class="highlight">glyceraldehyde-3-phosphate (G3P)</span> and its isomer dihydroxyacetone phosphate (DHAP), are the first stable carbohydrate products of the Calvin cycle. These three-carbon sugars represent the crucial link between carbon fixation and the biosynthesis of all plant carbohydrates. The fate of triose phosphates determines whether fixed carbon is immediately used for energy metabolism, stored for future use, or exported to support growth and development throughout the plant.</p>
+
+            <h3>Export from Chloroplasts</h3>
+
+            <p>Approximately one-sixth of the triose phosphate produced in the Calvin cycle exits the chloroplast stroma for use in the cytosol, while five-sixths remain to regenerate RuBP and continue the cycle. The export is mediated by the <span class="highlight">triose phosphate/phosphate translocator (TPT)</span>, an integral membrane protein in the inner chloroplast envelope.</p>
+
+            <p>The TPT operates as a strict antiporter with a 1:1 stoichiometry:</p>
+            <ul>
+                <li>Exports one triose phosphate (G3P or DHAP) from the stroma</li>
+                <li>Imports one inorganic phosphate (Pi) into the stroma</li>
+                <li>This exchange maintains stromal Pi levels necessary for continued ATP synthesis and photophosphorylation</li>
+            </ul>
+
+            <p>The rate of triose phosphate export is tightly regulated and responds to:</p>
+            <ul>
+                <li>Stromal Pi concentration (substrate availability)</li>
+                <li>Cytosolic sugar demand</li>
+                <li>Photosynthetic rate and Calvin cycle activity</li>
+            </ul>
+
+            <h3>Conversion to Sucrose (Cytosolic Pathway)</h3>
+
+            <p><span class="highlight">Sucrose</span> is the primary transport sugar in most plants, carrying fixed carbon from source leaves to sink tissues (roots, fruits, developing leaves). Sucrose synthesis occurs exclusively in the <span class="highlight">cytosol</span> and involves a complex series of reactions.</p>
+
+            <h3>Pathway of Sucrose Synthesis:</h3>
+
+            <p><span class="highlight">Step 1: Formation of Fructose-6-phosphate</span></p>
+            <p>Triose phosphates exported from chloroplasts are converted to fructose-6-phosphate (F6P):</p>
+            <ul>
+                <li>G3P and DHAP combine via aldolase to form fructose-1,6-bisphosphate (F1,6BP)</li>
+                <li>Cytosolic fructose-1,6-bisphosphatase (FBPase) removes one phosphate, producing F6P</li>
+            </ul>
+
+            <div class="equation">
+                G3P + DHAP → F1,6BP → F6P + Pi
+            </div>
+
+            <p><span class="highlight">Step 2: Formation of UDP-Glucose</span></p>
+            <p>F6P is converted to glucose-6-phosphate (G6P) by phosphoglucose isomerase, then to glucose-1-phosphate (G1P) by phosphoglucomutase. G1P then reacts with UTP to form UDP-glucose:</p>
+
+            <div class="equation">
+                G1P + UTP → UDP-glucose + PPi
+            </div>
+
+            <p>This reaction is catalyzed by <span class="highlight">UDP-glucose pyrophosphorylase</span> and is driven forward by pyrophosphate (PPi) hydrolysis.</p>
+
+            <p><span class="highlight">Step 3: Sucrose-6-phosphate Formation</span></p>
+            <p>The enzyme <span class="highlight">sucrose-phosphate synthase (SPS)</span> catalyzes the transfer of glucose from UDP-glucose to F6P:</p>
+
+            <div class="equation">
+                UDP-glucose + F6P → Sucrose-6-phosphate + UDP
+            </div>
+
+            <p>SPS is a key regulatory enzyme in sucrose synthesis, subject to multiple levels of control.</p>
+
+            <p><span class="highlight">Step 4: Sucrose Formation</span></p>
+            <p>Finally, <span class="highlight">sucrose-phosphate phosphatase (SPP)</span> removes the phosphate group:</p>
+
+            <div class="equation">
+                Sucrose-6-phosphate → Sucrose + Pi
+            </div>
+
+            <p>The overall reaction for sucrose synthesis from triose phosphates is:</p>
+
+            <div class="equation">
+                2 Triose phosphate + 2 NAD⁺ + 2 UTP → Sucrose + 2 NADH + 2 UDP + 4 Pi
+            </div>
+
+            <h3>Regulation of Sucrose Synthesis</h3>
+
+            <p>Sucrose synthesis is tightly regulated to coordinate with photosynthetic rate and sink demand:</p>
+            <ul>
+                <li><span class="highlight">Fructose-2,6-bisphosphate (F2,6BP):</span> Allosteric inhibitor of cytosolic FBPase; levels decrease in light, promoting sucrose synthesis</li>
+                <li><span class="highlight">Sucrose-phosphate synthase (SPS):</span> Activated by glucose-6-phosphate and light-dependent dephosphorylation</li>
+                <li><span class="highlight">Triose phosphate/Pi ratio:</span> High triose phosphate levels promote sucrose synthesis</li>
+                <li><span class="highlight">Hormonal control:</span> Cytokinins promote sucrose synthesis, while abscisic acid may inhibit it</li>
+            </ul>
+
+            <h3>Starch Synthesis (Chloroplastic Pathway)</h3>
+
+            <p>When sucrose synthesis is saturated or sink demand is low, excess triose phosphates are converted to <span class="highlight">starch</span> within chloroplasts for temporary storage. Starch synthesis occurs during the day and provides carbon reserves for nighttime metabolism.</p>
+
+            <h3>Pathway of Starch Synthesis:</h3>
+
+            <p><span class="highlight">Step 1: Formation of Glucose-1-phosphate</span></p>
+            <p>Triose phosphates in the stroma are converted to fructose-1,6-bisphosphate, then to glucose-1-phosphate through the same intermediates as in the cytosol, but using chloroplastic isoforms of the enzymes.</p>
+
+            <p><span class="highlight">Step 2: Formation of ADP-Glucose</span></p>
+            <p>The committed step in starch synthesis is catalyzed by <span class="highlight">ADP-glucose pyrophosphorylase (AGPase)</span>:</p>
+
+            <div class="equation">
+                G1P + ATP → ADP-glucose + PPi
+            </div>
+
+            <p>AGPase is a key regulatory enzyme, activated by 3-phosphoglycerate (3-PGA) and inhibited by Pi. This regulation links starch synthesis to Calvin cycle activity.</p>
+
+            <p><span class="highlight">Step 3: Elongation of Starch Chains</span></p>
+            <p>ADP-glucose serves as the glucose donor for starch synthases, which add glucose units to the non-reducing ends of existing starch chains:</p>
+
+            <div class="equation">
+                Starchₙ + ADP-glucose → Starchₙ₊₁ + ADP
+            </div>
+
+            <p>Different starch synthase isoforms are responsible for synthesizing amylose (linear chains) and amylopectin (branched chains).</p>
+
+            <p><span class="highlight">Step 4: Branching</span></p>
+            <p>Starch branching enzymes create α-1,6-glycosidic linkages, introducing branches into the growing starch molecule.</p>
+
+            <h3>Regulation of Starch Synthesis</h3>
+
+            <p>Starch synthesis is regulated primarily through:</p>
+            <ul>
+                <li><span class="highlight">AGPase activation:</span> 3-PGA/Pi ratio reflects photosynthetic status; high 3-PGA activates AGPase</li>
+                <li><span class="highlight">Redox regulation:</span> AGPase is activated in light by thioredoxin-mediated reduction</li>
+                <li><span class="highlight">Transcriptional control:</span> Expression of starch synthesis genes follows diurnal rhythms</li>
+                <li><span class="highlight">Sucrose levels:</span> High sucrose signals low sink demand, promoting starch accumulation</li>
+            </ul>
+
+            <h3>Other Metabolic Fates</h3>
+
+            <p>Beyond sucrose and starch, triose phosphates serve as precursors for numerous other compounds:</p>
+
+            <p><span class="highlight">1. Glycolysis and Respiration:</span></p>
+            <p>Triose phosphates can enter glycolysis directly to generate ATP and reducing power for cellular processes.</p>
+
+            <p><span class="highlight">2. Amino Acid Synthesis:</span></p>
+            <p>Triose phosphates provide carbon skeletons for synthesis of serine, glycine, and cysteine through the photorespiratory pathway and other routes.</p>
+
+            <p><span class="highlight">3. Lipid Synthesis:</span></p>
+            <p>Triose phosphates are converted to pyruvate, then to acetyl-CoA for fatty acid synthesis in plastids.</p>
+
+            <p><span class="highlight">4. Isoprenoid Synthesis:</span></p>
+            <p>Via the methylerythritol phosphate (MEP) pathway, triose phosphates contribute to synthesis of carotenoids, gibberellins, and other isoprenoids.</p>
+
+            <p><span class="highlight">5. Nucleotide Synthesis:</span></p>
+            <p>Triose phosphates provide carbon for purine and pyrimidine biosynthesis.</p>
+
+        </div>
+        
+        <!-- Navigation buttons -->
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentSectionSpan = document.getElementById('current-section');
+            const totalSectionsSpan = document.getElementById('total-sections');
+            const progressFill = document.getElementById('progress-fill');
+            
+            let currentSectionIndex = 0;
+            const totalSections = sections.length;
+            
+            // Set total sections in the progress indicator
+            totalSectionsSpan.textContent = totalSections;
+            
+            // Update navigation state
+            function updateNavigation() {
+                // Update progress indicator
+                currentSectionSpan.textContent = currentSectionIndex + 1;
+                const progressPercentage = ((currentSectionIndex + 1) / totalSections) * 100;
+                progressFill.style.width = `${progressPercentage}%`;
+                
+                // Update button states
+                prevBtn.disabled = currentSectionIndex === 0;
+                nextBtn.disabled = currentSectionIndex === totalSections - 1;
+                
+                // Update button text for last section
+                if (currentSectionIndex === totalSections - 1) {
+                    nextBtn.textContent = 'Finish';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            // Show a specific section
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                sections[index].classList.add('active');
+                
+                // Update current index
+                currentSectionIndex = index;
+                
+                // Update navigation
+                updateNavigation();
+                
+                // Scroll to top of the section
+                window.scrollTo(0, 0);
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSectionIndex > 0) {
+                    showSection(currentSectionIndex - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSectionIndex < totalSections - 1) {
+                    showSection(currentSectionIndex + 1);
+                } else {
+                    // On the last section, "Finish" could trigger something else
+                    alert('You have completed all sections!');
+                }
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
