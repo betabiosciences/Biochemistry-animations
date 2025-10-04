@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photoinhibitions & Photoprotection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #4e54c8;
+            --accent-light: #6a6fd9;
+            --light-text: #e6e6e6;
+            --highlight: #0fcece;
+            --highlight-light: #2de2e2;
+            --secondary: #8a8ae6;
+            --warning: #ff9a3c;
+            --success: #4cd97b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--light-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(26, 26, 46, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .background-decoration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(78, 84, 200, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(15, 206, 206, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(138, 138, 230, 0.05) 0%, transparent 50%);
+            z-index: 0;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--accent);
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--highlight);
+            margin: 20px 0 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--accent);
+        }
+        
+        h3 {
+            color: var(--secondary);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        h3 i {
+            color: var(--accent-light);
+            font-size: 0.9em;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .mechanism-box {
+            background-color: rgba(30, 30, 60, 0.7);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .detail-card {
+            background: linear-gradient(135deg, rgba(40, 40, 80, 0.7), rgba(30, 30, 60, 0.7));
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid rgba(78, 84, 200, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .process-steps {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .process-steps li {
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .process-steps li::before {
+            content: "•";
+            color: var(--highlight);
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
+        .comparison-table th {
+            background-color: var(--accent);
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(78, 84, 200, 0.3);
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, var(--accent-light), var(--highlight));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(78, 84, 200, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: rgba(78, 84, 200, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            width: 10%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+        
+        .section-indicator {
+            text-align: center;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .key-term {
+            color: var(--highlight-light);
+            font-weight: bold;
+        }
+        
+        .chemical {
+            color: var(--warning);
+            font-style: italic;
+        }
+        
+        .protein {
+            color: var(--success);
+            font-style: italic;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-decoration"></div>
+        
+        <header>
+            <h1><i class="fas fa-leaf"></i> Photoinhibitions & Photoprotection</h1>
+        </header>
+        
+        <div class="content-wrapper">
+            <div class="progress-container">
+                <div class="section-indicator">
+                    <span>Section 1 of 9</span>
+                    <span>Photoinhibition & Photoprotection</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+            
+            <!-- Section 1: Introduction -->
+            <section id="section1" class="content-section active">
+                <h2><i class="fas fa-sun"></i> Introduction to Photoinhibition</h2>
+                <p>When plants are exposed to high light intensities beyond their photosynthetic capacity, they can experience <span class="key-term">photoinhibition</span> - a decline in photosynthetic efficiency and potential damage to the photosynthetic apparatus, particularly <span class="protein">Photosystem II (PSII)</span>.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-question-circle"></i> Why Photoinhibition Occurs</h3>
+                    <p>Photosynthetic organisms face a fundamental dilemma: they need light for energy, but excess light can damage their photosynthetic machinery. The primary target is <span class="protein">PSII</span>, which contains reactive chlorophyll molecules that can generate harmful reactive oxygen species (ROS) when over-excited.</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-lightbulb"></i> Light Absorption vs. Utilization</h3>
+                    <p>Under optimal conditions, plants balance light absorption with utilization. However, when light intensity exceeds the capacity for carbon fixation, excess energy accumulates in photosynthetic pigments, leading to potential damage through:</p>
+                    <ul class="process-steps">
+                        <li>Formation of reactive oxygen species (ROS)</li>
+                        <li>Photooxidation of photosynthetic pigments</li>
+                        <li>Damage to the <span class="protein">D1 protein</span> in PSII</li>
+                        <li>Reduction in quantum yield of photosynthesis</li>
+                    </ul>
+                </div>
+                
+                <p>Plants have evolved sophisticated mechanisms to detect, respond to, and protect against high light stress while maximizing light capture under optimal conditions. These mechanisms operate at different timescales - from seconds to hours - providing layered protection.</p>
+            </section>
+            
+            <!-- Section 2: Dynamic Photoinhibition -->
+            <section id="section2" class="content-section">
+                <h2><i class="fas fa-exchange-alt"></i> Dynamic Photoinhibition</h2>
+                <p><span class="key-term">Dynamic photoinhibition</span> is a <strong>reversible, regulatory process</strong> that occurs rapidly in response to sudden increases in light intensity. It acts as a "safety valve" to protect the photosynthetic apparatus.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>This form of photoinhibition involves the reversible inactivation of PSII reaction centers, converting them from active energy converters to efficient energy dissipators. Key aspects include:</p>
+                    <ul class="process-steps">
+                        <li>Rapid response (seconds to minutes) to high light</li>
+                        <li>Reversible dissipation of excess energy as heat</li>
+                        <li>Protection of reaction centers from permanent damage</li>
+                        <li>Quick recovery when light conditions improve</li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-shield-alt"></i> Protective Function</h3>
+                    <p>Dynamic photoinhibition is considered a <strong>photoprotective strategy</strong> rather than damage, as it prevents more serious harm to the photosynthetic machinery. It represents an energy trade-off where some photosynthetic capacity is sacrificed to protect the entire system.</p>
+                </div>
+                
+                <p>This regulatory mechanism is particularly important in environments with rapidly fluctuating light conditions, such as forest understories with sunflecks or aquatic environments with wave-induced light fluctuations.</p>
+            </section>
+            
+            <!-- Section 3: Chronic Photoinhibition -->
+            <section id="section3" class="content-section">
+                <h2><i class="fas fa-exclamation-triangle"></i> Chronic Photoinhibition</h2>
+                <p><span class="key-term">Chronic photoinhibition</span> represents a <strong>long-term downregulation</strong> of photosynthesis that persists even after the high light stress is removed. It indicates actual damage to the photosynthetic apparatus.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>This type involves damage to the <span class="protein">D1 protein</span> of PSII, requiring protein synthesis for repair. The process includes:</p>
+                    <ul class="process-steps">
+                        <li>Photooxidative damage to the <span class="protein">D1 protein</span></li>
+                        <li>Inactivation of PSII reaction centers</li>
+                        <li>Requirement for de novo protein synthesis</li>
+                        <li>Slower recovery (hours to days)</li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-clock"></i> Conditions Leading to Chronic Photoinhibition</h3>
+                    <p>Chronic photoinhibition occurs when the rate of damage exceeds the plant's repair capacity, often under:</p>
+                    <ul class="process-steps">
+                        <li>Prolonged high light stress</li>
+                        <li>Combination with other environmental limitations (drought, cold)</li>
+                        <li>Insufficient capacity for <span class="protein">D1 protein</span> repair</li>
+                        <li>Limited availability of metabolic resources</li>
+                    </ul>
+                </div>
+                
+                <p>Unlike dynamic photoinhibition, chronic photoinhibition represents an actual impairment of photosynthetic function rather than a regulatory response. It's more common in plants growing near their environmental tolerance limits.</p>
+            </section>
+            
+            <!-- Section 4: Sustained Photoinhibition -->
+            <section id="section4" class="content-section">
+                <h2><i class="fas fa-pause-circle"></i> Sustained Photoinhibition</h2>
+                <p><span class="key-term">Sustained photoinhibition</span> represents severe, long-term damage that persists even after the removal of high light stress.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Features</h3>
+                    <ul class="process-steps">
+                        <li>Persists even after return to low light conditions</li>
+                        <li>Involves extensive damage to photosynthetic machinery</li>
+                        <li>Recovery can take days to weeks</li>
+                        <li>May involve damage to multiple photosystem components</li>
+                        <li>Often associated with environmental stress combinations</li>
+
+                    </ul>
+                </div>
+                
+            </section>
+            
+            <!-- Section 5: Chloroplast Movement -->
+            <section id="section5" class="content-section">
+                <h2><i class="fas fa-arrows-alt"></i> Chloroplast Movement</h2>
+                <p>Plants can physically reposition their chloroplasts to optimize light capture and minimize damage under high light conditions. This represents one of the fastest photoprotective responses.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-sun"></i> Periclinal Alignment</h3>
+                    <p>Under low light, chloroplasts move to the periclinal walls (parallel to the leaf surface) to maximize light absorption. This position presents the maximum surface area to incoming light.</p>
+                </div>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-shield-alt"></i> Anticlinal Alignment</h3>
+                    <p>Under high light, chloroplasts shift to the anticlinal walls (perpendicular to the leaf surface), reducing light absorption by presenting a smaller cross-sectional area to incoming light. This can reduce light absorption by up to 50%.</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-cogs"></i> Mechanism of Movement</h3>
+                    <p>Chloroplast movement is mediated by:</p>
+                    <ul class="process-steps">
+                        <li><span class="protein">Phototropin</span> blue light receptors that perceive light direction and intensity</li>
+                        <li>Actin filaments that provide the structural framework for movement</li>
+                        <li>Myosin motors that transport chloroplasts along actin filaments</li>
+                        <li>Calcium signaling that regulates the process</li>
+                    </ul>
+                    <p>This movement occurs within 15-30 minutes, providing a rapid first line of defense against excess light.</p>
+                </div>
+            </section>
+            
+            <!-- Section 6: Non-Photochemical Quenching -->
+            <section id="section6" class="content-section">
+                <h2><i class="fas fa-fire"></i> Non-Photochemical Quenching (NPQ)</h2>
+                <p><span class="key-term">Non-Photochemical Quenching (NPQ)</span> is a key photoprotective mechanism that safely dissipates excess excitation energy as heat, preventing the formation of damaging reactive oxygen species.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>When the thylakoid lumen becomes acidic due to high photosynthetic electron transport, several processes are triggered:</p>
+                    <ul class="process-steps">
+                        <li>The <span class="protein">PsbS protein</span> undergoes conformational changes</li>
+                        <li>This triggers the conversion of <span class="chemical">violaxanthin</span> to <span class="chemical">zeaxanthin</span> in the xanthophyll cycle</li>
+                        <li>Energy is dissipated as heat from chlorophyll molecules</li>
+                        <li>Excess excitation energy is safely quenched</li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-bolt"></i> Energy-Dependent Quenching (qE)</h3>
+                    <p>The fastest component of NPQ is <span class="key-term">energy-dependent quenching (qE)</span>, which:</p>
+                    <ul class="process-steps">
+                        <li>Responds within seconds to minutes to high light</li>
+                        <li>Is directly related to the trans-thylakoid pH gradient (ΔpH)</li>
+                        <li>Involves protonation of <span class="protein">PsbS</span> and activation of violaxanthin de-epoxidase</li>
+                        <li>Can dissipate up to 75% of excess excitation energy</li>
+                    </ul>
+                </div>
+                
+                <p>NPQ is rapidly reversible and represents one of the most important short-term photoprotective responses in plants. Its capacity varies between species and is influenced by environmental factors and acclimation history.</p>
+            </section>
+            
+            <!-- Section 7: Thylakoid Membrane Reorganization -->
+            <section id="section7" class="content-section">
+                <h2><i class="fas fa-layer-group"></i> Thylakoid Membrane Reorganization</h2>
+                <p>Plants can alter the organization of their thylakoid membranes to optimize light utilization and protect against photodamage. This represents a longer-term acclimation response.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>Under high light, plants undergo several structural changes:</p>
+                    <ul class="process-steps">
+                        <li>Reduction in thylakoid membrane stacking (destacking of grana)</li>
+                        <li>Decreased absorption cross-section of PSII</li>
+                        <li>Altered energy distribution between photosystems</li>
+                        <li>Changes in membrane lipid composition</li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-project-diagram"></i> Functional Significance</h3>
+                    <p>Thylakoid reorganization serves multiple protective functions:</p>
+                    <ul class="process-steps">
+                        <li><strong>Reduced PSII absorption:</strong> Less stacked membranes mean fewer PSII complexes are exposed to high light</li>
+                        <li><strong>Improved energy balance:</strong> Alters excitation energy distribution between PSI and PSII</li>
+                        <li><strong>Enhanced repair capacity:</strong> Allows better access for <span class="protein">D1 protein</span> repair machinery</li>
+                        <li><strong>Membrane stabilization:</strong> Changes in lipid composition help maintain membrane integrity under stress</li>
+                    </ul>
+                </div>
+                
+                <p>This reorganization occurs over hours to days and represents an important acclimation response to prolonged high light conditions. It's particularly significant in evergreen plants and those adapted to high-light environments.</p>
+            </section>
+            
+            <!-- Section 8: State Transitions -->
+            <section id="section8" class="content-section">
+                <h2><i class="fas fa-random"></i> State Transitions</h2>
+                <p><span class="key-term">State transitions</span> represent a medium-term response that balances energy distribution between Photosystem I (PSI) and Photosystem II (PSII). This helps optimize photosynthetic efficiency under changing light conditions. It involves redistribution of light-harvesting antenna between photosystems.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>State transitions involve the reversible phosphorylation of light-harvesting complexes:</p>
+                    <ul class="process-steps">
+                        <li><strong>State 1 (PSII favored):</strong> When PSI is over-excited, LHCII dephosphorylates and associates mainly with PSII</li>
+                        <li><strong>State 2 (PSI favored):</strong> When PSII is over-excited, LHCII phosphorylates and migrates to PSI</li>
+                        <li>Phosphorylation is mediated by <span class="protein">STN7 kinase</span></li>
+                        <li>Dephosphorylation is catalyzed by <span class="protein">PBCP phosphatase</span></li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-tachometer-alt"></i> Regulation and Function</h3>
+                    <p>State transitions are regulated by the redox state of the plastoquinone pool:</p>
+                    <ul class="process-steps">
+                        <li>Reduced plastoquinone activates <span class="protein">STN7 kinase</span>, promoting State 2</li>
+                        <li>Oxidized plastoquinone inactivates <span class="protein">STN7</span>, allowing transition to State 1</li>
+                        <li>This balances excitation energy between photosystems</li>
+                        <li>Helps prevent over-reduction of electron transport chain components</li>
+                    </ul>
+                </div>
+                
+                <p>State transitions occur within minutes and are particularly important in environments with fluctuating light quality, such as canopy shade where light is enriched in wavelengths preferentially absorbed by PSII.</p>
+            </section>
+            
+            <!-- Section 9: Xanthophyll Cycle -->
+            <section id="section9" class="content-section">
+                <h2><i class="fas fa-recycle"></i> Xanthophyll Cycle</h2>
+                <p>The <span class="key-term">xanthophyll cycle</span> is a key component of NPQ that involves the interconversion of three carotenoid pigments in response to light intensity. It provides dynamic regulation of photoprotective capacity.</p>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-cogs"></i> Mechanism</h3>
+                    <p>The xanthophyll cycle involves two enzymatic reactions:</p>
+                    <ul class="process-steps">
+                        <li><strong>De-epoxidation (high light):</strong> 
+                            <br><span class="chemical">Violaxanthin</span> → <span class="chemical">Antheraxanthin</span> → <span class="chemical">Zeaxanthin</span>
+                            <br>Catalyzed by <span class="protein">violaxanthin de-epoxidase (VDE)</span>
+                            <br>Activated by acidic pH in thylakoid lumen
+                        </li>
+                        <li><strong>Epoxidation (low light):</strong>
+                            <br><span class="chemical">Zeaxanthin</span> → <span class="chemical">Antheraxanthin</span> → <span class="chemical">Violaxanthin</span>
+                            <br>Catalyzed by <span class="protein">zeaxanthin epoxidase (ZE)</span>
+                            <br>Active at neutral pH
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="detail-card">
+                    <h3><i class="fas fa-shield-alt"></i> Photoprotective Roles of Xanthophylls</h3>
+                    <p>Different xanthophylls play specific roles in photoprotection:</p>
+                    <ul class="process-steps">
+                        <li><span class="chemical">Zeaxanthin</span>: Facilitates thermal energy dissipation in NPQ; strong antioxidant</li>
+                        <li><span class="chemical">Antheraxanthin</span>: Intermediate with moderate photoprotective capacity</li>
+                        <li><span class="chemical">Violaxanthin</span>: Light-harvesting function under low light; precursor for cycle</li>
+                    </ul>
+                    <p>The xanthophyll cycle operates on timescales of minutes to hours, allowing plants to dynamically adjust their photoprotective capacity according to light conditions.</p>
+                </div>
+                
+                <div class="mechanism-box">
+                    <h3><i class="fas fa-clipboard-check"></i> Summary</h3>
+                    <p>Plants employ a sophisticated array of photoprotective mechanisms working at different timescales:</p>
+                    <ul class="process-steps">
+                        <li><strong>Seconds:</strong> Energy-dependent quenching (qE), state transitions</li>
+                        <li><strong>Minutes:</strong> Chloroplast movement, xanthophyll cycle</li>
+                        <li><strong>Hours to days:</strong> Thylakoid reorganization, gene expression changes</li>
+                    </ul>
+                    <p>These layered defenses allow plants to balance light capture with protection against photodamage, maximizing photosynthetic efficiency while minimizing oxidative stress.</p>
+                </div>
+            </section>
+            
+            <div class="nav-buttons">
+                <button id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                    Previous
+                </button>
+                <button id="nextBtn">
+                    Next
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progress = document.getElementById('progress');
+            const sectionIndicator = document.querySelector('.section-indicator');
+            const sectionTitles = [
+                "Introduction to Photoinhibition",
+                "Dynamic Photoinhibition",
+                "Chronic Photoinhibition",
+                "Sustained Photoinhibition",
+                "Chloroplast Movement",
+                "Non-Photochemical Quenching",
+                "Thylakoid Membrane Reorganization",
+                "State Transitions",
+                "Xanthophyll Cycle"
+            ];
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            // Update progress bar and section indicator
+            function updateProgress() {
+                const progressPercentage = ((currentSection + 1) / totalSections) * 100;
+                progress.style.width = `${progressPercentage}%`;
+                sectionIndicator.innerHTML = `<span>Section ${currentSection + 1} of ${totalSections}</span><span>${sectionTitles[currentSection]}</span>`;
+            }
+            
+            // Show current section and hide others
+            function showSection(index) {
+                sections.forEach((section, i) => {
+                    section.classList.toggle('active', i === index);
+                });
+                
+                // Update button states
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSections - 1;
+                
+                // Update progress
+                updateProgress();
+                
+                // Scroll to top of section
+                window.scrollTo(0, 0);
+            }
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            });
+            
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+            
+            // Initialize
+            showSection(currentSection);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
