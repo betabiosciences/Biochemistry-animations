@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photosynthesis Mechanisms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(0, 20, 40, 0.85);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(to right, #7bed9f, #70a1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0d2ff;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Tab Navigation Styles */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 50, 90, 0.5);
+            color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background: rgba(30, 100, 150, 0.6);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            border: 1px solid rgba(100, 200, 255, 0.5);
+        }
+
+        /* Tab Content Styles */
+        .tab-content {
+            width: 100%;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Styles for the C4 details section */
+        .c4-details-panel {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            width: 100%;
+        }
+
+        .c4-details-panel h2 {
+            color: #70a1ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .c4-details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .c4-details-item {
+            background: rgba(0, 50, 90, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #7bed9f;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .c4-details-item strong {
+            color: #7bed9f;
+        }
+
+        .c4-details-item ul {
+            list-style-type: none;
+            padding-left: 25px; /* Adjusted padding-left for ul */
+            margin-top: 8px;
+        }
+
+        .c4-details-item ul li {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .c4-details-item ul li::before {
+            content: '•';
+            color: #7bed9f;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        /* Styling for the Core Principle Flowchart within the details section */
+        .core-principle-flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .core-principle-step {
+            background: rgba(40, 100, 150, 0.6); /* Slightly different color for nested flowchart */
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #a0d2ff;
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: white;
+            width: 95%; /* Keep relative width */
+            max-width: 700px; /* Increased max-width for wider boxes */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .core-principle-arrow {
+            width: 2px;
+            height: 10px;
+            background-color: #a0d2ff;
+            position: relative;
+        }
+
+        .core-principle-arrow::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 8px solid #a0d2ff;
+        }
+
+        /* Styles for the Anatomical Foundation section */
+        .anatomical-layout {
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on smaller screens */
+            align-items: flex-start; /* Align items to the top */
+            gap: 20px; /* Space between text and image */
+            margin-top: 10px; /* Space below the heading */
+        }
+
+        .anatomical-text {
+            flex: 1; /* Allows text to take available space */
+            min-width: 300px; /* Minimum width before wrapping */
+        }
+
+        .anatomical-figure {
+            flex-shrink: 0; /* Prevents shrinking */
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .kranz-diagram {
+            max-width: 100%; /* Ensure image is responsive */
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .figure-caption {
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+
+        .animation-container {
+            position: relative;
+            width: 100%; /* Occupy full width of parent container (max-width: 1000px) */
+            height: 500px;
+            background: rgba(10, 30, 50, 0.7);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0; /* Space above and below */
+            border: 2px solid rgba(100, 200, 255, 0.3);
+        }
+
+        .cell {
+            position: absolute;
+            width: 45%; /* Relative to animation-container (e.g., 45% of 1000px = 450px) */
+            height: 200px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            left: 27.5%; /* Centered: (100% - 45%) / 2 = 27.5% */
+        }
+
+        .mesophyll-cell {
+            top: 40px;
+            background: rgba(40, 180, 100, 0.25);
+            border: 2px solid #28b46f;
+        }
+
+        .bundle-sheath-cell {
+            top: 280px;
+            background: rgba(100, 100, 220, 0.25);
+            border: 2px solid #6464dc;
+        }
+
+        .cell-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 10;
+            left: 27.5%; /* Aligned with cells */
+        }
+
+        .mesophyll-label {
+            top: 20px;
+        }
+
+        .bundle-sheath-label {
+            top: 260px;
+        }
+
+        .plasmodesmata {
+            position: absolute;
+            top: 240px;
+            left: 40%; /* Centered: (100% - 20%) / 2 = 40% */
+            width: 20%;
+            height: 40px;
+            background: radial-gradient(circle, #70a1ff 0%, #a0d2ff 50%, transparent 100%);
+            border-radius: 5px;
+            opacity: 1;
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            color: white;
+            text-shadow: 0 0 5px rgba(255,255,255,0.7);
+            box-shadow: 0 0 15px rgba(112, 161, 255, 0.7);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            to {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        .molecule {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.5s;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .co2 { background: linear-gradient(135deg, #6a89cc, #4a69bd); }
+        .hco3 { background: linear-gradient(135deg, #78e08f, #38ada9); }
+        .pep { background: linear-gradient(135deg, #f6b93b, #e55039); }
+        .c4 { background: linear-gradient(135deg, #fd79a8, #e84393); }
+        .c3 { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .atp { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+        .calvin {
+            background: linear-gradient(135deg, #00cec9, #0984e3);
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            padding: 5px;
+            z-index: 4;
+        }
+        .sugar {
+            background: linear-gradient(135deg, #f0ff00, #ffe014);
+        }
+        
+        /* New molecule styles for C2 and CAM cycles */
+        .phosphoglycolate { background: linear-gradient(135deg, #FF6B6B, #FF8E8E); }
+        .glycolate { background: linear-gradient(135deg, #FFA726, #FFB74D); }
+        .glyoxylate { background: linear-gradient(135deg, #AB47BC, #CE93D8); }
+        .glycine { background: linear-gradient(135deg, #26C6DA, #80DEEA); }
+        .serine { background: linear-gradient(135deg, #66BB6A, #81C784); }
+        .glycerate { background: linear-gradient(135deg, #29B6F6, #81D4FA); }
+        .malate { background: linear-gradient(135deg, #FF7043, #FFAB91); }
+        .pyruvate { background: linear-gradient(135deg, #7E57C2, #B39DDB); }
+        .vacuole {
+            background: linear-gradient(135deg, #8D6E63, #A1887F);
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            padding: 5px;
+            z-index: 4;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-reset {
+            background: linear-gradient(to right, #e74c3c, #e67e22);
+        }
+        .btn-pause {
+            background: linear-gradient(to right, #f39c12, #e67e22);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #2ecc71, #3498db);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .info-panel {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            width: 100%; /* Takes full width below animation */
+        }
+
+        .info-panel h2 {
+            color: #70a1ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        /* Flowchart styles */
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Space between steps and arrows */
+        }
+
+        .flowchart-step {
+            background: rgba(0, 50, 90, 0.5);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            width: 90%; /* Adjust width for better fit */
+            max-width: 350px; /* Limit width for readability */
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .flowchart-step.active {
+            background: rgba(30, 100, 150, 0.6);
+            border-left: 44px solid #2ecc71;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .flowchart-step h3 {
+            color: #7bed9f;
+            margin-bottom: 5px;
+            font-size: 1.1rem; /* Slightly smaller for compactness */
+        }
+
+        .flowchart-step p {
+            font-size: 0.9rem; /* Smaller for compactness */
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .flowchart-arrow {
+            width: 2px; /* Thin line for the arrow shaft */
+            height: 15px; /* Length of the arrow shaft */
+            background-color: #a0d2ff; /* Color of the arrow */
+            position: relative;
+        }
+
+        .flowchart-arrow::after {
+            content: '';
+            position: absolute;
+            top: 100%; /* At the bottom of the shaft */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 10px solid #a0d2ff; /* Arrowhead */
+        }
+
+        .step-info { /* Original step info styles, will be removed */
+            display: none; /* Hide the old step info divs */
+        }
+
+        /* New styles for the momentary event popup */
+        .event-popup {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a2a6c;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 100; /* Ensure it's on top */
+            text-align: center;
+            white-space: nowrap; /* Prevent text wrapping */
+            transform: translateX(-50%); /* Centered horizontally based on its left position */
+        }
+
+        /* Styles for the new Subtypes table */
+        .subtypes-table-container {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            width: 100%;
+        }
+
+        .subtypes-table-container h2 {
+            color: #70a1ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        .subtypes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: rgba(0, 50, 90, 0.5);
+            border-radius: 10px;
+            overflow: hidden; /* Ensures rounded corners are applied */
+        }
+
+        .subtypes-table th, .subtypes-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .subtypes-table th {
+            background-color: rgba(0, 70, 140, 0.8);
+            font-weight: bold;
+            color: #7bed9f;
+            position: sticky;
+            top: 0; /* Keeps table header visible when scrolling */
+        }
+
+        .subtypes-table tr:hover {
+            background-color: rgba(0, 70, 140, 0.6);
+        }
+
+        /* Styles for the copyright/security footer */
+        .security-footer {
+            margin-top: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .cell {
+                left: 20%;
+                width: 60%;
+            }
+            .cell-label {
+                left: 20%;
+            }
+            .plasmodesmata {
+                left: 35%;
+                width: 30%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .animation-container {
+                height: 480px;
+            }
+            .cell {
+                left: 15%;
+                width: 70%;
+            }
+            .mesophyll-cell {
+                top: 20px;
+            }
+            .bundle-sheath-cell {
+                top: 260px;
+            }
+            .mesophyll-label {
+                top: 0px;
+            }
+            .bundle-sheath-label {
+                top: 240px;
+            }
+            .plasmodesmata {
+                top: 220px;
+                left: 32.5%;
+                width: 35%;
+                height: 40px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .molecule {
+                width: 40px;
+                height: 40px;
+                font-size: 0.7rem;
+            }
+            .calvin {
+                width: 60px;
+                height: 60px;
+            }
+            .anatomical-layout {
+                flex-direction: column; /* Stack vertically on smaller screens */
+            }
+            .anatomical-text, .anatomical-figure {
+                width: 100%; /* Full width when stacked */
+                min-width: unset; /* Remove min-width restriction */
+            }
+            .subtypes-table, .subtypes-table thead, .subtypes-table tbody, .subtypes-table th, .subtypes-table td, .subtypes-table tr {
+                display: block; /* Make table responsive by stacking cells */
+            }
+            .subtypes-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            .subtypes-table tr {
+                border: 1px solid rgba(100, 200, 255, 0.3);
+                margin-bottom: 10px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            .subtypes-table td {
+                border: none;
+                border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+            }
+            .subtypes-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: #a0d2ff;
+            }
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tab-button {
+                width: 90%;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .animation-container {
+                height: 440px;
+            }
+            .cell {
+                left: 10%;
+                width: 80%;
+            }
+            .mesophyll-cell {
+                top: 10px;
+            }
+            .bundle-sheath-cell {
+                top: 230px;
+            }
+            .mesophyll-label {
+                top: -10px;
+            }
+            .bundle-sheath-label {
+                top: 210px;
+            }
+            .plasmodesmata {
+                top: 210px;
+                left: 27.5%;
+                width: 45%;
+                height: 20px;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 90%;
+            }
+            .event-popup { /* Smaller adjustments for tiny screens */
+                font-size: 0.8rem;
+                padding: 8px 10px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Photosynthesis Mechanisms</h1>
+            <p class="subtitle">Explore different carbon fixation processes in plants</p>
+        </header>
+
+        <!-- Tab Navigation - REARRANGED ORDER -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="c2">C2 Cycle (Photorespiration)</button>
+            <button class="tab-button" data-tab="c4">C4 Cycle</button>
+            <button class="tab-button" data-tab="cam">CAM Cycle</button>
+        </div>
+
+        <!-- C2 Cycle Content - NOW FIRST -->
+        <div id="c2-tab" class="tab-content active">
+            <div class="c4-details-panel">
+                <h2>About C2 Photosynthesis (Photorespiration)</h2>
+                <div class="c4-details-list">
+                    <div class="c4-details-item">
+                        <strong>1. Photorespiration Overview</strong>
+                        <ul>
+                            <li><strong>Definition:</strong> Photorespiration is a metabolic pathway that consumes oxygen and releases carbon dioxide in the presence of light.</li>
+                            <li><strong>Trigger:</strong> Occurs when RuBisCO fixes oxygen instead of carbon dioxide.</li>
+                            <li><strong>Location:</strong> Takes place in three organelles: chloroplasts, peroxisomes, and mitochondria.</li>
+                            <li><strong>Energy Cost:</strong> Consumes ATP and reducing equivalents without producing sugars.</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>2. The C2 Cycle Process:</strong> Also known as the photorespiratory carbon oxidation cycle.
+                        <div class="core-principle-flowchart">
+                            <div class="core-principle-step">
+                                <strong>1. Oxygenation of RuBP:</strong> RuBisCO fixes O₂ instead of CO₂, producing phosphoglycolate and 3-phosphoglycerate.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>2. Phosphoglycolate Processing:</strong> Phosphoglycolate is dephosphorylated to glycolate in chloroplasts.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>3. Glycolate Transport:</strong> Glycolate moves to peroxisomes where it's oxidized to glyoxylate.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>4. Glycine Formation:</strong> Glyoxylate is transaminated to glycine using glutamate.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>5. Glycine to Serine:</strong> Glycine moves to mitochondria where two glycine molecules form one serine + CO₂ + NH₃.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>6. Serine Processing:</strong> Serine returns to peroxisome and is converted to hydroxypyruvate then glycerate.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>7. Glycerate to PGA:</strong> Glycerate moves back to chloroplast and is phosphorylated to 3-phosphoglycerate (3-PGA).
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Biological Significance:</strong>
+                        <ul>
+                            <li><strong>Carbon Salvage:</strong> Recovers 75% of carbon from phosphoglycolate that would otherwise be lost.</li>
+                            <li><strong>Nitrogen Metabolism:</strong> Involves amino acid metabolism (glycine, serine).</li>
+                            <li><strong>Stress Response:</strong> May play a role in plant stress responses and signaling.</li>
+                            <li><strong>Evolutionary Perspective:</strong> Represents an ancient metabolic pathway that became problematic when oxygen levels rose in Earth's atmosphere.</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Environmental Factors:</strong>
+                        <ul>
+                            <li><strong>Temperature:</strong> Photorespiration increases with temperature due to decreased CO₂ solubility and increased RuBisCO oxygenase activity.</li>
+                            <li><strong>Light Intensity:</strong> High light intensities can exacerbate photorespiration.</li>
+                            <li><strong>Water Stress:</strong> Stomatal closure under water stress limits CO₂ entry, favoring oxygenation.</li>
+                            <li><strong>CO₂:O₂ Ratio:</strong> Low CO₂:O₂ ratio increases photorespiration.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="animation-container" id="c2-animation-container">
+                <div class="cell" style="top: 40px; background: rgba(40, 180, 100, 0.25); border: 2px solid #28b46f;">Chloroplast</div>
+                <div class="cell" style="top: 170px; background: rgba(180, 100, 40, 0.25); border: 2px solid #b46428;">Peroxisome</div>
+                <div class="cell" style="top: 300px; background: rgba(100, 100, 220, 0.25); border: 2px solid #6464dc;">Mitochondria</div>
+
+                <div class="cell-label" style="top: 20px;">Chloroplast</div>
+                <div class="cell-label" style="top: 150px;">Peroxisome</div>
+                <div class="cell-label" style="top: 280px;">Mitochondria</div>
+
+                <div id="c2-event-popup" class="event-popup"></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="c2-progress-bar"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="c2-start-btn">Start Animation</button>
+                <button class="btn btn-pause" id="c2-pause-btn">Pause Animation</button>
+                <button class="btn btn-reset" id="c2-reset-btn">Reset</button>
+            </div>
+
+            <div class="info-panel">
+                <h2>C2 Cycle Steps Flowchart</h2>
+                <div class="flowchart">
+                    <div class="flowchart-step" id="c2-flow-step1">
+                        <h3>1. RuBisCO Oxygenation</h3>
+                        <p>RuBisCO fixes O₂ instead of CO₂, producing phosphoglycolate.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step2">
+                        <h3>2. Glycolate Formation</h3>
+                        <p>Phosphoglycolate is dephosphorylated to glycolate in chloroplasts.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step3">
+                        <h3>3. Glycolate Transport</h3>
+                        <p>Glycolate moves to peroxisomes for oxidation.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step4">
+                        <h3>4. Glyoxylate Production</h3>
+                        <p>Glycolate is oxidized to glyoxylate in peroxisomes.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step5">
+                        <h3>5. Glycine Formation</h3>
+                        <p>Glyoxylate is transaminated to glycine.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step6">
+                        <h3>6. Glycine to Serine</h3>
+                        <p>Two glycine molecules form serine + CO₂ in mitochondria.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="c2-flow-step7">
+                        <h3>7. Return to Calvin Cycle</h3>
+                        <p>Serine is converted back to 3-PGA, rejoining the Calvin cycle.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c4-details-item">
+                <strong>Photorespiratory Adaptations:</strong>
+                <div class="anatomical-layout">
+                    <div class="anatomical-text">
+                        <ul>
+                            <li><strong>C4 Plants:</strong> Spatial separation of initial carbon fixation from RuBisCO activity.</li>
+                            <li><strong>CAM Plants:</strong> Temporal separation of carbon fixation (night) from Calvin cycle (day).</li>
+                            <li><strong>CO₂ Concentrating Mechanisms:</strong> Some algae and cyanobacteria use bicarbonate pumps.</li>
+                            <li><strong>RuBisCO Variants:</strong> Some organisms have RuBisCO with higher CO₂ specificity.</li>
+                            <li><strong>Engineering Approaches:</strong> Research focuses on introducing C4 traits into C3 crops to reduce photorespiratory losses.</li>
+                        </ul>
+                    </div>
+                    <!-- Image container removed from C2 cycle -->
+                </div>
+            </div>
+        </div>
+
+        <!-- C4 Cycle Content - NOW SECOND -->
+        <div id="c4-tab" class="tab-content">
+            <div class="c4-details-panel">
+                <h2>About C4 Photosynthesis</h2>
+                <div class="c4-details-list">
+                    <div class="c4-details-item">
+                        <strong>1. The Evolutionary Problem: Photorespiration</strong>
+                        <ul>
+                            <li><strong>RuBisCO's Dilemma:</strong> Ribulose-1,5-bisphosphate carboxylase/oxygenase (RuBisCO), the key enzyme of carbon fixation in the Calvin cycle (C3 cycle), has dual activity. It catalyzes both:
+                                <ul>
+                                    <li>Carboxylation: RuBP + CO₂ → 2 x 3PGA (Desired, productive)</li>
+                                    <li>Oxygenation: RuBP + O₂ → 3PGA + 2-phosphoglycolate (Wasteful & Toxic)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Photorespiration:</strong> The oxygenation reaction produces 2-phosphoglycolate, initiating the photorespiratory pathway. This process:
+                                <ul>
+                                    <li>Consumes energy (ATP) and reducing power (NADPH).</li>
+                                    <li>Releases previously fixed CO₂.</li>
+                                    <li>Results in a significant net loss of carbon and energy (up to 30% in C3 plants under hot/dry conditions).</li>
+                                </ul>
+                            </li>
+                            <li><strong>Environmental Trigger:</strong> Photorespiration increases dramatically with rising temperature and decreasing CO₂:O₂ ratio (common in hot, dry, bright environments where stomata close to conserve water, limiting CO₂ entry).</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>2. The C4 Solution: Spatial CO₂ Concentration:</strong> C4 photosynthesis is an elegant biochemical and anatomical adaptation that minimizes photorespiration by concentrating CO₂ around RuBisCO, effectively suppressing its oxygenase activity.
+                        <div class="core-principle-flowchart">
+                            <div class="core-principle-step">
+                                <strong>Initial CO₂ Fixation in MCs:</strong> CO₂ fixed into 4-carbon acid (OAA) using PEPC in mesophyll cytosol. PEPC has high affinity for CO₂ and no oxygenase activity.<br>Reaction: PEP + CO₂ + H₂O → OAA + Pi
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Transport of C4 Acid:</strong> C4 acid (OAA/Malate/Aspartate) transported to Bundle Sheath Cells (BSCs) surrounding leaf veins.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Decarboxylation in BSCs:</strong> C4 acid decarboxylated in BSCs, releasing high concentration of CO₂.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Refixation by RuBisCO:</strong> Released CO₂ refixed by RuBisCO in BSC chloroplasts via Calvin cycle (C3 cycle), producing carbohydrates.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Regeneration of PEP:</strong> 3-carbon molecule (pyruvate/alanine) from decarboxylation transported back to MCs, converted to PEP using ATP via PPDK.<br>Reaction: Pyruvate + ATP + Pi → PEP + AMP + PPi (effectively 2 ATP equivalents)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Biochemical Advantages:</strong>
+                        <ul>
+                            <li>Suppressed Photorespiration: High [CO₂] in BSCs favors RuBisCO carboxylation.</li>
+                            <li>Higher Water Use Efficiency (WUE): PEPC's high affinity allows efficient CO₂ fixation even when stomata are partially closed, reducing water loss per unit carbon fixed.</li>
+                            <li>Higher Nitrogen Use Efficiency (NUE): Concentrating CO₂ allows BSC RuBisCO to operate near its maximum carboxylation rate. C4 plants often have less total RuBisCO protein (which is N-rich) than C3 plants for equivalent photosynthetic rates under favorable conditions.</li>
+                            <li>Higher Photosynthetic Efficiency at High Temp/Light: C4 plants outperform C3 plants under high temperatures (30-45°C) and high light intensities due to minimized photorespiratory losses.</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Energetic Cost:</strong> The C4 cycle requires 2 extra ATP per CO₂ fixed compared to the C3 cycle (to regenerate PEP via PPDK: Pyruvate + ATP → PEP + AMP + Pi → effectively 2 ATP equivalents). This cost is offset under conditions where photorespiration would otherwise consume large amounts of energy and carbon in C3 plants.
+                    </div>
+                </div>
+            </div>
+
+            <div class="animation-container" id="animation-container">
+                <div class="cell mesophyll-cell" id="mesophyll-cell"></div>
+                <div class="cell bundle-sheath-cell" id="bundle-sheath-cell"></div>
+
+                <div class="plasmodesmata">Plasmodesmata</div>
+
+                <div class="cell-label mesophyll-label">Mesophyll Cell</div>
+                <div class="cell-label bundle-sheath-label">Bundle Sheath Cell</div>
+
+                <div id="event-popup" class="event-popup"></div>
+
+                <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
+                    <path id="co2-path" class="path" d="M500,30 C500,80 500,140 500,140" />
+                    <path id="c4-path" class="path" d="M500,140 C500,220 500,360 500,360" />
+                    <path id="c3-path" class="path" d="M500,360 C500,280 500,140 500,140" />
+                </svg>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="start-btn">Start Animation</button>
+                <button class="btn btn-pause" id="pause-btn">Pause Animation</button>
+                <button class="btn btn-reset" id="reset-btn">Reset</button>
+            </div>
+
+            <div class="info-panel">
+                <h2>Animation Steps Flowchart</h2>
+                <div class="flowchart">
+                    <div class="flowchart-step" id="flow-step1">
+                        <h3>1. CO₂ Enters Leaf</h3>
+                        <p>Atmospheric CO₂ diffuses into the mesophyll cell through stomata.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step2">
+                        <h3>2. Bicarbonate Conversion</h3>
+                        <p>CO₂ is converted to bicarbonate ions (HCO₃⁻) in the mesophyll cell.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step3">
+                        <h3>3. C4 Acid Formation</h3>
+                        <p>HCO₃⁻ combines with PEP to form a C4 acid.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step4">
+                        <h3>4. Transport to Bundle Sheath</h3>
+                        <p>C4 acid diffuses into the bundle sheath cells via plasmodesmata.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step5">
+                        <h3>5. Decarboxylation</h3>
+                        <p>C4 acid undergoes decarboxylation, releasing CO₂ and forming C3 acid.</p>
+                    
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step6">
+                        <h3>6. Calvin Cycle & Sugar Production</h3>
+                        <p>Released CO₂ enters Calvin cycle for carbon fixation and sugar production.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="flow-step7">
+                        <h3>7. PEP Regeneration</h3>
+                        <p>C3 acid returns to mesophyll cell and is converted back to PEP using ATP.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c4-details-item">
+                <strong>Anatomical Foundation: Kranz Anatomy:</strong>
+                <div class="anatomical-layout">
+                    <div class="anatomical-text">
+                        <ul>
+                            <li>Requires specific leaf anatomy: Kranz (German for "wreath") anatomy.</li>
+                            <li>Vascular bundles are surrounded by one or more layers of large, chloroplast-rich Bundle Sheath Cells (BSCs).</li>
+                            <li>Mesophyll Cells (MCs) surround the BSCs and are in direct contact with intercellular air spaces.</li>
+                            <li><strong>Key Feature:</strong> Extensive plasmodesmatal connections between MCs and BSCs facilitate rapid metabolite exchange.</li>
+                            <li><strong>Compartmentalization:</strong> The separation of initial fixation (MC) from decarboxylation and the Calvin cycle (BSC) is crucial for CO₂ concentration. BSCs often have reduced exposure to intercellular air spaces.</li>
+                        </ul>
+                    </div>
+                    <div class="anatomical-figure">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Anatomy%20of%20a%20C3%20%20C4%20plant.jpg" alt="Kranz Anatomy Diagram" class="kranz-diagram" onerror="this.onerror=null;this.src='https://placehold.co/300x200/4CAF50/FFFFFF?text=Kranz+Anatomy';">
+                        <p class="figure-caption">Figure: Simplified Kranz Anatomy showing Mesophyll and Bundle Sheath cells.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subtypes-table-container">
+                <h2>Three Biochemical Subtypes of C4 Photosynthesis</h2>
+                <p>The key difference between subtypes lies in:</p>
+                <ul>
+                    <li>The primary C4 acid transported from MCs to BSCs.</li>
+                    <li>The decarboxylation enzyme used in the BSCs.</li>
+                    <li>The organelle where decarboxylation occurs.</li>
+                    <li>The metabolite returned to MCs for PEP regeneration.</li>
+                </ul>
+                <table class="subtypes-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>NADP-Malic Enzyme (NADP-ME) Type</th>
+                            <th>NAD-Malic Enzyme (NAD-ME) Type</th>
+                            <th>PEP Carboxykinase (PEP-CK) Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Feature">Primary C4 Acid</td>
+                            <td data-label="NADP-ME Type">Malate</td>
+                            <td data-label="NAD-ME Type">Aspartate</td>
+                            <td data-label="PEP-CK Type">Aspartate (primarily) or OAA</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Decarboxylation Site</td>
+                            <td data-label="NADP-ME Type">BSC Chloroplasts</td>
+                            <td data-label="NAD-ME Type">BSC Mitochondria</td>
+                            <td data-label="PEP-CK Type">BSC Cytosol</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Return Metabolite</td>
+                            <td data-label="NADP-ME Type">Pyruvate</td>
+                            <td data-label="NAD-ME Type">Alanine (or Pyruvate)</td>
+                            <td data-label="PEP-CK Type">PEP (minor), Pyruvate (major via Ala or direct)</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">BSC Chloroplasts</td>
+                            <td data-label="NADP-ME Type">Large, Agranal (PSII deficient)</td>
+                            <td data-label="NAD-ME Type">Granal (PSII active)</td>
+                            <td data-label="PEP-CK Type">Granal (PSII active)</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">BSC Mitochondria</td>
+                            <td data-label="NADP-ME Type">Fewer, smaller</td>
+                            <td data-label="NAD-ME Type">Numerous, large</td>
+                            <td data-label="PEP-CK Type">Numerous</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Examples</td>
+                            <td data-label="NADP-ME Type">Maize, Sugarcane, Sorghum (Many grasses)</td>
+                            <td data-label="NAD-ME Type">Amaranthus, Atriplex, Millet (e.g., Panicum miliaceum)</td>
+                            <td data-label="PEP-CK Type">Panicum maximum, Urochloa (Brachiaria), Chloris gayana</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CAM Cycle Content - NOW THIRD -->
+        <div id="cam-tab" class="tab-content">
+            <div class="c4-details-panel">
+                <h2>About CAM Photosynthesis</h2>
+                <div class="c4-details-list">
+                    <div class="c4-details-item">
+                        <strong>1. CAM Photosynthesis Overview</strong>
+                        <ul>
+                            <li><strong>Definition:</strong> Crassulacean Acid Metabolism (CAM) is a carbon fixation pathway that evolved in some plants as an adaptation to arid conditions.</li>
+                            <li><strong>Key Feature:</strong> Temporal separation of carbon fixation and the Calvin cycle.</li>
+                            <li><strong>Water Efficiency:</strong> CAM plants have extremely high water use efficiency.</li>
+                            <li><strong>Examples:</strong> Cacti, succulents, pineapple, orchids, and some ferns.</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>2. The CAM Cycle Process:</strong> Separation of carbon fixation into night and day phases.
+                        <div class="core-principle-flowchart">
+                            <div class="core-principle-step">
+                                <strong>Night Phase (Carbon Fixation):</strong> Stomata open at night to take in CO₂. CO₂ is fixed into organic acids (mainly malate) using PEP carboxylase and stored in vacuoles.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Day Phase (Calvin Cycle):</strong> Stomata close during the day to conserve water. Stored malate is decarboxylated, releasing CO₂ for the Calvin cycle.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Malate Storage:</strong> Malic acid accumulates in vacuoles during the night, causing cellular acidification.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>Malate Release:</strong> During the day, malate is transported out of vacuoles and decarboxylated.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>CO₂ Concentration:</strong> Released CO₂ is concentrated around RuBisCO, suppressing photorespiration.
+                            </div>
+                            <div class="core-principle-arrow"></div>
+                            <div class="core-principle-step">
+                                <strong>PEP Regeneration:</strong> The 3-carbon product of decarboxylation is used to regenerate PEP for the next night cycle.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Ecological Advantages:</strong>
+                        <ul>
+                            <li><strong>Water Conservation:</strong> Stomatal opening at night when evaporative demand is lower reduces water loss by up to 80% compared to C3 plants.</li>
+                            <li><strong>High Temperature Tolerance:</strong> CAM plants can photosynthesize efficiently at high temperatures when C3 plants would experience severe photorespiration.</li>
+                            <li><strong>Drought Resistance:</strong> Ability to close stomata completely during extended drought periods while maintaining basic metabolic functions.</li>
+                            <li><strong>Nutrient Use Efficiency:</strong> Often found in nutrient-poor environments where their conservative growth strategy is advantageous.</li>
+                        </ul>
+                    </div>
+                    <div class="c4-details-item">
+                        <strong>Types of CAM Plants:</strong>
+                        <ul>
+                            <li><strong>Obligate CAM:</strong> Always perform CAM photosynthesis (e.g., most cacti).</li>
+                            <li><strong>Facultative CAM:</strong> Can switch between C3 and CAM depending on environmental conditions (e.g., some species of Mesembryanthemum).</li>
+                            <li><strong>CAM Cycling:</strong> Fix CO₂ at night but also fix some CO₂ during the day via C3 photosynthesis.</li>
+                            <li><strong>CAM Idling:</strong> Under extreme drought, stomata remain closed day and night, with CO₂ from respiration being refixed.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="animation-container" id="cam-animation-container">
+                <div class="cell" style="top: 40px; background: rgba(40, 180, 100, 0.25); border: 2px solid #28b46f;">Night Phase</div>
+                <div class="cell" style="top: 280px; background: rgba(100, 100, 220, 0.25); border: 2px solid #6464dc;">Day Phase</div>
+
+                <div class="cell" style="top: 160px; left: 60%; width: 30%; height: 100px; background: rgba(180, 100, 180, 0.25); border: 2px solid #b464b4;">Vacuole</div>
+
+                <div class="cell-label" style="top: 20px;">Night Phase</div>
+                <div class="cell-label" style="top: 260px;">Day Phase</div>
+                <div class="cell-label" style="top: 160px; left: 60%;">Vacuole</div>
+
+                <div id="cam-event-popup" class="event-popup"></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="cam-progress-bar"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="cam-start-btn">Start Animation</button>
+                <button class="btn btn-pause" id="cam-pause-btn">Pause Animation</button>
+                <button class="btn btn-reset" id="cam-reset-btn">Reset</button>
+            </div>
+
+            <div class="info-panel">
+                <h2>CAM Cycle Steps Flowchart</h2>
+                <div class="flowchart">
+                    <div class="flowchart-step" id="cam-flow-step1">
+                        <h3>1. Night: CO₂ Uptake</h3>
+                        <p>Stomata open at night to take in CO₂ when evaporative demand is low.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step2">
+                        <h3>2. Night: Carbon Fixation</h3>
+                        <p>CO₂ is fixed into malate using PEP carboxylase in cytosol.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step3">
+                        <h3>3. Night: Malate Storage</h3>
+                        <p>Malate is transported into vacuoles and stored as malic acid.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step4">
+                        <h3>4. Day: Stomata Close</h3>
+                        <p>Stomata close during the day to conserve water.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step5">
+                        <h3>5. Day: Malate Release</h3>
+                        <p>Malate is transported out of vacuoles into cytosol.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step6">
+                        <h3>6. Day: Decarboxylation</h3>
+                        <p>Malate is decarboxylated, releasing CO₂ and pyruvate.</p>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    <div class="flowchart-step" id="cam-flow-step7">
+                        <h3>7. Day: Calvin Cycle</h3>
+                        <p>Released CO₂ enters Calvin cycle for sugar production.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c4-details-item">
+                <strong>Anatomical and Biochemical Features:</strong>
+                <div class="anatomical-layout">
+                    <div class="anatomical-text">
+                        <ul>
+                            <li><strong>Succulent Tissues:</strong> CAM plants typically have fleshy leaves or stems with large vacuoles for acid storage.</li>
+                            <li><strong>Reduced Stomatal Density:</strong> Fewer stomata than C3 or C4 plants, further reducing water loss.</li>
+                            <li><strong>Large Vacuoles:</strong> Specialized for storing malic acid overnight.</li>
+                            <li><strong>Enzyme Regulation:</strong> Key enzymes like PEP carboxylase are regulated by day/night cycles through phosphorylation/dephosphorylation.</li>
+                            <li><strong>pH Fluctuations:</strong> Dramatic daily pH changes in vacuoles (acidic at night, neutral during day).</li>
+                        </ul>
+                    </div>
+                    <!-- Image container removed from CAM cycle -->
+                </div>
+            </div>
+
+            <div class="subtypes-table-container">
+                <h2>Comparison of Photosynthetic Pathways</h2>
+                <table class="subtypes-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>C3 Plants</th>
+                            <th>C4 Plants</th>
+                            <th>CAM Plants</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Feature">Primary CO₂ Fixation Enzyme</td>
+                            <td data-label="C3 Plants">RuBisCO</td>
+                            <td data-label="C4 Plants">PEP carboxylase (initial)</td>
+                            <td data-label="CAM Plants">PEP carboxylase (night)</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Carbon Fixation Time</td>
+                            <td data-label="C3 Plants">Day</td>
+                            <td data-label="C4 Plants">Day</td>
+                            <td data-label="CAM Plants">Night (initial fixation)</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Stomatal Opening</td>
+                            <td data-label="C3 Plants">Day</td>
+                            <td data-label="C4 Plants">Day</td>
+                            <td data-label="CAM Plants">Night</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Water Use Efficiency</td>
+                            <td data-label="C3 Plants">Low</td>
+                            <td data-label="C4 Plants">Medium</td>
+                            <td data-label="CAM Plants">High</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Photorespiration</td>
+                            <td data-label="C3 Plants">High</td>
+                            <td data-label="C4 Plants">Low</td>
+                            <td data-label="CAM Plants">Low</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Feature">Examples</td>
+                            <td data-label="C3 Plants">Rice, Wheat, Soybean</td>
+                            <td data-label="C4 Plants">Maize, Sugarcane, Sorghum</td>
+                            <td data-label="CAM Plants">Cacti, Pineapple, Orchids</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="security-footer">
+            <span id="security-check-email">betabiosciences@gmail.com</span>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // SECURITY LAYER: Check for the presence and content of the security email text.
+            // If this element is missing or its text content is modified, the script will not execute further.
+            const securityEmailElement = document.getElementById('security-check-email');
+            const expectedEmail = 'betabiosciences@gmail.com';
+
+            if (!securityEmailElement || securityEmailElement.textContent.trim() !== expectedEmail) {
+                // If the security check fails, immediately return and do not execute the rest of the script.
+                // No error message is displayed as per the user's request.
+                console.warn('Security check failed: Script execution halted.');
+                return;
+            }
+
+            // Tab Navigation Functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function switchTab(tabId) {
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Remove active class from all tab buttons
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+                
+                // Show the selected tab content and activate the button
+                document.getElementById(tabId + '-tab').classList.add('active');
+                document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
+            }
+
+            // Add click event listeners to tab buttons
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Initialize with C2 tab active (now first)
+            switchTab('c2');
+
+            // --- Animation Systems for Each Tab ---
+            
+            // C2 Animation System
+            initializeC2Animation();
+            
+            // C4 Animation System
+            initializeC4Animation();
+            
+            // CAM Animation System
+            initializeCAMAnimation();
+
+            // --- C2 Animation System ---
+            function initializeC2Animation() {
+                // Elements
+                const startBtn = document.getElementById('c2-start-btn');
+                const pauseBtn = document.getElementById('c2-pause-btn');
+                const resetBtn = document.getElementById('c2-reset-btn');
+                const progressBar = document.getElementById('c2-progress-bar');
+                const animationContainer = document.getElementById('c2-animation-container');
+                const eventPopup = document.getElementById('c2-event-popup');
+
+                // Cell positions
+                const positions = {
+                    chloroplast: { x: 500, y: 140 },
+                    peroxisome: { x: 500, y: 270 },
+                    mitochondria: { x: 500, y: 400 }
+                };
+
+                // Animation state
+                let animationRunning = false;
+                let isPaused = false;
+                let currentStep = 0;
+
+                // Pause/Resume Animation
+                function togglePause() {
+                    isPaused = !isPaused;
+                    if (isPaused) {
+                        pauseBtn.textContent = 'Resume Animation';
+                        startBtn.disabled = true;
+                    } else {
+                        pauseBtn.textContent = 'Pause Animation';
+                        startBtn.disabled = false;
+                        if (animationRunning) {
+                            runAnimation();
+                        }
+                    }
+                }
+
+                // Reset animation
+                function resetAnimation() {
+                    animationRunning = false;
+                    isPaused = false;
+                    currentStep = 0;
+                    
+                    progressBar.style.width = '0%';
+
+                    // Remove all molecules
+                    document.querySelectorAll('#c2-animation-container .molecule').forEach(mol => {
+                        if (mol.parentNode) {
+                            mol.parentNode.removeChild(mol);
+                        }
+                    });
+
+                    // Hide event popup
+                    eventPopup.style.opacity = '0';
+                    eventPopup.textContent = '';
+
+                    // Reset step highlights for flowchart
+                    document.querySelectorAll('#c2-tab .flowchart-step').forEach(step => {
+                        step.classList.remove('active');
+                    });
+
+                    startBtn.textContent = 'Start Animation';
+                    startBtn.disabled = false;
+                    pauseBtn.textContent = 'Pause Animation';
+                    pauseBtn.disabled = true;
+                }
+
+                // Animation utility functions
+                function createMolecule(type, text, x, y) {
+                    const molecule = document.createElement('div');
+                    molecule.className = `molecule ${type}`;
+                    molecule.textContent = text;
+                    molecule.style.left = `${x - 25}px`;
+                    molecule.style.top = `${y - 25}px`;
+                    animationContainer.appendChild(molecule);
+                    return molecule;
+                }
+
+                function animateProperty(element, startValue, endValue, duration, property, unit = 'px') {
+                    return new Promise(resolve => {
+                        let animationStartTime = null;
+                        let pauseStartTime = null;
+                        let totalPausedTime = 0;
+                        let lastKnownProgress = 0;
+
+                        function animate(time) {
+                            if (isPaused) {
+                                if (!pauseStartTime) {
+                                    pauseStartTime = time;
+                                }
+                                requestAnimationFrame(animate);
+                                return;
+                            }
+
+                            if (pauseStartTime) {
+                                totalPausedTime += (time - pauseStartTime);
+                                pauseStartTime = null;
+                            }
+
+                            if (!animationStartTime) {
+                                animationStartTime = time - (lastKnownProgress * duration);
+                            }
+
+                            const elapsed = time - animationStartTime - totalPausedTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            lastKnownProgress = progress;
+
+                            const currentValue = startValue + (endValue - startValue) * progress;
+                            if (property.startsWith('opacity')) {
+                                element.style.opacity = currentValue;
+                            } else {
+                                element.style[property] = `${currentValue}${unit}`;
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                element.style[property] = `${endValue}${unit}`;
+                                resolve();
+                            }
+                        }
+                        requestAnimationFrame(animate);
+                    });
+                }
+
+                function moveMolecule(molecule, targetX, targetY, duration) {
+                    const startX = parseInt(molecule.style.left);
+                    const startY = parseInt(molecule.style.top);
+                    
+                    const moveXPromise = animateProperty(molecule, startX, targetX - 25, duration, 'left', 'px');
+                    const moveYPromise = animateProperty(molecule, startY, targetY - 25, duration, 'top', 'px');
+
+                    return Promise.all([moveXPromise, moveYPromise]);
+                }
+
+                function fadeIn(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 0, 1, duration, 'opacity');
+                }
+
+                function fadeOut(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 1, 0, duration, 'opacity')
+                        .then(() => {
+                            if (molecule.parentNode) {
+                                molecule.parentNode.removeChild(molecule);
+                            }
+                        });
+                }
+
+                function showEventPopup(message, xCenter, yBottom) {
+                    eventPopup.textContent = message;
+                    eventPopup.style.left = `${xCenter}px`;
+                    eventPopup.style.top = `${yBottom - 60}px`;
+                    eventPopup.style.opacity = '1';
+
+                    setTimeout(() => {
+                        eventPopup.style.opacity = '0';
+                    }, 2000);
+                }
+
+                function delay(duration) {
+                    return new Promise(resolve => {
+                        let delayStartTime = null;
+                        let accumulatedDelay = 0;
+
+                        function step(timestamp) {
+                            if (isPaused) {
+                                if (!delayStartTime) {
+                                    delayStartTime = timestamp;
+                                }
+                                requestAnimationFrame(step);
+                                return;
+                            }
+
+                            if (delayStartTime) {
+                                accumulatedDelay += (timestamp - delayStartTime);
+                                delayStartTime = null;
+                            }
+
+                            if (!delayStartTime) {
+                                delayStartTime = timestamp - accumulatedDelay;
+                            }
+
+                            const elapsed = timestamp - delayStartTime;
+                            
+                            if (elapsed >= duration) {
+                                resolve();
+                            } else {
+                                requestAnimationFrame(step);
+                            }
+                        }
+                        requestAnimationFrame(step);
+                    });
+                }
+
+                // Main animation sequence
+                async function runAnimation() {
+                    if (animationRunning && !isPaused) return;
+
+                    animationRunning = true;
+                    isPaused = false;
+                    startBtn.textContent = 'Running...';
+                    startBtn.disabled = true;
+                    pauseBtn.disabled = false;
+
+                    if (currentStep === 0) {
+                        document.querySelectorAll('#c2-tab .flowchart-step').forEach(step => {
+                            step.classList.remove('active');
+                        });
+                    }
+                    
+                    const advanceStep = async (stepId, action, delayTime = 0) => {
+                        if (!animationRunning) return;
+                        document.getElementById(stepId).classList.add('active');
+                        await action();
+                        if (delayTime > 0) {
+                            await delay(delayTime);
+                        }
+                        document.getElementById(stepId).classList.remove('active');
+                    };
+
+                    switch (currentStep) {
+                        case 0:
+                            await advanceStep('c2-flow-step1', async () => {
+                                const phosphoglycolate = createMolecule('phosphoglycolate', 'Phosphoglycolate', positions.chloroplast.x, positions.chloroplast.y);
+                                await fadeIn(phosphoglycolate);
+                                showEventPopup('RuBisCO fixes O₂, producing phosphoglycolate', positions.chloroplast.x, positions.chloroplast.y + 100);
+                                progressBar.style.width = '14%';
+                            }, 1000);
+                            currentStep = 1;
+                            if (!animationRunning || isPaused) return;
+                        case 1:
+                            await advanceStep('c2-flow-step2', async () => {
+                                const phosphoglycolate = document.querySelector('#c2-animation-container .molecule.phosphoglycolate');
+                                await fadeOut(phosphoglycolate);
+                                
+                                const glycolate = createMolecule('glycolate', 'Glycolate', positions.chloroplast.x, positions.chloroplast.y);
+                                await fadeIn(glycolate);
+                                showEventPopup('Phosphoglycolate dephosphorylated to glycolate', positions.chloroplast.x, positions.chloroplast.y + 100);
+                                progressBar.style.width = '28%';
+                            }, 1000);
+                            currentStep = 2;
+                            if (!animationRunning || isPaused) return;
+                        case 2:
+                            await advanceStep('c2-flow-step3', async () => {
+                                const glycolate = document.querySelector('#c2-animation-container .molecule.glycolate');
+                                await moveMolecule(glycolate, positions.peroxisome.x, positions.peroxisome.y, 1500);
+                                showEventPopup('Glycolate transported to peroxisome', positions.peroxisome.x, positions.peroxisome.y + 100);
+                                progressBar.style.width = '42%';
+                            }, 800);
+                            currentStep = 3;
+                            if (!animationRunning || isPaused) return;
+                        case 3:
+                            await advanceStep('c2-flow-step4', async () => {
+                                const glycolate = document.querySelector('#c2-animation-container .molecule.glycolate');
+                                await fadeOut(glycolate);
+                                
+                                const glyoxylate = createMolecule('glyoxylate', 'Glyoxylate', positions.peroxisome.x, positions.peroxisome.y);
+                                await fadeIn(glyoxylate);
+                                showEventPopup('Glycolate oxidized to glyoxylate', positions.peroxisome.x, positions.peroxisome.y + 100);
+                                progressBar.style.width = '56%';
+                            }, 1000);
+                            currentStep = 4;
+                            if (!animationRunning || isPaused) return;
+                        case 4:
+                            await advanceStep('c2-flow-step5', async () => {
+                                const glyoxylate = document.querySelector('#c2-animation-container .molecule.glyoxylate');
+                                await fadeOut(glyoxylate);
+                                
+                                const glycine = createMolecule('glycine', 'Glycine', positions.peroxisome.x, positions.peroxisome.y);
+                                await fadeIn(glycine);
+                                await moveMolecule(glycine, positions.mitochondria.x, positions.mitochondria.y, 1500);
+                                showEventPopup('Glyoxylate transaminated to glycine, transported to mitochondria', positions.mitochondria.x, positions.mitochondria.y + 100);
+                                progressBar.style.width = '70%';
+                            }, 1000);
+                            currentStep = 5;
+                            if (!animationRunning || isPaused) return;
+                        case 5:
+                            await advanceStep('c2-flow-step6', async () => {
+                                const glycine1 = document.querySelector('#c2-animation-container .molecule.glycine');
+                                const glycine2 = createMolecule('glycine', 'Glycine', positions.mitochondria.x - 30, positions.mitochondria.y);
+                                await fadeIn(glycine2);
+                                
+                                await delay(1000);
+                                
+                                await fadeOut(glycine1);
+                                await fadeOut(glycine2);
+                                
+                                const co2 = createMolecule('co2', 'CO₂', positions.mitochondria.x, positions.mitochondria.y);
+                                const serine = createMolecule('serine', 'Serine', positions.mitochondria.x, positions.mitochondria.y);
+                                await fadeIn(co2);
+                                await fadeIn(serine);
+                                
+                                await moveMolecule(serine, positions.peroxisome.x, positions.peroxisome.y, 1500);
+                                showEventPopup('Two glycine molecules form serine + CO₂', positions.mitochondria.x, positions.mitochondria.y + 100);
+                                progressBar.style.width = '84%';
+                            }, 1000);
+                            currentStep = 6;
+                            if (!animationRunning || isPaused) return;
+                        case 6:
+                            await advanceStep('c2-flow-step7', async () => {
+                                const serine = document.querySelector('#c2-animation-container .molecule.serine');
+                                await fadeOut(serine);
+                                
+                                const glycerate = createMolecule('glycerate', 'Glycerate', positions.peroxisome.x, positions.peroxisome.y);
+                                await fadeIn(glycerate);
+                                await moveMolecule(glycerate, positions.chloroplast.x, positions.chloroplast.y, 1500);
+                                
+                                await fadeOut(glycerate);
+                                
+                                const pga = createMolecule('c3', '3-PGA', positions.chloroplast.x, positions.chloroplast.y);
+                                await fadeIn(pga);
+                                showEventPopup('Serine converted to 3-PGA, rejoining Calvin cycle', positions.chloroplast.x, positions.chloroplast.y + 100);
+                                progressBar.style.width = '100%';
+                            }, 1500);
+                            currentStep = 7;
+                            if (!animationRunning || isPaused) return;
+                    }
+
+                    resetAnimation();
+                }
+
+                // Event listeners
+                startBtn.addEventListener('click', runAnimation);
+                pauseBtn.addEventListener('click', togglePause);
+                resetBtn.addEventListener('click', resetAnimation);
+
+                // Initialize
+                resetAnimation();
+            }
+
+            // --- C4 Animation System ---
+            function initializeC4Animation() {
+                // Elements
+                const startBtn = document.getElementById('start-btn');
+                const pauseBtn = document.getElementById('pause-btn');
+                const resetBtn = document.getElementById('reset-btn');
+                const progressBar = document.getElementById('progress-bar');
+                const animationContainer = document.getElementById('animation-container');
+                const eventPopup = document.getElementById('event-popup');
+
+                // Molecule positions
+                const positions = {
+                    outside: { x: 500, y: 30 },
+                    mesophyll: { x: 500, y: 140 },
+                    bundleSheath: { x: 500, y: 380 },
+                    calvinCycle: { x: 420, y: 380 },
+                    pep: { x: 450, y: 170 },
+                    atp: { x: 480, y: 100 },
+                    sugarOut: { x: 350, y: 380 }
+                };
+
+                // Animation state
+                let animationRunning = false;
+                let isPaused = false;
+                let currentStep = 0;
+
+                // Pause/Resume Animation
+                function togglePause() {
+                    isPaused = !isPaused;
+                    if (isPaused) {
+                        pauseBtn.textContent = 'Resume Animation';
+                        startBtn.disabled = true;
+                    } else {
+                        pauseBtn.textContent = 'Pause Animation';
+                        startBtn.disabled = false;
+                        if (animationRunning) {
+                            runAnimation();
+                        }
+                    }
+                }
+
+                // Reset animation
+                function resetAnimation() {
+                    animationRunning = false;
+                    isPaused = false;
+                    currentStep = 0;
+                    
+                    progressBar.style.width = '0%';
+
+                    // Remove all molecules
+                    document.querySelectorAll('#animation-container .molecule').forEach(mol => {
+                        if (mol.parentNode) {
+                            mol.parentNode.removeChild(mol);
+                        }
+                    });
+
+                    // Hide event popup
+                    eventPopup.style.opacity = '0';
+                    eventPopup.textContent = '';
+
+                    // Reset step highlights for flowchart
+                    document.querySelectorAll('#c4-tab .flowchart-step').forEach(step => {
+                        step.classList.remove('active');
+                    });
+
+                    startBtn.textContent = 'Start Animation';
+                    startBtn.disabled = false;
+                    pauseBtn.textContent = 'Pause Animation';
+                    pauseBtn.disabled = true;
+                }
+
+                // Animation utility functions
+                function createMolecule(type, text, x, y) {
+                    const molecule = document.createElement('div');
+                    molecule.className = `molecule ${type}`;
+                    molecule.textContent = text;
+                    molecule.style.left = `${x - 25}px`;
+                    molecule.style.top = `${y - 25}px`;
+                    animationContainer.appendChild(molecule);
+                    return molecule;
+                }
+
+                function animateProperty(element, startValue, endValue, duration, property, unit = 'px') {
+                    return new Promise(resolve => {
+                        let animationStartTime = null;
+                        let pauseStartTime = null;
+                        let totalPausedTime = 0;
+                        let lastKnownProgress = 0;
+
+                        function animate(time) {
+                            if (isPaused) {
+                                if (!pauseStartTime) {
+                                    pauseStartTime = time;
+                                }
+                                requestAnimationFrame(animate);
+                                return;
+                            }
+
+                            if (pauseStartTime) {
+                                totalPausedTime += (time - pauseStartTime);
+                                pauseStartTime = null;
+                            }
+
+                            if (!animationStartTime) {
+                                animationStartTime = time - (lastKnownProgress * duration);
+                            }
+
+                            const elapsed = time - animationStartTime - totalPausedTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            lastKnownProgress = progress;
+
+                            const currentValue = startValue + (endValue - startValue) * progress;
+                            if (property.startsWith('opacity')) {
+                                element.style.opacity = currentValue;
+                            } else {
+                                element.style[property] = `${currentValue}${unit}`;
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                element.style[property] = `${endValue}${unit}`;
+                                resolve();
+                            }
+                        }
+                        requestAnimationFrame(animate);
+                    });
+                }
+
+                function moveMolecule(molecule, targetX, targetY, duration) {
+                    const startX = parseInt(molecule.style.left);
+                    const startY = parseInt(molecule.style.top);
+                    
+                    const moveXPromise = animateProperty(molecule, startX, targetX - 25, duration, 'left', 'px');
+                    const moveYPromise = animateProperty(molecule, startY, targetY - 25, duration, 'top', 'px');
+
+                    return Promise.all([moveXPromise, moveYPromise]);
+                }
+
+                function fadeIn(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 0, 1, duration, 'opacity');
+                }
+
+                function fadeOut(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 1, 0, duration, 'opacity')
+                        .then(() => {
+                            if (molecule.parentNode) {
+                                molecule.parentNode.removeChild(molecule);
+                            }
+                        });
+                }
+
+                function showEventPopup(message, xCenter, yBottom) {
+                    eventPopup.textContent = message;
+                    eventPopup.style.left = `${xCenter}px`;
+                    eventPopup.style.top = `${yBottom - 60}px`;
+                    eventPopup.style.opacity = '1';
+
+                    setTimeout(() => {
+                        eventPopup.style.opacity = '0';
+                    }, 2000);
+                }
+
+                function delay(duration) {
+                    return new Promise(resolve => {
+                        let delayStartTime = null;
+                        let accumulatedDelay = 0;
+
+                        function step(timestamp) {
+                            if (isPaused) {
+                                if (!delayStartTime) {
+                                    delayStartTime = timestamp;
+                                }
+                                requestAnimationFrame(step);
+                                return;
+                            }
+
+                            if (delayStartTime) {
+                                accumulatedDelay += (timestamp - delayStartTime);
+                                delayStartTime = null;
+                            }
+
+                            if (!delayStartTime) {
+                                delayStartTime = timestamp - accumulatedDelay;
+                            }
+
+                            const elapsed = timestamp - delayStartTime;
+                            
+                            if (elapsed >= duration) {
+                                resolve();
+                            } else {
+                                requestAnimationFrame(step);
+                            }
+                        }
+                        requestAnimationFrame(step);
+                    });
+                }
+
+                // Main animation sequence
+                async function runAnimation() {
+                    if (animationRunning && !isPaused) return;
+
+                    animationRunning = true;
+                    isPaused = false;
+                    startBtn.textContent = 'Running...';
+                    startBtn.disabled = true;
+                    pauseBtn.disabled = false;
+
+                    if (currentStep === 0) {
+                        document.querySelectorAll('#c4-tab .flowchart-step').forEach(step => {
+                            step.classList.remove('active');
+                        });
+                    }
+                    
+                    const advanceStep = async (stepId, action, delayTime = 0) => {
+                        if (!animationRunning) return;
+                        document.getElementById(stepId).classList.add('active');
+                        await action();
+                        if (delayTime > 0) {
+                            await delay(delayTime);
+                        }
+                        document.getElementById(stepId).classList.remove('active');
+                    };
+
+                    switch (currentStep) {
+                        case 0:
+                            await advanceStep('flow-step1', async () => {
+                                const co2 = createMolecule('co2', 'CO₂', positions.outside.x, positions.outside.y);
+                                await fadeIn(co2);
+                                showEventPopup('CO₂ enters the leaf', positions.outside.x, positions.outside.y + 25);
+                                progressBar.style.width = '14%';
+                            }, 1000);
+                            currentStep = 1;
+                            if (!animationRunning || isPaused) return;
+                        case 1:
+                            await advanceStep('flow-step2', async () => {
+                                const co2 = document.querySelector('#animation-container .molecule.co2');
+                                await moveMolecule(co2, positions.mesophyll.x, positions.mesophyll.y, 1500);
+                                showEventPopup('CO₂ converted to HCO₃⁻ in Mesophyll', positions.mesophyll.x, positions.mesophyll.y + 100);
+                                progressBar.style.width = '28%';
+                            }, 800);
+                            currentStep = 2;
+                            if (!animationRunning || isPaused) return;
+                        case 2:
+                            await advanceStep('flow-step3', async () => {
+                                const co2 = document.querySelector('#animation-container .molecule.co2');
+                                await fadeOut(co2);
+
+                                const hco3 = createMolecule('hco3', 'HCO₃⁻', positions.mesophyll.x, positions.mesophyll.y);
+                                await fadeIn(hco3);
+
+                                const pep = createMolecule('pep', 'PEP', positions.pep.x, positions.pep.y);
+                                await fadeIn(pep);
+                                await moveMolecule(pep, positions.mesophyll.x, positions.mesophyll.y, 1000);
+
+                                await fadeOut(hco3);
+                                await fadeOut(pep);
+
+                                const c4 = createMolecule('c4', 'C₄ Acid', positions.mesophyll.x, positions.mesophyll.y);
+                                await fadeIn(c4);
+                                showEventPopup('C₄ Acid formed from HCO₃⁻ and PEP', positions.mesophyll.x, positions.mesophyll.y + 100);
+                                progressBar.style.width = '42%';
+                            }, 1000);
+                            currentStep = 3;
+                            if (!animationRunning || isPaused) return;
+                        case 3:
+                            await advanceStep('flow-step4', async () => {
+                                const c4 = document.querySelector('#animation-container .molecule.c4');
+                                await moveMolecule(c4, positions.bundleSheath.x, positions.bundleSheath.y, 1500);
+                                showEventPopup('C₄ Acid moves to Bundle Sheath cell', positions.bundleSheath.x, positions.bundleSheath.y + 100);
+                                progressBar.style.width = '56%';
+                            }, 800);
+                            currentStep = 4;
+                            if (!animationRunning || isPaused) return;
+                        case 4:
+                            await advanceStep('flow-step5', async () => {
+                                const c4 = document.querySelector('#animation-container .molecule.c4');
+                                const decarbCo2 = createMolecule('co2', 'CO₂', positions.bundleSheath.x, positions.bundleSheath.y);
+                                const c3 = createMolecule('c3', 'C₃ Acid', positions.bundleSheath.x, positions.bundleSheath.y);
+                                await fadeIn(decarbCo2);
+                                await fadeIn(c3);
+
+                                await Promise.all([
+                                    moveMolecule(decarbCo2, positions.bundleSheath.x - 50, positions.bundleSheath.y - 20, 1000),
+                                    moveMolecule(c3, positions.bundleSheath.x + 50, positions.bundleSheath.y + 20, 1000)
+                                ]);
+                                await fadeOut(c4);
+                                showEventPopup('C₄ Acid splits into CO₂ and C₃ Acid', positions.bundleSheath.x, positions.bundleSheath.y + 100);
+                                progressBar.style.width = '70%';
+                            }, 1000);
+                            currentStep = 5;
+                            if (!animationRunning || isPaused) return;
+                        case 5:
+                            await advanceStep('flow-step6', async () => {
+                                const decarbCo2 = document.querySelector('#animation-container .molecule.co2');
+                                await moveMolecule(decarbCo2, positions.calvinCycle.x, positions.calvinCycle.y, 1000);
+                                const calvin = createMolecule('calvin', 'Calvin Cycle', positions.calvinCycle.x, positions.calvinCycle.y);
+                                await fadeIn(calvin);
+                                await fadeOut(decarbCo2);
+
+                                const sugar = createMolecule('sugar', 'Sugar', positions.calvinCycle.x, positions.calvinCycle.y);
+                                await fadeIn(sugar);
+                                await moveMolecule(sugar, positions.sugarOut.x, positions.sugarOut.y, 1000);
+                                await fadeOut(sugar);
+                                showEventPopup('CO₂ enters Calvin Cycle, Sugar produced', positions.calvinCycle.x, positions.calvinCycle.y + 40);
+
+                                progressBar.style.width = '84%';
+                            }, 1000);
+                            currentStep = 6;
+                            if (!animationRunning || isPaused) return;
+                        case 6:
+                            await advanceStep('flow-step7', async () => {
+                                const c3 = document.querySelector('#animation-container .molecule.c3');
+                                await moveMolecule(c3, positions.mesophyll.x, positions.mesophyll.y, 1500);
+
+                                const atp1 = createMolecule('atp', 'ATP', positions.atp.x, positions.atp.y);
+                                const atp2 = createMolecule('atp', 'ATP', positions.atp.x + 30, positions.atp.y + 30);
+                                await fadeIn(atp1);
+                                await fadeIn(atp2);
+
+                                await moveMolecule(atp1, positions.mesophyll.x, positions.mesophyll.y, 800);
+                                await moveMolecule(atp2, positions.mesophyll.x, positions.mesophyll.y, 800);
+
+                                await fadeOut(atp1);
+                                await fadeOut(atp2);
+                                await fadeOut(c3);
+                                showEventPopup('C₃ Acid returns to Mesophyll, PEP regenerated using ATP', positions.mesophyll.x, positions.mesophyll.y + 100);
+
+                                const newPep = createMolecule('pep', 'PEP', positions.mesophyll.x, positions.mesophyll.y);
+                                await fadeIn(newPep);
+                                progressBar.style.width = '100%';
+                            }, 1500);
+                            currentStep = 7;
+                            if (!animationRunning || isPaused) return;
+                    }
+
+                    resetAnimation();
+                }
+
+                // Event listeners
+                startBtn.addEventListener('click', runAnimation);
+                pauseBtn.addEventListener('click', togglePause);
+                resetBtn.addEventListener('click', resetAnimation);
+
+                // Initialize
+                resetAnimation();
+            }
+
+            // --- CAM Animation System ---
+            function initializeCAMAnimation() {
+                // Elements
+                const startBtn = document.getElementById('cam-start-btn');
+                const pauseBtn = document.getElementById('cam-pause-btn');
+                const resetBtn = document.getElementById('cam-reset-btn');
+                const progressBar = document.getElementById('cam-progress-bar');
+                const animationContainer = document.getElementById('cam-animation-container');
+                const eventPopup = document.getElementById('cam-event-popup');
+
+                // Cell positions
+                const positions = {
+                    nightPhase: { x: 500, y: 140 },
+                    vacuole: { x: 700, y: 210 },
+                    dayPhase: { x: 500, y: 380 }
+                };
+
+                // Animation state
+                let animationRunning = false;
+                let isPaused = false;
+                let currentStep = 0;
+
+                // Pause/Resume Animation
+                function togglePause() {
+                    isPaused = !isPaused;
+                    if (isPaused) {
+                        pauseBtn.textContent = 'Resume Animation';
+                        startBtn.disabled = true;
+                    } else {
+                        pauseBtn.textContent = 'Pause Animation';
+                        startBtn.disabled = false;
+                        if (animationRunning) {
+                            runAnimation();
+                        }
+                    }
+                }
+
+                // Reset animation
+                function resetAnimation() {
+                    animationRunning = false;
+                    isPaused = false;
+                    currentStep = 0;
+                    
+                    progressBar.style.width = '0%';
+
+                    // Remove all molecules
+                    document.querySelectorAll('#cam-animation-container .molecule').forEach(mol => {
+                        if (mol.parentNode) {
+                            mol.parentNode.removeChild(mol);
+                        }
+                    });
+
+                    // Hide event popup
+                    eventPopup.style.opacity = '0';
+                    eventPopup.textContent = '';
+
+                    // Reset step highlights for flowchart
+                    document.querySelectorAll('#cam-tab .flowchart-step').forEach(step => {
+                        step.classList.remove('active');
+                    });
+
+                    startBtn.textContent = 'Start Animation';
+                    startBtn.disabled = false;
+                    pauseBtn.textContent = 'Pause Animation';
+                    pauseBtn.disabled = true;
+                }
+
+                // Animation utility functions
+                function createMolecule(type, text, x, y) {
+                    const molecule = document.createElement('div');
+                    molecule.className = `molecule ${type}`;
+                    molecule.textContent = text;
+                    molecule.style.left = `${x - 25}px`;
+                    molecule.style.top = `${y - 25}px`;
+                    animationContainer.appendChild(molecule);
+                    return molecule;
+                }
+
+                function animateProperty(element, startValue, endValue, duration, property, unit = 'px') {
+                    return new Promise(resolve => {
+                        let animationStartTime = null;
+                        let pauseStartTime = null;
+                        let totalPausedTime = 0;
+                        let lastKnownProgress = 0;
+
+                        function animate(time) {
+                            if (isPaused) {
+                                if (!pauseStartTime) {
+                                    pauseStartTime = time;
+                                }
+                                requestAnimationFrame(animate);
+                                return;
+                            }
+
+                            if (pauseStartTime) {
+                                totalPausedTime += (time - pauseStartTime);
+                                pauseStartTime = null;
+                            }
+
+                            if (!animationStartTime) {
+                                animationStartTime = time - (lastKnownProgress * duration);
+                            }
+
+                            const elapsed = time - animationStartTime - totalPausedTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            lastKnownProgress = progress;
+
+                            const currentValue = startValue + (endValue - startValue) * progress;
+                            if (property.startsWith('opacity')) {
+                                element.style.opacity = currentValue;
+                            } else {
+                                element.style[property] = `${currentValue}${unit}`;
+                            }
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            } else {
+                                element.style[property] = `${endValue}${unit}`;
+                                resolve();
+                            }
+                        }
+                        requestAnimationFrame(animate);
+                    });
+                }
+
+                function moveMolecule(molecule, targetX, targetY, duration) {
+                    const startX = parseInt(molecule.style.left);
+                    const startY = parseInt(molecule.style.top);
+                    
+                    const moveXPromise = animateProperty(molecule, startX, targetX - 25, duration, 'left', 'px');
+                    const moveYPromise = animateProperty(molecule, startY, targetY - 25, duration, 'top', 'px');
+
+                    return Promise.all([moveXPromise, moveYPromise]);
+                }
+
+                function fadeIn(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 0, 1, duration, 'opacity');
+                }
+
+                function fadeOut(molecule, duration = 800) {
+                    return animateProperty(molecule, parseFloat(molecule.style.opacity) || 1, 0, duration, 'opacity')
+                        .then(() => {
+                            if (molecule.parentNode) {
+                                molecule.parentNode.removeChild(molecule);
+                            }
+                        });
+                }
+
+                function showEventPopup(message, xCenter, yBottom) {
+                    eventPopup.textContent = message;
+                    eventPopup.style.left = `${xCenter}px`;
+                    eventPopup.style.top = `${yBottom - 60}px`;
+                    eventPopup.style.opacity = '1';
+
+                    setTimeout(() => {
+                        eventPopup.style.opacity = '0';
+                    }, 2000);
+                }
+
+                function delay(duration) {
+                    return new Promise(resolve => {
+                        let delayStartTime = null;
+                        let accumulatedDelay = 0;
+
+                        function step(timestamp) {
+                            if (isPaused) {
+                                if (!delayStartTime) {
+                                    delayStartTime = timestamp;
+                                }
+                                requestAnimationFrame(step);
+                                return;
+                            }
+
+                            if (delayStartTime) {
+                                accumulatedDelay += (timestamp - delayStartTime);
+                                delayStartTime = null;
+                            }
+
+                            if (!delayStartTime) {
+                                delayStartTime = timestamp - accumulatedDelay;
+                            }
+
+                            const elapsed = timestamp - delayStartTime;
+                            
+                            if (elapsed >= duration) {
+                                resolve();
+                            } else {
+                                requestAnimationFrame(step);
+                            }
+                        }
+                        requestAnimationFrame(step);
+                    });
+                }
+
+                // Main animation sequence
+                async function runAnimation() {
+                    if (animationRunning && !isPaused) return;
+
+                    animationRunning = true;
+                    isPaused = false;
+                    startBtn.textContent = 'Running...';
+                    startBtn.disabled = true;
+                    pauseBtn.disabled = false;
+
+                    if (currentStep === 0) {
+                        document.querySelectorAll('#cam-tab .flowchart-step').forEach(step => {
+                            step.classList.remove('active');
+                        });
+                    }
+                    
+                    const advanceStep = async (stepId, action, delayTime = 0) => {
+                        if (!animationRunning) return;
+                        document.getElementById(stepId).classList.add('active');
+                        await action();
+                        if (delayTime > 0) {
+                            await delay(delayTime);
+                        }
+                        document.getElementById(stepId).classList.remove('active');
+                    };
+
+                    switch (currentStep) {
+                        case 0:
+                            await advanceStep('cam-flow-step1', async () => {
+                                const co2 = createMolecule('co2', 'CO₂', positions.nightPhase.x, positions.nightPhase.y - 50);
+                                await fadeIn(co2);
+                                await moveMolecule(co2, positions.nightPhase.x, positions.nightPhase.y, 1000);
+                                showEventPopup('CO₂ enters through open stomata at night', positions.nightPhase.x, positions.nightPhase.y + 100);
+                                progressBar.style.width = '14%';
+                            }, 1000);
+                            currentStep = 1;
+                            if (!animationRunning || isPaused) return;
+                        case 1:
+                            await advanceStep('cam-flow-step2', async () => {
+                                const co2 = document.querySelector('#cam-animation-container .molecule.co2');
+                                await fadeOut(co2);
+                                
+                                const pep = createMolecule('pep', 'PEP', positions.nightPhase.x - 30, positions.nightPhase.y);
+                                await fadeIn(pep);
+                                await moveMolecule(pep, positions.nightPhase.x, positions.nightPhase.y, 800);
+                                
+                                await fadeOut(pep);
+                                
+                                const malate = createMolecule('malate', 'Malate', positions.nightPhase.x, positions.nightPhase.y);
+                                await fadeIn(malate);
+                                showEventPopup('CO₂ fixed into malate using PEP carboxylase', positions.nightPhase.x, positions.nightPhase.y + 100);
+                                progressBar.style.width = '28%';
+                            }, 1000);
+                            currentStep = 2;
+                            if (!animationRunning || isPaused) return;
+                        case 2:
+                            await advanceStep('cam-flow-step3', async () => {
+                                const malate = document.querySelector('#cam-animation-container .molecule.malate');
+                                await moveMolecule(malate, positions.vacuole.x, positions.vacuole.y, 1500);
+                                showEventPopup('Malate transported to vacuole for storage', positions.vacuole.x, positions.vacuole.y + 50);
+                                progressBar.style.width = '42%';
+                            }, 1000);
+                            currentStep = 3;
+                            if (!animationRunning || isPaused) return;
+                        case 3:
+                            await advanceStep('cam-flow-step4', async () => {
+                                // Day begins - stomata close
+                                showEventPopup('Day begins - stomata close to conserve water', positions.nightPhase.x, positions.nightPhase.y + 100);
+                                progressBar.style.width = '56%';
+                            }, 1000);
+                            currentStep = 4;
+                            if (!animationRunning || isPaused) return;
+                        case 4:
+                            await advanceStep('cam-flow-step5', async () => {
+                                const malate = document.querySelector('#cam-animation-container .molecule.malate');
+                                await moveMolecule(malate, positions.dayPhase.x, positions.dayPhase.y, 1500);
+                                showEventPopup('Malate released from vacuole during the day', positions.dayPhase.x, positions.dayPhase.y + 100);
+                                progressBar.style.width = '70%';
+                            }, 1000);
+                            currentStep = 5;
+                            if (!animationRunning || isPaused) return;
+                        case 5:
+                            await advanceStep('cam-flow-step6', async () => {
+                                const malate = document.querySelector('#cam-animation-container .molecule.malate');
+                                await fadeOut(malate);
+                                
+                                const co2 = createMolecule('co2', 'CO₂', positions.dayPhase.x, positions.dayPhase.y);
+                                const pyruvate = createMolecule('pyruvate', 'Pyruvate', positions.dayPhase.x, positions.dayPhase.y);
+                                await fadeIn(co2);
+                                await fadeIn(pyruvate);
+                                
+                                await Promise.all([
+                                    moveMolecule(co2, positions.dayPhase.x - 50, positions.dayPhase.y - 20, 1000),
+                                    moveMolecule(pyruvate, positions.dayPhase.x + 50, positions.dayPhase.y + 20, 1000)
+                                ]);
+                                showEventPopup('Malate decarboxylated, releasing CO₂ and pyruvate', positions.dayPhase.x, positions.dayPhase.y + 100);
+                                progressBar.style.width = '84%';
+                            }, 1000);
+                            currentStep = 6;
+                            if (!animationRunning || isPaused) return;
+                        case 6:
+                            await advanceStep('cam-flow-step7', async () => {
+                                const co2 = document.querySelector('#cam-animation-container .molecule.co2');
+                                await fadeOut(co2);
+                                
+                                const calvin = createMolecule('calvin', 'Calvin Cycle', positions.dayPhase.x, positions.dayPhase.y);
+                                await fadeIn(calvin);
+                                
+                                const sugar = createMolecule('sugar', 'Sugar', positions.dayPhase.x, positions.dayPhase.y);
+                                await fadeIn(sugar);
+                                await moveMolecule(sugar, positions.dayPhase.x - 100, positions.dayPhase.y, 1000);
+                                
+                                const pyruvate = document.querySelector('#cam-animation-container .molecule.pyruvate');
+                                await moveMolecule(pyruvate, positions.nightPhase.x, positions.nightPhase.y, 1500);
+                                
+                                await fadeOut(pyruvate);
+                                
+                                const newPep = createMolecule('pep', 'PEP', positions.nightPhase.x, positions.nightPhase.y);
+                                await fadeIn(newPep);
+                                showEventPopup('CO₂ enters Calvin cycle, PEP regenerated for next night', positions.dayPhase.x, positions.dayPhase.y + 100);
+                                progressBar.style.width = '100%';
+                            }, 1500);
+                            currentStep = 7;
+                            if (!animationRunning || isPaused) return;
+                    }
+
+                    resetAnimation();
+                }
+
+                // Event listeners
+                startBtn.addEventListener('click', runAnimation);
+                pauseBtn.addEventListener('click', togglePause);
+                resetBtn.addEventListener('click', resetAnimation);
+
+                // Initialize
+                resetAnimation();
+            }
+        });
+    </script>
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+</body>
+</html>
