@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacterial Photosynthesis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f1a30, #1a2b4a);
+            color: #e6f7ff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 2px solid #4d79ff;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #6dc9ff;
+            text-shadow: 0 0 8px rgba(109, 201, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #a3d5ff;
+        }
+
+        .section-container {
+            background: rgba(15, 25, 45, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a3f6d;
+            min-height: 400px;
+        }
+
+        h2 {
+            color: #4dccff;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 1px solid #3a5a8a;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #6dc9ff;
+            margin: 15px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #ffcc66;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #3a5a8a;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background-color: #1a2b4a;
+            color: #6dc9ff;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(42, 63, 109, 0.3);
+        }
+
+        .feature-list {
+            list-style-type: none;
+            margin-left: 20px;
+        }
+
+        .feature-list li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .feature-list li:before {
+            content: "•";
+            color: #4dccff;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+
+        .diagram {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(109, 201, 255, 0.3);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-button {
+            background: linear-gradient(to right, #1a5fb4, #2d7cd6);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-button:hover {
+            background: linear-gradient(to right, #2d7cd6, #3584e4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-button:disabled {
+            background: #3a5a8a;
+            color: #8fa3c4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #1a2b4a;
+            border-radius: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(to right, #1a5fb4, #2d7cd6);
+            width: 25%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .light-reaction-box {
+            background: rgba(26, 43, 74, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #4dccff;
+        }
+
+        .light-reaction-box h4 {
+            color: #6dc9ff;
+            margin-bottom: 10px;
+        }
+
+        .process-diagram {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            display: block;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(42, 63, 109, 0.3);
+            border-radius: 6px;
+        }
+
+        .step-number {
+            background: #4dccff;
+            color: #0f1a30;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section-container {
+                padding: 15px;
+            }
+            
+            .nav-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .process-diagram {
+                padding: 10px;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bacterial Photosynthesis</h1>
+            <p class="subtitle">Exploring the diverse mechanisms of light energy conversion in bacteria</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="section-container">
+            <div class="section active" id="section1">
+                <h2>Oxygenic Photosynthesis in Cyanobacteria</h2>
+                <p>Cyanobacteria are unique among bacteria for performing <span class="highlight">oxygenic photosynthesis</span>, similar to plants and algae. This process uses water as an electron donor and produces oxygen as a byproduct.</p>
+                
+                <h3>Key Differences from Plant Photosynthesis</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Cyanobacteria</th>
+                        <th>Plants</th>
+                    </tr>
+                    <tr>
+                        <td>Primary Pigments</td>
+                        <td>Chlorophyll a, Phycobilins</td>
+                        <td>Chlorophyll a, Chlorophyll b</td>
+                    </tr>
+                    <tr>
+                        <td>Accessory Pigments</td>
+                        <td>Phycocyanin, Allophycocyanin, Phycoerythrin</td>
+                        <td>Carotenoids</td>
+                    </tr>
+                    <tr>
+                        <td>Light-Harvesting Complex</td>
+                        <td>Phycobilisomes</td>
+                        <td>LHC I and LHC II</td>
+                    </tr>
+                    <tr>
+                        <td>Location</td>
+                        <td>Thylakoid membranes (not in chloroplasts)</td>
+                        <td>Thylakoid membranes in chloroplasts</td>
+                    </tr>
+                </table>
+                
+                <h3>Phycobilisomes</h3>
+                <p>These are large, water-soluble protein complexes attached to the thylakoid membranes. They contain <span class="highlight">phycobiliproteins</span> that efficiently capture light energy and transfer it to chlorophyll a in the reaction centers.</p>
+                
+                <ul class="feature-list">
+                    <li>Allow cyanobacteria to thrive in various light conditions</li>
+                    <li>Enable absorption of light wavelengths that chlorophyll cannot efficiently absorb</li>
+                    <li>Organized in rod-like structures with a core of allophycocyanin</li>
+                </ul>
+            </div>
+            
+            <div class="section" id="section2">
+                <h2>Anoxygenic Photosynthesis in Purple Bacteria</h2>
+                <p>Purple bacteria perform <span class="highlight">anoxygenic photosynthesis</span>, which does not produce oxygen. They use reduced compounds like hydrogen sulfide, sulfur, or organic molecules as electron donors.</p>
+                
+                <h3>Key Characteristics</h3>
+                <ul class="feature-list">
+                    <li>Use <span class="highlight">bacteriochlorophyll a or b</span> as primary pigments</li>
+                    <li>Have a single photosystem (PS I-like)</li>
+                    <li>Perform cyclic electron flow to generate ATP</li>
+                    <li>Can grow photoautotrophically or photoheterotrophically</li>
+                </ul>
+                
+                <h3>Light Reaction Details</h3>
+                <div class="light-reaction-box">
+                    <h4>Cyclic Electron Flow Process</h4>
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div>Light energy is absorbed by antenna complexes (LH1 and LH2)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div>Energy is transferred to the reaction center (P870 or P960)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div>Excited electron is transferred to a primary acceptor (bacteriopheophytin)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div>Electron moves through quinone pool (ubiquinone)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <div>Cytochrome bc1 complex pumps protons across the membrane</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">6</div>
+                        <div>Electron returns to the reaction center via cytochrome c2</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">7</div>
+                        <div>Proton gradient drives ATP synthesis via ATP synthase</div>
+                    </div>
+                </div>
+                
+                <h3>Photosynthetic Apparatus</h3>
+                <p>The photosynthetic membranes of purple bacteria form extensive <span class="highlight">intracytoplasmic membranes</span> that increase the surface area for light absorption.</p>
+                
+                <ul class="feature-list">
+                    <li>Reaction centers are surrounded by light-harvesting complexes</li>
+                    <li>Light-harvesting complexes contain carotenoids that absorb light and transfer energy to bacteriochlorophyll</li>
+                    <li>Different types of light-harvesting complexes (LH1, LH2) work together to capture light efficiently</li>
+                </ul>
+                
+                <p>Unlike cyanobacteria and plants, purple bacteria do not have two separate photosystems and do not perform non-cyclic electron flow that would generate NADPH directly.</p>
+            </div>
+            
+            <div class="section" id="section3">
+                <h2>Anoxygenic Photosynthesis in Green Sulfur Bacteria</h2>
+                <p>Green sulfur bacteria are obligate anaerobic phototrophs that perform anoxygenic photosynthesis using reduced sulfur compounds as electron donors.</p>
+                
+                <h3>Unique Features</h3>
+                <ul class="feature-list">
+                    <li>Use <span class="highlight">bacteriochlorophyll c, d, or e</span> as main pigments</li>
+                    <li>Extremely efficient at harvesting light in low-light conditions</li>
+                    <li>Have a non-cyclic electron flow that generates both ATP and NADPH</li>
+                    <li>Can fix carbon dioxide via the reverse TCA cycle</li>
+                </ul>
+                
+                <h3>Light Reaction Details</h3>
+                <div class="light-reaction-box">
+                    <h4>Non-Cyclic Electron Flow Process</h4>
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div>Light energy is captured by chlorosomes and transferred to the reaction center (P840)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div>Excited electron is transferred through iron-sulfur centers</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div>Electron reduces ferredoxin, which then reduces NAD+ to NADH</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div>The electron "hole" in P840 is filled by electrons from reduced sulfur compounds (H₂S, S⁰)</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <div>Sulfur oxidation generates protons, contributing to the proton gradient</div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">6</div>
+                        <div>Proton gradient drives ATP synthesis via ATP synthase</div>
+                    </div>
+                </div>
+                
+                <h3>The Chlorosome Structure</h3>
+                <p>Green sulfur bacteria possess unique light-harvesting complexes called <span class="highlight">chlorosomes</span>, which are the most efficient light-harvesting structures known in nature.</p>
+                
+                <ul class="feature-list">
+                    <li>Chlorosomes are <span class="highlight">oval-shaped organelles</span> attached to the cytoplasmic membrane</li>
+                    <li>They contain thousands of bacteriochlorophyll molecules arranged in rod elements</li>
+                    <li>This arrangement allows for efficient energy transfer through exciton coupling</li>
+                    <li>Chlorosomes are surrounded by a lipid monolayer instead of a protein shell</li>
+                    <li>They can constitute up to 30% of the cell's dry weight</li>
+                </ul>
+                
+                <p>The exceptional light-harvesting capability of chlorosomes enables green sulfur bacteria to thrive in extremely low-light environments, such as the deep layers of aquatic habitats where little light penetrates.</p>
+            </div>
+            
+            <div class="section" id="section4">
+                <h2>Comparing Bacterial Photosynthesis</h2>
+                <p>Different bacteria have evolved diverse photosynthetic strategies to thrive in various ecological niches.</p>
+                
+                <h3>Light Reaction Comparison</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Feature</th>
+                        <th>Cyanobacteria</th>
+                        <th>Purple Bacteria</th>
+                        <th>Green Sulfur Bacteria</th>
+                    </tr>
+                    <tr>
+                        <td>Photosystem Type</td>
+                        <td>PS I and PS II</td>
+                        <td>PS I-like</td>
+                        <td>PS I-like</td>
+                    </tr>
+                    <tr>
+                        <td>Electron Flow</td>
+                        <td>Non-cyclic (Z-scheme)</td>
+                        <td>Cyclic</td>
+                        <td>Mostly non-cyclic</td>
+                    </tr>
+                    <tr>
+                        <td>Electron Donor</td>
+                        <td>H₂O</td>
+                        <td>H₂S, S, organic compounds</td>
+                        <td>H₂S, S</td>
+                    </tr>
+                    <tr>
+                        <td>Byproduct</td>
+                        <td>O₂</td>
+                        <td>S⁰ (elemental sulfur)</td>
+                        <td>S⁰ (elemental sulfur)</td>
+                    </tr>
+                    <tr>
+                        <td>Reducing Power</td>
+                        <td>NADPH</td>
+                        <td>Reverse electron flow for NADH</td>
+                        <td>NADH directly</td>
+                    </tr>
+                </table>
+                
+                <h3>Evolutionary Significance</h3>
+                <p>Cyanobacteria were responsible for the <span class="highlight">Great Oxygenation Event</span> approximately 2.4 billion years ago, which dramatically changed Earth's atmosphere and paved the way for aerobic life.</p>
+                
+                <h3>Ecological Roles</h3>
+                <ul class="feature-list">
+                    <li><span class="highlight">Cyanobacteria</span>: Major primary producers in aquatic ecosystems; some form harmful algal blooms</li>
+                    <li><span class="highlight">Purple Bacteria</span>: Important in sulfur cycles; used in wastewater treatment</li>
+                    <li><span class="highlight">Green Sulfur Bacteria</span>: Thrive in anoxic, sulfide-rich environments; contribute to carbon and sulfur cycling</li>
+                </ul>
+                
+                <h3>Biotechnological Applications</h3>
+                <p>Understanding bacterial photosynthesis has led to various applications:</p>
+                
+                <ul class="feature-list">
+                    <li>Biofuel production using cyanobacteria</li>
+                    <li>Development of artificial photosynthetic systems</li>
+                    <li>Biosensors based on photosynthetic pigments</li>
+                    <li>Wastewater treatment using photosynthetic bacteria</li>
+                </ul>
+                
+                <p>Research into bacterial photosynthesis continues to reveal new insights into energy conversion, with potential applications in sustainable energy technologies.</p>
+            </div>
+        </div>
+        
+        <div class="nav-container">
+            <button class="nav-button" id="prevBtn" disabled>Previous</button>
+            <button class="nav-button" id="nextBtn">Next</button>
+        </div>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update progress bar
+                const progress = ((currentSection + 1) / totalSections) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update section visibility
+                sections.forEach((section, index) => {
+                    section.classList.toggle('active', index === currentSection);
+                });
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateNavigation();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    updateNavigation();
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
