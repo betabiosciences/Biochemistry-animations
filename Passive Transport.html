@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passive Transport Across Membranes</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX CSS for rendering LaTeX math -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" xintegrity="sha384-GvrOXb2h9B23Y1S3iW/3VnU+b+Qo88K8VvLhJc6XnK3jF7s0qX+p/s6Wz" crossorigin="anonymous">
+    <!-- KaTeX JS and Auto-Render Extension -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" xintegrity="sha384-Y81zFv7p4Nf7+n7QO58Y/8G0i3/BwP+Fv7w21k/u2+Qo88K8VvLhJc6XnK3jF7s0qX+p/s6Wz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" xintegrity="sha384-Y81zFv7p4Nf7+n7QO58Y/8G0i3/BwP+Fv7w21k/u2+Qo88K8VvLhJc6XnK3jF7s0qX+p/s6Wz" crossorigin="anonymous"></script>
+
+    <!-- Configuration for Inter font and custom colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#100C2A', // Very dark bluish-violet
+                        'card-bg': '#1E1B4B', // Slightly lighter card color
+                        'accent-text': '#A5B4FC', // Light indigo for headings
+                        'primary-text': '#E0E7FF', // Off-white for body text
+                        'nav-btn': '#4F46E5', // Indigo for buttons
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Custom styles for centering and overall look -->
+    <style>
+        body {
+            background-color: #100C2A; /* Dark bluish-violet */
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .container-card {
+            max-width: 48rem; /* Desktop max width */
+            width: 100%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .image-placeholder {
+            background: var(--primary);
+            border: 1px dashed var(--accent);
+            padding: 30px;
+            text-align: center;
+            margin: 15px 0;
+            border-radius: 10px;
+            color: var(--accent);
+        }
+
+        /* Mobile optimization: Ensure the card takes up most of the screen on small devices */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.5rem;
+                align-items: flex-start; /* Start content at the top on mobile */
+            }
+            .container-card {
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+            }
+        }
+        /* Style for LaTeX/Math formulas */
+        /* Note: KaTeX will replace the content of this div with rendered HTML, 
+           but these styles provide the container's appearance. */
+        .math-formula {
+            display: block;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background-color: #312E81; /* Darker indigo for math box */
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            color: #C7D2FE;
+            text-align: center; /* Center KaTeX content */
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div id="app" class="container-card bg-card-bg shadow-2xl rounded-xl p-6 md:p-8">
+    <h1 id="main-title" class="text-3xl md:text-4xl font-extrabold text-accent-text mb-4 border-b border-indigo-700 pb-3">
+        Passive Transport Across Membranes
+    </h1>
+
+    <div id="content-container" class="min-h-[40vh] text-primary-text leading-relaxed">
+        <!-- Dynamic content will be injected here -->
+    </div>
+
+    <div id="navigation" class="mt-8 flex justify-between pt-4 border-t border-indigo-700">
+        <button id="prev-btn" onclick="navigate(-1)" class="px-4 py-2 bg-nav-btn text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">
+            &larr; Previous
+        </button>
+        <div id="page-indicator" class="text-primary-text flex items-center text-sm"></div>
+        <button id="next-btn" onclick="navigate(1)" class="px-4 py-2 bg-nav-btn text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">
+            Next &rarr;
+        </button>
+    </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+</div>
+
+<script>
+    const sections = [
+        {
+            title: "1. Introduction",
+            content: `
+                <p><strong>Passive transport</strong> is the fundamental process by which molecules move across the cell membrane without the cell expending metabolic energy (ATP). This movement is entirely dictated by the <strong>electrochemical gradient</strong>—the combination of the concentration gradient and the electrical gradient.</p>
+                <h3 class="text-xl font-semibold text-accent-text mt-4 mb-2">Thermodynamics of Transport ($\Delta G$)</h3>
+                <p>The <strong>Gibbs Free Energy change ($\Delta G$)</strong> determines the direction of transport. A negative $\Delta G$ indicates a spontaneous, downhill process (passive transport). Equilibrium is reached when $\Delta G = 0$.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-3">Non-charged Solutes</h4>
+                <p>For uncharged molecules, only the concentration gradient is relevant. The energy change for movement from concentration $C_1$ (initial) to $C_2$ (final) is:</p>
+                <div class="math-formula">
+                    $$\\Delta G = R T \\ln \\left( \\frac{C_2}{C_1} \\right)$$
+                </div>
+                <p>If $C_2 < C_1$ (movement down the concentration gradient), then $\\ln(C_2/C_1)$ is negative, and $\\Delta G$ is negative, driving passive movement. $R$ is the gas constant, and $T$ is the absolute temperature.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-3">Charged Solutes (Ions)</h4>
+                <p>For ions, both the concentration gradient and the <strong>membrane potential ($\Delta \\Psi$)</strong> contribute to the driving force, forming the electrochemical gradient:</p>
+                <div class="math-formula">
+                    $$\\Delta G = R T \\ln \\left( \\frac{C_2}{C_1} \\right) + Z F \\Delta \\Psi$$
+                </div>
+                <p>The term $Z F \\Delta \\Psi$ accounts for the electrical work. $Z$ is the charge of the ion, $F$ is the Faraday constant, and $\Delta \\Psi$ is the potential difference across the membrane. Passive transport occurs when the overall $\Delta G$ is negative.</p>
+            `
+        },
+
+        {
+            title: "2. Simple Diffusion",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Simple Diffusion across the Lipid Bilayer</h3>
+                <p>Simple diffusion is the <strong>most direct form</strong> of passive transport, involving the unassisted movement of a solute directly through the hydrophobic core of the lipid bilayer. The movement is solely driven by the kinetic energy of the molecules and their concentration difference.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Characteristics of Permeable Solutes</h4>
+                <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li><strong>Size:</strong> Generally very small molecules (less than $\\approx 100 \text{ Da}$).</li>
+                    <li><strong>Polarity/Hydrophobicity:</strong> Must be highly <strong>nonpolar</strong> (lipophilic) to dissolve readily into the fatty acyl chains of the membrane.</li>
+                    <li><strong>Examples:</strong> Gases (like $\\text{O}_2$, $\\text{CO}_2$, $\\text{N}_2$), lipid-soluble hormones (steroids), and small, uncharged polar molecules like ethanol or water (though water often uses aquaporins).</li>
+                </ul>
+                <p class="mt-3">The rate of transport is determined by how easily the molecule can shed its surrounding water molecules (desolvation energy) and dissolve into the lipid phase.</p>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Simple-diffusion.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+
+            `
+
+        },
+        {
+            title: "3. Fick's Law of Simple Diffusion",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Fick's First Law and Transport Rate</h3>
+                <p>Fick's First Law is the mathematical description of the rate of simple diffusion. In a biological context, the rate depends on the <strong>Permeability Coefficient</strong>, the <strong>Concentration Gradient</strong>, and the <strong>Surface Area</strong> available for transport.</p>
+
+                <h4 class="text-lg font-medium text-accent-text mt-4">Equation for the Rate of Simple Diffusion (Mass Transport)</h4>
+                <p>The overall <strong>Rate of Simple Diffusion</strong> across a membrane is proportional to the membrane's surface area ($A$) and the concentration difference ($\Delta C$). The rate is denoted as $\\frac{\\text{d}Q}{\\text{d}t}$.</p>
+                <div class="math-formula">
+                    $$\\frac{\\text{d}Q}{\\text{d}t} = - P \\cdot A \\cdot \\Delta C$$
+                </div>
+                <p>Where:</p>
+                <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li>$\\frac{\\text{d}Q}{\\text{d}t}$: <strong>Rate of Diffusion</strong> (Amount of substance transported per unit time, e.g., $\\text{mol} \\cdot \\text{s}^{-1}$).</li>
+                    <li>$P$: <strong>Permeability Coefficient</strong>. Units: $\\text{cm} \\cdot \\text{s}^{-1}$. This constant summarizes the properties of both the solute and the membrane.</li>
+                    <li>$A$: <strong>Surface Area</strong> of the membrane. Units: $\\text{cm}^{2}$.</li>
+                    <li>$\\Delta C$: <strong>Concentration Difference</strong> across the membrane ($C_{\\text{out}} - C_{\\text{in}}$).</li>
+                </ul>
+                
+                <h4 class="text-lg font-medium text-accent-text mt-4">Components of Permeability ($P$)</h4>
+                <p>The permeability coefficient itself is often expressed as: $$P = \\frac{K_p \\cdot D}{x}$$</p>
+                <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li>$K_p$: <strong>Partition Coefficient</strong>. Measures the solubility of the solute in the lipid phase versus the aqueous phase (hydrophobicity).</li>
+                    <li>$D$: <strong>Diffusion Coefficient</strong>. Measures the mobility of the solute within the membrane's hydrophobic core (influenced by size).</li>
+                    <li>$x$: <strong>Thickness</strong> of the membrane.</li>
+                </ul>
+            `
+        },
+        {
+            title: "4. Simple Diffusion Rate Graph",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Rate of Simple Diffusion vs. Concentration Gradient</h3>
+                <p>A key characteristic of simple diffusion, derived directly from Fick's Law, is the <strong>linear and unsaturable</strong> relationship between the transport rate ($J$) and the concentration gradient ($\Delta C$).</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Linearity Explained</h4>
+                <p>Since simple diffusion does not rely on protein binding sites, there are theoretically an infinite number of paths through the lipid bilayer. Therefore, no matter how high the solute concentration is, the membrane transport rate will continue to increase proportionally to the concentration gradient.</p>
+                <p class="mt-3 p-3 bg-indigo-900/50 rounded-lg">
+                    A graph plotting Flux ($J$, on the y-axis) against Concentration Gradient ($\Delta C$, on the x-axis) for simple diffusion yields a <strong>straight line passing through the origin</strong>. This indicates that there is <strong>no maximum velocity ($V_{max}$)</strong> for simple diffusion.
+                </p>
+                <p class="mt-3">This constant linear increase distinguishes it clearly from the hyperbolic, saturable kinetics of protein-mediated transport (Facilitated Diffusion).</p>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/simple%20diffusion%20graph.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            `
+        },
+        {
+            title: "5. Measuring Simple Diffusion via Radioactivity",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Experimental Measurement using Radioisotopes</h3>
+                <p>Measuring the initial rate of simple diffusion accurately requires specialized techniques, often employing <strong>radiolabeled tracers</strong> ($^3\\text{H}$ or $^{14}\\text{C}$) because the rates are generally very fast and the quantity of solute moved is small.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Measurement Procedure and Utility</h4>
+                <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
+                    <li><strong>Preparation:</strong> Cells or <strong>liposomes</strong> (artificial lipid vesicles) are incubated in a solution containing the radiolabeled solute at a high concentration, establishing a large inward concentration gradient.</li>
+                    <li><strong>Time Course:</strong> At defined, very short time intervals (e.g., in seconds), aliquots are rapidly removed.</li>
+                    <li><strong>Separation & Quenching:</strong> The cells are quickly separated from the external medium (e.g., via oil-layer centrifugation or filtration) and the transport is "quenched" (stopped) by a wash step.</li>
+                    <li><strong>Analysis:</strong> The radioactivity incorporated into the cells is measured by a <strong>scintillation counter</strong>.</li>
+                </ol>
+                <p class="mt-3">The initial slope of the curve plotting internal radioactivity versus time gives the initial <strong>rate of influx</strong> ($J$). This method is highly sensitive and allows researchers to determine the precise permeability coefficient ($P$) under various conditions.</p>
+            `
+        },
+        {
+            title: "6. Factors Affecting Simple Diffusion: Membrane Properties (1/2)",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Factors Affecting Permeability ($P$) - Membrane Properties</h3>
+                <p>The fluidity and packing of the lipid bilayer significantly modulate its barrier function, thereby affecting the overall permeability coefficient ($P$).</p>
+                
+                <h4 class="text-lg font-medium text-accent-text mt-4">1. Phospholipid Dynamics and Asymmetry</h4>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Lateral Diffusion:</strong> Phospholipids move rapidly within their own leaflet, promoting a fluid state. This is crucial for overall membrane integrity but only indirectly affects solute diffusion rate.</li>
+                    <li><strong>Lipid Asymmetry:</strong> The inner and outer leaflets have different lipid compositions. For instance, <strong>Phosphatidylserine (PS)</strong> is typically restricted to the inner leaflet. This asymmetry generates local charges and structural differences that can influence the movement of charged or partially charged solutes across the membrane.</li>
+                    <li><strong>Flip-Flop:</strong> The spontaneous movement of a lipid from one leaflet to the other is extremely slow; energy and specific enzymes (flippases/floppases) are required, highlighting the barrier function of the core.</li>
+                </ul>
+
+                <h4 class="text-lg font-medium text-accent-text mt-4">2. Fatty Acyl Chain Characteristics</h4>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Level of Unsaturation:</strong> Unsaturated fatty acids contain double bonds, which introduce <strong>kinks</strong> in the acyl chains. These kinks prevent tight van der Waals packing, leading to <strong>increased membrane fluidity</strong> and, consequently, <strong>higher permeability</strong> to solutes.</li>
+                    <li><strong>Chain Length:</strong> Longer fatty acyl chains allow for greater contact surface area and stronger van der Waals interactions between adjacent chains. $\\uparrow$ chain length $\\to$ $\\downarrow$ fluidity $\\to$ <strong>$\\downarrow$ permeability</strong>.</li>
+                </ul>
+            `
+        },
+        {
+            title: "7. Factors Affecting Simple Diffusion: Membrane Properties (2/2)",
+            content: `
+                <h4 class="text-lg font-medium text-accent-text mb-2">3. Cholesterol, Temperature, and Phase Transition</h4>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Cholesterol:</strong> Its rigid steroid ring intercalates between phospholipids. It serves as a <strong>fluidity buffer</strong>. At body temperature, it restricts lipid movement, making the membrane <strong>less fluid</strong> and <strong>less permeable</strong>. At low temperatures, it prevents the phospholipids from packing too tightly, maintaining some fluidity.</li>
+                    <li><strong>Temperature:</strong> As temperature $\\uparrow$, the kinetic energy of the phospholipids $\\uparrow$, increasing the gaps in the core and promoting the fluid state, thus <strong>increasing permeability</strong>.</li>
+                    <li><strong>Phase Transition:</strong> All membranes exhibit a characteristic <strong>Transition Temperature ($T_m$)</strong>. Below $T_m$, the membrane is in a highly ordered, crystalline <strong>gel state</strong> (low permeability). Above $T_m$, it is in a disordered, flexible <strong>fluid state</strong> (high permeability). The rate of transport rises sharply at $T_m$.</li>
+                </ul>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Phase%20transition%20graph.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Cholesterol%20fluidity%20graph.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <h3 class="text-xl font-semibold text-accent-text mt-4 mb-2">Factors Affecting Permeability ($P$) - Solute Properties</h3>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Size:</strong> Solute size is inversely proportional to permeability. Larger molecules face higher resistance when attempting to diffuse through the limited spaces within the hydrophobic core.</li>
+                    <li><strong>Hydrophobicity (Lipid Solubility):</strong> This is the single most important solute factor. Highly hydrophobic molecules have high <strong>Partition Coefficients ($K_p$)</strong>, meaning they readily dissolve in the membrane. Hydrophobicity is often quantified by the <strong>Octanol/Water Partition Coefficient ($\log P$)</strong>; a higher $\log P$ usually corresponds to a higher simple diffusion rate.</li>
+                </ul>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Permeability%20of%20different%20solutes.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            `
+        },
+        {
+            title: "8. Facilitated Diffusion Introduction",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Facilitated Diffusion (Carrier-Mediated)</h3>
+                <p>Facilitated diffusion is a type of passive transport that utilizes integral membrane proteins to move polar or large molecules down their electrochemical gradient. It is necessary for vital substances like <strong>glucose, amino acids, and specific ions</strong> that cannot traverse the lipid bilayer efficiently on their own.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Transporters vs. Channels</h4>
+                <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                    <li><strong>Carrier Proteins (Transporters, Permeases):</strong> Bind the specific solute, undergo a <strong>conformational change</strong> to move the solute across, and then release it. Transport rates are slower due to the required conformational change. (e.g., GLUT transporters)</li>
+                    <li><strong>Channel Proteins:</strong> Form hydrophilic <strong>pores</strong> through the membrane. They do not undergo major conformational changes and usually move ions much faster. (e.g., Ion channels, porins)</li>
+                    </ul>
+                <p class="mt-3">Crucially, all facilitated diffusion still requires a negative $\Delta G$ (downhill movement); the protein only increases the <strong>rate</strong> of movement, not the direction.</p>
+            `
+        },
+        {
+            title: "9. Glucose Transport via GLUT (Mechanism)",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">The GLUT Transporter (Glucose Transporter)</h3>
+                <p>The $\{GLUT}$ family of transporters are essential for maintaining blood glucose homeostasis. They operate exclusively via facilitated diffusion. For instance, <strong>$\{GLUT1}$</strong> is constitutively expressed in red blood cells and endothelial cells of the blood-brain barrier, providing a steady glucose supply.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Structure</h4>
+                <p>GLUT transporters are large, monomeric proteins, characterized by 12 hydrophobic <strong>transmembrane $\alpha$-helices</strong>. These helices bundle together to form an internal channel that can accommodate the glucose molecule and provide it with a hydrophilic environment for passage.</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">Mechanism (Ping-Pong Model)</h4>
+                <p>The transport operates similarly to an enzyme cycling between two states:</p>
+                <ol class="list-decimal list-inside ml-4 mt-2 space-y-2">
+                    <li><strong>$\{T1}$ (Outward-Open):</strong> The glucose binding site faces the exterior (high glucose).</li>
+                    <li><strong>Binding:</strong> Glucose binds to the site, triggering a structural change.</li>
+                    <li><strong>Transition:</strong> The protein flips its conformation, exposing the binding site and glucose to the interior.</li>
+                    <li><strong>Release:</strong> Glucose dissociates into the cytoplasm (low glucose). Once released, the empty site immediately flips back to the $\{T1}$ (outward-open) state, ready for another cycle. This continuous cycling down the gradient is the <strong>Ping-Pong mechanism</strong> of transport.</li>
+                </ol>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/GLUT%20conformational%20change%20simple.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            `
+        },
+        {
+            title: "10. Features of Facilitated Diffusion",
+            content: `
+                <h3 class="text-xl font-semibold text-accent-text mb-2">Key Features of Facilitated Diffusion</h3>
+                <p>Facilitated diffusion shares three critical kinetic features with enzyme catalysis, distinguishing it fundamentally from simple diffusion:</p>
+                <h4 class="text-lg font-medium text-accent-text mt-4">1. Saturation Kinetics</h4>
+                <p>The most defining characteristic. Unlike the linear increase in simple diffusion, the transport rate ($V$) in facilitated diffusion plateaus as the concentration gradient (substrate concentration) increases. This is because the rate is limited by the <strong>finite number of available carrier proteins</strong> in the membrane.</p>
+                <p class="mt-3 p-3 bg-indigo-900/50 rounded-lg">
+                    A graph plotting the rate of transport ($V$) against the substrate concentration yields a <strong>hyperbolic curve</strong>. Once all carrier sites are occupied and cycling at their maximum rate, the transport reaches the <strong>Maximum Velocity ($V_{max}$)</strong>, even if the concentration continues to rise.
+                </p>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Facilitative%20diffusion%20graph.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                
+                <h4 class="text-lg font-medium text-accent-text mt-4">2. High Specificity</h4>
+                <p>The carrier protein has a highly specific binding site, much like an enzyme active site. For example, the <strong>$\{GLUT1}$</strong> transporter effectively transports $\{D-glucose}$ but has a minimal affinity for the biologically inactive $\{L-glucose}$.</p>
+                
+                <h4 class="text-lg font-medium text-accent-text mt-4">3. Susceptibility to Inhibition</h4>
+                <p>Since proteins are involved, facilitated diffusion is subject to inhibition:</p>
+                <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li><strong>Competitive Inhibition:</strong> An inhibitor structurally similar to the substrate competes for the same binding site, reducing $V_{max}$ only at that specific inhibitor concentration.</li>
+                    <li><strong>Non-Competitive Inhibition:</strong> The inhibitor binds to a separate site, changing the overall conformation of the carrier and reducing its efficiency, thereby lowering the $V_{max}$.</li>
+                </ul>
+            `
+        },
+    ];
+
+    let currentSectionIndex = 0;
+
+    const contentContainer = document.getElementById('content-container');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const pageIndicator = document.getElementById('page-indicator');
+    const mainTitle = document.getElementById('main-title');
+
+    /**
+     * Renders LaTeX math expressions using KaTeX's auto-render extension.
+     */
+    function renderMath() {
+        // Ensure the KaTeX auto-render function is loaded before calling it
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(contentContainer, {
+                // Configure delimiters for display math ($$...) and inline math ($...)
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                ],
+                // Display mode: render equations centered on a new line
+                displayMode: true, 
+                // Enable text macro for \text{}
+                throwOnError: false
+            });
+        }
+    }
+
+
+    /**
+     * Renders the current section content and updates navigation controls.
+     */
+    function renderSection() {
+        const section = sections[currentSectionIndex];
+        
+        // Update main title with section title
+        mainTitle.innerHTML = section.title;
+
+        // Animate content change (optional: added fade effect)
+        contentContainer.style.opacity = '0';
+        setTimeout(() => {
+            contentContainer.innerHTML = section.content;
+            contentContainer.style.opacity = '1';
+            
+            // Render the math equations after content is loaded
+            renderMath();
+
+        }, 150);
+
+
+        // Update navigation buttons state
+        prevBtn.disabled = currentSectionIndex === 0;
+        nextBtn.disabled = currentSectionIndex === sections.length - 1;
+
+        // Update page indicator
+        pageIndicator.textContent = `Section ${currentSectionIndex + 1} of ${sections.length}`;
+
+        // Scroll to the top of the content card (important for mobile UX)
+        document.getElementById('app').scrollTop = 0;
+        window.scrollTo(0, 0);
+    }
+
+    /**
+     * Navigates to the next or previous section.
+     * @param {number} direction - 1 for next, -1 for previous.
+     */
+    function navigate(direction) {
+        let newIndex = currentSectionIndex + direction;
+
+        if (newIndex >= 0 && newIndex < sections.length) {
+            currentSectionIndex = newIndex;
+            renderSection();
+        }
+    }
+
+    // Initial render
+    window.onload = renderSection;
+
+</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
