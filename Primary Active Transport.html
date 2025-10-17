@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary Active Transport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #6a4c93;
+            --light-text: #e6e6e6;
+            --highlight: #8a6bb8;
+            --card-bg: rgba(30, 30, 50, 0.8);
+            --secondary: #4a4a8a;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--light-text);
+            line-height: 1.6;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        h1 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .section-container {
+            position: relative;
+            min-height: 60vh;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--highlight);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(106, 76, 147, 0.3);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .caption {
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        button:hover {
+            background: var(--highlight);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #4a4a6a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(106, 76, 147, 0.3);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .section-counter {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary);
+        }
+
+        th {
+            background: var(--secondary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                min-width: 100px;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Primary Active Transport Across Membranes</h1>
+        </header>
+        
+        <div class="section-counter">
+            <span id="current-section">1</span> of <span id="total-sections">7</span>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar"></div>
+        </div>
+        
+        <div class="section-container">
+            <!-- Section 1: Classification -->
+            <section class="section active" id="section1">
+                <h2>1. Classification of Primary Active Transporters</h2>
+                <p>Primary active transporters are membrane proteins that use energy from ATP hydrolysis to move substances against their concentration gradients. They are classified into several families based on structure and mechanism:</p>
+                
+                <h3>Main Classes:</h3>
+                <ul>
+                    <li><strong>P-class pumps</strong>: Phosphorylate during transport cycle (e.g., Na⁺/K⁺ ATPase)</li>
+                    <li><strong>V-class pumps</strong>: Vacuolar-type H⁺ ATPases</li>
+                    <li><strong>F-class pumps</strong>: ATP synthases (reverse transport)</li>
+                    <li><strong>ABC Transporters</strong>: ATP-Binding Cassette transporters</li>
+                </ul>
+                
+                <h3>Key Characteristics:</h3>
+                <ul>
+                    <li>Direct utilization of ATP as energy source</li>
+                    <li>Formation of high-energy intermediates during transport cycle</li>
+                    <li>Ability to transport substances against steep concentration gradients</li>
+                    <li>Essential for maintaining cellular homeostasis</li>
+                </ul>
+                
+                <h3>Evolutionary Significance:</h3>
+                <p>Primary active transporters represent some of the most ancient membrane transport systems, with homologs found across all domains of life. Their conservation highlights their fundamental importance in cellular physiology.</p>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Types%20of%20primary%20active%20transport.png" alt="Types of primary active transport">
+                    <p class="caption">Classification of primary active transporters</p>
+                </div>
+            </section>
+            
+            <!-- Section 2: P-class pumps -->
+            <section class="section" id="section2">
+                <h2>2. Structure and Mechanism of P-class Pumps</h2>
+                <p>P-class pumps are characterized by the formation of a phosphorylated intermediate during their transport cycle. They typically have multiple subunits and transport cations.</p>
+                
+                <h3>Key Examples:</h3>
+                <ul>
+                    <li><strong>Na⁺/K⁺ ATPase (NKA)</strong>: Maintains electrochemical gradients in animal cells</li>
+                    <li><strong>SERCA</strong>: Sarco/endoplasmic reticulum Ca²⁺ ATPase</li>
+                    <li><strong>Proton pumps</strong>: Found in gastric mucosa and plant/fungal membranes</li>
+                </ul>
+                
+                <h3>Transport Mechanism:</h3>
+                <p>P-class pumps undergo conformational changes between E1 and E2 states:</p>
+                <ol>
+                    <li>ATP binding and ion binding on one side of membrane</li>
+                    <li>Phosphorylation of aspartate residue</li>
+                    <li>Conformational change exposing ions to other side</li>
+                    <li>Dephosphorylation and return to original conformation</li>
+                </ol>
+                
+                <h3>Structural Features:</h3>
+                <ul>
+                    <li>Large cytoplasmic domain containing ATP-binding site</li>
+                    <li>Transmembrane domain with ion-binding pockets</li>
+                    <li>Conserved phosphorylation site (aspartate residue)</li>
+                    <li>Regulatory domains that control pump activity</li>
+                </ul>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/SERCA%20mechanism%20simple.png" alt="SERCA mechanism">
+                    <p class="caption">Conformational changes in P-class pumps during transport cycle</p>
+                </div>
+            </section>
+            
+            <!-- Section 3: V-class pumps -->
+            <section class="section" id="section3">
+                <h2>3. Structure and Mechanism of V-class Pumps</h2>
+                <p>V-class pumps are multi-subunit complexes that transport protons into organelles like lysosomes and vacuoles, acidifying these compartments.</p>
+                
+                <h3>Structure:</h3>
+                <ul>
+                    <li>V₀ domain: Membrane-embedded proton channel</li>
+                    <li>V₁ domain: Peripheral ATPase complex</li>
+                    <li>Rotary mechanism similar to F-class pumps</li>
+                </ul>
+                
+                <h3>Function:</h3>
+                <p>V-class pumps acidify intracellular compartments, which is crucial for:</p>
+                <ul>
+                    <li>Lysosomal enzyme activity</li>
+                    <li>Protein degradation</li>
+                    <li>Neurotransmitter loading into synaptic vesicles</li>
+                    <li>Bone resorption by osteoclasts</li>
+                </ul>
+                
+                <h3>Regulation:</h3>
+                <p>V-ATPase activity is regulated by reversible dissociation of V₁ and V₀ domains, as well as by regulatory subunits that respond to cellular energy status and environmental cues.</p>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/V%20class%20electrogenic.png" alt="V-class pump structure">
+                    <p class="caption">Structure of V-class proton pumps showing V₀ and V₁ domains</p>
+                </div>
+            </section>
+            
+            <!-- Section 4: F-class pumps -->
+            <section class="section" id="section4">
+                <h2>4. Structure and Mechanism of F-class Pumps</h2>
+                <p>F-class pumps (ATP synthases) primarily function in reverse - they use proton gradients to synthesize ATP, but can also function as ATP-driven proton pumps.</p>
+                
+                <h3>Structure:</h3>
+                <ul>
+                    <li>F₀ subunit: Membrane-embedded proton channel</li>
+                    <li>F₁ subunit: Peripheral ATP synthase complex</li>
+                    <li>Rotary catalytic mechanism</li>
+                </ul>
+                
+                <h3>Mechanism:</h3>
+                <p>Proton flow through F₀ causes rotation of the γ subunit, which drives conformational changes in F₁ that catalyze ATP synthesis.</p>
+                
+                <h3>Key Features:</h3>
+                <ul>
+                    <li>Reversible operation depending on cellular energy status</li>
+                    <li>Extremely high efficiency in ATP synthesis</li>
+                    <li>Conserved across bacteria, mitochondria, and chloroplasts</li>
+                    <li>Binding change mechanism for ATP synthesis</li>
+                </ul>
+            </section>
+            
+            <!-- Section 5: ABC Transporters -->
+            <section class="section" id="section5">
+                <h2>5. Structure and Mechanism of ABC Transporters</h2>
+                <p>ATP-Binding Cassette (ABC) transporters constitute one of the largest transporter families and move diverse substrates including ions, sugars, amino acids, and drugs.</p>
+                
+                <h3>Structure:</h3>
+                <ul>
+                    <li>Two transmembrane domains (TMDs) forming transport pathway</li>
+                    <li>Two nucleotide-binding domains (NBDs) that bind and hydrolyze ATP</li>
+                </ul>
+                
+                <h3>Mechanism:</h3>
+                <p>ABC transporters use the "alternating access" model:</p>
+                <ol>
+                    <li>Substrate binding to high-affinity inward-facing conformation</li>
+                    <li>ATP binding to NBDs promotes dimerization</li>
+                    <li>Conformational change to outward-facing state</li>
+                    <li>Substrate release and ATP hydrolysis</li>
+                    <li>Return to inward-facing conformation</li>
+                </ol>
+                
+                <h3>Biological Significance:</h3>
+                <ul>
+                    <li>Multidrug resistance in cancer cells (P-glycoprotein)</li>
+                    <li>Cholesterol transport (ABCG5/ABCG8)</li>
+                    <li>Antigen presentation (TAP transporters)</li>
+                    <li>Cystic fibrosis (CFTR chloride channel)</li>
+                </ul>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/ABC%20tranporter%20mechanism.png" alt="ABC transporter mechanism">
+                    <p class="caption">Alternating access mechanism of ABC transporters</p>
+                </div>
+            </section>
+            
+            <!-- Section 6: Flippase, Floppase, Scramblase -->
+            <section class="section" id="section6">
+                <h2>6. Contrast Between Flippase, Floppase and Scramblases</h2>
+                <p>These are lipid transporters that maintain membrane asymmetry by moving phospholipids between membrane leaflets.</p>
+                
+                <h3>Flippases:</h3>
+                <ul>
+                    <li>Move phospholipids from outer to inner leaflet</li>
+                    <li>ATP-dependent</li>
+                    <li>Specific for aminophospholipids (phosphatidylserine, phosphatidylethanolamine)</li>
+                    <li>Maintain membrane asymmetry in resting cells</li>
+                </ul>
+                
+                <h3>Floppases:</h3>
+                <ul>
+                    <li>Move phospholipids from inner to outer leaflet</li>
+                    <li>ATP-dependent</li>
+                    <li>Less specific than flippases</li>
+                    <li>Often ABC transporters</li>
+                </ul>
+                
+                <h3>Scramblases:</h3>
+                <ul>
+                    <li>Bidirectional movement of phospholipids</li>
+                    <li>ATP-independent</li>
+                    <li>Activated by increased intracellular Ca²⁺</li>
+                    <li>Disrupt membrane asymmetry (e.g., during apoptosis)</li>
+                </ul>
+                
+                <h3>Comparative Analysis:</h3>
+                <table>
+                    <tr>
+                        <th>Property</th>
+                        <th>Flippase</th>
+                        <th>Floppase</th>
+                        <th>Scramblase</th>
+                    </tr>
+                    <tr>
+                        <td>Energy Source</td>
+                        <td>ATP</td>
+                        <td>ATP</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Direction</td>
+                        <td>Out → In</td>
+                        <td>In → Out</td>
+                        <td>Bidirectional</td>
+                    </tr>
+                    <tr>
+                        <td>Primary Substrates</td>
+                        <td>PS, PE</td>
+                        <td>PC, SM, cholesterol</td>
+                        <td>All phospholipids</td>
+                    </tr>
+                    <tr>
+                        <td>Key Proteins</td>
+                        <td>P4-ATPases</td>
+                        <td>ABC transporters</td>
+                        <td>TMEM16, XKR</td>
+                    </tr>
+                </table>
+                
+                <h3>Physiological Roles:</h3>
+                <ul>
+                    <li>Maintenance of membrane lipid asymmetry</li>
+                    <li>Cell signaling through phosphatidylserine exposure</li>
+                    <li>Blood coagulation</li>
+                    <li>Apoptotic cell clearance</li>
+                </ul>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Flippase%20floppase.png" alt="Lipid transporter comparison">
+                    <p class="caption">Comparison of flippase, floppase, and scramblase activities</p>
+                </div>
+            </section>
+            
+            <!-- Section 7: Fluorescence Quenching Assay -->
+            <section class="section" id="section7">
+                <h2>7. In Vitro Fluorescence Quenching Assay</h2>
+                <p>This assay measures transporter activity by monitoring fluorescence changes as substrates are transported into or out of vesicles.</p>
+                
+                <h3>Principle:</h3>
+                <p>Fluorescent dyes whose emission is quenched by specific ions or molecules are encapsulated in vesicles. Transport activity is measured as fluorescence changes when these molecules enter or exit vesicles.</p>
+                
+                <h3>Procedure:</h3>
+                <ol>
+                    <li>Prepare vesicles containing fluorescent dye</li>
+                    <li>Add transporter protein to vesicle membrane</li>
+                    <li>Initiate transport by adding ATP</li>
+                    <li>Monitor fluorescence changes over time</li>
+                    <li>Calculate transport rates from fluorescence kinetics</li>
+                </ol>
+                
+                <h3>Common Applications:</h3>
+                <ul>
+                    <li>Study kinetics of various transporters</li>
+                    <li>Screen for transporter inhibitors</li>
+                    <li>Characterize mutant transporters</li>
+                    <li>Measure proton transport by ATPases</li>
+                </ul>
+                
+                <h3>Key Advantages:</h3>
+                <ul>
+                    <li>High sensitivity</li>
+                    <li>Real-time measurements</li>
+                    <li>Applicable to diverse transport systems</li>
+                    <li>Compatible with high-throughput screening</li>
+                </ul>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/In%20vitro%20flourescence%20quenching%20assay.png" alt="Fluorescence quenching assay">
+                    <p class="caption">Schematic of in vitro fluorescence quenching assay for transporter activity</p>
+                </div>
+            </section>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentSectionSpan = document.getElementById('current-section');
+            const totalSectionsSpan = document.getElementById('total-sections');
+            const progressBar = document.getElementById('progress-bar');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            totalSectionsSpan.textContent = totalSections;
+            
+            function updateNavigation() {
+                // Update section counter
+                currentSectionSpan.textContent = currentSection + 1;
+                
+                // Update progress bar
+                progressBar.style.width = `${((currentSection + 1) / totalSections) * 100}%`;
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update button text for last section
+                nextBtn.textContent = currentSection === totalSections - 1 ? 'Finish' : 'Next';
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                sections[index].classList.add('active');
+                
+                // Scroll to top of section container
+                document.querySelector('.section-container').scrollTop = 0;
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                    updateNavigation();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                    updateNavigation();
+                } else {
+                    // On last section, could redirect or show completion message
+                    alert('You have completed the overview of primary active transport!');
+                }
+            });
+            
+            // Initialize
+            showSection(currentSection);
+            updateNavigation();
+        });
+    </script>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
