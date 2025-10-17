@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secondary Active Transport</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #4e54c8;
+            --light-accent: #8f94fb;
+            --text: #e6e6e6;
+            --highlight: #ffd166;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-accent);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--highlight);
+            text-shadow: 0 0 10px rgba(255, 209, 102, 0.3);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+            color: var(--light-accent);
+            border-left: 4px solid var(--accent);
+            padding-left: 10px;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 20px 0 10px;
+            color: var(--highlight);
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            background: rgba(26, 26, 46, 0.7);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .diagram {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            background: var(--darker-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .image-placeholder {
+            background: var(--darker-bg);
+            border: 1px dashed var(--accent);
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+            border-radius: 10px;
+            color: var(--accent);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .image-placeholder img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+        }
+        
+        .membrane {
+            height: 4px;
+            background: linear-gradient(90deg, #ffd166, #8f94fb);
+            margin: 20px 0;
+            border-radius: 2px;
+        }
+        
+        .molecule {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 5px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .sodium { background: #ff6b6b; color: #000; }
+        .glucose { background: #4ecdc4; color: #000; }
+        .calcium { background: #ffe66d; color: #000; }
+        .lactose { background: #95e1d3; color: #000; }
+        .proton { background: #ff9a76; color: #000; }
+        .chloride { background: #a8e6cf; color: #000; }
+        
+        .transport-arrow {
+            font-size: 1.5rem;
+            margin: 0 10px;
+            color: var(--light-accent);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: var(--light-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--light-accent));
+            border-radius: 10px;
+            width: 11%; /* Starting at first section */
+            transition: width 0.3s ease;
+        }
+        
+        .section-counter {
+            text-align: center;
+            margin: 10px 0;
+            color: var(--light-accent);
+            font-size: 0.9rem;
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.2rem; }
+            p { font-size: 1rem; }
+            button { padding: 10px 20px; }
+            .section { padding: 15px; }
+        }
+        
+        .key-point {
+            background: rgba(79, 84, 200, 0.2);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .transporter {
+            display: inline-block;
+            padding: 5px 10px;
+            background: rgba(143, 148, 251, 0.2);
+            border-radius: 5px;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .vertical-arrow-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .vertical-arrow {
+            font-size: 1.5rem;
+            color: var(--light-accent);
+            margin: 5px 0;
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--dark-bg), var(--darker-bg));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Secondary Active Transport</h1>
+            <p>Understanding how cells move molecules against concentration gradients</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="section-counter" id="sectionCounter">Section 1 of 9</div>
+        
+        <!-- Section 1: Overall Mechanism -->
+        <section class="section active" id="section1">
+            <h2>Overall Mechanism of Secondary Active Transporters</h2>
+            <p>Secondary active transport is a form of active transport where the movement of molecules across a membrane is driven by an electrochemical gradient established by primary active transport.</p>
+            
+            <div class="key-point">
+                <p>Unlike primary active transport that directly uses ATP, secondary active transport utilizes the energy stored in ion gradients (usually Na⁺ or H⁺) to transport other molecules.</p>
+            </div>
+            
+            <p>This process is called "secondary" because it relies on the energy initially expended by primary active transporters like the Na⁺/K⁺ ATPase pump.</p>
+            
+            <p>There are two main types of secondary active transporters:</p>
+            <ul>
+                <li><strong>Symporters</strong> - Transport both molecules in the same direction</li>
+                <li><strong>Antiporters</strong> - Exchange one molecule for another in opposite directions</li>
+            </ul>
+        </section>
+        
+        <!-- Section 2: Types of Secondary Active Transporters -->
+        <section class="section" id="section2">
+            <h2>Types of Secondary Active Transporters</h2>
+            <p>Secondary active transporters are classified based on the direction of transport and the molecules they move.</p>
+            
+            <h3>Symporters (Co-transporters)</h3>
+            <p>Symporters move two or more different molecules or ions across the membrane in the same direction.</p>
+            
+            <div class="diagram">
+                <h3>Symporter Mechanism</h3>
+                <div>Extracellular Space</div>
+                <div class="molecule sodium">Na⁺</div>
+                <span>+</span>
+                <div class="molecule glucose">Glucose</div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="membrane"></div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="molecule sodium">Na⁺</div>
+                <span>+</span>
+                <div class="molecule glucose">Glucose</div>
+                <div>Cytoplasm</div>
+                <p>Both molecules move together in the same direction</p>
+            </div>
+            
+            <p>Examples include:
+                <span class="transporter">SGLT</span>
+                <span class="transporter">Lac Permease</span>
+            </p>
+            
+            <h3>Antiporters (Exchangers)</h3>
+            <p>Antiporters move two or more different molecules or ions across the membrane in opposite directions.</p>
+            
+            <div class="diagram">
+                <h3>Antiporter Mechanism</h3>
+                <div>Extracellular Space</div>
+                <div class="molecule sodium">Na⁺</div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="membrane"></div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↑</div>
+                </div>
+                <div class="molecule calcium">Ca²⁺</div>
+                <div>Cytoplasm</div>
+                <p>One molecule enters while another exits</p>
+            </div>
+            
+            <p>Examples include:
+                <span class="transporter">Na⁺/Ca²⁺ Exchanger</span>
+                <span class="transporter">Na⁺/H⁺ Exchanger</span>
+            </p>
+        </section>
+        
+        <!-- Section 3: Sodium Glucose Symporter -->
+        <section class="section" id="section3">
+            <h2>Sodium Glucose Symporter (SGLT)</h2>
+            <p>The Sodium-Glucose Linked Transporter (SGLT) is a vital symporter found in the intestinal epithelium and renal tubules.</p>
+            
+            <div class="key-point">
+                <p>SGLT uses the sodium gradient established by the Na⁺/K⁺ ATPase pump to transport glucose against its concentration gradient.</p>
+            </div>
+            
+            <div class="diagram">
+                <h3>SGLT Mechanism</h3>
+                <div>Extracellular Space</div>
+                <div class="molecule sodium">Na⁺</div>
+                <span>+</span>
+                <div class="molecule glucose">Glucose</div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="membrane"></div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="molecule sodium">Na⁺</div>
+                <span>+</span>
+                <div class="molecule glucose">Glucose</div>
+                <div>Cytoplasm</div>
+                <p>Na⁺ and glucose co-transport into the cell</p>
+            </div>
+            
+            <p>This transporter is essential for:</p>
+            <ul>
+                <li>Absorption of glucose from the intestine</li>
+                <li>Reabsorption of glucose in the kidneys</li>
+                <li>Maintaining blood glucose levels</li>
+            </ul>
+            
+            <p>SGLT inhibitors are used as medications for diabetes to reduce glucose reabsorption.</p>
+        </section>
+        
+        <!-- Section 4: Sodium Calcium Exchanger -->
+        <section class="section" id="section4">
+            <h2>Sodium Calcium Exchanger (NCX)</h2>
+            <p>The Sodium-Calcium Exchanger (NCX) is an antiporter that plays a crucial role in calcium homeostasis, especially in cardiac muscle cells.</p>
+            
+            <div class="key-point">
+                <p>NCX exchanges 3 Na⁺ ions for 1 Ca²⁺ ion, using the sodium gradient to remove calcium from cells.</p>
+            </div>
+            
+            <div class="diagram">
+                <h3>NCX Mechanism</h3>
+                <div>Extracellular Space</div>
+                <div class="molecule sodium">Na⁺</div>
+                <div class="molecule sodium">Na⁺</div>
+                <div class="molecule sodium">Na⁺</div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="membrane"></div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↑</div>
+                </div>
+                <div class="molecule calcium">Ca²⁺</div>
+                <div>Cytoplasm</div>
+                <p>3 Na⁺ enter while 1 Ca²⁺ exits the cell</p>
+            </div>
+            
+            <p>Key functions of NCX:</p>
+            <ul>
+                <li>Maintains low intracellular calcium concentration</li>
+                <li>Critical for cardiac muscle relaxation</li>
+                <li>Regulates neurotransmitter release in neurons</li>
+            </ul>
+            
+            <p>In cardiac cells, NCX works alongside the SERCA pump to regulate calcium during contraction and relaxation cycles.</p>
+        </section>
+        
+        <!-- Section 5: Lac Permease -->
+        <section class="section" id="section5">
+            <h2>Lac Permease</h2>
+            <p>Lac Permease (LacY) is a well-studied symporter in E. coli that transports lactose into the cell using the proton gradient.</p>
+            
+            <div class="key-point">
+                <p>Lac Permease couples the movement of one lactose molecule with one proton, using the proton motive force for energy.</p>
+            </div>
+            
+            <div class="diagram">
+                <h3>Lac Permease Mechanism</h3>
+                <div>Periplasm</div>
+                <div class="molecule proton">H⁺</div>
+                <span>+</span>
+                <div class="molecule lactose">Lac</div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="membrane"></div>
+                <div class="vertical-arrow-container">
+                    <div class="vertical-arrow">↓</div>
+                    <div class="vertical-arrow">↓</div>
+                </div>
+                <div class="molecule proton">H⁺</div>
+                <span>+</span>
+                <div class="molecule lactose">Lac</div>
+                <div>Cytoplasm</div>
+                <p>H⁺ and lactose co-transport into the cell</p>
+            </div>
+            
+            <p>Features of Lac Permease:</p>
+            <ul>
+                <li>First secondary active transporter to be sequenced</li>
+                <li>Classic example of a β-galactoside permease</li>
+                <li>Essential for lactose metabolism in bacteria</li>
+            </ul>
+            
+            <p>The lac operon, which includes the gene for Lac Permease, is a fundamental model of gene regulation in molecular biology.</p>
+        </section>
+        
+        <!-- Section 6: Stomach Acidification -->
+        <section class="section" id="section6">
+            <h2>Acidification in Stomach Lumen by Oxyntic Cells</h2>
+            <p>Oxyntic (parietal) cells in the stomach lining are responsible for secreting hydrochloric acid (HCl) to create the acidic environment necessary for digestion.</p>
+            
+            <div class="key-point">
+                <p>Parietal cells use a combination of primary active transport (H⁺/K⁺ ATPase) and secondary active transport to secrete HCl.</p>
+            </div>
+            
+            <p>The process involves:</p>
+            <ol>
+                <li>H⁺/K⁺ ATPase pumps H⁺ into the lumen in exchange for K⁺</li>
+                <li>Cl⁻/HCO₃⁻ antiporter exchanges Cl⁻ for HCO₃⁻</li>
+                <li>Cl⁻ and H⁺ combine in the lumen to form HCl</li>
+            </ol>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Acidification%20of%20stomach%20lumen.png" alt="Acidification of stomach lumen diagram">
+                </div>
+
+            
+            <p>This system can create a pH as low as 1.5 in the stomach lumen.</p>
+        </section>
+        
+        <!-- Section 7: Plant Vacuole Accumulation -->
+        <section class="section" id="section7">
+            <h2>Accumulation of Metabolites in Plant Vacuoles</h2>
+            <p>Plant cells use specialized transporters to accumulate metabolites in vacuoles, with V-class ATPases and V-PPase playing key roles.</p>
+            
+            <div class="key-point">
+                <p>Vacuoles serve as storage compartments for various metabolites, and their accumulation is driven by proton gradients established by proton pumps.</p>
+            </div>
+            
+            <h3>V-class ATPase</h3>
+            <p>Vacuolar-type H⁺-ATPase (V-ATPase) is a primary active transporter that pumps protons into the vacuole using ATP.</p>
+            
+            <h3>V-PPase</h3>
+            <p>Vacuolar H⁺-pyrophosphatase (V-PPase) uses the energy from pyrophosphate (PPi) hydrolysis to pump protons into the vacuole.</p>
+            
+            <p>These proton gradients then drive secondary active transporters that accumulate:</p>
+            <ul>
+                <li>Sugars</li>
+                <li>Amino acids</li>
+                <li>Organic acids</li>
+                <li>Ions</li>
+            </ul>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Plant%20vacuole.png" alt="Plant vacuole diagram">
+                </div>
+
+        </section>
+        
+        <!-- Section 8: Osteoclast HCl Secretion -->
+        <section class="section" id="section8">
+            <h2>HCl Secretion by Osteoclasts</h2>
+            <p>Osteoclasts are bone-resorbing cells that secrete HCl to dissolve the mineral component of bone matrix.</p>
+            
+            <div class="key-point">
+                <p>Osteoclasts create an acidic extracellular compartment between their ruffled border and the bone surface to dissolve hydroxyapatite crystals.</p>
+            </div>
+            
+            <p>The process involves:</p>
+            <ol>
+                <li>V-ATPase pumps H⁺ into the resorption lacuna</li>
+                <li>ClC-7 chloride channels allow Cl⁻ to follow</li>
+                <li>H⁺ and Cl⁻ combine to form HCl</li>
+                <li>HCl dissolves bone mineral (hydroxyapatite)</li>
+                <li>Proteases then digest the organic matrix</li>
+            </ol>
+                <div class="image-placeholder">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Osteoclast.png" alt="Osteoclast diagram">
+                </div>
+            
+            <p>This bone resorption process is essential for bone remodeling and calcium homeostasis.</p>
+        </section>
+        
+        <!-- Section 9: Amino Acid Absorption -->
+        <section class="section" id="section9">
+            <h2>Amino Acid Absorption from Intestine</h2>
+            <p>The small intestine uses various transporters to absorb amino acids from digested proteins, employing both primary and secondary active transport mechanisms.</p>
+            
+            <div class="key-point">
+                <p>Most amino acid absorption occurs in the small intestine through specialized transporters that often use the sodium gradient as their energy source.</p>
+            </div>
+            
+            <h3>Major Amino Acid Transporters</h3>
+            
+            <h4>Na⁺-Dependent Symporters</h4>
+            <ul>
+                <li><strong>B⁰ system</strong> - Neutral amino acids</li>
+                <li><strong>IMINO system</strong> - Imino acids (proline, hydroxyproline)</li>
+                <li><strong>X⁻AG system</strong> - Acidic amino acids (glutamate, aspartate)</li>
+            </ul>
+            
+            <h4>Facilitated Transporters</h4>
+            <ul>
+                <li><strong>L system</strong> - Large neutral amino acids</li>
+                <li><strong>ASC system</strong> - Small neutral amino acids</li>
+                <li><strong>y⁺ system</strong> - Basic amino acids</li>
+            </ul>
+            
+            <p>After absorption into enterocytes, amino acids exit via basolateral transporters into the bloodstream for distribution throughout the body.</p>
+        </section>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            const sectionCounter = document.getElementById('sectionCounter');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            // Update section visibility and button states
+            function updateSection() {
+                sections.forEach((section, index) => {
+                    section.classList.toggle('active', index === currentSection);
+                });
+                
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update progress bar
+                const progress = ((currentSection + 1) / totalSections) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update section counter
+                sectionCounter.textContent = `Section ${currentSection + 1} of ${totalSections}`;
+            }
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    updateSection();
+                }
+            });
+            
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateSection();
+                }
+            });
+            
+            // Initialize
+            updateSection();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
