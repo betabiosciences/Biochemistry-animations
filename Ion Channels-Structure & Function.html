@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ion Channels: Structure, Function & Mechanisms</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --darker-bg: #0a0f1c;
+            --accent: #4f46e5;
+            --light-accent: #6366f1;
+            --text: #e2e8f0;
+            --heading: #f1f5f9;
+            --highlight: #60a5fa;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--light-accent);
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+        }
+        
+        h1 {
+            color: var(--heading);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--highlight);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, var(--accent), var(--light-accent));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .progress-text {
+            position: absolute;
+            right: 10px;
+            top: -20px;
+            font-size: 0.8rem;
+            color: var(--highlight);
+        }
+        
+        .section-container {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--heading);
+            margin-bottom: 1.5rem;
+            font-size: 1.7rem;
+            border-bottom: 2px solid var(--light-accent);
+            padding-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--highlight);
+        }
+        
+        h3 {
+            color: var(--highlight);
+            margin: 1.5rem 0 0.8rem;
+            font-size: 1.3rem;
+            padding-left: 10px;
+            border-left: 3px solid var(--accent);
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-left: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.7rem;
+            position: relative;
+        }
+        
+        li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .highlight {
+            background-color: rgba(79, 70, 229, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: bold;
+            color: var(--highlight);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+        
+        .equation {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(79, 70, 229, 0.1));
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .example-box {
+            background: rgba(96, 165, 250, 0.1);
+            border-left: 4px solid var(--highlight);
+            padding: 1.2rem;
+            margin: 1.2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .note {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1.2rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .key-concept {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .key-concept h4 {
+            color: var(--success);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th {
+            background: var(--accent);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .comparison-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--accent), var(--light-accent));
+            color: white;
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .section-counter {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--highlight);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .section-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .section-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .section-dot.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+        
+        /* Updated image container styles */
+        .image-container {
+            width: 100%;
+            margin: 1.5rem 0;
+            text-align: center;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .image-caption {
+            padding: 10px 15px;
+            background: rgba(15, 23, 42, 0.8);
+            font-size: 0.9rem;
+            color: var(--highlight);
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .section-container {
+                padding: 1.5rem;
+                min-height: 550px;
+            }
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.95rem;
+            }
+            
+            .equation {
+                font-size: 1rem;
+                padding: 1rem;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section-container {
+                padding: 1.2rem;
+            }
+            
+            button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-buttons button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        .floating-ion {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(96, 165, 250, 0.3);
+            animation: float 6s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(20px, 15px) rotate(180deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+        
+        .state-diagram {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            background: rgba(30, 41, 59, 0.7);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .state-box {
+            text-align: center;
+            flex: 1;
+            padding: 1rem;
+            margin: 0 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .state-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .state-closed {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.3));
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+        
+        .state-open {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.3));
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .state-inactive {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3));
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        
+        .state-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .state-potential {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .state-closed .state-title {
+            color: #60a5fa;
+        }
+        
+        .state-open .state-title {
+            color: #4ade80;
+        }
+        
+        .state-inactive .state-title {
+            color: #f87171;
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-atom"></i> Ion Channels: Structure, Function & Mechanisms</h1>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="section-container">
+            <!-- Floating ions for visual effect -->
+            <div class="floating-ion" style="top: 10%; left: 5%;"></div>
+            <div class="floating-ion" style="top: 70%; left: 90%; animation-delay: 1s;"></div>
+            <div class="floating-ion" style="top: 40%; left: 85%; animation-delay: 2s;"></div>
+            <div class="floating-ion" style="top: 80%; left: 10%; animation-delay: 3s;"></div>
+            
+            <!-- Section 1 -->
+            <div class="section active" id="section1">
+                <h2><i class="fas fa-sitemap"></i> 1. Classification of Ion Channels</h2>
+                <p>Ion channels are integral membrane proteins that form pores, allowing ions to flow across cell membranes. This movement of ions is fundamental to numerous physiological processes including nerve impulse transmission, muscle contraction, and cellular signaling.</p>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>Ion channels are characterized by their <span class="highlight">selectivity</span> (which ions they allow to pass) and their <span class="highlight">gating mechanism</span> (what opens and closes them).</p>
+                </div>
+                
+                <h3>Classification by Gating Mechanism:</h3>
+                <ul>
+                    <li><span class="highlight">Voltage-gated channels</span> - Open or close in response to changes in membrane potential. Examples include voltage-gated sodium, potassium, and calcium channels.</li>
+                    <li><span class="highlight">Ligand-gated channels</span> - Open when a specific chemical messenger (ligand) binds to the channel. These include neurotransmitter receptors like nicotinic acetylcholine receptors and GABA receptors.</li>
+                    <li><span class="highlight">Mechanically-gated channels</span> - Respond to physical forces such as pressure, stretch, or vibration. Found in sensory systems like hearing and touch.</li>
+                    <li><span class="highlight">Leak channels</span> - Remain open at rest, contributing to the resting membrane potential. Potassium leak channels are particularly important for maintaining the resting potential.</li>
+                </ul>
+                
+                <h3>Classification by Ion Selectivity:</h3>
+                <ul>
+                    <li><span class="highlight">Sodium channels</span> (Na⁺) - Critical for action potential generation</li>
+                    <li><span class="highlight">Potassium channels</span> (K⁺) - Diverse family with roles in repolarization and setting resting potential</li>
+                    <li><span class="highlight">Calcium channels</span> (Ca²⁺) - Important for muscle contraction, neurotransmitter release, and second messenger signaling</li>
+                    <li><span class="highlight">Chloride channels</span> (Cl⁻) - Regulate cell volume and contribute to inhibitory neurotransmission</li>
+                    <li><span class="highlight">Non-selective cation channels</span> - Allow passage of several cation types, often activated by nucleotides or other intracellular signals</li>
+                </ul>
+                
+                <div class="note">
+                    <p><i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> Some channels exhibit multiple gating mechanisms. For example, certain potassium channels can be both voltage-gated and calcium-activated.</p>
+                </div>
+            </div>
+            
+            <!-- Section 2 -->
+            <div class="section" id="section2">
+                <h2><i class="fas fa-bolt"></i> 2. Potassium Leak Channels: Structure & Function</h2>
+                <p>Potassium leak channels are a specialized class of ion channels that remain constitutively open at rest, allowing potassium ions to passively flow down their concentration gradient. These channels play a fundamental role in establishing and maintaining the resting membrane potential in virtually all cells.</p>
+                
+                <h3>Structural Organization:</h3>
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/K+%20channel%203D.png" alt="Potassium Channel 3D Structure">
+                    <div class="image-caption">3D structure of a potassium channel showing the pore region and selectivity filter</div>
+                </div>
+
+                <ul>
+                    <li>Potassium leak channels belong to the <span class="highlight">two-pore domain potassium channel (K2P) family</span></li>
+                    <li>These channels are tetramers composed of subunits that each contain two pore-forming domains, unlike typical potassium channels with one per subunit.</li>
+
+                    <li>Each subunit contains <span class="highlight">4 transmembrane segments (M1-M4)</span> and <span class="highlight">two pore-forming domains (P1 and P2)</span></li>
+                    <li>Functional channels are formed by <span class="highlight">dimerization of two subunits</span>, creating a channel with four pore domains</li>
+                    <li>Unlike voltage-gated potassium channels, K2P channels lack a voltage-sensing domain (S4 segment)</li>
+                    <li>The pore architecture includes a <span class="highlight">selectivity filter</span> with the conserved GYG signature sequence that ensures potassium selectivity</li>
+                    <li>Many K2P channels have large extracellular cap domains that may regulate channel activity</li>
+                </ul>
+                
+                
+                <h3>Physiological Functions:</h3>
+                <ul>
+                    <li>Establish and maintain the <span class="highlight">resting membrane potential</span> close to the potassium equilibrium potential (E<sub>K</sub>)</li>
+                    <li>Provide a <span class="highlight">background potassium conductance</span> that stabilizes the membrane potential</li>
+                    <li>Contribute to <span class="highlight">cellular excitability</span> by setting the baseline membrane potential</li>
+                    <li>Participate in <span class="highlight">potassium buffering</span> in the brain, helping to maintain extracellular potassium homeostasis</li>
+                    <li>Mediate responses to various <span class="highlight">physical and chemical stimuli</span> including pH, temperature, and membrane stretch</li>
+                    <li>Play roles in <span class="highlight">anesthetic actions</span>, neuroprotection, and regulation of vascular tone</li>
+                </ul>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>Potassium leak channels are responsible for the high resting potassium permeability of cells, which keeps the membrane potential close to E<sub>K</sub> (-90 mV). The small but significant sodium permeability through sodium leak channels prevents the membrane potential from reaching exactly E<sub>K</sub>, resulting in the typical resting potential of -70 mV.</p>
+                </div>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> TASK-1 channels in cerebellar granule neurons contribute to the resting potassium conductance and help set the input resistance of these cells, influencing their responsiveness to synaptic inputs.</p>
+                </div>
+            </div>
+            
+            <!-- Section 3 -->
+            <div class="section" id="section3">
+                <h2><i class="fas fa-tachometer-alt"></i> 3. Sodium Leak Channels: Structure & Function</h2>
+                <p>Sodium leak channels, also known as background or resting sodium channels, provide a small but significant sodium permeability at rest. While less prominent than potassium leak channels, they play a crucial role in setting the precise value of the resting membrane potential.</p>
+                
+                <h3>Structural Organization:</h3>
+                <ul>
+                    <li>Sodium leak channels belong to the <span class="highlight">NALCN (sodium leak channel, non-selective) family</span></li>
+                    <li>NALCN channels share structural homology with voltage-gated sodium and calcium channels, with <span class="highlight">four homologous domains</span>, each containing <span class="highlight">6 transmembrane segments</span></li>
+                    <li>Unlike voltage-gated sodium channels, NALCN channels have <span class="highlight">altered voltage-sensing domains</span> that render them relatively voltage-insensitive</li>
+                    <li>The pore region contains specific residues that confer <span class="highlight">sodium selectivity</span> while allowing some calcium permeation</li>
+                    <li>The channels also interact with <span class="highlight">GPCR pathways</span> that modulate their activity</li>
+                </ul>
+                
+                <h3>Key Properties:</h3>
+                <ul>
+                    <li>Exhibit <span class="highlight">weak voltage dependence</span> compared to voltage-gated sodium channels</li>
+                    <li>Permeable to <span class="highlight">calcium ions</span>, though with lower permeability than sodium</li>
+                    <li>Resistant to <span class="highlight">tetrodotoxin (TTX)</span>, which blocks voltage-gated sodium channels</li>
+                    <li>Modulated by various <span class="highlight">neurotransmitters and neuropeptides</span> including substance P, acetylcholine, and opioids</li>
+                    <li>Regulated by <span class="highlight">extracellular calcium concentration</span> through a calcium-sensing receptor mechanism</li>
+                </ul>
+                
+                <h3>Physiological Functions:</h3>
+                <ul>
+                    <li>Contribute to the <span class="highlight">resting membrane potential</span> by providing background sodium conductance</li>
+                    <li>Help establish the <span class="highlight">driving force for sodium entry</span> during action potentials and synaptic transmission</li>
+                    <li>Play a role in <span class="highlight">respiratory rhythm generation</span> </li>
+                    <li>Participate in <span class="highlight">sleep-wake regulation</span> and circadian rhythms</li>
+                    <li>Contribute to <span class="highlight">neuronal excitability</span> and spontaneous firing in some neuronal populations</li>
+                    <li>Involved in <span class="highlight">locomotion</span> and motor control circuits</li>
+                    <li>Play roles in <span class="highlight">pain perception</span> and modulation</li>
+                </ul>
+                
+                <div class="note">
+                    <p><i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> The sodium leak conductance is much smaller than the potassium leak conductance at rest (P<sub>K</sub> >> P<sub>Na</sub>), which is why the resting membrane potential (-70 mV) is much closer to E<sub>K</sub> (-90 mV) than to E<sub>Na</sub> (+60 mV).</p>
+                </div>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> Mutations in the NALCN gene cause severe neurological disorders in humans, including infantile hypotonia with psychomotor retardation and characteristic facies (IHPRF syndrome), highlighting the importance of sodium leak channels in normal neuronal function.</p>
+                </div>
+            </div>
+            
+            <!-- Section 4 -->
+            <div class="section" id="section4">
+                <h2><i class="fas fa-battery-half"></i> 4. Membrane Potential Concepts</h2>
+                <p>The membrane potential is the electrical potential difference across the cell membrane, typically ranging from -40 to -90 mV in most cells. This electrical gradient is essential for cellular communication and function.</p>
+                
+                <h3>Equilibrium Potential (E<sub>ion</sub>):</h3>
+                <p>The membrane potential at which there is no net movement of a specific ion across the membrane. At this potential, the chemical and electrical driving forces are balanced.</p>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>The equilibrium potential represents the point where the <span class="highlight">chemical driving force</span> (concentration gradient) exactly balances the <span class="highlight">electrical driving force</span> (membrane potential).</p>
+                </div>
+                
+                <h3>Electrochemical Driving Force (EDF):</h3>
+                <p>The net driving force acting on an ion, calculated as:</p>
+                <div class="equation">EDF = V<sub>m</sub> - E<sub>ion</sub></div>
+                <p>Where V<sub>m</sub> is the membrane potential and E<sub>ion</sub> is the equilibrium potential for that ion.</p>
+                <ul>
+                    <li>If EDF is negative, the ion will tend to move into the cell</li>
+                    <li>If EDF is positive, the ion will tend to move out of the cell</li>
+                    <li>If EDF is zero, there is no net movement of the ion</li>
+                </ul>
+                
+                <h3>Chemical Driving Force (CDF):</h3>
+                <p>The force resulting from concentration gradients across the membrane. Ions tend to move from areas of high concentration to areas of low concentration.</p>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> For potassium ions (K⁺), the intracellular concentration is typically around 140 mM while extracellular concentration is about 5 mM. This creates a strong chemical driving force for K⁺ to move out of the cell.</p>
+                </div>
+                
+                <h3>Resting Membrane Potential:</h3>
+                <p>The steady-state membrane potential when the cell is not actively signaling. It is primarily determined by:</p>
+                <ul>
+                    <li>The unequal distribution of ions across the membrane</li>
+                    <li>The relative permeability of the membrane to different ions</li>
+                    <li>The activity of ion pumps (especially Na⁺/K⁺ ATPase)</li>
+                </ul>
+            </div>
+            
+            <!-- Section 5 -->
+            <div class="section" id="section5">
+                <h2><i class="fas fa-calculator"></i> 5. Nernst Equation & Equilibrium Potential</h2>
+                <p>The Nernst equation calculates the equilibrium potential for a specific ion based on its concentration gradient across the membrane. This fundamental equation links chemical gradients to electrical potentials.</p>
+                
+                <h3>Nernst Equation:</h3>
+                <div class="equation">E<sub>ion</sub> = (RT/zF) × ln([ion]<sub>out</sub> / [ion]<sub>in</sub>)</div>
+                <p>Where:</p>
+                <ul>
+                    <li>E<sub>ion</sub> = equilibrium potential for the ion</li>
+                    <li>R = universal gas constant (8.314 J/mol·K)</li>
+                    <li>T = absolute temperature in Kelvin</li>
+                    <li>z = valence (charge) of the ion</li>
+                    <li>F = Faraday's constant (96,485 C/mol)</li>
+                    <li>[ion]<sub>out</sub> = extracellular ion concentration</li>
+                    <li>[ion]<sub>in</sub> = intracellular ion concentration</li>
+                </ul>
+                
+                <h3>Simplified Nernst Equation (at 37°C):</h3>
+                <div class="equation">E<sub>ion</sub> = (61.5 / z) × log([ion]<sub>out</sub> / [ion]<sub>in</sub>) mV</div>
+                
+                <h3>Example Calculation for K⁺:</h3>
+                <p>Typical concentrations: [K⁺]<sub>out</sub> = 5 mM, [K⁺]<sub>in</sub> = 140 mM</p>
+                <div class="equation">E<sub>K</sub> = (61.5 / 1) × log(5 / 140) = 61.5 × log(0.0357) ≈ -90 mV</div>
+                
+                <h3>Example Calculation for Na⁺:</h3>
+                <p>Typical concentrations: [Na⁺]<sub>out</sub> = 145 mM, [Na⁺]<sub>in</sub> = 15 mM</p>
+                <div class="equation">E<sub>Na</sub> = (61.5 / 1) × log(145 / 15) = 61.5 × log(9.67) ≈ +60 mV</div>
+                
+                <div class="note">
+                    <p><i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> The Nernst equation assumes the membrane is permeable to only one ion at a time. In reality, multiple ions contribute to the membrane potential simultaneously.</p>
+                </div>
+            </div>
+            
+            <!-- Section 6 -->
+            <div class="section" id="section6">
+                <h2><i class="fas fa-balance-scale"></i> 6. Significance of Na⁺ and K⁺ Equilibrium Potentials</h2>
+                <p>The equilibrium potentials for sodium and potassium ions are critically important for understanding electrical signaling in cells. Their values determine the direction and magnitude of ion flow during changes in membrane permeability.</p>
+                
+                <h3>Potassium Equilibrium Potential (E<sub>K</sub>):</h3>
+                <ul>
+                    <li>Typically around -90 mV in mammalian cells</li>
+                    <li>Close to the resting membrane potential of most cells (-70 mV)</li>
+                    <li>K⁺ leak channels keep the membrane potential near E<sub>K</sub></li>
+                    <li>Changes in extracellular K⁺ concentration significantly affect resting potential</li>
+                    <li>Hyperkalemia (high blood K⁺) depolarizes cells, while hypokalemia hyperpolarizes them</li>
+                </ul>
+                
+                <h3>Sodium Equilibrium Potential (E<sub>Na</sub>):</h3>
+                <ul>
+                    <li>Typically around +60 mV in mammalian cells</li>
+                    <li>Far from the resting membrane potential</li>
+                    <li>Creates a strong driving force for Na⁺ influx when Na⁺ channels open</li>
+                    <li>Responsible for the upstroke of action potentials</li>
+                    <li>Small changes in extracellular Na⁺ have minimal effect on resting potential but significantly impact action potential amplitude</li>
+                </ul>
+                
+                <h3>Physiological Significance:</h3>
+                <p>The large difference between E<sub>Na</sub> and E<sub>K</sub> creates the electrochemical gradient necessary for:</p>
+                <ul>
+                    <li>Generation of action potentials with rapid depolarization and repolarization</li>
+                    <li>Maintenance of resting membrane potential</li>
+                    <li>Secondary active transport processes (e.g., glucose absorption)</li>
+                    <li>Cell volume regulation through coordinated movement of ions and water</li>
+                </ul>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> During an action potential, sodium channels open, and the membrane potential moves toward E<sub>Na</sub> (+60 mV). Then potassium channels open, and the membrane potential moves back toward E<sub>K</sub> (-90 mV), often briefly hyperpolarizing before returning to the resting potential.</p>
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Ion</th>
+                            <th>Typical E<sub>ion</sub></th>
+                            <th>Effect on Membrane Potential</th>
+                            <th>Primary Channel Types</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>K⁺</td>
+                            <td>-90 mV</td>
+                            <td>Hyperpolarizing</td>
+                            <td>Leak, voltage-gated, Ca²⁺-activated</td>
+                        </tr>
+                        <tr>
+                            <td>Na⁺</td>
+                            <td>+60 mV</td>
+                            <td>Depolarizing</td>
+                            <td>Voltage-gated, epithelial</td>
+                        </tr>
+                        <tr>
+                            <td>Ca²⁺</td>
+                            <td>+120 mV</td>
+                            <td>Strongly depolarizing</td>
+                            <td>Voltage-gated, ligand-gated</td>
+                        </tr>
+                        <tr>
+                            <td>Cl⁻</td>
+                            <td>-65 mV</td>
+                            <td>Stabilizing (near resting potential)</td>
+                            <td>Ligand-gated, volume-regulated</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section 7 -->
+            <div class="section" id="section7">
+                <h2><i class="fas fa-square-root-alt"></i> 7. Goldman-Hodgkin-Katz Equation</h2>
+                <p>The Goldman-Hodgkin-Katz (GHK) equation calculates the membrane potential when multiple ions contribute to the permeability of the membrane. It provides a more accurate prediction of membrane potential than the Nernst equation for real cells.</p>
+                
+                <h3>GHK Voltage Equation:</h3>
+                <div class="equation">
+                    V<sub>m</sub> = (RT/F) × ln( (P<sub>K</sub>[K⁺]<sub>out</sub> + P<sub>Na</sub>[Na⁺]<sub>out</sub> + P<sub>Cl</sub>[Cl⁻]<sub>in</sub>) / (P<sub>K</sub>[K⁺]<sub>in</sub> + P<sub>Na</sub>[Na⁺]<sub>in</sub> + P<sub>Cl</sub>[Cl⁻]<sub>out</sub>) )
+                </div>
+                <p>Where P<sub>ion</sub> represents the membrane permeability to each ion.</p>
+                
+                <h3>Key Points:</h3>
+                <ul>
+                    <li>The GHK equation accounts for multiple permeant ions simultaneously</li>
+                    <li>The resting membrane potential is closest to the equilibrium potential of the most permeable ion</li>
+                    <li>At rest, P<sub>K</sub> >> P<sub>Na</sub>, so V<sub>m</sub> is close to E<sub>K</sub></li>
+                    <li>During an action potential, P<sub>Na</sub> increases dramatically, driving V<sub>m</sub> toward E<sub>Na</sub></li>
+                    <li>Chloride ions (Cl⁻) often distribute passively according to the membrane potential</li>
+                </ul>
+                
+                <h3>Simplified Version (for K⁺ and Na⁺ only):</h3>
+                <div class="equation">
+                    V<sub>m</sub> = (RT/F) × ln( (P<sub>K</sub>[K⁺]<sub>out</sub> + P<sub>Na</sub>[Na⁺]<sub>out</sub>) / (P<sub>K</sub>[K⁺]<sub>in</sub> + P<sub>Na</sub>[Na⁺]<sub>in</sub>) )
+                </div>
+                
+                <h3>Example Calculation:</h3>
+                <p>Using typical concentrations and relative permeabilities at rest (P<sub>K</sub>:P<sub>Na</sub> = 1:0.04):</p>
+                <div class="equation">
+                    V<sub>m</sub> = 61.5 × log( (1×5 + 0.04×145) / (1×140 + 0.04×15) ) ≈ -70 mV
+                </div>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>The GHK equation explains why the resting membrane potential (-70 mV) is slightly more positive than E<sub>K</sub> (-90 mV) due to the small but significant sodium permeability at rest.</p>
+                </div>
+            </div>
+            
+            <!-- Section 8 -->
+            <div class="section" id="section8">
+                <h2><i class="fas fa-bolt"></i> 8. Voltage-Gated Channels</h2>
+                <p>Voltage-gated channels open and close in response to changes in membrane potential. They are fundamental to electrical signaling in excitable cells like neurons and muscle cells.</p>
+                
+                <h3>Voltage-Gated Sodium Channels (Na<sub>v</sub>):</h3>
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/NaV%20channel.png" alt="Voltage-Gated Sodium Channel Structure">
+                    <div class="image-caption">Structure of voltage-gated sodium channel showing voltage-sensing domains</div>
+                </div>
+
+                <ul>
+                    <li>Rapid activation (within 0.1-0.2 ms) and fast inactivation</li>
+                    <li>Responsible for the rising phase of action potentials</li>
+                    <li>Four domains, each with 6 transmembrane segments</li>
+                    <li>S4 segments act as voltage sensors with positive charges</li>
+                    <li>Inactivation mediated by the "ball and chain" mechanism (III-IV linker)</li>
+                    <li>Local anesthetics (e.g., lidocaine) block these channels by binding to the inner pore</li>
+                </ul>
+                
+                <h3>Three Functional States of Voltage-Gated Sodium Channels:</h3>
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Nav%20closed%20open%20state.png" alt="Sodium Channel States">
+                    <div class="image-caption">Three states of voltage-gated sodium channels: closed, open, and inactivated</div>
+                </div>
+                
+                <div class="state-diagram">
+                    <div class="state-box state-closed">
+                        <div class="state-title">Closed State</div>
+                        <div class="state-potential">-70 mV to -90 mV</div>
+                        <p>Channel is non-conducting but capable of opening. Activation gate closed, inactivation gate open.</p>
+                    </div>
+                    
+                    <div class="state-box state-open">
+                        <div class="state-title">Open State</div>
+                        <div class="state-potential">-55 mV to +30 mV</div>
+                        <p>Channel is conducting, allowing Na⁺ influx. Both activation and inactivation gates are open.</p>
+                    </div>
+                    
+                    <div class="state-box state-inactive">
+                        <div class="state-title">Inactive State</div>
+                        <div class="state-potential">> -55 mV (depolarized)</div>
+                        <p>Channel is non-conducting and refractory. Activation gate may be open, but inactivation gate is closed.</p>
+                    </div>
+                </div>
+                
+                <h4>Detailed State Transitions:</h4>
+                <ul>
+                    <li><span class="highlight">Closed → Open:</span> Occurs when membrane depolarizes to threshold potential (-55 mV). Voltage sensors (S4 segments) move outward, causing conformational changes that open the activation gate.</li>
+                    <li><span class="highlight">Open → Inactive:</span> Occurs automatically 1-2 ms after opening. The intracellular loop between domains III and IV (the "inactivation gate") blocks the pore.</li>
+                    <li><span class="highlight">Inactive → Closed:</span> Requires membrane repolarization to below -70 mV. The inactivation gate swings away from the pore, allowing the channel to return to the closed state.</li>
+                </ul>
+                
+                <h3>Voltage-Gated Potassium Channels (K<sub>v</sub>):</h3>
+                <ul>
+                    <li>Slower activation than Na⁺ channels (1-2 ms)</li>
+                    <li>No fast inactivation (except for A-type K⁺ channels)</li>
+                    <li>Responsible for repolarization and hyperpolarization</li>
+                    <li>Four subunits, each with 6 transmembrane segments</li>
+                    <li>Diversity in K<sub>v</sub> channels allows for fine-tuning of electrical signaling</li>
+                    <li>Some K<sub>v</sub> channels inactivate via N-type (ball and chain) or C-type (pore collapse) mechanisms</li>
+                </ul>
+                
+                <h3>Gating Mechanism:</h3>
+                <p>Voltage sensing involves:</p>
+                <ol>
+                    <li>Movement of charged S4 segments in response to membrane potential changes</li>
+                    <li>Conformational changes that open the pore</li>
+                    <li>Inactivation mechanisms that close the channel during sustained depolarization</li>
+                </ol>
+                
+                <h3>Voltage-Gated Calcium Channels (Ca<sub>v</sub>):</h3>
+                <ul>
+                    <li>Similar structure to Na<sub>v</sub> channels but with different selectivity</li>
+                    <li>Critical for neurotransmitter release, muscle contraction, and gene expression</li>
+                    <li>Slower activation and inactivation than Na<sub>v</sub> channels</li>
+                    <li>Classified into L-, N-, P/Q-, R-, and T-types based on biophysical and pharmacological properties</li>
+                </ul>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>The three states of voltage-gated sodium channels create the <span class="highlight">refractory periods</span> that prevent backward propagation of action potentials and limit their frequency. The absolute refractory period corresponds to when channels are inactivated, while the relative refractory period occurs during recovery when some channels are still inactivated.</p>
+                </div>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> The sequential opening of voltage-gated Na⁺ and K⁺ channels generates the action potential: Na⁺ channel opening causes rapid depolarization, while delayed K⁺ channel opening repolarizes the membrane. The inactivation of Na⁺ channels ensures the action potential moves in one direction along the axon.</p>
+                </div>
+            </div>
+            
+            <!-- Section 9 -->
+            <div class="section" id="section9">
+                <h2><i class="fas fa-handshake"></i> 9. Ligand-Gated Ion Channels</h2>
+                <p>Ligand-gated channels open when a specific chemical messenger (ligand) binds to the channel. They mediate fast synaptic transmission and are targets for many drugs.</p>
+                
+                <h3>Nicotinic Acetylcholine Receptor (nAChR):</h3>
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/AchR%20mechanism.png" alt="Acetylcholine Receptor Mechanism">
+                    <div class="image-caption">Nicotinic acetylcholine receptor structure and activation mechanism</div>
+                </div>
+
+                <ul>
+                    <li>Pentameric structure with five subunits (α, β, γ, δ, ε) arranged around a central pore</li>
+                    <li>Each subunit has 4 transmembrane domains (M1-M4)</li>
+                    <li>Binding of two acetylcholine molecules opens the channel</li>
+                    <li>Permeable to Na⁺, K⁺, and Ca²⁺ (non-selective cation channel)</li>
+                    <li>Found at neuromuscular junctions and in the CNS</li>
+                    <li>Agonists: nicotine, acetylcholine; Antagonists: curare, α-bungarotoxin</li>
+                </ul>
+                
+                <h3>Mechanism of Action:</h3>
+                <ol>
+                    <li>Acetylcholine binds to extracellular sites on α-subunits</li>
+                    <li>Conformational change opens the channel pore</li>
+                    <li>Cations flow through, depolarizing the membrane (excitatory effect)</li>
+                    <li>Channel closes when acetylcholine dissociates or is degraded by acetylcholinesterase</li>
+                </ol>
+                
+                <h3>Other Ligand-Gated Channels:</h3>
+                <ul>
+                    <li><span class="highlight">GABA<sub>A</sub> receptors</span> - Cl⁻ permeable, inhibitory, targeted by benzodiazepines and barbiturates</li>
+                    <li><span class="highlight">Glycine receptors</span> - Cl⁻ permeable, inhibitory, mainly in spinal cord</li>
+                    <li><span class="highlight">Ionotropic glutamate receptors</span> - Cation permeable, excitatory, include AMPA, NMDA, and kainate receptors</li>
+                    <li><span class="highlight">ATP-gated P2X receptors</span> - Cation permeable, involved in pain signaling</li>
+                    <li><span class="highlight">5-HT<sub>3</sub> receptors</span> - Cation permeable, excitatory serotonin receptors</li>
+                </ul>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Key Concept</h4>
+                    <p>Ligand-gated channels mediate <span class="highlight">fast synaptic transmission</span> (millisecond timescale), while G-protein coupled receptors mediate <span class="highlight">slow synaptic transmission</span> (seconds to minutes).</p>
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Receptor Type</th>
+                            <th>Primary Ions</th>
+                            <th>Effect</th>
+                            <th>Main Locations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>nAChR</td>
+                            <td>Na⁺, K⁺, Ca²⁺</td>
+                            <td>Excitatory</td>
+                            <td>Neuromuscular junction, CNS</td>
+                        </tr>
+                        <tr>
+                            <td>GABA<sub>A</sub></td>
+                            <td>Cl⁻</td>
+                            <td>Inhibitory</td>
+                            <td>CNS (widespread)</td>
+                        </tr>
+                        <tr>
+                            <td>AMPA</td>
+                            <td>Na⁺, K⁺</td>
+                            <td>Excitatory</td>
+                            <td>CNS (glutamatergic synapses)</td>
+                        </tr>
+                        <tr>
+                            <td>NMDA</td>
+                            <td>Na⁺, K⁺, Ca²⁺</td>
+                            <td>Excitatory</td>
+                            <td>CNS (glutamatergic synapses)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section 10 -->
+            <div class="section" id="section10">
+                <h2><i class="fas fa-ruler-combined"></i> 10. Membrane Potential Measurement</h2>
+                <p>Glass microelectrodes are used to measure membrane potential in individual cells. This technique, developed in the mid-20th century, revolutionized our understanding of cellular electrophysiology.</p>
+                
+                <h3>Glass Microelectrode Technique:</h3>
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Vm%20measurement.png" alt="Membrane Potential Measurement">
+                    <div class="image-caption">Setup for measuring membrane potential using intracellular microelectrodes</div>
+                </div>
+
+                <ul>
+                    <li>Fine-tipped glass pipettes filled with conductive solution (usually 3M KCl)</li>
+                    <li>Tip diameter typically 0.5-1.0 μm</li>
+                    <li>High electrical resistance (10-100 MΩ)</li>
+                    <li>Connected to a high-impedance amplifier (10¹² Ω input impedance)</li>
+                    <li>Ag/AgCl wires provide stable electrical connection</li>
+                </ul>
+                
+                <h3>Measurement Procedure:</h3>
+                <ol>
+                    <li>Microelectrode is advanced toward the cell using a micromanipulator</li>
+                    <li>Upon penetration of the cell membrane, a sudden negative potential is recorded</li>
+                    <li>This potential represents the resting membrane potential</li>
+                    <li>Changes in potential during electrical activity can be recorded</li>
+                    <li>Intracellular injection of dyes or substances is possible through the pipette</li>
+                </ol>
+                
+                <h3>Advantages and Limitations:</h3>
+                <ul>
+                    <li><span class="highlight">Advantages:</span> Direct measurement, high temporal resolution, intracellular access for manipulation</li>
+                    <li><span class="highlight">Limitations:</span> Cell damage during impalement, difficult long-term recordings, limited spatial resolution, cannot measure very small cells</li>
+                </ul>
+                
+                <h3>Alternative Techniques:</h3>
+                <ul>
+                    <li><span class="highlight">Voltage-sensitive dyes</span> - Fluorescent molecules that change emission with membrane potential</li>
+                    <li><span class="highlight">Patch clamp</span> - Higher resolution technique (see next section)</li>
+                    <li><span class="highlight">Field potential recording</span> - Extracellular recording of population activity</li>
+                    <li><span class="highlight">Optogenetics</span> - Using light-sensitive channels to control and monitor membrane potential</li>
+                </ul>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> Using intracellular microelectrodes, Alan Hodgkin and Andrew Huxley characterized the ionic basis of the action potential in squid giant axons, work for which they received the Nobel Prize in 1963.</p>
+                </div>
+            </div>
+            
+            <!-- Section 11 -->
+            <div class="section" id="section11">
+                <h2><i class="fas fa-microscope"></i> 11. Patch Clamp Principles</h2>
+                <p>The patch clamp technique, developed by Erwin Neher and Bert Sakmann (Nobel Prize 1991), revolutionized cellular physiology by enabling recording of ionic currents through individual ion channels. This powerful method provides unprecedented insight into channel properties and regulation.</p>
+                
+                <div class="image-container">
+                    <img src="https://betabiosciences.github.io//Biochemistry-animations/Patch%20clamp%20channel%20open%20close.png" alt="Patch Clamp Technique">
+                    <div class="image-caption">Patch clamp recording of single ion channel currents showing open and closed states</div>
+                </div>
+
+                
+                <h3>Fundamental Principles:</h3>
+                <ul>
+                    <li>Uses a glass micropipette with a tip diameter of ~1 μm to form a high-resistance seal (gigaohm seal) with the cell membrane</li>
+                    <li>Allows recording of extremely small currents in the picoampere (10⁻¹² A) range</li>
+                    <li>Can measure single channel activity or whole-cell currents</li>
+                    <li>Operates in voltage clamp mode to control membrane potential while measuring current, or current clamp mode to record membrane potential changes</li>
+                    <li>Requires specialized equipment including a vibration-isolation table, Faraday cage, and high-gain low-noise amplifier</li>
+                </ul>
+                
+                <h3>Patch Configurations:</h3>
+                <ol>
+                    <li><span class="highlight">Cell-attached</span> - Pipette sealed to intact cell, non-invasive recording of channel activity without disrupting intracellular environment</li>
+                    <li><span class="highlight">Whole-cell</span> - Membrane patch ruptured after seal formation, allowing electrical and diffusional access to the cell interior</li>
+                    <li><span class="highlight">Inside-out</span> - Excised patch with cytoplasmic side exposed to bath solution, ideal for studying regulation by intracellular factors</li>
+                    <li><span class="highlight">Outside-out</span> - Excised patch with extracellular side exposed, perfect for studying effects of extracellular ligands</li>
+                </ol>
+                
+                <h3>Applications and Impact:</h3>
+                <ul>
+                    <li>Characterization of single channel properties (conductance, gating kinetics, open probability)</li>
+                    <li>Pharmacological profiling of ion channels and drug discovery</li>
+                    <li>Investigation of channel regulation by second messengers, phosphorylation, and interacting proteins</li>
+                    <li>Elucidation of disease mechanisms involving ion channel dysfunction (channelopathies)</li>
+                    <li>Study of synaptic transmission and presynaptic mechanisms</li>
+                </ul>
+                
+                <div class="key-concept">
+                    <h4><i class="fas fa-lightbulb"></i> Technical Considerations</h4>
+                    <p>Successful patch clamping requires meticulous technique: clean solutions, properly fabricated pipettes, vibration isolation, and careful manipulation. The quality of the seal (resistance >1 GΩ) critically determines signal-to-noise ratio.</p>
+                </div>
+                
+                <div class="example-box">
+                    <p><i class="fas fa-flask"></i> <strong>Example:</strong> Patch clamp studies revealed how cystic fibrosis results from defective CFTR chloride channels, leading to the development of drugs that specifically target these channel defects.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>
+                <i class="fas fa-arrow-left"></i>
+                Previous
+            </button>
+            <button id="nextBtn">
+                Next
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="section-counter">
+            Section <span id="currentSection">1</span> of <span id="totalSections">11</span>
+        </div>
+        
+        <div class="section-nav" id="sectionNav">
+            <!-- Section navigation dots will be added by JavaScript -->
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const currentSectionSpan = document.getElementById('currentSection');
+            const totalSectionsSpan = document.getElementById('totalSections');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const sectionNav = document.getElementById('sectionNav');
+            
+            let currentSectionIndex = 0;
+            const totalSections = sections.length;
+            
+            // Create section navigation dots
+            for (let i = 0; i < totalSections; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'section-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    currentSectionIndex = i;
+                    updateNavigation();
+                });
+                sectionNav.appendChild(dot);
+            }
+            
+            totalSectionsSpan.textContent = totalSections;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSectionIndex === 0;
+                nextBtn.disabled = currentSectionIndex === totalSections - 1;
+                
+                // Update section counter
+                currentSectionSpan.textContent = currentSectionIndex + 1;
+                
+                // Update progress bar
+                const progress = ((currentSectionIndex + 1) / totalSections) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+                
+                // Show/hide sections
+                sections.forEach((section, index) => {
+                    section.classList.toggle('active', index === currentSectionIndex);
+                });
+                
+                // Update navigation dots
+                document.querySelectorAll('.section-dot').forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSectionIndex);
+                });
+                
+                // Scroll to top of section container
+                document.querySelector('.section-container').scrollTop = 0;
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    updateNavigation();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSectionIndex < totalSections - 1) {
+                    currentSectionIndex++;
+                    updateNavigation();
+                }
+            });
+            
+            // Add keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft' && currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    updateNavigation();
+                } else if (e.key === 'ArrowRight' && currentSectionIndex < totalSections - 1) {
+                    currentSectionIndex++;
+                    updateNavigation();
+                }
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
