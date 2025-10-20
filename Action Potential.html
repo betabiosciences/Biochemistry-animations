@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Action Potential Interactive Guide</title>
+    <style>
+        :root {
+            --dark-bg: #0a0e29;
+            --medium-bg: #121740;
+            --light-bg: #1c2257;
+            --accent-color: #6c5ce7;
+            --text-color: #e2e2e2;
+            --highlight-color: #a29bfe;
+            --button-color: #4834d4;
+            --button-hover: #5f4fe0;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #e17055;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--medium-bg));
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--light-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--highlight-color);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--highlight-color);
+            font-size: 1.5rem;
+            margin: 15px 0;
+        }
+        
+        h3 {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        .section {
+            display: none;
+            padding: 15px;
+            background-color: rgba(28, 34, 87, 0.7);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 400px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        button:disabled {
+            background-color: #3a3a5a;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: var(--dark-bg);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 11.11%; /* 1/9 of the total width */
+            transition: width 0.3s;
+        }
+        
+        .section-number {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+        }
+        
+        .info-box {
+            background-color: var(--medium-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            border: 1px solid var(--accent-color);
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background-color: var(--medium-bg);
+            color: var(--highlight-color);
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+        
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Action Potential Interactive Guide</h1>
+            <p>Explore the fundamentals of neural signaling</p>
+        </header>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="section-number">
+            Section <span id="current-section">1</span> of 9
+        </div>
+        
+        <!-- Section 1: Local Potential and Their Characteristics -->
+        <div class="section active" id="section1">
+            <h2>1. Local Potential and Their Characteristics</h2>
+            <p>Local potentials, also known as graded potentials, are small changes in the membrane potential of neurons that occur in response to stimuli. Unlike action potentials, they are graded and decremental in nature.</p>
+            
+            <h3>Key Characteristics:</h3>
+            <ul>
+                <li><strong>Graded Nature:</strong> The magnitude of local potentials varies directly with the strength of the stimulus. A stronger stimulus produces a larger potential change, while a weaker stimulus produces a smaller change.</li>
+                <li><strong>Decremental Conduction:</strong> Local potentials decrease in strength as they travel away from their point of origin. This occurs because the current leaks out across the membrane as it spreads.</li>
+                <li><strong>Reversibility:</strong> Once the stimulus is removed, the membrane potential returns to its resting state without requiring any special reset mechanism.</li>
+                <li><strong>Excitatory or Inhibitory:</strong> Local potentials can be either depolarizing (making the inside of the cell less negative) or hyperpolarizing (making the inside more negative).</li>
+                <li><strong>No Refractory Period:</strong> Unlike action potentials, local potentials do not have a refractory period, meaning they can summate with subsequent stimuli.</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>Important:</strong> Local potentials serve as the initial response to stimuli and can summate to reach the threshold needed to trigger an action potential.</p>
+            </div>
+        </div>
+        
+        <!-- Section 2: Graded Potential Nature of Local Potential -->
+        <div class="section" id="section2">
+            <h2>2. Graded Potential Nature of Local Potential</h2>
+            <p>The graded nature of local potentials refers to their ability to vary in amplitude based on stimulus strength. This property allows for the integration of multiple signals through summation processes.</p>
+            
+            <h3>Spatial Summation:</h3>
+            <p>Spatial summation occurs when multiple stimuli from different locations on the neuron arrive simultaneously and combine their effects. For example, if several excitatory postsynaptic potentials (EPSPs) from different synapses occur at the same time, their combined depolarization may reach the threshold to trigger an action potential, even if individually they would be insufficient.</p>
+            
+            <h3>Temporal Summation:</h3>
+            <p>Temporal summation happens when multiple stimuli from the same location arrive in rapid succession. If the time between stimuli is shorter than the time it takes for the membrane to return to its resting potential, the effects of the stimuli will add up. This can push the membrane potential to threshold even if individual stimuli are subthreshold.</p>
+            
+            <div class="info-box">
+                <p><strong>Clinical Relevance:</strong> Understanding summation is crucial for comprehending how neurons integrate information from multiple sources and make "decisions" about whether to fire an action potential.</p>
+            </div>
+        </div>
+        
+        <!-- Section 3: The 3 Phases in Action Potential Graph -->
+        <div class="section" id="section3">
+            <h2>3. The 3 Phases in Action Potential Graph</h2>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Action%20potential%20graph.png" alt="Potassium Channel 3D Structure">
+</div>
+            <p>Action potentials are rapid, transient changes in membrane potential that propagate along excitable cells like neurons. They consist of three distinct phases:</p>
+            
+            <ol>
+                <li><strong>Depolarization Phase:</strong> This initial phase begins when the membrane potential reaches threshold (typically around -55 mV). Voltage-gated sodium channels open rapidly, allowing Na+ ions to flood into the cell. This massive influx of positive charge causes the membrane potential to quickly rise toward sodium's equilibrium potential (+60 mV), resulting in the sharp upward spike of the action potential.</li>
+                
+                <li><strong>Repolarization Phase:</strong> As the membrane potential approaches its peak, two important events occur: voltage-gated sodium channels begin to inactivate (close), and voltage-gated potassium channels open. The outflow of K+ ions, driven by both concentration and electrical gradients, returns the membrane potential toward its resting value. This creates the downward slope of the action potential.</li>
+                
+                <li><strong>Hyperpolarization Phase (After-hyperpolarization):</strong> Following repolarization, the membrane potential briefly becomes more negative than the resting potential. This occurs because potassium channels remain open for a short time after repolarization is complete, allowing excess K+ to leave the cell. The membrane then gradually returns to its resting potential as potassium channels close and the sodium-potassium pump restores ion concentrations.</li>
+            </ol>
+            
+            <div class="info-box">
+                <p><strong>Key Point:</strong> The all-or-none principle states that once threshold is reached, an action potential will fire at full amplitude regardless of stimulus strength. Subthreshold stimuli produce no action potential, while suprathreshold stimuli produce action potentials of identical magnitude.</p>
+            </div>
+        </div>
+        
+        <!-- Section 4: Effect of Tetrodotoxin, Tri Ethyl Ammonium on Action Potential -->
+        <div class="section" id="section4">
+            <h2>4. Effect of Tetrodotoxin and Triethyl Ammonium</h2>
+            <p>Various neurotoxins and chemicals can selectively block ion channels, providing important insights into action potential mechanisms and having significant clinical implications.</p>
+            
+            <h3>Tetrodotoxin (TTX):</h3>
+            <p>Tetrodotoxin is a potent neurotoxin found in pufferfish and some other marine animals. It specifically blocks voltage-gated sodium channels by binding to their outer pore. This prevents sodium influx during depolarization, effectively halting action potential generation and propagation. TTX does not affect the resting membrane potential or potassium channels. The extreme potency of TTX (lethal at microgram quantities) makes it both a dangerous poison and a valuable research tool for studying sodium channel function.</p>
+
+           
+            <h3>Triethyl Ammonium (TEA):</h3>
+            <p>Triethyl ammonium is a potassium channel blocker that specifically targets voltage-gated potassium channels. By preventing potassium efflux during repolarization, TEA prolongs the action potential duration. The membrane remains depolarized for an extended period because the repolarization phase is slowed. This effect demonstrates the crucial role of potassium channels in terminating the action potential and returning the membrane to its resting state.</p>
+
+           
+            <div class="info-box">
+                <p><strong>Medical Application:</strong> Understanding how these toxins work has led to the development of various therapeutic drugs that modulate ion channel activity, such as local anesthetics (which work similarly to TTX) and certain antiarrhythmic medications.</p>
+            </div>
+        </div>
+        
+        <!-- Section 5: Factors Affecting Velocity of Action Potential -->
+        <div class="section" id="section5">
+            <h2>5. Factors Affecting Velocity of Action Potential</h2>
+            <p>The speed at which action potentials propagate along axons is influenced by several physical and electrical properties of the neuron. Two key concepts for understanding conduction velocity are the time constant and space constant.</p>
+            
+            <h3>Time Constant (τ):</h3>
+            <p>The time constant represents how quickly the membrane potential changes in response to a current. It is calculated as τ = R<sub>m</sub> × C<sub>m</sub>, where R<sub>m</sub> is membrane resistance and C<sub>m</sub> is membrane capacitance. A lower time constant means the membrane can charge and discharge more rapidly, allowing faster action potential propagation. Factors that decrease membrane capacitance (such as myelination) reduce the time constant and increase conduction velocity.</p>
+            
+            <h3>Space Constant (λ):</h3>
+            <p>The space constant determines how far a local potential can spread along the membrane before decaying. It is calculated as λ = √(R<sub>m</sub> / R<sub>i</sub>), where R<sub>m</sub> is membrane resistance and R<sub>i</sub> is internal resistance (axoplasmic resistance). A larger space constant means potentials can spread further with less decrement, improving conduction efficiency. Increasing axon diameter reduces internal resistance, thereby increasing the space constant and conduction velocity.</p>
+            
+            <div class="info-box">
+                <p><strong>Biological Significance:</strong> Different types of neurons have evolved optimized conduction velocities based on their specific functions. For example, neurons carrying pain signals tend to be slower than those carrying proprioceptive information.</p>
+            </div>
+        </div>
+        
+        <!-- Section 6: Ways to Increase the Velocity of Action Potential -->
+        <div class="section" id="section6">
+            <h2>6. Ways to Increase the Velocity of Action Potential</h2>
+            <p>Several evolutionary adaptations and physiological mechanisms have developed to optimize action potential conduction velocity in nervous systems:</p>
+            
+            <ul>
+                <li><strong>Increase Axon Diameter:</strong> Larger diameter axons have lower internal resistance (R<sub>i</sub>), which increases the space constant. This allows local currents to spread further along the axon, reducing the number of regions that need to regenerate the action potential and thereby increasing conduction velocity. In unmyelinated axons, velocity is proportional to the square root of diameter.</li>
+                
+                <li><strong>Myelination:</strong> Myelin sheaths dramatically increase conduction velocity through two mechanisms: they greatly increase membrane resistance (reducing current leakage) and decrease membrane capacitance (allowing faster charging of the membrane). This enables saltatory conduction, where action potentials "jump" between nodes of Ranvier.</li>
+                
+                <li><strong>Optimize Temperature:</strong> Within physiological ranges, increased temperature speeds up ion channel kinetics and diffusion rates, thereby increasing conduction velocity. This explains why nerve conduction studies are performed at controlled temperatures.</li>
+                
+                <li><strategic Ion Channel Distribution:</strong> In myelinated axons, voltage-gated sodium channels are concentrated at the nodes of Ranvier, while potassium channels are mostly located in the internodal regions. This specialized distribution optimizes the efficiency of saltatory conduction.</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>Evolutionary Note:</strong> The evolution of myelination allowed for much faster nerve conduction without requiring prohibitively large axon diameters, enabling the development of complex nervous systems in animals with limited body space.</p>
+            </div>
+        </div>
+        
+        <!-- Section 7: Effect of Myelination on Velocity -->
+        <div class="section" id="section7">
+            <h2>7. Effect of Myelination on Velocity</h2>
+            <p>Myelination represents one of the most significant evolutionary adaptations for increasing neural conduction velocity. Myelin is a lipid-rich substance produced by Schwann cells in the peripheral nervous system and oligodendrocytes in the central nervous system.</p>
+            
+            <h3>Mechanisms of Myelination Effects:</h3>
+            <ul>
+                <li><strong>Electrical Insulation:</strong> Myelin acts as an electrical insulator, dramatically increasing membrane resistance. This prevents current leakage across the membrane, allowing the depolarizing current to travel further along the axon.</li>
+                
+                <li><strong>Reduced Membrane Capacitance:</strong> Myelin decreases the capacitance of the membrane by increasing the distance between intracellular and extracellular conductive fluids. Lower capacitance means less charge is needed to change the membrane potential, allowing faster depolarization.</li>
+                
+                <li><strong>Saltatory Conduction:</strong> The combination of high resistance and low capacitance enables saltatory conduction, where action potentials appear to "jump" from one node of Ranvier to the next. At each node, where myelin is absent, the high concentration of voltage-gated sodium channels allows rapid regeneration of the action potential.</li>
+            </ul>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Unmyelinated Axon</th>
+                            <th>Myelinated Axon</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Conduction Mechanism</td>
+                            <td>Continuous conduction along entire axon</td>
+                            <td>Saltatory conduction between nodes</td>
+                        </tr>
+                        <tr>
+                            <td>Typical Speed</td>
+                            <td>Slow (0.5-2 m/s)</td>
+                            <td>Fast (up to 120 m/s)</td>
+                        </tr>
+                        <tr>
+                            <td>Energy Efficiency</td>
+                            <td>Low - ions flux across entire membrane</td>
+                            <td>High - ions flux only at nodes</td>
+                        </tr>
+                        <tr>
+                            <td>Space Efficiency</td>
+                            <td>Requires larger diameter for speed</td>
+                            <td>Small diameter can achieve high speed</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>Clinical Correlation:</strong> Demyelinating diseases like Multiple Sclerosis disrupt myelin sheaths, leading to slowed conduction velocity, conduction block, and various neurological symptoms depending on which nerves are affected.</p>
+            </div>
+        </div>
+        
+        <!-- Section 8: Types of Synaptic Transmission -->
+        <div class="section" id="section8">
+            <h2>8. Types of Synaptic Transmission</h2>
+            <p>Synaptic transmission is the process by which neurons communicate with each other or with effector cells. There are two primary types of synaptic transmission with distinct mechanisms and functions.</p>
+
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Electrical%20and%20chemical%20synapse.png" alt="Potassium Channel 3D Structure">
+</div>
+            
+            <h3>Electrical Synapses:</h3>
+            <ul>
+                <li><strong>Structure:</strong> Electrical synapses consist of gap junctions that directly connect the cytoplasm of adjacent cells. These junctions contain connexin proteins that form channels allowing ions and small molecules to pass directly between cells.</li>
+                <li><strong>Transmission Mechanism:</strong> Ions flow directly through gap junctions, creating an electrical current that depolarizes the postsynaptic cell.</li>
+                <li><strong>Speed:</strong> Extremely fast, virtually instantaneous transmission.</li>
+                <li><strong>Directionality:</strong> Typically bidirectional, though some can be rectifying (allowing current flow in one direction only).</li>
+                <li><strong>Functions:</strong> Important for synchronizing activity in neuronal networks, cardiac muscle contraction, and embryonic development.</li>
+            </ul>
+            
+            <h3>Chemical Synapses:</h3>
+            <ul>
+                <li><strong>Structure:</strong> Chemical synapses have a presynaptic terminal containing synaptic vesicles filled with neurotransmitter, a synaptic cleft, and a postsynaptic membrane with receptor proteins.</li>
+                <li><strong>Transmission Mechanism:</strong> Action potentials in the presynaptic neuron trigger calcium influx, causing neurotransmitter release into the synaptic cleft. Neurotransmitters bind to receptors on the postsynaptic membrane, leading to ion channel opening or second messenger activation.</li>
+                <li><strong>Speed:</strong> Slower than electrical synapses due to multiple steps involved (typically 0.3-5 ms delay).</li>
+                <li><strong>Directionality:</strong> Strictly unidirectional - from presynaptic to postsynaptic cell.</li>
+                <li><strong>Functions:</strong> Allow for signal amplification, modulation, and integration. Most synapses in the human nervous system are chemical, enabling complex information processing, learning, and memory.</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>Evolutionary Perspective:</strong> Chemical synapses appeared later in evolution than electrical synapses and allowed for more complex and flexible neural processing, contributing to the development of advanced nervous systems.</p>
+            </div>
+        </div>
+        
+        <!-- Section 9: Refractory Period and Their Types -->
+        <div class="section" id="section9">
+            <h2>9. Refractory Period and Their Types</h2>
+            <p>Refractory periods are time intervals following an action potential during which a second action potential is either impossible or more difficult to generate. These periods are crucial for proper neural function.</p>
+            
+            <h3>Absolute Refractory Period:</h3>
+            <ul>
+                <li><strong>Timing:</strong> Begins at the onset of the action potential and continues through most of the repolarization phase, typically lasting about 1-2 milliseconds.</li>
+                <li><strong>Mechanism:</strong> Caused by the inactivation of voltage-gated sodium channels. After these channels open during depolarization, they enter an inactive state where they cannot be reopened, regardless of membrane potential.</li>
+                <li><strong>Functional Significance:</strong> Ensures the action potential propagates in one direction only (away from the initial site of depolarization). Limits the maximum firing rate of neurons. Provides a "reset" period that prevents summation of action potentials.</li>
+            </ul>
+            
+            <h3>Relative Refractory Period:</h3>
+            <ul>
+                <li><strong>Timing:</strong> Follows the absolute refractory period and coincides with the after-hyperpolarization phase, typically lasting several milliseconds.</li>
+                <li><strong>Mechanism:</strong> Caused by two factors: some sodium channels remain inactivated, and potassium channels remain open, creating an outward current that opposes depolarization.</li>
+                <li><strong>Functional Significance:</strong> A stronger-than-normal stimulus can overcome the hyperpolarization and residual sodium channel inactivation to generate an action potential. Allows for frequency coding of stimulus intensity - stronger stimuli can produce higher firing frequencies. Contributes to adaptation in sensory neurons.</li>
+            </ul>
+            
+            <div class="info-box">
+                <p><strong>Clinical Importance:</strong> Abnormal refractory periods can contribute to various neurological disorders. For example, shortened refractory periods in certain cardiac cells can lead to arrhythmias, while altered refractory periods in neurons may contribute to epilepsy.</p>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        // Section navigation
+        let currentSection = 1;
+        const totalSections = 9;
+        const progressBar = document.getElementById('progress');
+        const currentSectionSpan = document.getElementById('current-section');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        function updateNavigation() {
+            // Update progress bar
+            progressBar.style.width = `${(currentSection / totalSections) * 100}%`;
+            
+            // Update section number
+            currentSectionSpan.textContent = currentSection;
+            
+            // Update button states
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+            
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show current section
+            document.getElementById(`section${currentSection}`).classList.add('active');
+        }
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentSection > 1) {
+                currentSection--;
+                updateNavigation();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentSection < totalSections) {
+                currentSection++;
+                updateNavigation();
+            }
+        });
+        
+        // Initialize the navigation
+        window.onload = function() {
+            updateNavigation();
+        };
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
