@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nucleic Acid Structure</title>
+    <style>
+        :root {
+            --dark-bg: #0f172a;
+            --darker-bg: #0a0f1c;
+            --accent: #4f46e5;
+            --light-accent: #6366f1;
+            --text: #e2e8f0;
+            --heading: #f1f5f9;
+            --highlight: #60a5fa;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h1 {
+            color: var(--heading);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--light-accent);
+            font-size: 1rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: var(--accent);
+            width: 14.28%; /* 1/7 of the width */
+            transition: width 0.3s ease;
+        }
+        
+        .section-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            color: var(--highlight);
+            font-size: 1.5rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        h3 {
+            color: var(--light-accent);
+            margin: 1.2rem 0 0.7rem 0;
+            font-size: 1.2rem;
+        }
+        
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .note-box {
+            background-color: rgba(96, 165, 250, 0.1);
+            border-left: 4px solid var(--highlight);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .key-point {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            border: 1px solid var(--border);
+            padding: 0.7rem;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background-color: var(--darker-bg);
+            color: var(--light-accent);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background-color: var(--light-accent);
+        }
+        
+        button:disabled {
+            background-color: var(--border);
+            cursor: not-allowed;
+        }
+        
+        .section-counter {
+            text-align: center;
+            color: var(--light-accent);
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 600px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .section-container {
+                padding: 1rem;
+                min-height: 450px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .section-content {
+                max-height: 55vh;
+            }
+        }
+        
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--card-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        
+        /* Highlight for important terms */
+        .term {
+            color: var(--highlight);
+            font-weight: 600;
+        }
+        
+        /* Animation for section transitions */
+        .section-content {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+/* Updated image container styles */
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nucleic Acid Structure</h1>
+            <p class="subtitle">An Interactive Guide to DNA and RNA Components</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </header>
+        
+        <main>
+            <div class="section-container">
+                <h2 class="section-title" id="sectionTitle">Overview of Nucleic Acid Components</h2>
+                <div class="section-content" id="sectionContent">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
+                
+                <div class="nav-buttons">
+                    <button id="prevBtn" disabled>Previous</button>
+                    <button id="nextBtn">Next</button>
+                </div>
+                <div class="section-counter" id="sectionCounter">Section 1 of 7</div>
+            </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+        </main>
+    </div>
+
+    <script>
+        // Section data with expanded explanations (diagrams removed)
+        const sections = [
+            {
+                title: "Overview of Nucleic Acid Components",
+                content: `
+                    <p>Nucleic acids are biopolymers essential for all known forms of life. They include DNA (deoxyribonucleic acid) and RNA (ribonucleic acid), which store and transmit genetic information.</p>
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> Nucleic acids are the information storage molecules of the cell, with DNA serving as the long-term genetic repository and RNA functioning in various roles including information transfer and regulation.</p>
+                    </div>
+                    
+                    <p>The three main components of nucleic acids are:</p>
+                    <ul>
+                        <li><span class="term">Sugar</span> - A pentose sugar (ribose in RNA, deoxyribose in DNA) that forms the backbone structure</li>
+                        <li><span class="term">Nucleobase</span> - Nitrogenous bases that form the "letters" of the genetic code through specific pairing</li>
+                        <li><span class="term">Phosphate group</span> - Provides the negatively charged backbone and links nucleotides together</li>
+                    </ul>
+                    
+                    <p>These components combine hierarchically to form increasingly complex structures:</p>
+                    <ol>
+                        <li><span class="term">Nucleoside</span> = Sugar + Base (no phosphate)</li>
+                        <li><span class="term">Nucleotide</span> = Sugar + Base + Phosphate (monomer unit)</li>
+                        <li><span class="term">Nucleic Acid</span> = Polymer of nucleotides (DNA or RNA)</li>
+                    </ol>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> The distinction between nucleosides and nucleotides is crucial. Nucleosides lack phosphate groups and serve different biological roles, often in signaling (e.g., adenosine) or as metabolic intermediates.</p>
+                    </div>
+                    
+                    <h3>DNA vs RNA: Structural Differences</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>DNA</th>
+                            <th>RNA</th>
+                        </tr>
+                        <tr>
+                            <td>Sugar</td>
+                            <td>Deoxyribose (lacks OH at 2')</td>
+                            <td>Ribose (has OH at 2')</td>
+                        </tr>
+                        <tr>
+                            <td>Bases</td>
+                            <td>A, T, G, C</td>
+                            <td>A, U, G, C</td>
+                        </tr>
+                        <tr>
+                            <td>Structure</td>
+                            <td>Typically double-stranded</td>
+                            <td>Typically single-stranded</td>
+                        </tr>
+                        <tr>
+                            <td>Stability</td>
+                            <td>More chemically stable</td>
+                            <td>Less stable, prone to hydrolysis</td>
+                        </tr>
+                    </table>
+                `
+            },
+            {
+                title: "Sugar Components",
+                content: `
+                    <p>The sugar component in nucleic acids is a pentose (5-carbon) sugar. RNA contains <span class="term">ribose</span>, while DNA contains <span class="term">deoxyribose</span> (lacking an oxygen at the 2' position).</p>
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> The difference between ribose and deoxyribose (the presence or absence of an oxygen at the 2' carbon) is fundamental to the different chemical properties and biological roles of DNA and RNA.</p>
+                    </div>
+                    
+                    <h3>Furanose Ring Formation</h3>
+                    <p>The linear pentose sugars cyclize to form a <span class="term">furanose ring</span>, a 5-membered ring consisting of four carbon atoms and one oxygen atom. This ring structure is more stable than the linear form and provides the structural framework for nucleotide assembly.</p>
+                    
+                    <h3>Alpha and Beta Anomers</h3>
+                    <p>The configuration at the anomeric carbon (C1') determines whether the sugar is in the α or β form. Nucleic acids exclusively use the <span class="term">β-anomer</span>, where the base is in the equatorial position, providing greater stability and proper geometry for base pairing.</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Aldehyde%20and%20furanose.png" alt="Potassium Channel 3D Structure">
+</div>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> The β-configuration places the nucleobase in a position that minimizes steric hindrance and allows for proper base stacking in the double helix.</p>
+                    </div>
+                    
+                    <h3>Sugar Puckering</h3>
+                    <p>The furanose ring is not planar but adopts various <span class="term">puckered conformations</span> to relieve torsional strain. This pseudorotation occurs around the C2'-C3' bond axis and affects the overall geometry of the nucleic acid.</p>
+                    
+                    <p>Common conformations include:</p>
+                    <ul>
+                        <li><span class="term">C2'-endo</span> - Common in B-form DNA, creates wider and shallower minor groove</li>
+                        <li><span class="term">C3'-endo</span> - Common in A-form DNA and RNA, creates deeper and narrower minor groove</li>
+                        <li><span class="term">O4'-endo</span> - Intermediate conformation</li>
+                    </ul>
+                    
+                    <h3>Endo/Exo Configurations</h3>
+                    <p>In <span class="term">endo</span> conformations, the atom is displaced toward the same side as the C5' atom (above the ring plane). In <span class="term">exo</span> conformations, it's displaced toward the opposite side (below the ring plane).</p>
+                    
+                    <div class="note-box">
+                        <p><strong>Biological Significance:</strong> Sugar puckering affects the overall geometry of nucleic acids, influencing protein-DNA recognition, DNA packaging, and the transition between different helical forms (A, B, Z DNA).</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Sugar%20puckering.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    </div>
+                `
+            },
+            {
+                title: "Nucleobases",
+                content: `
+                    <p>Nucleobases are nitrogen-containing heterocyclic compounds that form the information-carrying part of nucleic acids through specific hydrogen bonding patterns.</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Purine%20structure.png" alt="Potassium Channel 3D Structure">
+</div>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Pyrimidine%20structure.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> The complementary base pairing (A-T/U and G-C) through specific hydrogen bonding is the fundamental mechanism for genetic information storage, replication, and expression.</p>
+                    </div>
+                    
+                    <h3>Aromaticity and Planarity</h3>
+                    <p>Nucleobases are <span class="term">aromatic heterocycles</span>, which contributes to their stability and planar structure. This aromaticity arises from delocalized π-electrons in conjugated ring systems, allowing for base stacking interactions that stabilize the double helix.</p>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> The planar nature of nucleobases enables efficient base stacking, which contributes significantly to the stability of double-stranded nucleic acids, sometimes even more than hydrogen bonding.</p>
+                    </div>
+                    
+                    <h3>UV Absorbance Properties</h3>
+                    <p>Nucleobases absorb UV light strongly at around 260 nm due to their conjugated double-bond systems. This property is utilized in:</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Nucleotide%20absorbance.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    <ul>
+                        <li>Quantifying nucleic acid concentration</li>
+                        <li>Assessing nucleic acid purity (A260/A280 ratio)</li>
+                        <li>Detecting structural changes (hypochromicity upon base stacking)</li>
+                    </ul>
+                    
+                    <h3>Purines and Pyrimidines: Structural Classification</h3>
+                    <p>There are two fundamental types of nucleobases:</p>
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Feature</th>
+                            <th>Purines</th>
+                            <th>Pyrimidines</th>
+                        </tr>
+                        <tr>
+                            <td>Ring Structure</td>
+                            <td>Fused double ring (pyrimidine + imidazole)</td>
+                            <td>Single six-membered ring</td>
+                        </tr>
+                        <tr>
+                            <td>Size</td>
+                            <td>Larger (∼2.5 Å across)</td>
+                            <td>Smaller (∼2.0 Å across)</td>
+                        </tr>
+                        <tr>
+                            <td>Biosynthesis</td>
+                            <td>Built on ribose phosphate</td>
+                            <td>Assembled as free bases</td>
+                        </tr>
+                        <tr>
+                            <td>Examples</td>
+                            <td>Adenine (A), Guanine (G)</td>
+                            <td>Cytosine (C), Thymine (T), Uracil (U)</td>
+                        </tr>
+                    </table>
+                    
+                    <h3>Tautomerism and Its Biological Significance</h3>
+                    <p>Nucleobases can exist in different <span class="term">tautomeric forms</span> by rearrangement of hydrogen atoms and double bonds. The equilibrium strongly favors certain tautomers under physiological conditions:</p>
+                    
+                    <ul>
+                        <li><span class="term">Amino vs Imino forms</span> - Amino form predominates for A and C</li>
+                        <li><span class="term">Lactam vs Lactim forms</span> - Lactam form predominates for G, T, and U</li>
+                    </ul>
+                    
+                    <div class="note-box">
+                        <p><strong>Important:</strong> Rare tautomers can cause incorrect base pairing during DNA replication, leading to mutations. For example, the rare imino form of adenine can pair with cytosine instead of thymine.</p>
+                    </div>
+                    
+                    <h3>Modified Bases</h3>
+                    <p>In addition to the standard bases, nucleic acids contain modified bases with specialized functions:</p>
+                    <ul>
+                        <li><span class="term">Methylated bases</span> - Regulation of gene expression (e.g., 5-methylcytosine)</li>
+                        <li><span class="term">Inosine</span> - Found in tRNA, allows wobble pairing</li>
+                        <li><span class="term">Pseudouridine</span> - Modified uridine in tRNA and rRNA</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Nucleosides",
+                content: `
+                    <p>A <span class="term">nucleoside</span> consists of a nucleobase covalently attached to a sugar (ribose or deoxyribose) but without the phosphate group. Nucleosides serve as fundamental building blocks and have important biological roles beyond nucleic acid synthesis.</p>
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> Nucleosides represent the minimal unit containing both the information component (base) and structural component (sugar) of nucleic acids, and many have important biological functions independent of their role in nucleic acids.</p>
+                    </div>
+                    
+                    <h3>Condensation Reaction Formation</h3>
+                    <p>Nucleosides form through an <span class="term">N-glycosylation reaction</span> between the anomeric carbon (C1') of the sugar and a nitrogen atom of the base, with the elimination of water. The specific nitrogen involved depends on the base type:</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/NucleosideReaction.png" alt="Potassium Channel 3D Structure">
+</div>
+                    
+                    <ul>
+                        <li><span class="term">Purines</span> - Attach through N9</li>
+                        <li><span class="term">Pyrimidines</span> - Attach through N1</li>
+                    </ul>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> This reaction is catalyzed by specific enzymes called nucleoside phosphorylases in salvage pathways, or occurs during de novo nucleotide synthesis.</p>
+                    </div>
+                    
+                    <h3>Glycosidic Linkage Characteristics</h3>
+                    <p>The bond between the sugar and base is called the <span class="term">N-glycosidic bond</span>. This bond has several important features:</p>
+                    
+                    <ul>
+                        <li>It's relatively flexible but has restricted rotation due to steric hindrance</li>
+                        <li>It's stable under physiological conditions but can be hydrolyzed under acidic conditions or by specific enzymes</li>
+                        <li>The bond length is approximately 1.5 Å</li>
+                        <li>The bond angle affects the orientation of the base relative to the sugar</li>
+                    </ul>
+                    
+                    <h3>Syn and Anti Conformations</h3>
+                    <p>The orientation of the base relative to the sugar can adopt different conformations defined by the glycosidic torsion angle (χ):</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Anti%20and%20syn%20nucleosides.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Conformation</th>
+                            <th>Glycosidic Angle (χ)</th>
+                            <th>Base Position</th>
+                            <th>Occurrence</th>
+                        </tr>
+                        <tr>
+                            <td>Anti</td>
+                            <td>-90° to -180°</td>
+                            <td>Away from sugar</td>
+                            <td>Most common in B-DNA</td>
+                        </tr>
+                        <tr>
+                            <td>Syn</td>
+                            <td>0° to 90°</td>
+                            <td>Over the sugar ring</td>
+                            <td>Z-DNA, purines in single strands</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="note-box">
+                        <p><strong>Structural Impact:</strong> The anti conformation is sterically favored in most nucleic acid structures, while the syn conformation can occur in certain sequences (alternating purine-pyrimidine) or under specific conditions, leading to different DNA forms like Z-DNA.</p>
+                    </div>
+                    
+                    <h3>Biological Roles of Nucleosides</h3>
+                    <p>Beyond serving as nucleotide precursors, nucleosides have diverse biological functions:</p>
+                    
+                    <ul>
+                        <li><span class="term">Adenosine</span> - Neurotransmitter, regulates blood flow, component of ATP</li>
+                        <li><span class="term">Guanosine</span> - Component of signaling molecules (cGMP)</li>
+                        <li><span class="term">Cytidine</span> - Component of CDP-choline in phospholipid synthesis</li>
+                        <li><span class="term">Uridine</span> - Component of UDP-sugars in glycosylation reactions</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Phosphate Group Significance",
+                content: `
+                    <p>The <span class="term">phosphate group</span> is a crucial component of nucleic acids, providing the negatively charged backbone and enabling polymerization. Its chemical properties fundamentally shape nucleic acid structure and function.</p>
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> The polyanionic nature of nucleic acids, conferred by phosphate groups, is essential for their solubility, protein interactions, and overall structural stability, while also providing the chemical functionality for polymerization.</p>
+                    </div>
+                    
+                    <h3>Structural Role in Nucleic Acid Backbone</h3>
+                    <p>Phosphate groups create the repeating, negatively charged backbone that:</p>
+                    <ul>
+                        <li>Provides a uniform structural framework regardless of base sequence</li>
+                        <li>Creates the polyanionic character essential for solubility in aqueous environments</li>
+                        <li>Maintains the structural integrity of the double helix through charge repulsion</li>
+                        <li>Defines the directionality (5'→3') of nucleic acid chains</li>
+                    </ul>
+                    
+                    <h3>Chemical Properties and Reactivity</h3>
+                    <p>Phosphate groups have distinctive chemical characteristics:</p>
+                    
+                    <ul>
+                        <li><span class="term">Acidity</span> - Strongly acidic (pKa ≈ 2 for first dissociation), fully ionized at physiological pH</li>
+                        <li><span class="term">Charge</span> - Each phosphate carries approximately -1 charge at neutral pH</li>
+                        <li><span class="term">Hydrophilicity</span> - Highly polar and water-soluble</li>
+                        <li><span class="term">Metal binding</span> - Can coordinate divalent cations like Mg²⁺, which stabilize the structure</li>
+                    </ul>
+                    
+                    <h3>Biological Significance and Interactions</h3>
+                    <p>The phosphate backbone mediates crucial biological interactions:</p>
+                    
+                    <ul>
+                        <li><span class="term">Protein recognition</span> - Many DNA-binding proteins interact with the phosphate backbone through electrostatic or hydrogen bonding</li>
+                        <li><span class="term">Cation binding</span> - Mg²⁺ and other cations neutralize the negative charge, reducing electrostatic repulsion</li>
+                        <li><span class="term">Structural transitions</span> - Phosphate charge affects transitions between different DNA forms (A, B, Z)</li>
+                        <li><span class="term">Enzymatic processing</span> - Nucleases, polymerases, and other enzymes recognize and modify the phosphodiester backbone</li>
+                    </ul>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> The high density of negative charge along the DNA backbone creates significant electrostatic repulsion that must be overcome for DNA compaction. This is achieved through cation binding and protein interactions in chromatin.</p>
+                    </div>
+                    
+                    <h3>Energy Storage and Transfer</h3>
+                    <p>Beyond structural roles, phosphate groups are central to cellular energy metabolism:</p>
+                    
+                    <ul>
+                        <li><span class="term">High-energy bonds</span> - Phosphoanhydride bonds in ATP store chemical energy</li>
+                        <li><span class="term">Phosphorylation</span> - Transfer of phosphate groups regulates protein activity</li>
+                        <li><span class="term">Nucleotide cofactors</span> - Many enzymatic cofactors contain phosphate groups (NAD+, FAD, coenzyme A)</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Nucleotides",
+                content: `
+                    <p>A <span class="term">nucleotide</span> is the complete monomer unit of nucleic acids, consisting of a nucleobase, a sugar, and one or more phosphate groups. Nucleotides serve as both building blocks of nucleic acids and as important molecules in cellular metabolism and signaling.</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Formation%20of%20nucleotide.png" alt="Potassium Channel 3D Structure">
+</div>
+ 
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> Nucleotides are the activated monomeric units that polymerize to form nucleic acids, with the number of phosphate groups determining their metabolic role—monophosphates as nucleic acid components, triphosphates as energy carriers and polymerization substrates.</p>
+                    </div>
+                    
+                    <h3>Classification by Sugar Type</h3>
+                    <p>Nucleotides are fundamentally classified based on their sugar component:</p>
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Type</th>
+                            <th>Sugar</th>
+                            <th>2' Position</th>
+                            <th>Biological Role</th>
+                        </tr>
+                        <tr>
+                            <td>Ribonucleotides</td>
+                            <td>Ribose</td>
+                            <td>-OH</td>
+                            <td>RNA building blocks, signaling, cofactors</td>
+                        </tr>
+                        <tr>
+                            <td>Deoxyribonucleotides</td>
+                            <td>Deoxyribose</td>
+                            <td>-H</td>
+                            <td>DNA building blocks only</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="note-box">
+                        <p><strong>Note:</strong> The absence of the 2'-OH group in deoxyribonucleotides makes DNA more chemically stable than RNA, as it prevents base-catalyzed hydrolysis. This chemical stability is crucial for DNA's role as the long-term genetic repository.</p>
+                    </div>
+                    
+                    <h3>NMP, NDP, and NTP: The Phosphate Hierarchy</h3>
+                    <p>Nucleotides are categorized by their number of phosphate groups, which determines their biological functions:</p>
+                    
+                    <ul>
+                        <li><span class="term">NMP (Nucleoside Monophosphate)</span> - Base + Sugar + 1 Phosphate
+                            <ul>
+                                <li>Final components of nucleic acids</li>
+                                <li>Examples: AMP, GMP, CMP, UMP (RNA); dAMP, dGMP, dCMP, dTMP (DNA)</li>
+                            </ul>
+                        </li>
+                        
+                        <li><span class="term">NDP (Nucleoside Diphosphate)</span> - Base + Sugar + 2 Phosphates
+                            <ul>
+                                <li>Intermediate in nucleotide interconversion</li>
+                                <li>Examples: ADP, GDP, CDP, UDP</li>
+                            </ul>
+                        </li>
+                        
+                        <li><span class="term">NTP (Nucleoside Triphosphate)</span> - Base + Sugar + 3 Phosphates
+                            <ul>
+                                <li>Activated precursors for nucleic acid synthesis</li>
+                                <li>Energy currency (ATP), signaling (GTP), substrates for polymerization</li>
+                                <li>Examples: ATP, GTP, CTP, UTP (RNA); dATP, dGTP, dCTP, dTTP (DNA)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <h3>Biological Roles Beyond Nucleic Acid Synthesis</h3>
+                    <p>Nucleotides have diverse cellular functions:</p>
+                    
+                    <ul>
+                        <li><span class="term">Energy metabolism</span> - ATP as universal energy currency</li>
+                        <li><span class="term">Cellular signaling</span> - cAMP, cGMP as second messengers</li>
+                        <li><span class="term">Enzyme cofactors</span> - NAD+, FAD, coenzyme A</li>
+                        <li><span class="term">Activated intermediates</span> - UDP-glucose for glycogen synthesis, CDP-choline for phospholipid synthesis</li>
+                    </ul>
+                    
+                    <h3>Regulation of Nucleotide Pools</h3>
+                    <p>Cells carefully regulate nucleotide concentrations through:</p>
+                    
+                    <ul>
+                        <li><span class="term">De novo synthesis</span> - Building nucleotides from simple precursors</li>
+                        <li><span class="term">Salvage pathways</span> - Recycling nucleotides from degraded nucleic acids</li>
+                        <li><span class="term">Feedback inhibition</span> - End products regulating synthetic enzymes</li>
+                    </ul>
+                `
+            },
+            {
+                title: "Nucleotide Polymerization",
+                content: `
+                    <p>Nucleic acids are polymers formed by linking nucleotides through <span class="term">phosphodiester bonds</span> in a template-directed process that preserves genetic information with remarkable fidelity.</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Phosphodiester%20bond.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    
+                    <div class="key-point">
+                        <p><strong>Key Concept:</strong> Nucleic acid polymerization is a highly regulated process that proceeds with directionality (5'→3') and depends on energy derived from nucleotide triphosphate hydrolysis, ensuring accurate transmission of genetic information.</p>
+                    </div>
+                    
+                    <h3>Polymerization Reaction Mechanism</h3>
+                    <p>Polymerization occurs through a <span class="term">nucleophilic substitution reaction</span> where the 3'-OH group of the growing chain attacks the α-phosphate of an incoming nucleoside triphosphate.</p>
+                    
+                    <p>This reaction is catalyzed by <span class="term">DNA and RNA polymerases</span> that:</p>
+                    <ul>
+                        <li>Position the substrates for optimal geometry</li>
+                        <li>Provide metal ions (Mg²⁺) that facilitate catalysis</li>
+                        <li>Ensure base pairing fidelity through proofreading</li>
+                        <li>Processively synthesize long nucleic acid chains</li>
+                    </ul>
+                    
+                    <h3>Direction of Polymerization: 5' → 3'</h3>
+                    <p>All known nucleic acid synthesis occurs exclusively in the <span class="term">5' → 3' direction</span>, meaning new nucleotides are added to the 3'-OH end of the growing chain. This directionality has profound implications:</p>
+                    
+                    <ul>
+                        <li><span class="term">Chemical rationale</span> - The 3'-OH is the only nucleophile available for attack</li>
+                        <li><span class="term">Biological consequences</span> - Leads to semi-discontinuous DNA replication with leading and lagging strands</li>
+                        <li><span class="term">Structural consistency</span> - All nucleic acids have the same chemical polarity</li>
+                    </ul>
+                    
+                    <div class="note-box">
+                        <p><strong>Evolutionary Insight:</strong> The universal 5'→3' directionality of nucleic acid synthesis suggests this mechanism arose early in evolution and has been conserved throughout biological history due to its chemical efficiency and functional advantages.</p>
+                    </div>
+                    
+                    <h3>Pyrophosphate Hydrolysis Coupling</h3>
+                    <p>The polymerization reaction is made thermodynamically favorable by <span class="term">coupling</span> it to pyrophosphate hydrolysis.</p>
+                    
+                    <p>This coupling provides several advantages:</p>
+                    <ul>
+                        <li>Makes the overall reaction strongly exergonic and irreversible</li>
+                        <li>Prevents futile cycles of synthesis and degradation</li>
+                        <li>Provides a thermodynamic driving force for processive synthesis</li>
+                    </ul>
+                    
+                    <h3>Backbone Conformational Flexibility</h3>
+                    <p>The nucleic acid backbone has six rotatable bonds per nucleotide that allow conformational flexibility while maintaining structural integrity:</p>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/All%20torsional%20angles%20in%20nucleic%20acids.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Torsion Angle</th>
+                            <th>Bond</th>
+                            <th>Typical Values</th>
+                            <th>Structural Impact</th>
+                        </tr>
+                        <tr>
+                            <td>α (alpha)</td>
+                            <td>O3'-P</td>
+                            <td>-60° (g⁻)</td>
+                            <td>Phosphate orientation</td>
+                        </tr>
+                        <tr>
+                            <td>β (beta)</td>
+                            <td>P-O5'</td>
+                            <td>180° (trans)</td>
+                            <td>Sugar-phosphate distance</td>
+                        </tr>
+                        <tr>
+                            <td>γ (gamma)</td>
+                            <td>O5'-C5'</td>
+                            <td>60° (g⁺)</td>
+                            <td>Sugar orientation</td>
+                        </tr>
+                        <tr>
+                            <td>δ (delta)</td>
+                            <td>C5'-C4'</td>
+                            <td>~144°</td>
+                            <td>Sugar pucker correlation</td>
+                        </tr>
+                        <tr>
+                            <td>ε (epsilon)</td>
+                            <td>C3'-O3'</td>
+                            <td>-150° (trans)</td>
+                            <td>Backbone flexibility</td>
+                        </tr>
+                        <tr>
+                            <td>ζ (zeta)</td>
+                            <td>O3'-P</td>
+                            <td>-90° (g⁻)</td>
+                            <td>Helical parameter influence</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="note-box">
+                        <p><strong>Structural Significance:</strong> These torsion angles are not independent but exhibit correlations that define the overall nucleic acid conformation. Different combinations of these angles give rise to the various DNA forms (A, B, Z) and allow nucleic acids to adopt specific structures for protein recognition.</p>
+                    </div>
+                    
+                    <h3>Biological Implications of Polymerization Features</h3>
+                    <p>The specific characteristics of nucleic acid polymerization have shaped biological evolution:</p>
+                    
+                    <ul>
+                        <li><span class="term">Fidelity mechanisms</span> - Proofreading and repair systems evolved to maintain genetic stability</li>
+                        <li><span class="term">Replication strategies</span> - Complex replication machinery developed to handle anti-parallel strands</li>
+                        <li><span class="term">Energy coupling</span> - Efficient use of NTP hydrolysis energy enables rapid synthesis</li>
+                        <li><span class="term">Structural diversity</span> - Backbone flexibility allows functional adaptation</li>
+                    </ul>
+                `
+            }
+        ];
+
+        // DOM elements
+        const sectionTitle = document.getElementById('sectionTitle');
+        const sectionContent = document.getElementById('sectionContent');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const sectionCounter = document.getElementById('sectionCounter');
+        const progressBar = document.getElementById('progressBar');
+
+        // Current section index
+        let currentSection = 0;
+
+        // Function to update the displayed section
+        function updateSection() {
+            sectionTitle.textContent = sections[currentSection].title;
+            sectionContent.innerHTML = sections[currentSection].content;
+            
+            // Update navigation buttons
+            prevBtn.disabled = currentSection === 0;
+            nextBtn.disabled = currentSection === sections.length - 1;
+            
+            // Update section counter
+            sectionCounter.textContent = `Section ${currentSection + 1} of ${sections.length}`;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentSection + 1) / sections.length) * 100}%`;
+            
+            // Scroll to top of content
+            sectionContent.scrollTop = 0;
+        }
+
+        // Event listeners for navigation buttons
+        prevBtn.addEventListener('click', () => {
+            if (currentSection > 0) {
+                currentSection--;
+                updateSection();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSection < sections.length - 1) {
+                currentSection++;
+                updateSection();
+            }
+        });
+
+        // Initialize the first section
+        updateSection();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
