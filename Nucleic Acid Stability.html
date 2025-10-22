@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factors Affecting Nucleic Acid Stability</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #0f3460;
+            --text: #e6e6e6;
+            --highlight: #4cc9f0;
+            --button: #4361ee;
+            --button-hover: #3a56d4;
+            --card-bg: rgba(22, 33, 62, 0.8);
+            --warning: #f72585;
+            --success: #4ade80;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #b3b3b3;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: var(--darker-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--button), var(--highlight));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--highlight);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-left: 4px solid var(--button);
+            padding-left: 10px;
+        }
+        
+        h3 {
+            color: #a3bffa;
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: rgba(79, 70, 229, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            background-color: var(--button);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #4a5568;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .section-indicators {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active {
+            background-color: var(--highlight);
+            transform: scale(1.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--button);
+        }
+        
+        .advanced-note {
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .formula {
+            background-color: rgba(22, 33, 62, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid var(--accent);
+        }
+        
+        .interactive-element {
+            background-color: rgba(15, 52, 96, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .interactive-element button {
+            align-self: flex-start;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            border: 1px solid var(--accent);
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(15, 52, 96, 0.2);
+        }
+        
+        .molecule-diagram {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(15, 52, 96, 0.3);
+            border-radius: 8px;
+        }
+        
+        .molecule-diagram .structure {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            text-align: center;
+            margin: 10px 0;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.85rem;
+            }
+            
+            .molecule-diagram .structure {
+                font-size: 0.8rem;
+            }
+        }
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dna"></i> Factors Affecting Nucleic Acid Stability</h1>
+            <p class="subtitle">Comprehensive analysis of factors affecting DNA and RNA structural integrity</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="section-indicators" id="sectionIndicators"></div>
+        
+        <!-- Section 1: Hydrogen Bonding -->
+        <section class="section active" id="section1">
+            <h2>A. Intrinsic Factors</h2>
+            <h3>1. Hydrogen Bonding</h3>
+            
+            <div class="content-card">
+                <h3>Watson-Crick Base Pairing</h3>
+                <p>The specific hydrogen bonding between complementary bases (A-T and G-C in DNA; A-U and G-C in RNA) is fundamental to nucleic acid stability and specificity.</p>
+                
+                <ul>
+                    <li>Adenine forms <span class="highlight">two hydrogen bonds</span> with Thymine (DNA) or Uracil (RNA) with bond lengths of approximately 2.8-2.9 Å</li>
+                    <li>Guanine forms <span class="highlight">three hydrogen bonds</span> with Cytosine with bond lengths of approximately 2.8-3.0 Å</li>
+                    <li>This specificity ensures accurate replication and transcription with error rates as low as 10⁻⁹</li>
+                    <li>Hydrogen bond strength in DNA is approximately 4-13 kJ/mol per bond</li>
+                </ul>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Hydrogen%20bonding%20positions%20in%20major%20and%20minor.png" alt="Potassium Channel 3D Structure">
+</div>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-flask"></i> <strong>Advanced Note:</strong> While hydrogen bonds are relatively weak individually, their collective effect contributes significantly to duplex stability. The free energy contribution of a single A-T base pair is approximately -1.0 kcal/mol, while a G-C pair contributes approximately -2.3 kcal/mol.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Chargaff's Rules</h3>
+                <p>Empirical rules describing the base composition of DNA, discovered by Erwin Chargaff in the 1940s:</p>
+                <ul>
+                    <li>Purines equal pyrimidines: [A] + [G] = [T] + [C]</li>
+                    <li>Adenine equals thymine: [A] = [T]</li>
+                    <li>Guanine equals cytosine: [G] = [C]</li>
+                    <li>The base composition varies between species but remains constant within a species</li>
+                    <li>These observations were critical to the development of the Watson-Crick DNA model</li>
+                </ul>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-microscope"></i> <strong>Experimental Evidence:</strong> Chargaff's data showed that while base composition varies between organisms (e.g., E. coli has ~50% G+C content, while human DNA has ~40%), the A/T and G/C ratios remain close to 1.0 across species.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Alternative Base Pairing Schemes</h3>
+                <p>Beyond Watson-Crick pairing, nucleic acids can form alternative hydrogen bonding patterns:</p>
+                <ul>
+                    <li><span class="highlight">Hoogsteen base pairing</span>: Alternative hydrogen bonding pattern important in triple helices</li>
+                    <li><span class="highlight">Wobble base pairing</span>: Non-Watson-Crick pairing that allows tRNA to recognize multiple codons</li>
+                    <li><span class="highlight">Reverse Watson-Crick pairing</span>: Observed in some synthetic nucleic acid analogs</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Section 2: Stacking Interactions -->
+        <section class="section" id="section2">
+            <h2>A. Intrinsic Factors</h2>
+            <h3>2. Stacking Interactions</h3>
+            
+            <div class="content-card">
+                <p>Stacking interactions between adjacent base pairs in the DNA double helix contribute significantly to stability through hydrophobic and van der Waals forces. These interactions arise from the π-π orbital overlap between aromatic bases.</p>
+                
+                <div class="molecule-diagram">
+                    <h4>Base Stacking Geometry</h4>
+                    <div class="structure">
+Typical B-DNA:
+  Helical rise: 3.4 Å per base pair
+  Rotation: 36° per base pair
+  Base tilt: ~6° relative to helix axis
+  Stacking energy: -5 to -15 kJ/mol per base pair step
+                    </div>
+                </div>
+                
+                <ul>
+                    <li>Bases are <span class="highlight">hydrophobic and planar</span>, promoting stacking in aqueous environments to minimize solvent-accessible surface area</li>
+                    <li>Stacking minimizes surface area exposed to water, increasing stability by reducing unfavorable water-base interactions</li>
+                    <li>G-C stacks are generally more stable than A-T stacks due to greater polarizability of purine-purine interactions</li>
+                    <li>Stacking energy depends on neighboring base pairs (sequence context) with 5'-purine-purine-3' steps being most stable</li>
+                </ul>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Stacking%20interactions.png" alt="Potassium Channel 3D Structure">
+</div>
+
+            </div>
+            
+            <div class="content-card">
+                <h3>Importance of Stacking</h3>
+                <p>Stacking interactions:</p>
+                <ul>
+                    <li>Contribute more to duplex stability than hydrogen bonding in some contexts (up to 50% of total stabilization energy)</li>
+                    <li>Help maintain the regular helical structure of DNA by providing a thermodynamic driving force for base pair organization</li>
+                    <li>Provide structural rigidity to the nucleic acid backbone through base-base interactions</li>
+                    <li>Influence DNA bending and protein recognition by creating sequence-dependent structural preferences</li>
+                </ul>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-chart-line"></i> <strong>Energetics:</strong> Stacking free energies range from -1.5 to -3.5 kcal/mol per dinucleotide step, with 5'-GC-3'/5'-GC-3' being the most stable (-3.5 kcal/mol) and 5'-TA-3'/5'-TA-3' being the least stable (-1.5 kcal/mol).</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Sequence-Dependent Stacking Effects</h3>
+                <p>Stacking interactions vary significantly with sequence:</p>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Dinucleotide Step</th>
+                            <th>Stacking Energy (kcal/mol)</th>
+                            <th>Helical Twist</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>5'-CG-3'</td>
+                            <td>-3.4</td>
+                            <td>36°</td>
+                        </tr>
+                        <tr>
+                            <td>5'-GC-3'</td>
+                            <td>-3.5</td>
+                            <td>35°</td>
+                        </tr>
+                        <tr>
+                            <td>5'-GG-3'</td>
+                            <td>-2.9</td>
+                            <td>37°</td>
+                        </tr>
+                        <tr>
+                            <td>5'-AA-3'</td>
+                            <td>-2.4</td>
+                            <td>34°</td>
+                        </tr>
+                        <tr>
+                            <td>5'-TA-3'</td>
+                            <td>-1.5</td>
+                            <td>32°</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Section 4: pH Effects -->
+        <section class="section" id="section4">
+            <h2>B. Extrinsic Factors</h2>
+            <h3>1. pH Effects</h3>
+            
+            <div class="content-card">
+                <h3>Effect of Acidic pH</h3>
+                <p>Under acidic conditions:</p>
+                <ul>
+                    <li>DNA is unstable but can undergo <span class="highlight">depurination</span> (hydrolysis of glycosidic bonds) at pH &lt; 4</li>
+                    <li>RNA is more susceptible to hydrolysis due to the 2'-OH group which can participate in intramolecular transesterification</li>
+                    <li>Extremely low pH (pH &lt; 3) can protonate bases, disrupting hydrogen bonding and causing partial denaturation</li>
+                    <li>Depurination rates increase 100-fold when pH decreases from 7 to 3</li>
+                    <li>Both DNA & RNA susceptible to acid hydrolysis</li>
+
+                </ul>
+                
+                <div class="molecule-diagram">
+                    <h4>Depurination Mechanism</h4>
+                    <div class="structure">
+1. Protonation of purine bases (N-7 of guanine, N-3 of adenine)
+2. Cleavage of glycosidic bond → apurinic site
+3. Strand breakage can occur at apurinic sites
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Effect of Alkaline pH</h3>
+                <p>Under alkaline conditions:</p>
+                <ul>
+                    <li>DNA undergoes <span class="highlight">strand separation</span> above pH 11.5 due to deprotonation of bases</li>
+                    <li>RNA is rapidly hydrolyzed due to intramolecular transesterification catalyzed by the 2'-OH group</li>
+                    <li>Only RNA experience base-catalyzed hydrolysis of phosphodiester bonds at high pH</li>
+                    <li>Cytosine and uracil can undergo deamination at alkaline pH</li>
+                </ul>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-exclamation-triangle"></i> <strong>RNA Vulnerability:</strong> The 2'-OH group in RNA makes it particularly susceptible to alkaline hydrolysis. At pH 9, RNA half-life can be as short as minutes, while DNA remains stable for years under the same conditions.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Schiff's Test</h3>
+                <p>A chemical test used to detect aldehydes, which can be produced during nucleic acid degradation:</p>
+                <ul>
+                    <li>Based on the reaction between aldehydes and fuchsin-sulfite reagent (Schiff's reagent)</li>
+                    <li>Produces a magenta color in the presence of aldehydes through formation of a quinoid dye</li>
+                    <li>Can indicate DNA damage through depurination or oxidation that generates aldehyde groups</li>
+                    <li>Used in Feulgen staining to quantify DNA in cells</li>
+                </ul>
+                
+                <div class="interactive-element">
+                    <h4>pH Stability Simulation</h4>
+                    <p>Adjust pH to see stability effects:</p>
+                    <input type="range" min="1" max="14" value="7" class="slider" id="phSlider">
+                    <p>Current pH: <span id="phValue">7</span></p>
+                    <div id="phEffect"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 5: Temperature Effects -->
+        <section class="section" id="section5">
+            <h2>B. Extrinsic Factors</h2>
+            <h3>2. Temperature Effects</h3>
+            
+            <div class="content-card">
+                <h3>Thermal Denaturation</h3>
+                <p>The process of DNA strand separation due to heat:</p>
+                <ul>
+                    <li>Hydrogen bonds between base pairs break as temperature increases, with G-C pairs requiring higher temperatures than A-T pairs</li>
+                    <li>Double-stranded DNA transitions to single-stranded DNA in a cooperative manner</li>
+                    <li>Process is <span class="highlight">cooperative</span> - once started, it propagates quickly due to the "zipper" effect</li>
+                    <li>Denaturation is reversible under appropriate conditions (renaturation)</li>
+                </ul>
+<div class="image-container">
+    <img src="https://betabiosciences.github.io//Biochemistry-animations/Melting%20curve%20of%20DNA.png" alt="Potassium Channel 3D Structure">
+</div>
+
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-fire"></i> <strong>Cooperativity:</strong> DNA melting is highly cooperative because the energy required to initiate melting (creating a "bubble") is higher than the energy needed to extend it. This results in a sharp transition between double-stranded and single-stranded states.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Melting Curve and Hyperchromicity</h3>
+                <p>As DNA denatures:</p>
+                <ul>
+                    <li>Absorbance at 260 nm increases (<span class="highlight">hyperchromic effect</span>) due to unstacking of bases</li>
+                    <li>This occurs because bases become unstacked and more exposed to solvent, increasing their UV absorbance</li>
+                    <li>A melting curve plots absorbance vs. temperature, showing a sigmoidal transition</li>
+                    <li>The midpoint of this transition is the <span class="highlight">melting temperature (Tm)</span>, where 50% of DNA is denatured</li>
+                </ul>
+                
+                <div class="formula">
+                    Hyperchromicity: H = (A₂₆₀,denatured - A₂₆₀,native) / A₂₆₀,native × 100%
+                    <br>Typical hyperchromicity: 30-40% for double-stranded DNA
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Melting Temperature (Tm)</h3>
+                <p>The temperature at which 50% of DNA is denatured:</p>
+                <ul>
+                    <li>Depends on G-C content (higher G-C = higher Tm) due to triple hydrogen bonds in G-C pairs</li>
+                    <li>Affected by salt concentration and pH through electrostatic effects</li>
+                    <li>Can be calculated using formulas based on base composition</li>
+                </ul>
+                
+                <div class="formula">
+                    For long DNA: Tm = 81.5 + 16.6 × log₁₀[Na⁺] + 0.41(%G+C) - 500/length
+                    <br>For oligonucleotides: Tm = 4(G+C) + 2(A+T) °C (simplified)
+                    <br>More accurate: Tm = ΔH° / (ΔS° + R ln(Cₜ)) - 273.15
+                </div>
+                
+                <div class="interactive-element">
+                    <h4>Tm Calculator</h4>
+                    <p>Calculate melting temperature based on sequence:</p>
+                    <input type="text" id="dnaSequence" placeholder="Enter DNA sequence (e.g., ATGCCGTA)" value="ATGCGCTA">
+                    <button id="calculateTm">Calculate Tm</button>
+                    <p id="tmResult"></p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Renaturation and Cot Analysis</h3>
+                <p>When cooled slowly, single-stranded DNA can reanneal:</p>
+                <ul>
+                    <li>Renaturation kinetics follow second-order reaction: dC/dt = -kC²</li>
+                    <li><span class="highlight">Cot analysis</span> measures renaturation as a function of time (t) and concentration (C₀)</li>
+                    <li>Used to study genome complexity and repetitive sequences</li>
+                    <li>Eukaryotic genomes show more complex Cot curves due to repetitive DNA</li>
+                </ul>
+                
+                <div class="formula">
+                    Cot value: Cot = C₀ × t (mol·s/L)
+                    <br>Cot₁/₂: Cot value when 50% renaturation has occurred
+                    <br>Complexity: N ≈ Cot₁/₂ × 5 × 10⁵ bp (for standard conditions)
+                </div>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-dna"></i> <strong>Genome Complexity:</strong> Cot curves reveal three kinetic components in eukaryotic DNA: fast (highly repetitive), intermediate (moderately repetitive), and slow (single-copy) sequences. This reflects the organization of eukaryotic genomes with various repetition frequencies.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 6: Ionic Strength -->
+        <section class="section" id="section6">
+            <h2>B. Extrinsic Factors</h2>
+            <h3>3. Ionic Strength</h3>
+            
+            <div class="content-card">
+                <p>The concentration of ions in solution affects nucleic acid stability through electrostatic interactions. DNA backbone is negatively charged due to phosphate groups, creating electrostatic repulsion between strands.</p>
+                
+                <ul>
+                    <li>Cations (Na⁺, Mg²⁺) shield this repulsion, stabilizing the duplex through charge screening</li>
+                    <li>Higher ionic strength increases Tm and stability by reducing electrostatic repulsion</li>
+                    <li>Divalent cations like Mg²⁺ are more effective than monovalent cations</li>
+                    <li>Ionic strength affects both DNA melting and renaturation kinetics</li>
+                </ul>
+            </div>
+            
+            <div class="content-card">
+                <h3>Effects on Nucleic Acid Structure</h3>
+                <p>Ionic strength influences:</p>
+                <ul>
+                    <li>DNA melting temperature (Tm) - can increase by 10-20°C with high salt</li>
+                    <li>Transition between different DNA conformations (A, B, Z forms)</li>
+                    <li>RNA folding and tertiary structure stability through charge neutralization</li>
+                    <li>Protein-nucleic acid interactions by modulating electrostatic components</li>
+                </ul>
+                
+                <div class="advanced-note">
+                    <p><i class="fas fa-vial"></i> <strong>Specific Ion Effects:</strong> Different cations have varying effects on DNA stability. Mg²⁺ is more effective than Na⁺ at stabilizing DNA due to its higher charge density. The Hofmeister series describes how different ions affect macromolecular stability.</p>
+                </div>
+            </div>
+            
+            <div class="content-card">
+                <h3>Practical Implications</h3>
+                <p>Understanding ionic strength effects is important for:</p>
+                <ul>
+                    <li>PCR buffer optimization - typically 50 mM KCl for Taq polymerase</li>
+                    <li>DNA hybridization assays - controlled salt conditions for specificity</li>
+                    <li>Nucleic acid storage conditions - often TE buffer (10 mM Tris, 1 mM EDTA)</li>
+                    <li>Electrophoresis and other molecular biology techniques</li>
+                </ul>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Salt Concentration</th>
+                            <th>Effect on Tm</th>
+                            <th>Application</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Low (&lt; 10 mM)</td>
+                            <td>Lower Tm, reduced stability</td>
+                            <td>Stringent hybridization</td>
+                        </tr>
+                        <tr>
+                            <td>Medium (50-100 mM)</td>
+                            <td>Moderate Tm</td>
+                            <td>Standard PCR, storage</td>
+                        </tr>
+                        <tr>
+                            <td>High (&gt; 500 mM)</td>
+                            <td>Higher Tm, increased stability</td>
+                            <td>Stabilization, some enzyme reactions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+            <button id="nextBtn">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            const sectionIndicators = document.getElementById('sectionIndicators');
+            const phSlider = document.getElementById('phSlider');
+            const phValue = document.getElementById('phValue');
+            const phEffect = document.getElementById('phEffect');
+            const dnaSequence = document.getElementById('dnaSequence');
+            const calculateTm = document.getElementById('calculateTm');
+            const tmResult = document.getElementById('tmResult');
+            
+            let currentSection = 0;
+            
+            // Create section indicators
+            sections.forEach((section, index) => {
+                const indicator = document.createElement('div');
+                indicator.classList.add('indicator');
+                if (index === 0) indicator.classList.add('active');
+                indicator.addEventListener('click', () => goToSection(index));
+                sectionIndicators.appendChild(indicator);
+            });
+            
+            // Update navigation and progress
+            function updateNavigation() {
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress bar
+                const progress = ((currentSection + 1) / sections.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update section indicators
+                document.querySelectorAll('.indicator').forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentSection);
+                });
+            }
+            
+            // Navigate to specific section
+            function goToSection(index) {
+                sections[currentSection].classList.remove('active');
+                currentSection = index;
+                sections[currentSection].classList.add('active');
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    goToSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < sections.length - 1) {
+                    goToSection(currentSection + 1);
+                }
+            });
+            
+            // pH effect simulation
+            phSlider.addEventListener('input', function() {
+                const pH = parseFloat(this.value);
+                phValue.textContent = pH;
+                
+                let effectText = '';
+                if (pH < 3) {
+                    effectText = '<span style="color: var(--warning)"><i class="fas fa-exclamation-triangle"></i> High degradation risk: DNA depurination, RNA hydrolysis</span>';
+                } else if (pH < 5) {
+                    effectText = '<span style="color: #ffa500"><i class="fas fa-exclamation-circle"></i> Moderate risk: Some DNA depurination, RNA unstable</span>';
+                } else if (pH >= 5 && pH <= 9) {
+                    effectText = '<span style="color: var(--success)"><i class="fas fa-check-circle"></i> Optimal stability: Both DNA and RNA stable</span>';
+                } else if (pH > 9 && pH <= 11) {
+                    effectText = '<span style="color: #ffa500"><i class="fas fa-exclamation-circle"></i> Moderate risk: DNA denaturation above pH 11, RNA hydrolysis</span>';
+                } else {
+                    effectText = '<span style="color: var(--warning)"><i class="fas fa-exclamation-triangle"></i> High degradation risk: DNA denaturation, rapid RNA hydrolysis</span>';
+                }
+                
+                phEffect.innerHTML = effectText;
+            });
+            
+            // Initialize pH effect
+            phSlider.dispatchEvent(new Event('input'));
+            
+            // Tm calculator
+            calculateTm.addEventListener('click', function() {
+                const sequence = dnaSequence.value.toUpperCase();
+                if (!sequence || !/^[ATCG]+$/.test(sequence)) {
+                    tmResult.innerHTML = '<span style="color: var(--warning)">Please enter a valid DNA sequence (A,T,C,G only)</span>';
+                    return;
+                }
+                
+                // Count bases
+                let aCount = 0, tCount = 0, gCount = 0, cCount = 0;
+                for (let i = 0; i < sequence.length; i++) {
+                    switch(sequence[i]) {
+                        case 'A': aCount++; break;
+                        case 'T': tCount++; break;
+                        case 'G': gCount++; break;
+                        case 'C': cCount++; break;
+                    }
+                }
+                
+                // Simple Tm calculation for oligonucleotides
+                const gcContent = (gCount + cCount) / sequence.length * 100;
+                const tmSimple = 4 * (gCount + cCount) + 2 * (aCount + tCount);
+                
+                // More sophisticated calculation
+                const tmSophisticated = 64.9 + 41 * (gCount + cCount - 16.4) / sequence.length;
+                
+                tmResult.innerHTML = `
+                    <strong>Sequence:</strong> ${sequence}<br>
+                    <strong>Length:</strong> ${sequence.length} bp<br>
+                    <strong>GC Content:</strong> ${gcContent.toFixed(1)}%<br>
+                    <strong>Simple Tm:</strong> ${tmSimple}°C<br>
+                    <strong>Sophisticated Tm:</strong> ${tmSophisticated.toFixed(1)}°C
+                `;
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
