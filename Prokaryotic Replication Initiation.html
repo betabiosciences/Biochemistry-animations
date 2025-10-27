@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initiation of Replication in Prokaryotes</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the active section */
+        .section-content.active {
+            display: block;
+        }
+        /* Style for hidden sections */
+        .section-content {
+            display: none;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-indigo-900 to-black text-gray-100 min-h-screen">
+
+    <!-- Main Content Container -->
+    <div class="max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
+        
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-cyan-300 mb-2">Initiation of Replication</h1>
+            <p class="text-lg sm:text-xl text-violet-300">Advanced Concepts in Prokaryotes</p>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <main class="bg-gray-800 bg-opacity-50 rounded-xl shadow-2xl p-6 sm:p-8 min-h-[400px]">
+
+            <!-- Section 1: General Components -->
+            <section id="section-1" class="section-content active">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">1. General Components: Replicator and Initiator</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>The initiation of DNA replication is a precisely controlled process that relies on two fundamental components:</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Replicator</h3>
+                        <p>The replicator is a <span class="font-bold text-yellow-300">cis-acting DNA sequence</span> that is necessary and sufficient to direct the initiation of replication. It functions as the binding site for the initiator protein. In prokaryotes like <span class="font-bold italic text-white">E. coli</span>, the single replicator sequence is known as the <span class="font-bold text-white">origin of replication</span>, or simply <span class="font-bold text-white">`oriC`</span>. Its specific sequence and structure are critical for regulation.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Initiator</h3>
+                        <p>The initiator is a <span class="font-bold text-yellow-300">trans-acting protein</span> (meaning it is encoded by a gene elsewhere) that specifically recognizes and binds to a DNA sequence within the replicator. Its binding triggers the cascade of events for initiation, starting with the local unwinding of the DNA double helix. In <span class="font-bold italic text-white">E. coli</span>, the initiator protein is <span class="font-bold text-white">DnaA</span>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Concept of Replicon -->
+            <section id="section-2" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">2. The Replicon Concept</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>A <span class="font-bold text-yellow-300">replicon</span> is a unit of the genome in which DNA is replicated. Each replicon contains its own replicator (origin) and includes all the DNA that is replicated from that single origin. The number and nature of replicons differ significantly between prokaryotes and eukaryotes.</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Prokaryotic Replicons</h3>
+                        <p>Prokaryotes typically possess a single, circular chromosome. Consequently, their entire genome functions as a <span class="font-bold text-white">single replicon</span>. Replication initiates at the sole origin (`oriC`) and proceeds bidirectionally (in two directions) around the circle until the two replication forks meet, having duplicated the entire chromosome.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Eukaryotic Replicons</h3>
+                        <p>Eukaryotes face a different challenge with their vast, linear chromosomes. Replicating such large amounts of DNA from a single origin would take an impractically long time. To solve this, eukaryotic chromosomes are organized into <span class="font-bold text-white">multiple replicons</span>. Each linear chromosome contains thousands of origins. During the S phase of the cell cycle, clusters of these origins are activated to ensure the entire genome is duplicated in a timely manner.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Initiator Protein DnaA -->
+            <section id="section-3" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">3. Initiator Protein: DnaA</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>DnaA is the master initiator protein in <span class="font-bold italic text-white">E. coli</span> and belongs to the <span class="font-bold text-yellow-300">AAA+ (ATPases Associated with various cellular Activities)</span> superfamily. Its activity is tightly regulated by its nucleotide-binding state (ATP vs. ADP).</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Structure (Four Domains)</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/DnaA%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+                        <ul class="list-disc list-inside ml-4 space-y-2">
+                            <li><span class="font-bold text-white">Domain I:</span> The N-terminal domain, responsible for <span class="font-bold">oligomerization</span> (DnaA-DnaA interaction) and interaction with other key proteins, including the helicase (DnaB).</li>
+                            <li><span class="font-bold text-white">Domain II:</span> A flexible linker region that connects Domain I and III.</li>
+                            <li><span class="font-bold text-white">Domain III:</span> The core AAA+ ATPase domain. This domain binds <span class="font-bold">ATP or ADP</span>, acting as a molecular switch. <span class="font-bold text-green-300">DnaA-ATP</span> is the <span class="font-bold">active</span> form required for initiation. <span class="font-bold text-red-300">DnaA-ADP</span> is the <span class="font-bold">inactive</span> form.</li>
+                            <li><span class="font-bold text-white">Domain IV:</span> The C-terminal domain, which contains a <span class="font-bold">helix-turn-helix motif</span> for specific DNA binding to sequences within `oriC` (the DnaA boxes).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Mechanism of Action</h3>
+                        <p>DnaA proteins (in both ATP and ADP states) bind to high-affinity sites at `oriC` throughout the cell cycle. As the cell grows and prepares for division, the concentration of DnaA increases, and the cellular ratio of ATP to ADP becomes high. This promotes the binding of <span class="font-bold text-green-300">active DnaA-ATP</span> molecules to the lower-affinity sites at `oriC`. This cooperative binding builds a large, filament-like nucleoprotein complex that wraps the DNA. The wrapping imparts <span class="font-bold text-yellow-300">torsional stress</span> on the DNA, which forces the nearby AT-rich region (the DUE) to melt and unwind.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Structure of oriC -->
+            <section id="section-4" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">4. Structure of `oriC`</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>The <span class="font-bold italic text-white">E. coli</span> origin, `oriC`, is a highly conserved 245-base-pair region containing two main types of functional sequences: DnaA binding sites and the unwinding element.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Ori%20C%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">DnaA Boxes (9-mers)</h3>
+                        <p>These are 9-bp (9-mer) consensus sequences (5'-TTATCCACA-3') that serve as the binding sites for DnaA (via its Domain IV). They are categorized by their binding affinity:</p>
+                        <ul class="list-disc list-inside ml-4 space-y-2">
+                            <li><span class="font-bold text-white">High-Affinity Sites (R1, R2, R4):</span> These sites bind DnaA regardless of whether it's in the ATP or ADP form. They serve to "anchor" DnaA to the origin at all times.</li>
+                            <li><span class="font-bold text-white">Low-Affinity Sites (e.g., R3, R5, I-boxes, &tau;-boxes):</span> These sites preferentially bind the <span class="font-bold text-green-300">active DnaA-ATP</span> form. It is the cooperative, sequential binding of DnaA-ATP to these sites that builds the active complex and triggers initiation.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">DNA Unwinding Element (DUE) (13-mers)</h3>
+                        <p>This is the region where the DNA double helix first melts. It consists of three tandem repeats of a 13-bp (13-mer) sequence. This region is <span class="font-bold text-yellow-300">AT-rich</span> (Adenine-Thymine), which is crucial because A-T base pairs are held by only two hydrogen bonds (compared to three for G-C), making them easier to separate. The torsional stress generated by the DnaA filament forces this weak region to unwind, exposing single-stranded DNA.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: DNA Helicase DnaB -->
+            <section id="section-5" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">5. DNA Helicase: DnaB</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>DnaB is the primary replicative helicase in <span class="font-bold italic text-white">E. coli</span>. It is the "engine" that drives the separation of the DNA strands at the replication fork.</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Structure</h3>
+                        <p>DnaB is a <span class="font-bold text-yellow-300">hexameric</span> protein, meaning it is composed of six identical subunits. These subunits assemble into a <span class="font-bold text-white">ring-shaped structure</span> that has a central channel just large enough to encircle a single strand of DNA.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Mechanism of Action</h3>
+                        <p>Once loaded onto the DNA (by DnaC), the DnaB ring encircles the <span class="font-bold text-white">lagging strand template</span>. It moves processively along this strand in the <span class="font-bold text-yellow-300">5' to 3' direction</span>. Using the energy derived from <span class="font-bold">ATP hydrolysis</span>, DnaB translocates along the strand and actively unwinds the double helix, separating the two parent strands as it goes. This action creates the "replication fork" and exposes the single-stranded DNA templates that are read by DNA polymerase. Two DnaB helicases are loaded at the origin, one for each of the two replication forks moving in opposite directions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Helicase Loader DnaC -->
+            <section id="section-6" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">6. Helicase Loader: DnaC</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>The DnaB helicase is a very stable, closed ring. This stability is great for processivity, but it presents a problem: how does it get onto the DNA in the first place? This is the job of the helicase loader, DnaC.</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Structure and Function</h3>
+                        <p>DnaC is also an <span class="font-bold text-yellow-300">AAA+ ATPase</span>. Its function is entirely dependent on its nucleotide-binding state.</p>
+                        <ul class="list-disc list-inside ml-4 space-y-2">
+                            <li>In its <span class="font-bold text-green-300">ATP-bound state</span>, DnaC binds tightly to the DnaB hexamer, forming a DnaB-DnaC complex (typically 6 DnaC molecules per DnaB hexamer).</li>
+                            <li>This binding <span class="font-bold text-white">"cracks open"</span> the DnaB ring, breaking the interface between two of its subunits.</li>
+                            <li>This DnaB-DnaC complex is recruited to the `oriC` by interacting with the DnaA initiator complex.</li>
+                            <li>The open DnaB ring is then deposited around the exposed single-stranded DNA (ssDNA) in the unwound 13-mer (DUE) region.</li>
+                            <li>Once DnaB is correctly positioned, ATP hydrolysis by DnaC (and its interaction with the ssDNA) causes DnaC to release DnaB. The DnaB ring closes around the DNA, and DnaC dissociates, leaving the active helicase loaded and ready to begin unwinding.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 7: Primase DnaG -->
+            <section id="section-7" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4 text-cyan-300">7. Primase: DnaG</h2>
+                <div class="space-y-4 text-gray-200 text-base sm:text-lg leading-relaxed">
+                    <p>DNA polymerases have a fundamental limitation: they cannot start synthesizing DNA <span class="font-bold text-yellow-300">de novo</span> (from scratch). They can only add nucleotides to a pre-existing 3'-hydroxyl (3'-OH) group. The primase, DnaG, solves this problem.</p>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Structure</h3>
+                        <p>DnaG is a specialized <span class="font-bold text-white">RNA polymerase</span>. It has three main domains:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Primase%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                        <ul class="list-disc list-inside ml-4 space-y-2">
+                            <li><span class="font-bold text-white">Zinc-Binding Domain (ZBD):</span> Recognizes ssDNA and, crucially, interacts with the DnaB helicase.</li>
+                            <li><span class="font-bold text-white">RNA Polymerase Domain (RPD):</span> The catalytic core that synthesizes the RNA primer.</li>
+                            <li><span class="font-bold text-white">C-Terminal Domain (CTD):</span> Also involved in protein-protein interactions, particularly with DnaB.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mt-6 mb-2 text-teal-300">Mechanism of Action</h3>
+                        <p>DnaG is recruited to the replication fork by <span class="font-bold text-yellow-300">physically associating with the DnaB helicase</span>. This interaction activates the primase. DnaG then synthesizes a short (10-12 nucleotide) <span class="font-bold text-cyan-300">RNA primer</span> on the single-stranded DNA template. This short RNA segment provides the critical <span class="font-bold text-white">3'-OH end</span> that DNA polymerase III requires to bind and begin synthesizing DNA. On the leading strand, only one primer is needed at the origin. On the lagging strand, DnaG must synthesize new primers repeatedly (for each Okazaki fragment) as the DnaB helicase exposes more and more of the template strand.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/DnaA%20oligomerzation.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Navigation -->
+        <footer class="mt-8 flex justify-between items-center">
+            <button id="prevBtn" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2 px-6 rounded-lg shadow-lg transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <span id="sectionIndicator" class="text-sm text-gray-400">1 / 7</span>
+            <button id="nextBtn" class="bg-cyan-500 hover:bg-cyan-400 text-black font-bold py-2 px-6 rounded-lg shadow-lg transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </footer>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentSection = 1;
+            const totalSections = 7;
+            
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const sectionIndicator = document.getElementById('sectionIndicator');
+
+            function showSection(sectionNumber) {
+                // Hide all sections
+                document.querySelectorAll('.section-content').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show the target section
+                const activeSection = document.getElementById(`section-${sectionNumber}`);
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+
+                // Update section indicator
+                sectionIndicator.textContent = `${sectionNumber} / ${totalSections}`;
+
+                // Update button states
+                prevBtn.disabled = sectionNumber === 1;
+                nextBtn.disabled = sectionNumber === totalSections;
+            }
+
+            // Event listener for Next button
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < totalSections) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            });
+
+            // Event listener for Previous button
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 1) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+
+            // Initialize the first section
+            showSection(currentSection);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
+
