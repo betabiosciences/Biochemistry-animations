@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Topology</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0933 0%, #2d1b4e 50%, #1a0933 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(26, 9, 51, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.4);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            color: #bb86fc;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-shadow: 0 0 15px rgba(187, 134, 252, 0.6);
+            background: linear-gradient(135deg, #bb86fc, #cf6fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #cf6fff;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #7b2cbf;
+            padding-bottom: 12px;
+            text-shadow: 0 0 8px rgba(207, 111, 255, 0.3);
+        }
+
+        h3 {
+            color: #bb86fc;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #9d4edd;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 18px;
+            text-align: justify;
+            color: #d4c5f9;
+            font-size: 1.05em;
+        }
+
+        .formula {
+            background: rgba(123, 44, 191, 0.25);
+            border-left: 4px solid #bb86fc;
+            padding: 18px;
+            margin: 22px 0;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            color: #e6d9ff;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.2);
+        }
+
+        .key-point {
+            background: rgba(187, 134, 252, 0.15);
+            border-radius: 12px;
+            padding: 18px;
+            margin: 18px 0;
+            border: 1px solid rgba(187, 134, 252, 0.4);
+            box-shadow: 0 4px 15px rgba(187, 134, 252, 0.1);
+        }
+
+        .key-point strong {
+            color: #cf6fff;
+            font-size: 1.1em;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 18px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            color: #d4c5f9;
+            font-size: 1.05em;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 35px;
+            gap: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(123, 44, 191, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a189a 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(123, 44, 191, 0.5);
+            font-weight: bold;
+            border: 1px solid rgba(187, 134, 252, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #9d4edd 0%, #7b2cbf 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(123, 44, 191, 0.7);
+        }
+
+        button:disabled {
+            background: linear-gradient(135deg, #3d2954 0%, #2d1b4e 100%);
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress {
+            text-align: center;
+            color: #bb86fc;
+            font-weight: bold;
+            font-size: 1.1em;
+            background: rgba(123, 44, 191, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(187, 134, 252, 0.2);
+        }
+
+        .highlight {
+            color: #ffd60a;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 214, 10, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: rgba(123, 44, 191, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(123, 44, 191, 0.2);
+        }
+
+        th {
+            background: rgba(123, 44, 191, 0.4);
+            color: #e6d9ff;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #7b2cbf;
+        }
+
+        td {
+            border: 1px solid #7b2cbf;
+            padding: 12px 15px;
+            color: #d4c5f9;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(123, 44, 191, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            h3 {
+                font-size: 1.3em;
+            }
+
+            h4 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .progress {
+                order: -1;
+            }
+        }
+
+        /* DNA helix decoration */
+        .dna-decoration {
+            text-align: center;
+            margin: 10px 0 30px 0;
+            font-size: 2em;
+            color: #bb86fc;
+            text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(26, 9, 51, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #9d4edd, #bb86fc);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DNA Topology</h1>
+
+        <!-- Section 1: Definition and Significance -->
+        <div class="section active" data-section="1">
+            <h2>1. Definition of Topology and Its Significance</h2>
+            
+            <h3>What is Topology?</h3>
+            <p>
+                <strong>Topology</strong> is a branch of mathematics concerned with the properties of geometric objects that remain invariant under continuous deformations such as stretching, twisting, and bending, but not tearing or gluing. In the context of molecular biology, <span class="highlight">DNA topology</span> refers to the three-dimensional spatial configuration of DNA molecules, particularly focusing on properties that cannot be changed without breaking and rejoining the DNA strands.
+            </p>
+
+            <div class="key-point">
+                <strong>Key Concept:</strong> DNA topology describes the geometric and topological properties of closed circular DNA molecules, including supercoiling, knotting, and catenation (interlinking of DNA circles).
+            </div>
+
+            <h3>Significance in Molecular Biology</h3>
+            <p>
+                DNA topology is crucial for understanding fundamental biological processes:
+            </p>
+            <ul>
+                <li><strong>Gene Expression:</strong> The topological state of DNA affects transcription initiation and elongation. Supercoiled DNA is more compact and can influence promoter accessibility.</li>
+                <li><strong>DNA Replication:</strong> During replication, topological tension accumulates ahead of the replication fork, requiring topoisomerases to relieve this stress.</li>
+                <li><strong>DNA Packaging:</strong> In prokaryotes and eukaryotes, DNA must be compacted to fit within the cell. Topological properties facilitate this packaging.</li>
+                <li><strong>Recombination and Repair:</strong> Topological constraints influence DNA recombination, repair mechanisms, and chromosome segregation.</li>
+                <li><strong>Drug Targeting:</strong> Many antibiotics and anticancer agents target topoisomerases, making DNA topology clinically relevant.</li>
+            </ul>
+
+            <div class="key-point">
+                <strong>Biological Relevance:</strong> Most cellular DNA exists in a negatively supercoiled state, which facilitates strand separation necessary for replication and transcription. Enzymes called topoisomerases regulate DNA topology by catalyzing changes in linking number.
+            </div>
+
+            <h3>Historical Context</h3>
+            <p>
+                The discovery of DNA supercoiling in the 1960s by Jerome Vinograd revolutionized our understanding of DNA structure. This led to the identification of topoisomerases and elucidation of how cells manage topological stress during DNA metabolism.
+            </p>
+        </div>
+
+        <!-- Section 2: Linking Number -->
+        <div class="section" data-section="2">
+            <h2>2. Linking Number (Lk)</h2>
+            
+            <h3>Definition</h3>
+            <p>
+                The <span class="highlight">linking number (Lk)</span> is a topological property of closed circular double-stranded DNA that describes the number of times one strand winds around the other. It is an integer value that can only be changed by breaking one or both DNA strands.
+            </p>
+
+            <div class="formula">
+                Lk = number of helical turns in the DNA duplex
+            </div>
+
+            <h3>Properties of Linking Number</h3>
+            <ul>
+                <li><strong>Topological Invariant:</strong> Lk cannot change without breaking and rejoining DNA strands, making it a conserved quantity during conformational changes.</li>
+                <li><strong>Integer Value:</strong> Lk is always a whole number for closed circular DNA.</li>
+                <li><strong>Sign Convention:</strong> Right-handed helical turns (B-DNA) contribute positive linking number, while left-handed turns contribute negative linking number.</li>
+                <li><strong>Reference State:</strong> Lk is typically compared to Lk₀ (linking number of relaxed DNA) to determine the degree of supercoiling.</li>
+            </ul>
+
+            <h3>Lk₀ - The Relaxed State</h3>
+            <p>
+                <strong>Lk₀</strong> represents the linking number of relaxed, torsionally unstressed B-form DNA under physiological conditions. For B-DNA:
+            </p>
+
+            <div class="formula">
+                Lk₀ = N / h<br>
+                where:<br>
+                N = number of base pairs<br>
+                h = helical repeat (approximately 10.5 bp/turn for B-DNA)
+            </div>
+
+            <div class="key-point">
+                <strong>Example:</strong> A circular DNA molecule with 4,200 base pairs would have Lk₀ = 4,200 / 10.5 = 400. This represents the relaxed state with no supercoiling.
+            </div>
+
+            <h3>Change in Linking Number (ΔLk)</h3>
+            <p>
+                The difference between the actual linking number and the relaxed linking number indicates the degree of supercoiling:
+            </p>
+
+            <div class="formula">
+                ΔLk = Lk - Lk₀
+            </div>
+
+            <ul>
+                <li><strong>ΔLk < 0:</strong> Negatively supercoiled (underwound) - typical in vivo state</li>
+                <li><strong>ΔLk = 0:</strong> Relaxed DNA with no torsional stress</li>
+                <li><strong>ΔLk > 0:</strong> Positively supercoiled (overwound) - occurs transiently during replication and transcription</li>
+            </ul>
+
+            <h3>Specific Linking Difference (σ)</h3>
+            <p>
+                The <strong>specific linking difference</strong> or <strong>superhelical density</strong> normalizes the change in linking number:
+            </p>
+
+            <div class="formula">
+                σ = ΔLk / Lk₀
+            </div>
+
+            <p>
+                This value is typically around -0.06 (or -6%) for cellular DNA, indicating moderate negative supercoiling that facilitates biological processes requiring strand separation.
+            </p>
+        </div>
+
+        <!-- Section 3: Calculation of Linking Number -->
+        <div class="section" data-section="3">
+            <h2>3. Calculation of Linking Number</h2>
+            
+            <h3>Fundamental Approach</h3>
+            <p>
+                Calculating the linking number requires projecting the three-dimensional DNA structure onto a two-dimensional plane and counting signed crossings between the two strands.
+            </p>
+
+            <h3>Step-by-Step Calculation Method</h3>
+            <ol>
+                <li><strong>Orient the DNA:</strong> Choose one strand as the reference strand and assign it a direction (5' to 3').</li>
+                <li><strong>Project onto a plane:</strong> Create a two-dimensional projection of the closed circular DNA.</li>
+                <li><strong>Identify crossings:</strong> Locate all points where one strand crosses over the other.</li>
+                <li><strong>Assign signs to crossings:</strong> Use the right-hand rule to assign +1 or -1 to each crossing.</li>
+                <li><strong>Sum the crossings:</strong> Lk = (1/2) × Σ(signed crossings)</li>
+            </ol>
+
+            <h3>Right-Hand Rule for Sign Convention</h3>
+            <div class="key-point">
+                <strong>Positive Crossing (+1):</strong> When the reference strand crosses over the other strand in a right-handed manner (clockwise rotation brings the under-strand to the over-strand).<br><br>
+                <strong>Negative Crossing (-1):</strong> When the crossing is left-handed (counterclockwise).
+            </div>
+
+            <h3>Practical Example</h3>
+            <p>
+                Consider a circular DNA with 5,250 base pairs under physiological conditions:
+            </p>
+
+            <div class="formula">
+                <strong>Step 1:</strong> Calculate Lk₀<br>
+                Lk₀ = N / h = 5,250 / 10.5 = 500<br><br>
+                
+                <strong>Step 2:</strong> If the actual measured Lk = 470<br><br>
+                
+                <strong>Step 3:</strong> Calculate ΔLk<br>
+                ΔLk = Lk - Lk₀ = 470 - 500 = -30<br><br>
+                
+                <strong>Step 4:</strong> Calculate superhelical density<br>
+                σ = ΔLk / Lk₀ = -30 / 500 = -0.06 or -6%
+            </div>
+
+            <h3>Alternative Calculation Using Twist and Writhe</h3>
+            <p>
+                The linking number can also be expressed in terms of twist and writhe (discussed in later sections):
+            </p>
+
+            <div class="formula">
+                Lk = Tw + Wr<br><br>
+                where:<br>
+                Tw = twist (helical winding of strands)<br>
+                Wr = writhe (coiling of the helix axis)
+            </div>
+
+            <h3>Experimental Determination</h3>
+            <ul>
+                <li><strong>Gel Electrophoresis:</strong> Different topoisomers (molecules with different Lk) migrate at different rates, allowing separation and counting.</li>
+                <li><strong>Electron Microscopy:</strong> Direct visualization of supercoiled DNA can provide topological information.</li>
+                <li><strong>Atomic Force Microscopy (AFM):</strong> High-resolution imaging of DNA topology on surfaces.</li>
+            </ul>
+
+            <div class="key-point">
+                <strong>Important Note:</strong> The linking number is conserved during any conformational change that doesn't break the DNA backbone. This makes it a powerful tool for studying DNA structural transitions and enzyme mechanisms.
+            </div>
+        </div>
+
+        <!-- Section 4: Twist -->
+        <div class="section" data-section="4">
+            <h2>4. Twist (Tw)</h2>
+            
+            <h3>Definition</h3>
+            <p>
+                <span class="highlight">Twist (Tw)</span> describes the number of helical turns in the DNA double helix, representing the winding of one strand around the other along the helical axis. Unlike linking number, twist is not constrained to be an integer and can vary continuously.
+            </p>
+
+            <div class="formula">
+                For uniform DNA:<br>
+                Tw = N / h<br><br>
+                where:<br>
+                N = number of base pairs<br>
+                h = helical repeat (bp/turn)
+            </div>
+
+            <h3>Characteristics of Twist</h3>
+            <ul>
+                <li><strong>Non-integer value:</strong> Tw can take fractional values, unlike Lk.</li>
+                <li><strong>Local property:</strong> Tw describes the local helical structure rather than global topology.</li>
+                <li><strong>Energy-dependent:</strong> Changes in Tw require energy to overcome the torsional rigidity of DNA.</li>
+                <li><strong>Temperature-sensitive:</strong> Tw varies with temperature, ionic strength, and DNA sequence.</li>
+            </ul>
+
+            <h3>Relationship to Linking Number</h3>
+            <p>
+                The fundamental topological equation relates twist to linking number and writhe:
+            </p>
+
+            <div class="formula">
+                Lk = Tw + Wr
+            </div>
+
+            <p>
+                Since Lk is constant for closed circular DNA (without strand breaks), any change in twist must be compensated by an opposite change in writhe:
+            </p>
+
+            <div class="formula">
+                ΔLk = ΔTw + ΔWr = 0<br>
+                Therefore: ΔTw = -ΔWr
+            </div>
+
+            <h3>Twist in Different DNA Forms</h3>
+            <div class="key-point">
+                <strong>B-DNA (Right-handed):</strong> h ≈ 10.5 bp/turn, positive twist contribution<br><br>
+                <strong>A-DNA (Right-handed):</strong> h ≈ 11 bp/turn, more tightly wound than B-DNA<br><br>
+                <strong>Z-DNA (Left-handed):</strong> h ≈ 12 bp/turn, negative twist contribution (opposite handedness)
+            </div>
+
+            <h3>Change in Twist (ΔTw)</h3>
+            <p>
+                When DNA is underwound or overwound from its relaxed state:
+            </p>
+
+            <div class="formula">
+                ΔTw = Tw - Tw₀<br><br>
+                where Tw₀ is the twist of relaxed DNA
+            </div>
+
+            <ul>
+                <li><strong>Negative ΔTw:</strong> DNA is underwound (fewer helical turns than relaxed state)</li>
+                <li><strong>Positive ΔTw:</strong> DNA is overwound (more helical turns)</li>
+            </ul>
+
+            <h3>Biological Significance of Twist Changes</h3>
+            <ul>
+                <li><strong>DNA Melting:</strong> Underwinding (negative ΔTw) facilitates strand separation, crucial for replication and transcription.</li>
+                <li><strong>Protein Binding:</strong> Some proteins induce local changes in twist upon binding (e.g., TATA-binding protein unwinds DNA).</li>
+                <li><strong>Drug Intercalation:</strong> Molecules like ethidium bromide unwind DNA by reducing twist by ~26° per intercalated molecule.</li>
+                <li><strong>Nucleosome Formation:</strong> DNA wrapping around histones involves both twist and writhe changes.</li>
+            </ul>
+
+        </div>
+
+        <!-- Section 5: Writhe -->
+        <div class="section" data-section="5">
+            <h2>5. Writhe (Wr)</h2>
+            
+            <h3>Definition</h3>
+            <p>
+                <span class="highlight">Writhe (Wr)</span> is a geometric property that describes the coiling of the DNA helix axis in three-dimensional space. It represents the supercoiling or tertiary structure of DNA, quantifying how the double helix axis winds around itself.
+            </p>
+
+            <div class="key-point">
+                <strong>Conceptual Understanding:</strong> While twist describes the winding of strands around each other, writhe describes the winding of the entire double helix axis in space. Writhe is what creates the supercoiled appearance of DNA molecules.
+            </div>
+
+            <h3>Mathematical Properties</h3>
+            <ul>
+                <li><strong>Non-integer value:</strong> Wr can be any real number, positive or negative.</li>
+                <li><strong>Path-dependent:</strong> Wr depends on the three-dimensional path of the helix axis.</li>
+                <li><strong>Sign convention:</strong> Right-handed supercoiling gives positive Wr; left-handed (negative) supercoiling gives negative Wr.</li>
+                <li><strong>Zero for planar DNA:</strong> Relaxed circular DNA lying flat in a plane has Wr = 0.</li>
+            </ul>
+
+            <h3>Calculation of Writhe</h3>
+            <p>
+                Writhe is calculated using the Călugăreanu-White-Fuller theorem:
+            </p>
+
+            <div class="formula">
+                Lk = Tw + Wr<br><br>
+                Therefore:<br>
+                Wr = Lk - Tw
+            </div>
+
+            <p>
+                For practical calculations, writhe is often determined experimentally by measuring linking number and twist, then calculating writhe by subtraction.
+            </p>
+
+            <h3>Types of Writhe</h3>
+
+            <h4>1. Interwound (Plectonemic) Supercoiling</h4>
+            <p>
+                The DNA helix axis coils around itself in a branched, interwound structure. This is the most common form of writhe in vivo.
+            </p>
+            <ul>
+                <li>More compact structure</li>
+                <li>Lower energetic cost</li>
+                <li>Typical of negatively supercoiled DNA in cells</li>
+                <li>Resembles a telephone cord or twisted rope</li>
+            </ul>
+
+            <h4>2. Toroidal Supercoiling</h4>
+            <p>
+                The DNA helix axis winds around a cylindrical surface (toroid) without the strands crossing each other.
+            </p>
+            <ul>
+                <li>More extended structure</li>
+                <li>Higher energetic cost when free in solution</li>
+                <li>Stabilized by protein binding (e.g., nucleosomes)</li>
+                <li>Resembles DNA wrapped around a cylinder</li>
+            </ul>
+
+            <h3>Distribution of Supercoiling Energy</h3>
+            <p>
+                For negatively supercoiled DNA (ΔLk < 0), the topological constraint is distributed between twist and writhe:
+            </p>
+
+            <div class="formula">
+                ΔLk = ΔTw + ΔWr<br><br>
+                For typical conditions:<br>
+                ΔWr ≈ 75-80% of ΔLk<br>
+                ΔTw ≈ 20-25% of ΔLk
+            </div>
+
+            <div class="key-point">
+                <strong>Energy Minimization:</strong> DNA adopts conformations that minimize free energy. Since introducing writhe is energetically cheaper than changing twist (due to DNA's torsional rigidity), most supercoiling appears as writhe rather than twist changes.
+            </div>
+
+            <h3>Biological Significance of Writhe</h3>
+            <ul>
+                <li><strong>DNA Compaction:</strong> Writhe allows DNA to occupy less volume, essential for packaging in cells.</li>
+                <li><strong>Accessibility:</strong> Negative writhe creates regions of local underwinding, facilitating protein access and strand separation.</li>
+                <li><strong>Energy Storage:</strong> Supercoiling stores elastic energy that can be released during DNA transactions.</li>
+                <li><strong>Regulation:</strong> The level of writhe affects gene expression and DNA metabolism.</li>
+            </ul>
+
+            <h3>Experimental Observation</h3>
+            <ul>
+                <li><strong>Electron Microscopy:</strong> Direct visualization of supercoiled structures shows interwound or toroidal forms.</li>
+                <li><strong>Atomic Force Microscopy:</strong> Can distinguish between different supercoiling geometries on surfaces.</li>
+                <li><strong>Gel Electrophoresis:</strong> Supercoiled DNA migrates faster than relaxed DNA due to its compact structure (high writhe).</li>
+            </ul>
+        </div>
+
+        <!-- Section 6: Plectonemic and Toroidal Supercoiling -->
+        <div class="section" data-section="6">
+            <h2>6. Plectonemic and Toroidal Supercoiling</h2>
+            
+            <h3>Introduction</h3>
+            <p>
+                Supercoiled DNA can adopt two fundamentally different geometric forms to accommodate changes in linking number: <span class="highlight">plectonemic</span> (interwound) and <span class="highlight">toroidal</span> (solenoidal) supercoiling. Both represent different manifestations of writhe, and the choice between them depends on energetic considerations and environmental constraints.
+            </p>
+
+            <h3>Plectonemic Supercoiling</h3>
+            
+            <h4>Structural Characteristics</h4>
+            <p>
+                In plectonemic supercoiling, the DNA double helix axis wraps around itself in a branched, interwound configuration. The term "plectonemic" comes from the Greek word "plektos," meaning twisted or braided.
+            </p>
+
+            <div class="key-point">
+                <strong>Visual Description:</strong> Imagine a rubber band twisted upon itself - the two strands of the band wind around each other. This is analogous to plectonemic supercoiling, where the DNA helix axis (not the individual strands) coils around itself.
+            </div>
+
+            <h4>Properties of Plectonemic Forms</h4>
+            <ul>
+                <li><strong>Energetically Favorable:</strong> This is the lowest energy state for free DNA in solution.</li>
+                <li><strong>Compact Structure:</strong> Results in a highly condensed molecule with reduced radius of gyration.</li>
+                <li><strong>Branched Topology:</strong> Contains superhelical branch points where strands cross.</li>
+                <li><strong>Rapid Interconversion:</strong> Superhelical branches can redistribute along the DNA freely.</li>
+                <li><strong>Negative Writhe:</strong> For negatively supercoiled DNA (typical cellular state), plectonemic coils are left-handed.</li>
+            </ul>
+
+            <h4>Biological Context</h4>
+            <p>
+                Plectonemic supercoiling is the predominant form in prokaryotic cells and in free DNA within eukaryotic cells. It's crucial for:
+            </p>
+            <ul>
+                <li>DNA compaction in bacterial nucleoids</li>
+                <li>Creating topological domains</li>
+                <li>Regulating DNA accessibility to proteins</li>
+                <li>Storing elastic energy for DNA transactions</li>
+            </ul>
+
+            <h3>Toroidal Supercoiling</h3>
+            
+            <h4>Structural Characteristics</h4>
+            <p>
+                In toroidal (or solenoidal) supercoiling, the DNA helix axis wraps around the surface of an imaginary toroid (doughnut shape) or cylinder. The DNA winds in a regular, organized manner without the strands crossing each other.
+            </p>
+
+            <div class="key-point">
+                <strong>Visual Description:</strong> Imagine wrapping a garden hose around a cylindrical barrel in neat, parallel loops. The hose (DNA) follows a helical path around the cylinder's surface without crossing itself.
+            </div>
+
+            <h4>Properties of Toroidal Forms</h4>
+            <ul>
+                <li><strong>Higher Energy:</strong> Less energetically favorable than plectonemic forms in free solution.</li>
+                <li><strong>More Extended:</strong> Occupies more volume than equivalent plectonemic supercoiling.</li>
+                <li><strong>Regular Organization:</strong> Forms ordered, repetitive structures when stabilized by proteins.</li>
+                <li><strong>Protein-Stabilized:</strong> Typically requires protein scaffolds to maintain this geometry.</li>
+                <li><strong>Negative Writhe:</strong> Wrapping in the right-handed direction (viewed from inside the toroid) introduces negative writhe.</li>
+            </ul>
+
+            <h4>Biological Context</h4>
+            <p>
+                Toroidal supercoiling is predominantly found in eukaryotic chromatin:
+            </p>
+
+            <div class="formula">
+                <strong>Nucleosome Structure:</strong><br>
+                • 147 bp of DNA wraps 1.65 turns around histone octamer<br>
+                • Left-handed superhelical path (when viewed from outside)<br>
+                • Introduces ΔLk ≈ -1.0 to -1.5 per nucleosome<br>
+                • This writhe is toroidal, not plectonemic
+            </div>
+
+            <h3>Comparison and Interconversion</h3>
+
+            <table>
+                <tr>
+                    <th>Property</th>
+                    <th>Plectonemic</th>
+                    <th>Toroidal</th>
+                </tr>
+                <tr>
+                    <td>Energy</td>
+                    <td>Lower (favored)</td>
+                    <td>Higher</td>
+                </tr>
+                <tr>
+                    <td>Compactness</td>
+                    <td>More compact</td>
+                    <td>More extended</td>
+                </tr>
+                <tr>
+                    <td>Occurrence</td>
+                    <td>Free DNA, prokaryotes</td>
+                    <td>Protein-bound, chromatin</td>
+                </tr>
+                <tr>
+                    <td>Structure</td>
+                    <td>Interwound, branched</td>
+                    <td>Wrapped, regular</td>
+                </tr>
+            </table>
+
+            <h4>Interconversion Between Forms</h4>
+            <p>
+                Under certain conditions, DNA can transition between plectonemic and toroidal forms:
+            </p>
+
+            <div class="formula">
+                Plectonemic ⇌ Toroidal<br><br>
+                Driven by:<br>
+                • Protein binding (favors toroidal)<br>
+                • Ionic strength changes<br>
+                • DNA-binding molecules<br>
+                • Mechanical constraints
+            </div>
+
+            <h3>Biological Implications</h3>
+            <ul>
+                <li><strong>Gene Regulation:</strong> Conversion between forms can expose or hide regulatory sequences.</li>
+                <li><strong>DNA Accessibility:</strong> Plectonemic regions are less accessible to proteins than toroidally wrapped DNA.</li>
+                <li><strong>Energy Landscape:</strong> Cells can manipulate DNA topology by controlling which form predominates.</li>
+                <li><strong>Chromatin Remodeling:</strong> Nucleosome sliding and removal involves transitions between toroidal and plectonemic states.</li>
+            </ul>
+        </div>
+
+        <!-- Section 7: Topology of B-DNA to A-DNA and B-DNA to Z-DNA Transitions -->
+        <div class="section" data-section="7">
+            <h2>7. Topology of B-DNA to A-DNA and B-DNA to Z-DNA Transitions</h2>
+            
+            <h3>Introduction</h3>
+            <p>
+                DNA can adopt multiple helical conformations depending on sequence, hydration, ionic environment, and topology. The three major forms—A-DNA, B-DNA, and Z-DNA—have distinct structural parameters that profoundly affect DNA topology, particularly in closed circular molecules where linking number is conserved.
+            </p>
+
+            <h3>B-DNA to A-DNA Transition</h3>
+            
+            <h4>Structural Characteristics</h4>
+            <div class="formula">
+                <strong>B-DNA (Standard Form):</strong><br>
+                • Right-handed helix<br>
+                • Helical repeat: ~10.5 bp/turn<br>
+                • Rise per bp: 3.4 Å<br>
+                • Major groove: Wide and deep<br>
+                • Minor groove: Narrow<br>
+                • Base pairs: Nearly perpendicular to helix axis<br><br>
+                
+                <strong>A-DNA (Dehydrated Form):</strong><br>
+                • Right-handed helix<br>
+                • Helical repeat: ~11 bp/turn<br>
+                • Rise per bp: 2.6 Å<br>
+                • Major groove: Narrow and deep<br>
+                • Minor groove: Wide and shallow<br>
+                • Base pairs: Tilted ~20° from perpendicular
+            </div>
+
+            <h4>Topological Consequences</h4>
+            <p>
+                The B-to-A transition has important topological implications for closed circular DNA:
+            </p>
+
+            <div class="key-point">
+                <strong>Change in Twist:</strong><br>
+                • B-DNA: Tw = N/10.5<br>
+                • A-DNA: Tw = N/11<br><br>
+                For a 5,250 bp circular DNA:<br>
+                • B-form: Tw = 500<br>
+                • A-form: Tw = 477<br>
+                • ΔTw = -23 (underwinding)
+            </div>
+
+            <p>
+                Since linking number is conserved in closed circular DNA:
+            </p>
+
+            <div class="formula">
+                Lk = Tw + Wr = constant<br><br>
+                If ΔTw = -23 (decrease), then ΔWr = +23 (compensatory increase)<br><br>
+                Result: B-to-A transition introduces <strong>positive supercoiling</strong>
+            </div>
+
+            <h4>Biological and Experimental Relevance</h4>
+            <ul>
+                <li><strong>Dehydration:</strong> A-DNA forms under low humidity conditions (~75% relative humidity).</li>
+                <li><strong>RNA-DNA Hybrids:</strong> RNA-DNA duplexes adopt A-like conformations.</li>
+                <li><strong>Protein Recognition:</strong> Some proteins recognize and stabilize A-form DNA.</li>
+                <li><strong>Experimental Tool:</strong> Ethanol precipitation can induce B-to-A transitions, affecting supercoiling.</li>
+            </ul>
+
+            <h3>B-DNA to Z-DNA Transition</h3>
+            
+            <h4>Structural Characteristics</h4>
+            <div class="formula">
+                <strong>Z-DNA (Left-handed Form):</strong><br>
+                • Left-handed helix (opposite handedness!)<br>
+                • Helical repeat: ~12 bp/turn<br>
+                • Rise per bp: 3.7 Å<br>
+                • Major groove: Flat, almost absent<br>
+                • Minor groove: Narrow and deep<br>
+                • Zigzag backbone (hence "Z-DNA")<br>
+                • Requires alternating purine-pyrimidine sequences
+            </div>
+
+            <h4>Sequence Requirements</h4>
+            <p>
+                Z-DNA formation is highly sequence-dependent:
+            </p>
+            <ul>
+                <li><strong>Favorable:</strong> Alternating GC repeats (d(GC)n) or d(CA)n·d(TG)n</li>
+                <li><strong>Stabilizing Factors:</strong> High salt concentration, negative supercoiling, cytosine methylation, certain proteins</li>
+                <li><strong>Energy Cost:</strong> B-to-Z transition requires ~3 kcal/mol per base pair (energetically unfavorable)</li>
+            </ul>
+
+            <h4>Dramatic Topological Consequences</h4>
+            <p>
+                The B-to-Z transition is one of the most dramatic topological changes in DNA:
+            </p>
+
+            <div class="key-point">
+                <strong>Handedness Reversal:</strong><br>
+                • B-DNA: Right-handed (+) helical turns<br>
+                • Z-DNA: Left-handed (-) helical turns<br><br>
+                
+                <strong>Change in Twist per Base Pair:</strong><br>
+                • B-DNA: +1/10.5 = +0.095 turns/bp<br>
+                • Z-DNA: -1/12 = -0.083 turns/bp<br>
+                • Net change: -0.178 turns/bp
+            </div>
+
+            <p>
+                For a segment converting from B to Z form:
+            </p>
+
+            <div class="formula">
+                ΔTw per bp ≈ -0.18 turns<br><br>
+                For a 20 bp Z-forming sequence:<br>
+                ΔTw = 20 × (-0.18) ≈ -3.6 turns<br><br>
+                Since Lk is constant:<br>
+                ΔWr = +3.6 turns (compensatory positive writhe)
+            </div>
+
+            <h3>Negative Supercoiling Drives Z-DNA Formation</h3>
+            <p>
+                This is a crucial biological principle:
+            </p>
+
+            <div class="key-point">
+                <strong>Topological Mechanism:</strong><br>
+                1. Negatively supercoiled DNA has ΔLk < 0<br>
+                2. This creates torsional stress (underwinding)<br>
+                3. B-to-Z transition releases this stress by absorbing negative linking number<br>
+                4. The transition converts negative writhe (supercoiling) into negative twist (left-handed Z-form)<br>
+                5. Net result: Energetically favorable relief of superhelical tension
+            </div>
+
+            <div class="formula">
+                <strong>Equilibrium:</strong><br>
+                In negatively supercoiled DNA:<br>
+                Higher |ΔLk| → Greater propensity for Z-DNA formation<br><br>
+                Threshold: σ ≈ -0.05 to -0.06 needed for Z-DNA in (GC)n sequences
+            </div>
+
+            <h3>Biological Significance</h3>
+            
+            <h4>B-to-A Transition</h4>
+            <ul>
+                <li>Limited biological occurrence (mainly RNA-DNA hybrids during transcription)</li>
+                <li>May play roles in recombination and repair</li>
+                <li>Some DNA-binding proteins induce local A-form structure</li>
+            </ul>
+
+            <h4>B-to-Z Transition</h4>
+            <ul>
+                <li><strong>Gene Regulation:</strong> Z-DNA formation at promoters can affect transcription.</li>
+                <li><strong>Recombination Hotspots:</strong> Z-forming sequences are recombination-prone.</li>
+                <li><strong>Chromatin Structure:</strong> Z-DNA may influence nucleosome positioning.</li>
+                <li><strong>Transcription-Induced:</strong> Negative supercoiling behind RNA polymerase can induce transient Z-DNA.</li>
+                <li><strong>Disease Relevance:</strong> Expanded trinucleotide repeats (CAG, CGG) can form Z-DNA, linked to genetic disorders.</li>
+            </ul>
+
+            <h3>Detection and Study</h3>
+            <ul>
+                <li><strong>Antibodies:</strong> Z-DNA-specific antibodies can detect Z-form regions in vivo.</li>
+                <li><strong>Chemical Probing:</strong> Certain chemicals react differently with B vs. Z-DNA.</li>
+                <li><strong>Circular Dichroism:</strong> Spectroscopic signatures distinguish DNA forms.</li>
+                <li><strong>Gel Electrophoresis Analysis:</strong> Gel electrophoresis can detect linking number changes associated with conformational transitions.</li>
+            </ul>
+
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSection(-1)">← Previous</button>
+            <div class="progress">
+                <span id="currentSection">1</span> / 7
+            </div>
+            <button id="nextBtn" onclick="changeSection(1)">Next →</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 7;
+
+        function showSection(n) {
+            const sections = document.querySelectorAll('.section');
+            
+            if (n > totalSections) {
+                currentSection = totalSections;
+            }
+            if (n < 1) {
+                currentSection = 1;
+            }
+            
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            sections[currentSection - 1].classList.add('active');
+            
+            document.getElementById('currentSection').textContent = currentSection;
+            
+            document.getElementById('prevBtn').disabled = currentSection === 1;
+            document.getElementById('nextBtn').disabled = currentSection === totalSections;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSection(direction) {
+            currentSection += direction;
+            showSection(currentSection);
+        }
+
+        showSection(currentSection);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
