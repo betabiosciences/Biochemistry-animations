@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Replication Elongation in Prokaryotes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(45, 27, 78, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        h1 {
+            color: #a78bfa;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        .section-indicator {
+            text-align: center;
+            color: #c4b5fd;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        #content-wrapper {
+            min-height: 400px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #c4b5fd;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #7c3aed;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #ddd6fe;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        h4 {
+            color: #ddd6fe;
+            font-size: 1.05em;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .emphasis {
+            color: #a78bfa;
+            font-style: italic;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(30, 15, 50, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            text-align: left;
+        }
+
+        th {
+            background: rgba(124, 58, 237, 0.4);
+            color: #c4b5fd;
+            font-weight: 600;
+        }
+
+        td {
+            color: #e0d4f7;
+        }
+
+        .image-container {
+            width: 100%;
+            margin: 1.5rem 0;
+            text-align: center;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .image-caption {
+            padding: 10px 15px;
+            background: rgba(15, 23, 42, 0.8);
+            font-size: 0.9rem;
+            color: #fbbf24;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        footer {
+            background: linear-gradient(to right, #1a0b2e, #2d1b4e);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: 2rem;
+            border-radius: 10px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 0.95em;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DNA Replication Elongation in Prokaryotes</h1>
+        <div class="section-indicator">
+            Section <span id="current-section">1</span> of <span id="total-sections">12</span>
+        </div>
+
+        <div id="content-wrapper"></div>
+
+        <div class="nav-buttons">
+            <button id="prev-btn" onclick="navigateSection(-1)">Previous</button>
+            <button id="next-btn" onclick="navigateSection(1)">Next</button>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <img src="https://betabiosciences.github.io/Biochemistry-animations/Logo%20transparent.png" 
+                     alt="BETA Biosciences Logo" class="footer-logo">
+                <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+                <p class="footer-text">Email: betabiosciences@gmail.com</p>
+                <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 12;
+
+        const sections = {
+            1: {
+                title: "Concept of Replication Fork",
+                content: `
+                    <h2>Concept of Replication Fork</h2>
+                    <p>The <span class="highlight">replication fork</span> is a Y-shaped structure that forms during DNA replication when the double-stranded DNA molecule is unwound by helicases. This dynamic molecular machine is the site where the actual DNA synthesis occurs in both prokaryotic and eukaryotic cells.</p>
+                    
+                    <h3>Structural Organization</h3>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Leading%20and%20lagging%20strand%20definition.png" alt="Replication Fork Diagram">
+                    </div>
+                    <p>At the replication fork, the parental DNA duplex is unwound into two single-stranded templates. The fork advances along the chromosome at approximately <span class="highlight">1000 nucleotides per second</span> in E. coli, making it one of the fastest molecular motors known. The asymmetric nature of DNA strands (5' to 3' directionality) creates distinct requirements for synthesis on each template strand.</p>
+                    
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li><span class="emphasis">Bidirectional nature:</span> In prokaryotes, replication forks proceed in both directions from the origin of replication (oriC), creating two active replication forks that travel in opposite directions around the circular chromosome.</li>
+                        <li><span class="emphasis">Helicase activity:</span> DnaB helicase unwinds the parental duplex by breaking hydrogen bonds between complementary base pairs, using ATP hydrolysis as an energy source.</li>
+                        <li><span class="emphasis">Topological stress:</span> Fork progression generates positive supercoiling ahead of the fork and negative supercoiling behind it, which must be resolved by topoisomerases (gyrase and topoisomerase IV).</li>
+                        <li><span class="emphasis">Protein coordination:</span> Multiple proteins work in concert at the fork, including helicases, primases, polymerases, single-strand binding proteins, and topoisomerases, forming a sophisticated molecular assembly called the replisome.</li>
+                    </ul>
+                    
+                    <p>The replication fork represents a remarkable example of molecular coordination, where multiple enzymatic activities must be precisely synchronized to ensure accurate and efficient DNA duplication.</p>
+                `
+            },
+            2: {
+                title: "Leading and Lagging Strand Synthesis",
+                content: `
+                    <h2>Leading and Lagging Strand Synthesis</h2>
+                    <p>The antiparallel nature of DNA strands and the unidirectional synthesis capability of DNA polymerases (5' to 3' only) create an elegant problem that cells solve through <span class="highlight">asymmetric replication mechanisms</span>.</p>
+                    
+                    <h3>Leading Strand Synthesis</h3>
+                    <p>The leading strand is synthesized <span class="emphasis">continuously</span> in the same direction as the advancing replication fork. Key characteristics include:</p>
+                    <ul>
+                        <li>Requires only a <span class="highlight">single RNA primer</span> synthesized by primase at the origin of replication</li>
+                        <li>DNA polymerase III synthesizes DNA continuously in the 5' to 3' direction following the helicase</li>
+                        <li>No interruptions in synthesis except for occasional pausing due to DNA lesions or secondary structures</li>
+                        <li>Highly processive synthesis covering thousands of nucleotides without dissociation</li>
+                    </ul>
+                    
+                    <h3>Lagging Strand Synthesis</h3>
+                    <p>The lagging strand is synthesized <span class="emphasis">discontinuously</span> in the direction opposite to fork movement, creating multiple short DNA fragments:</p>
+                    <ul>
+                        <li>Synthesis occurs in short segments called <span class="highlight">Okazaki fragments</span> (1000-2000 nucleotides in prokaryotes)</li>
+                        <li>Each fragment requires a <span class="highlight">new RNA primer</span> (approximately 10-12 nucleotides) synthesized by primase</li>
+                        <li>DNA polymerase III extends each primer until it encounters the previous Okazaki fragment</li>
+                        <li>Requires extensive primer removal and fragment joining by DNA polymerase I and DNA ligase</li>
+                        <li>Creates a "retrograde" synthesis pattern where DNA is made in the opposite direction of fork progression</li>
+                    </ul>
+                    
+                    <h3>Coordination Mechanism</h3>
+                    <p>Despite the different synthesis modes, both strands are replicated simultaneously by a single dimeric DNA polymerase III holoenzyme. The lagging strand template forms a <span class="emphasis">loop structure</span> (trombone loop) that allows both polymerase cores to move in the same physical direction along the DNA, even though they synthesize in opposite directions relative to the template strands.</p>
+                `
+            },
+            3: {
+                title: "Okazaki Experiment with dut⁻ and ung⁻ Mutants",
+                content: `
+                    <h2>Okazaki Experiment: Using dut⁻ and ung⁻ Mutants</h2>
+                    <p>The elegant experimental design using <span class="highlight">dut⁻ and ung⁻ mutants</span> provided crucial insights into the mechanism of DNA replication, particularly the role of uracil incorporation and its relationship to RNA primers and Okazaki fragments.</p>
+                    
+                    <h3>Genetic Background</h3>
+                    <ul>
+                        <li><span class="highlight">dut⁻ mutants:</span> Deficient in dUTPase (dut gene product), which normally hydrolyzes dUTP to dUMP. This deficiency leads to elevated intracellular dUTP levels, causing increased misincorporation of uracil into DNA by DNA polymerases.</li>
+                        <li><span class="highlight">ung⁻ mutants:</span> Lack uracil-DNA glycosylase (ung gene product), which normally removes uracil bases from DNA through base excision repair. These mutants cannot repair uracil-containing DNA.</li>
+                        <li><span class="highlight">Double mutant (dut⁻ ung⁻):</span> Combines both defects, resulting in stable incorporation and retention of uracil in newly synthesized DNA.</li>
+                    </ul>
+                    
+                    <h3>Experimental Design</h3>
+                    <p>Researchers grew dut⁻ ung⁻ mutant E. coli cells and pulse-labeled them with radioactive thymidine for very short periods (seconds), followed by chase experiments. They then analyzed the size distribution and alkali sensitivity of newly synthesized DNA fragments.</p>
+                    
+                    <h3>Key Observations</h3>
+                    <ul>
+                        <li>In wild-type cells, brief pulse-labeling revealed small DNA fragments (Okazaki fragments) that were rapidly converted to high molecular weight DNA</li>
+                        <li>In dut⁻ ung⁻ mutants, <span class="highlight">uracil was stably incorporated</span> into nascent DNA at much higher frequencies</li>
+                        <li>The uracil-containing regions were specifically localized at the <span class="emphasis">5' ends of Okazaki fragments</span></li>
+                        <li>Alkaline treatment (which breaks DNA at sites of ribonucleotides) produced fragments slightly larger than those seen after uracil removal, indicating the presence of RNA primers</li>
+                        <li>The size of uracil-containing segments corresponded to the expected length of RNA primers (10-12 nucleotides)</li>
+                    </ul>
+                    
+                    <h3>Critical Inferences</h3>
+                    <ul>
+                        <li><span class="emphasis">RNA primers initiate Okazaki fragments:</span> The uracil (from misincorporated dUTP mimicking RNA) at fragment 5' ends confirmed that each Okazaki fragment begins with an RNA primer</li>
+                        <li><span class="emphasis">Primer removal and replacement:</span> The transient nature of these uracil-rich regions in wild-type cells indicated active primer removal and replacement with DNA</li>
+                        <li><span class="emphasis">Lagging strand discontinuity:</span> The persistent presence of multiple short fragments with primer sequences provided direct evidence for discontinuous lagging strand synthesis</li>
+                        <li><span class="emphasis">Maturation pathway:</span> Results demonstrated that Okazaki fragment maturation involves specific removal of RNA primers followed by DNA polymerase fill-in synthesis and ligation</li>
+                    </ul>
+                    
+                    <p>This experimental approach brilliantly exploited metabolic mutants to stabilize normally transient intermediates, allowing researchers to capture and analyze the fleeting steps of DNA replication.</p>
+                `
+            },
+            4: {
+                title: "Okazaki Fragment Size",
+                content: `
+                    <h2>Okazaki Fragment Size in Prokaryotes and Eukaryotes</h2>
+                    <p>The size of Okazaki fragments differs significantly between prokaryotic and eukaryotic organisms, reflecting fundamental differences in their DNA replication machinery and chromatin organization.</p>
+                    
+                    <h3>Prokaryotic Okazaki Fragments</h3>
+                    <p>In bacteria such as E. coli, Okazaki fragments are relatively <span class="highlight">large</span>:</p>
+                    <ul>
+                        <li>Average length: <span class="highlight">1000-2000 nucleotides</span></li>
+                        <li>Can extend up to 2000 nucleotides under optimal conditions</li>
+                        <li>Each fragment begins with an RNA primer of approximately 10-12 ribonucleotides</li>
+                        <li>The larger size reflects the high processivity of prokaryotic DNA polymerase III</li>
+                        <li>Rapid synthesis rate (approximately 1000 nt/second) combined with less frequent priming events</li>
+                    </ul>
+                    
+                    <h3>Eukaryotic Okazaki Fragments</h3>
+                    <p>In eukaryotic cells, Okazaki fragments are considerably <span class="highlight">shorter</span>:</p>
+                    <ul>
+                        <li>Average length: <span class="highlight">100-200 nucleotides</span></li>
+                        <li>Typically around 150 nucleotides in mammalian cells</li>
+                        <li>Each fragment begins with an RNA primer of approximately 8-12 ribonucleotides</li>
+                        <li>The shorter length correlates with more frequent priming events</li>
+                        <li>More frequent primase activity on the lagging strand template</li>
+                    </ul>
+                    
+                    <h3>Mechanistic Basis for Size Differences</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>Factor</th>
+                                <th>Prokaryotes</th>
+                                <th>Eukaryotes</th>
+                            </tr>
+                            <tr>
+                                <td>Polymerase processivity</td>
+                                <td>Very high (Pol III)</td>
+                                <td>Moderate (Pol δ)</td>
+                            </tr>
+                            <tr>
+                                <td>Primase activity</td>
+                                <td>Less frequent</td>
+                                <td>More frequent</td>
+                            </tr>
+                            <tr>
+                                <td>Chromatin structure</td>
+                                <td>Absent</td>
+                                <td>Nucleosome barriers</td>
+                            </tr>
+                            <tr>
+                                <td>Replication speed</td>
+                                <td>~1000 nt/sec</td>
+                                <td>~50 nt/sec</td>
+                            </tr>
+                            <tr>
+                                <td>Sliding clamp</td>
+                                <td>β-clamp (very stable)</td>
+                                <td>PCNA (less stable)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <h3>Functional Implications</h3>
+                    <ul>
+                        <li><span class="emphasis">Maturation complexity:</span> Eukaryotes require more frequent primer removal and ligation events, necessitating additional coordination mechanisms</li>
+                        <li><span class="emphasis">Error correction:</span> Shorter fragments may provide more opportunities for quality control through more frequent proofreading checkpoints</li>
+                        <li><span class="emphasis">Chromatin assembly:</span> The shorter fragment size in eukaryotes may facilitate coordination between DNA synthesis and nucleosome assembly</li>
+                        <li><span class="emphasis">Replication timing:</span> Despite shorter fragments, eukaryotic replication is slower overall due to multiple factors including chromatin structure and lower polymerase processivity</li>
+                    </ul>
+                `
+            },
+            5: {
+                title: "Components of Replisome",
+                content: `
+                    <h2>Components of Replisome: Primosome and DNA Pol III Holoenzyme</h2>
+                    <p>The <span class="highlight">replisome</span> is a highly sophisticated molecular machine that coordinates all activities at the replication fork. In E. coli, it consists of approximately 30 different proteins organized into two major functional assemblies: the primosome and the DNA polymerase III holoenzyme.</p>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Replisome%20structure.png" alt="Replisome Structure Diagram">
+                    </div>
+                    
+                    <h3>Primosome Complex</h3>
+                    <p>The primosome is responsible for <span class="emphasis">unwinding DNA and synthesizing RNA primers</span> on the lagging strand. Key components include:</p>
+                    
+                    <ul>
+                        <li><span class="highlight">DnaB helicase (hexamer):</span> The primary replicative helicase that unwinds double-stranded DNA at the replication fork. It encircles the lagging strand template and translocates in the 5' to 3' direction, using ATP hydrolysis to break hydrogen bonds between base pairs. Unwinds DNA at approximately 1000 base pairs per second.</li>
+                        
+                        <li><span class="highlight">DnaG primase:</span> Synthesizes short RNA primers (10-12 nucleotides) that are essential for initiating DNA synthesis. Primase associates transiently with DnaB helicase on the lagging strand, synthesizing a new primer every 1-2 seconds to initiate each Okazaki fragment. It recognizes specific trinucleotide sequences on single-stranded DNA templates.</li>
+                        
+                        <li><span class="highlight">DnaC:</span> Acts as a helicase loader protein that delivers DnaB helicase to the origin of replication. It prevents premature helicase activity during the loading process and is released once DnaB is properly positioned.</li>
+                        
+                        <li><span class="highlight">PriA, PriB, PriC (additional primosome components):</span> These proteins are involved in replication restart after fork stalling or collapse. PriA recognizes and binds to stalled forks and recruits other primosome components to re-establish replication.</li>
+                    </ul>
+                    
+                    <h3>DNA Polymerase III Holoenzyme</h3>
+                    <p>This is the primary replicative polymerase complex responsible for synthesizing both leading and lagging strands. The holoenzyme is a <span class="highlight">dimeric asymmetric complex</span> with the following organization:</p>
+                    
+                    <h4>Core Enzyme (2 copies - one for each strand)</h4>
+                    <ul>
+                        <li><span class="highlight">α subunit (dnaE):</span> The catalytic subunit with polymerase activity (5' to 3' synthesis). Molecular weight of approximately 130 kDa. Contains the active site for nucleotide addition.</li>
+                        
+                        <li><span class="highlight">ε subunit (dnaQ):</span> Provides 3' to 5' exonuclease activity for proofreading. Removes incorrectly incorporated nucleotides, enhancing replication fidelity by approximately 100-fold. Molecular weight of approximately 27 kDa.</li>
+                        
+                        <li><span class="highlight">θ subunit (holE):</span> Small subunit (approximately 9 kDa) that stabilizes the ε subunit and may modulate its exonuclease activity. Its exact function is still being investigated.</li>
+                    </ul>
+                    
+                    <h4>β-Clamp (sliding clamp - multiple copies)</h4>
+                    <ul>
+                        <li>Ring-shaped homodimer that encircles DNA and tethers the core enzyme to the template</li>
+                        <li>Dramatically increases polymerase processivity from about 10 nucleotides to over 500,000 nucleotides per binding event</li>
+                        <li>Functions as a mobile platform for multiple replication and repair proteins</li>
+                    </ul>
+                    
+                    <h4>Clamp Loader Complex (τ complex)</h4>
+                    <ul>
+                        <li><span class="highlight">τ subunits (2 copies - dnaX):</span> Large subunits that dimerize the two core enzymes and connect them to the DnaB helicase. They coordinate leading and lagging strand synthesis.</li>
+                        
+                        <li><span class="highlight">γ subunits (3 copies - dnaX):</span> Shorter form of τ (internal translation start). Part of the pentameric clamp loader that loads β-clamps onto DNA.</li>
+                        
+                        <li><span class="highlight">δ subunit (holA):</span> Opens the β-clamp ring to allow loading onto DNA.</li>
+                        
+                        <li><span class="highlight">δ' subunit (holB):</span> Binds to β-clamp and helps position it on primer-template junctions.</li>
+                        
+                        <li><span class="highlight">χ subunit (holC):</span> Binds to SSB proteins, helping to coordinate clamp loading with single-strand DNA binding.</li>
+                        
+                        <li><span class="highlight">ψ subunit (holD):</span> Stabilizes the clamp loader's grip on the β-clamp. Approximately 2-3 ATP molecules are hydrolyzed per loading event.</li>
+                    </ul>
+                    
+                    <h3>Replisome Stoichiometry and Organization</h3>
+                    <p>A complete replisome contains:</p>
+                    <ul>
+                        <li>1 DnaB hexameric helicase</li>
+                        <li>1 DnaG primase (transiently associated)</li>
+                        <li>2 DNA Pol III core enzymes (leading and lagging strand)</li>
+                        <li>Multiple β-clamps (at least 2, but more accumulate on lagging strand)</li>
+                        <li>1 clamp loader complex (τ₂γδδ'χψ or τ₃δδ'χψ)</li>
+                        <li>Numerous SSB proteins coating single-stranded regions</li>
+                    </ul>
+                    
+                    <p>This remarkable molecular machine achieves coordinated DNA synthesis on both strands while maintaining extremely high fidelity and speed, representing one of the most impressive examples of biological nanomachinery.</p>
+                `
+            },
+            6: {
+                title: "Sliding Clamp and Clamp Loader",
+                content: `
+                    <h2>Sliding Clamp and Clamp Loader Mechanism</h2>
+                    <p>The processivity problem faced by DNA polymerases—the tendency to dissociate from DNA after synthesizing only a few nucleotides—is elegantly solved by the <span class="highlight">sliding clamp and clamp loader system</span>, which transforms a distributive polymerase into a highly processive enzyme.</p>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Minimal%20clamp%20loader.png" alt="Clamp Loader Diagram">
+                    </div>
+                    
+                    <h3>The β-Clamp (Sliding Clamp) Structure</h3>
+                    <p>The β-clamp is a <span class="emphasis">ring-shaped protein</span> with remarkable structural features:</p>
+                    <ul>
+                        <li><span class="highlight">Homodimeric structure:</span> Composed of two identical β subunits (dnaN gene product), each with a molecular weight of approximately 40 kDa</li>
+                        <li><span class="highlight">Ring topology:</span> Forms a closed circular structure with an internal diameter of approximately 35 Å, large enough to accommodate double-stranded DNA (20 Å diameter) while allowing free sliding</li>
+                        <li><span class="highlight">Head-to-tail assembly:</span> The two monomers associate through extensive interactions at their interfaces, creating a stable but openable structure</li>
+                        <li><span class="highlight">Hydrophilic interior:</span> The inner surface is lined with positively charged and polar residues that interact electrostatically with the DNA backbone without sequence specificity</li>
+                        <li><span class="highlight">Tilted orientation:</span> The clamp sits on DNA at approximately 22° tilt, allowing optimal interaction with both the polymerase and the DNA</li>
+                    </ul>
+                    
+                    <h3>Mechanism of Processivity Enhancement</h3>
+                    <p>The β-clamp transforms DNA polymerase III from a distributive enzyme (synthesizing only 10-20 nucleotides per binding event) to a highly processive enzyme capable of synthesizing over 500,000 nucleotides without dissociating:</p>
+                    <ul>
+                        <li><span class="emphasis">Topological linking:</span> The clamp encircles DNA, creating a topological link that prevents polymerase dissociation while still allowing the enzyme to slide along DNA freely</li>
+                        <li><span class="emphasis">Protein-protein interactions:</span> The α subunit of DNA Pol III contains a conserved clamp-binding motif that interacts with a hydrophobic pocket on the clamp surface</li>
+                        <li><span class="emphasis">Dynamic tethering:</span> The interaction is strong enough to maintain association but flexible enough to allow conformational changes during catalysis</li>
+                        <li><span class="emphasis">Unidirectional sliding:</span> Although the clamp can slide bidirectionally on DNA, the polymerase-clamp complex moves unidirectionally during synthesis</li>
+                    </ul>
+                    
+                    <h3>The Clamp Loader Complex (γ Complex)</h3>
+                    <p>The clamp loader is a sophisticated <span class="highlight">pentameric AAA+ ATPase</span> machine responsible for loading β-clamps onto DNA:</p>
+                    
+                    <h4>Composition and Structure</h4>
+                    <ul>
+                        <li><span class="highlight">Pentameric assembly:</span> Typically consists of γ₃δδ' or τ₃δδ' configuration, forming a circular but incomplete structure</li>
+                        <li><span class="highlight">AAA+ ATPase domains:</span> The γ or τ subunits contain ATP-binding sites that power conformational changes</li>
+                        <li><span class="highlight">Spiral arrangement:</span> The five subunits are arranged in a right-handed spiral that matches the helical pitch of DNA</li>
+                        <li><span class="highlight">Clamp-binding site:</span> The δ subunit binds to the β-clamp and opens the ring at the interface between monomers</li>
+                    </ul>
+                    
+                    <h4>Clamp Loading Mechanism (Step-by-Step)</h4>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Clamp%20loading%20fig.png" alt="Clamp Loading Diagram">
+                    </div>
+
+                    <ol>
+                        <li><span class="highlight">Recognition and binding:</span> The clamp loader recognizes primer-template junctions. The χ and ψ subunits help recruit the complex by interacting with SSB proteins on single-stranded DNA.</li>
+                        
+                        <li><span class="highlight">ATP binding:</span> Three ATP molecules bind to the γ or τ subunits, inducing a conformational change that increases the complex's affinity for the β-clamp.</li>
+                        
+                        <li><span class="highlight">Clamp opening:</span> The δ subunit binds to one monomer of the β-clamp while δ' binds to the other, breaking the interface and opening the ring by approximately 30°.</li>
+                        
+                        <li><span class="highlight">DNA threading:</span> The opened clamp is positioned around the primer-template junction. The clamp loader uses its spiral structure to properly orient the clamp on DNA with the correct polarity.</li>
+                        
+                        <li><span class="highlight">ATP hydrolysis:</span> Sequential hydrolysis of ATP molecules triggers conformational changes that release the clamp onto DNA and dissociate the clamp loader.</li>
+                        
+                        <li><span class="highlight">Clamp closure:</span> Once released from the clamp loader, the β-clamp spontaneously closes around DNA, forming a stable topological link.</li>
+                        
+                        <li><span class="highlight">Polymerase recruitment:</span> The newly loaded clamp is now ready to bind and processively tether DNA polymerase III for synthesis.</li>
+                    </ol>
+                    
+                    <h3>Regulation and Dynamics</h3>
+                    <ul>
+                        <li><span class="highlight">Preferential loading:</span> The clamp loader shows strong preference for primer-template junctions with 3'-OH groups, ensuring clamps are loaded only at sites ready for synthesis</li>
+                        <li><span class="emphasis">Repeated loading on lagging strand:</span> On the lagging strand, new clamps must be loaded for each Okazaki fragment, requiring the clamp loader to act repeatedly every 1-2 seconds</li>
+                        <li><span class="highlight">Clamp recycling:</span> After completing an Okazaki fragment, clamps can be unloaded and recycled by the clamp loader, which can also function as a clamp unloader</li>
+                        <li><span class="emphasis">Energy consumption:</span> The ATP-dependent mechanism ensures that clamp loading is directional and properly regulated, preventing wasteful or inappropriate clamp placement</li>
+                    </ul>
+                    
+                    <h3>Functional Significance</h3>
+                    <p>The sliding clamp and clamp loader system represents an elegant solution to the processivity challenge, enabling rapid and accurate genome duplication. This mechanism is universally conserved across all domains of life, with PCNA serving as the eukaryotic sliding clamp and RFC as the clamp loader, highlighting the fundamental importance of this molecular strategy.</p>
+                `
+            },
+            7: {
+                title: "Types of DNA Polymerases",
+                content: `
+                    <h2>Types of DNA Polymerases in Prokaryotes</h2>
+                    <p>Prokaryotic cells, particularly E. coli, possess <span class="highlight">five distinct DNA polymerases</span> (Pol I through Pol V), each with specialized functions in DNA replication, repair, and damage tolerance. Understanding their distinct roles is crucial for comprehending the complete picture of DNA metabolism.</p>
+                    
+                    <h3>DNA Polymerase I (Pol I)</h3>
+                    <p><span class="emphasis">Gene:</span> polA | <span class="emphasis">Molecular weight:</span> ~103 kDa | <span class="emphasis">Abundance:</span> ~400 molecules per cell</p>
+                    <ul>
+                        <li><span class="highlight">Primary role:</span> Okazaki fragment maturation, primer removal, and DNA repair</li>
+                        <li><span class="highlight">Multi-domain structure:</span> Contains three functional domains in a single polypeptide chain:
+                            <ul>
+                                <li>5' to 3' exonuclease domain (N-terminal) - removes RNA primers and damaged DNA</li>
+                                <li>3' to 5' exonuclease domain (middle) - proofreading activity</li>
+                                <li>Polymerase domain (C-terminal) - DNA synthesis activity</li>
+                            </ul>
+                        </li>
+                        <li><span class="highlight">Nick translation:</span> Can simultaneously remove nucleotides ahead (5' to 3' exonuclease) while synthesizing DNA behind (polymerase), effectively "translating" nicks along DNA</li>
+                        <li><span class="emphasis">Processivity:</span> Low (20-100 nucleotides without accessory proteins)</li>
+                        <li><span class="highlight">Klenow fragment:</span> The large C-terminal fragment (produced by proteolytic cleavage) retains polymerase and 3' to 5' exonuclease activities but lacks 5' to 3' exonuclease, widely used in molecular biology</li>
+                        <li>Essential for removing RNA primers from Okazaki fragments and filling in gaps during lagging strand synthesis</li>
+                    </ul>
+                    
+                    <h3>DNA Polymerase II (Pol II)</h3>
+                    <p><span class="emphasis">Gene:</span> polB (dinA) | <span class="emphasis">Molecular weight:</span> ~90 kDa | <span class="emphasis">Abundance:</span> ~40 molecules per cell</p>
+                    <ul>
+                        <li><span class="highlight">Primary role:</span> DNA repair and replication restart after fork stalling</li>
+                        <li>Part of the <span class="emphasis">SOS response system</span> - upregulated during DNA damage stress</li>
+                        <li>Contains 3' to 5' exonuclease activity for proofreading but lacks 5' to 3' exonuclease</li>
+                        <li><span class="highlight">High fidelity:</span> Accurate polymerase suitable for error-free repair synthesis</li>
+                        <li>Can extend primers with high processivity when associated with the β-clamp</li>
+                        <li>Involved in repairing gaps left after replication of damaged templates</li>
+                        <li>May function in rescuing stalled replication forks</li>
+                    </ul>
+                    
+                    <h3>DNA Polymerase III (Pol III)</h3>
+                    <p><span class="emphasis">Gene:</span> dnaE (α subunit) | <span class="emphasis">Molecular weight:</span> ~900 kDa (entire holoenzyme) | <span class="emphasis">Abundance:</span> ~10-20 molecules per cell</p>
+                    <ul>
+                        <li><span class="highlight">Primary role:</span> Principal replicative polymerase for both leading and lagging strands</li>
+                        <li><span class="highlight">Multi-subunit holoenzyme:</span> At least 10 different subunits forming a sophisticated molecular machine</li>
+                        <li>Contains 3' to 5' exonuclease (ε subunit) but lacks 5' to 3' exonuclease</li>
+                        <li><span class="emphasis">Extremely high processivity:</span> >500,000 nucleotides per binding event when associated with β-clamp</li>
+                        <li><span class="highlight">Speed:</span> Synthesizes ~1000 nucleotides per second</li>
+                        <li><span class="highlight">Asymmetric dimer:</span> Two core enzymes work on leading and lagging strands simultaneously</li>
+                        <li>Directly responsible for >99% of chromosomal DNA synthesis during replication</li>
+                    </ul>
+                    
+                    <h3>DNA Polymerase IV (Pol IV)</h3>
+                    <p><span class="emphasis">Gene:</span> dinB | <span class="emphasis">Molecular weight:</span> ~40 kDa | <span class="emphasis">Abundance:</span> ~250 molecules per cell (highly induced during SOS)</p>
+                    <ul>
+                        <li><span class="highlight">Primary role:</span> Translesion synthesis (TLS) - bypassing DNA lesions that block replicative polymerases</li>
+                        <li>Member of the <span class="emphasis">Y-family of DNA polymerases</span></li>
+                        <li><span class="highlight">Error-prone:</span> Lacks 3' to 5' exonuclease activity, leading to reduced fidelity</li>
+                        <li>Can incorporate nucleotides opposite damaged bases that would stall Pol III</li>
+                        <li>Part of SOS response - dramatically upregulated after DNA damage</li>
+                    </ul>
+                    
+                    <h3>DNA Polymerase V (Pol V)</h3>
+                    <p><span class="emphasis">Gene:</span> umuC and umuD | <span class="emphasis">Molecular weight:</span> ~50 kDa (UmuC) | <span class="emphasis">Abundance:</span> ~15 molecules per cell (induced during SOS)</p>
+                    <ul>
+                        <li><span class="highlight">Primary role:</span> Translesion synthesis - most error-prone polymerase in E. coli</li>
+                        <li><span class="highlight">Composition:</span> UmuC (catalytic subunit) + UmuD'₂ (processivity factor) forming UmuD'₂C complex</li>
+                        <li>Another member of the <span class="emphasis">Y-family</span></li>
+                        <li><span class="highlight">Extremely error-prone:</span> No proofreading activity, misincorporation rate ~1/30 nucleotides</li>
+                        <li>Can bypass bulky DNA lesions such as thymine dimers and other UV-induced damage</li>
+                    </ul>
+                    
+                    <h3>Functional Division of Labor</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>Polymerase</th>
+                                <th>Primary Function</th>
+                                <th>Fidelity</th>
+                                <th>Processivity</th>
+                            </tr>
+                            <tr>
+                                <td>Pol I</td>
+                                <td>Primer removal, repair</td>
+                                <td>High</td>
+                                <td>Low</td>
+                            </tr>
+                            <tr>
+                                <td>Pol II</td>
+                                <td>Repair, restart</td>
+                                <td>High</td>
+                                <td>Moderate</td>
+                            </tr>
+                            <tr>
+                                <td>Pol III</td>
+                                <td>Chromosomal replication</td>
+                                <td>Very high</td>
+                                <td>Very high</td>
+                            </tr>
+                            <tr>
+                                <td>Pol IV</td>
+                                <td>Translesion synthesis</td>
+                                <td>Low</td>
+                                <td>Low</td>
+                            </tr>
+                            <tr>
+                                <td>Pol V</td>
+                                <td>Translesion synthesis</td>
+                                <td>Very low</td>
+                                <td>Low</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>This diverse set of polymerases provides E. coli with remarkable flexibility to handle various DNA metabolic challenges, from rapid accurate replication to damage tolerance and repair.</p>
+                `
+            },
+            8: {
+                title: "DNA Pol III Structure and Active Site",
+                content: `
+                    <h2>DNA Polymerase III Structure and Active Site</h2>
+                    <p>DNA Polymerase III represents one of nature's most sophisticated catalytic machines. The <span class="highlight">α subunit</span> contains the polymerase active site and exemplifies the conserved architecture shared by many DNA polymerases across evolution.</p>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/DNA%20pol%20structure.png" alt="DNA Polymerase Structure Diagram">
+                    </div>
+
+                    
+                    <h3>Overall Architecture of the α Subunit</h3>
+                    <p>The α subunit (130 kDa) adopts a characteristic <span class="emphasis">"right-hand" structure</span> resembling a partially closed right hand, which is a hallmark of most DNA polymerases:</p>
+                    
+                    <ul>
+                        <li><span class="highlight">Palm domain:</span> Contains the catalytic core with conserved acidic residues that coordinate metal ions essential for catalysis. This is the most conserved region across all DNA polymerases.</li>
+                        
+                        <li><span class="highlight">Fingers domain:</span> Recognizes and binds incoming dNTPs. Undergoes significant conformational changes during catalysis, closing over the active site when the correct nucleotide is bound.</li>
+                        
+                        <li><span class="highlight">Thumb domain:</span> Grips the DNA duplex and provides processivity by interacting with the minor groove of the newly synthesized DNA. Contributes to the tight binding of the enzyme to the primer-template.</li>
+                        
+                        <li><span class="highlight">PHP domain:</span> Polymerase and histidinol phosphatase domain located at the N-terminus. In Pol III α subunit, this domain is catalytically inactive but serves structural roles.</li>
+                        
+                        <li><span class="highlight">β-binding domain:</span> Contains motifs that interact specifically with the β-clamp, enabling high processivity. This interaction is essential for the polymerase's role in chromosomal replication.</li>
+                    </ul>
+                    
+                    <h3>The Active Site Architecture</h3>
+                    <p>The active site of DNA Pol III is a precisely organized pocket where <span class="highlight">nucleotidyl transfer</span> occurs:</p>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/DNA%20pol%20active%20site.png" alt="DNA Polymerase Active Site Diagram">
+                    </div>
+
+                    
+                    <h4>Metal Ion Coordination</h4>
+                    <p>The catalytic mechanism employs a <span class="emphasis">two-metal-ion mechanism</span>, universally conserved among DNA and RNA polymerases:</p>
+                    <ul>
+                        <li><span class="highlight">Metal A (catalytic metal):</span> Coordinates the 3'-OH of the primer terminus, lowering its pKa and facilitating its nucleophilic attack on the α-phosphate of the incoming dNTP. Also stabilizes the developing negative charge on the leaving pyrophosphate group.</li>
+                        
+                        <li><span class="highlight">Metal B (nucleotide-binding metal):</span> Coordinates the triphosphate moiety of the incoming dNTP, properly positioning it for catalysis and stabilizing the transition state.</li>
+                        
+                        <li><span class="emphasis">Metal identity:</span> Typically Mg²⁺ ions, though Mn²⁺ can substitute and often reduces fidelity</li>
+                        
+                        <li><span class="highlight">Coordinating residues:</span> Three highly conserved aspartate residues in the palm domain (Asp-Asp-Asp or Asp-Asp-Glu motif) coordinate both metal ions, creating the catalytic center</li>
+                    </ul>
+                    
+                    <h4>Substrate Binding Pocket</h4>
+                    <ul>
+                        <li><span class="highlight">Primer-template binding:</span> The active site cradles approximately 6-8 base pairs of DNA duplex, with the 3'-OH of the primer precisely positioned for nucleophilic attack</li>
+                        
+                        <li><span class="highlight">Template base recognition:</span> The templating base is held in a specific pocket that ensures proper geometry for Watson-Crick base pairing with the incoming nucleotide</li>
+                        
+                        <li><span class="highlight">Incoming nucleotide pocket:</span> A tight-fitting pocket that accommodates the incoming dNTP. The geometry of this pocket is crucial for selectivity</li>
+                        
+                        <li><span class="emphasis">Minor groove contacts:</span> Amino acid residues contact the minor groove of the nascent base pair, sensing proper geometry without reading the specific sequence</li>
+                    </ul>
+                    
+                    <h3>Conformational Changes During Catalysis</h3>
+                    <p>DNA synthesis by Pol III involves dramatic conformational changes:</p>
+                    
+                    <ol>
+                        <li><span class="highlight">Open conformation:</span> The fingers domain is open, allowing the incoming dNTP to enter the active site. The polymerase scans for the correct nucleotide.</li>
+                        
+                        <li><span class="highlight">Nucleotide binding and selection:</span> When a dNTP enters, the polymerase tests whether it forms proper Watson-Crick geometry with the template base.</li>
+                        
+                        <li><span class="highlight">Closed conformation:</span> Upon binding the correct nucleotide, the fingers domain closes over the active site by approximately 40°, bringing key catalytic residues into proper alignment. This closure:
+                            <ul>
+                                <li>Excludes water from the active site</li>
+                                <li>Properly positions the metal ions</li>
+                                <li>Aligns the 3'-OH for nucleophilic attack</li>
+                                <li>Creates tight contacts that sense base pair geometry</li>
+                            </ul>
+                        </li>
+                        
+                        <li><span class="highlight">Chemical catalysis:</span> The nucleotidyl transfer reaction occurs, forming a new phosphodiester bond and releasing pyrophosphate (PPi)</li>
+                        
+                        <li><span class="highlight">Translocation:</span> After catalysis, the fingers reopen, the DNA translocates by one base pair, and the enzyme returns to the open conformation ready for the next cycle</li>
+                    </ol>
+                    
+                    <h3>Key Structural Features for Fidelity</h3>
+                    <ul>
+                        <li><span class="highlight">Geometric selection:</span> The active site is designed to accommodate only Watson-Crick base pairs with correct geometry. Mismatches cause geometric distortions that prevent efficient catalysis.</li>
+                        
+                        <li><span class="emphasis">Tight active site:</span> The snug fit around the nascent base pair provides exquisite sensitivity to even minor perturbations caused by incorrect pairing</li>
+                        
+                        <li><span class="highlight">Induced fit mechanism:</span> Fingers closure only occurs optimally when the correct nucleotide is bound, implementing a pre-chemistry fidelity checkpoint</li>
+                        
+                        <li><span class="highlight">O-helix:</span> A specific α-helix in the fingers domain makes critical contacts with the minor groove of the nascent base pair, sensing proper width and hydrogen bonding pattern</li>
+                        
+                        <li><span class="emphasis">Steric gate:</span> Specific amino acid residues create a "steric gate" that discriminates against ribonucleotides (rNTPs) based on the 2'-OH group</li>
+                    </ul>
+                    
+                    <h3>Interface with the ε Subunit</h3>
+                    <p>The α subunit maintains an interface with the ε subunit (proofreading exonuclease):</p>
+                    <ul>
+                        <li>The DNA can switch between the polymerase active site (α) and the exonuclease active site (ε)</li>
+                        <li>Mismatched primer termini show reduced affinity for the polymerase active site and enhanced affinity for the exonuclease site</li>
+                        <li>This switching mechanism enables efficient proofreading when errors occur</li>
+                    </ul>
+                    
+                    <p>The sophisticated architecture of DNA Pol III's active site represents a masterpiece of molecular engineering, achieving error rates as low as 10⁻⁶ to 10⁻⁷ per nucleotide incorporated through geometric selection and induced-fit mechanisms.</p>
+                `
+            },
+            9: {
+                title: "DNA Polymerase Fidelity Mechanisms",
+                content: `
+                    <h2>DNA Polymerase Fidelity Mechanisms</h2>
+                    <p>DNA polymerases achieve remarkable accuracy through multiple fidelity mechanisms working in concert. The overall error rate of approximately <span class="highlight">10⁻⁹ to 10⁻¹⁰</span> per base pair results from the combination of several distinct mechanisms.</p>
+                    
+                    <h3>Base Selection (Pre-chemistry Fidelity)</h3>
+                    <p>The initial selection of correct nucleotides occurs before the chemical reaction:</p>
+                    <ul>
+                        <li><span class="highlight">Geometric selection:</span> The active site is precisely shaped to accommodate only Watson-Crick base pairs with correct geometry. Mismatched pairs create distortions that prevent proper alignment.</li>
+                        <li><span class="emphasis">Induced fit mechanism:</span> Correct nucleotide binding triggers conformational changes (fingers closure) that position catalytic residues optimally. Incorrect nucleotides fail to induce this transition.</li>
+                        <li><span class="highlight">Minor groove sensing:</span> Amino acid residues contact the minor groove of the nascent base pair, detecting proper width and hydrogen bonding pattern without reading specific sequences.</li>
+                        <li><span class="emphasis">Kinetic discrimination:</span> Correct nucleotides have higher binding affinity and faster incorporation rates than incorrect ones.</li>
+                    </ul>
+                    
+                    <h3>Proofreading (Post-chemistry Fidelity)</h3>
+                    <p>The 3' to 5' exonuclease activity provides a second chance to correct errors:</p>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Proofreading.png" alt="Proofreading Mechanism Diagram">
+                    </div>
+
+                    <ul>
+                        <li><span class="highlight">Partitioning mechanism:</span> The primer terminus can switch between the polymerase and exonuclease active sites. Mismatched termini have higher affinity for the exonuclease site.</li>
+                        <li><span class="emphasis">Kinetic proofreading:</span> Mismatched bases slow down the polymerization rate, giving more time for the exonuclease to act before the next nucleotide is added.</li>
+                        <li><span class="highlight">Processivity effect:</span> The β-clamp enhances proofreading efficiency by keeping the polymerase associated with DNA, allowing multiple attempts at correction.</li>
+                        <li><span class="emphasis">Exonuclease activation:</span> Mismatches induce conformational changes that facilitate transfer to the exonuclease site.</li>
+                    </ul>
+                    
+                    <h3>Mismatch Extension Discrimination</h3>
+                    <p>DNA polymerases are particularly effective at preventing extension of mismatched primer termini:</p>
+                    <ul>
+                        <li><span class="highlight">Reduced catalytic efficiency:</span> Mismatched primer termini are extended much more slowly than matched termini.</li>
+                        <li><span class="emphasis">Increased exonuclease access:</span> Mismatches increase the probability of primer transfer to the exonuclease site.</li>
+                        <li><span class="highlight">Structural distortions:</span> Mismatches create DNA distortions that are sensed by the polymerase active site.</li>
+                    </ul>
+                    
+                    <h3>Contributions to Overall Fidelity</h3>
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>Fidelity Mechanism</th>
+                                <th>Error Reduction</th>
+                                <th>Key Features</th>
+                            </tr>
+                            <tr>
+                                <td>Base selection</td>
+                                <td>10⁴-10⁵ fold</td>
+                                <td>Geometric selection, induced fit</td>
+                            </tr>
+                            <tr>
+                                <td>Proofreading</td>
+                                <td>10²-10³ fold</td>
+                                <td>3' to 5' exonuclease, partitioning</td>
+                            </tr>
+                            <tr>
+                                <td>Mismatch repair</td>
+                                <td>10²-10³ fold</td>
+                                <td>Post-replication correction</td>
+                            </tr>
+                            <tr>
+                                <td>Overall</td>
+                                <td>10⁹-10¹⁰ fold</td>
+                                <td>Combined mechanisms</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <p>These multiple fidelity mechanisms work synergistically to ensure accurate DNA replication, with each mechanism providing an independent checkpoint against errors.</p>
+                `
+            },
+            10: {
+                title: "Single-Strand Binding Proteins",
+                content: `
+                    <h2>Single-Strand Binding Proteins (SSB)</h2>
+                    <p>Single-strand binding proteins play crucial roles in DNA replication by stabilizing single-stranded DNA intermediates and coordinating multiple replication activities.</p>
+                    
+                    <h3>Structure and Organization</h3>
+                    <p>E. coli SSB forms a <span class="highlight">homotetrameric complex</span> with remarkable functional properties:</p>
+                    <ul>
+                        <li><span class="highlight">Tetrameric structure:</span> Four identical subunits (19 kDa each) arranged with four-fold symmetry</li>
+                        <li><span class="emphasis">DNA-binding domains:</span> Each subunit contains an OB-fold (oligonucleotide/oligosaccharide binding) domain that interacts with DNA</li>
+                        <li><span class="highlight">Flexible C-terminal:</span> The C-terminal tails are unstructured and contain protein-protein interaction motifs</li>
+                        <li><span class="emphasis">Multiple binding modes:</span> SSB can bind DNA in different modes depending on salt concentration and SSB density</li>
+                    </ul>
+                    
+                    <h3>Functional Roles in Replication</h3>
+                    <p>SSB proteins perform multiple essential functions at the replication fork:</p>
+                    <ul>
+                        <li><span class="highlight">Stabilization of ssDNA:</span> Prevents single-stranded DNA from forming secondary structures that could impede replication</li>
+                        <li><span class="emphasis">Protection from nucleases:</span> Shields single-stranded regions from degradation by nucleases</li>
+                        <li><span class="highlight">Coordination of replication proteins:</span> The C-terminal tails interact with multiple replication proteins including DNA Pol III, primase, and RecQ helicase</li>
+                        <li><span class="emphasis">Prevention of reannealing:</span> Keeps template strands separated ahead of the replication fork</li>
+                    </ul>
+                    
+                    <h3>Binding Modes and Dynamics</h3>
+                    <p>SSB exhibits remarkable flexibility in its DNA binding behavior:</p>
+                    <ul>
+                        <li><span class="highlight">(SSB)₃₅ mode:</span> Binds 35 nucleotides with high cooperativity at high salt concentrations</li>
+                        <li><span class="emphasis">(SSB)₆₅ mode:</span> Binds 65 nucleotides with lower cooperativity at low salt concentrations</li>
+                        <li><span class="highlight">Dynamic exchange:</span> SSB molecules can rapidly exchange positions on DNA despite high binding affinity</li>
+                        <li><span class="emphasis">Cooperative binding:</span> SSB binding facilitates additional SSB binding to adjacent regions</li>
+                    </ul>
+                    
+                    <p>The versatility of SSB proteins makes them essential coordinators of DNA replication, repair, and recombination processes.</p>
+                `
+            },
+            11: {
+                title: "Topoisomerases in Replication",
+                content: `
+                    <h2>Topoisomerases in DNA Replication</h2>
+                    <p>Topoisomerases solve the topological problems created during DNA replication by managing DNA supercoiling and resolving intertwined daughter molecules.</p>
+                    
+                    <h3>DNA Gyrase (Topoisomerase II)</h3>
+                    <p>DNA gyrase is a <span class="highlight">type II topoisomerase</span> that introduces negative supercoils ahead of the replication fork:</p>
+                    <ul>
+                        <li><span class="highlight">A₂B₂ tetramer:</span> Composed of two GyrA and two GyrB subunits</li>
+                        <li><span class="emphasis">ATP-dependent mechanism:</span> Uses ATP hydrolysis to drive conformational changes</li>
+                        <li><span class="highlight">Double-strand passage:</span> Creates a transient double-strand break and passes another DNA segment through the break</li>
+                        <li><span class="emphasis">Negative supercoiling:</span> Specifically introduces negative supercoils to relieve positive supercoiling ahead of the fork</li>
+                    </ul>
+                    
+                    <h3>Topoisomerase IV</h3>
+                    <p>Topoisomerase IV is essential for <span class="highlight">decatenation</span> of daughter chromosomes after replication:</p>
+                    <ul>
+                        <li><span class="highlight">C₂E₂ structure:</span> Composed of two ParC and two ParE subunits</li>
+                        <li><span class="emphasis">Decatenation specialist:</span> Particularly efficient at separating intertwined daughter molecules</li>
+                        <li><span class="highlight">Chromosome segregation:</span> Essential for proper chromosome segregation during cell division</li>
+                        <li><span class="emphasis">Backup gyrase function:</span> Can also relieve positive supercoiling when gyrase is inhibited</li>
+                    </ul>
+                    
+                    <h3>Functional Coordination</h3>
+                    <p>Different topoisomerases work together throughout replication:</p>
+                    <ul>
+                        <li><span class="highlight">Initiation phase:</span> Gyrase introduces negative supercoils to facilitate origin opening</li>
+                        <li><span class="emphasis">Elongation phase:</span> Gyrase relieves positive supercoiling ahead of the replication fork</li>
+                        <li><span class="highlight">Termination phase:</span> Topoisomerase IV separates catenated daughter chromosomes</li>
+                        <li><span class="emphasis">Backup systems:</span> Multiple topoisomerases provide redundancy for essential functions</li>
+                    </ul>
+                    
+                    <p>The coordinated action of topoisomerases ensures that topological constraints never become limiting for DNA replication.</p>
+                `
+            },
+            12: {
+                title: "Primer Removal",
+                content: `
+                    <h2>Primer Removal</h2>
+                    <p>The RNA primers synthesized by primase must be removed and replaced with DNA to complete Okazaki fragment maturation. This process is critical because RNA is chemically unstable in DNA and would compromise genome integrity if retained.</p>
+                    
+                    <h3>Why Primers Must Be Removed</h3>
+                    <ul>
+                        <li><span class="highlight">Chemical instability:</span> RNA is susceptible to alkaline hydrolysis due to the 2'-OH group, which can attack the adjacent phosphodiester bond</li>
+                        <li><span class="highlight">Structural incompatibility:</span> RNA-DNA hybrids adopt A-form-like helical geometry, different from B-form DNA</li>
+                        <li><span class="highlight">Recognition by repair systems:</span> Ribonucleotides in DNA are recognized as damage by specific repair pathways</li>
+                        <li><span class="highlight">Mutagenic potential:</span> Retained primers could lead to mutations during subsequent rounds of replication</li>
+                    </ul>
+                    
+                    <h3>Primary Mechanism: DNA Polymerase I</h3>
+                    <p>DNA Polymerase I is the principal enzyme responsible for primer removal in E. coli through its unique combination of activities:</p>
+                    
+                    <h4>Nick Translation by Pol I</h4>
+                    <p>Pol I performs "nick translation" - simultaneous removal and replacement:</p>
+                    <ul>
+                        <li><span class="highlight">Initial recognition:</span> Pol I recognizes the nick (single-strand break) at the junction between the RNA primer and the previously synthesized DNA of an Okazaki fragment</li>
+                        <li><span class="highlight">5' to 3' exonuclease activity:</span> The N-terminal domain of Pol I hydrolyzes the phosphodiester bond ahead of the nick, removing nucleotides from the 5' end (including RNA and possibly some DNA)
+                            <ul>
+                                <li>Binds to the 5' terminus at the nick</li>
+                                <li>Cleaves the phosphodiester bond, releasing mononucleotides or short oligonucleotides</li>
+                                <li>Can remove both ribonucleotides and deoxyribonucleotides</li>
+                                <li>Processively removes nucleotides one at a time from the 5' end</li>
+                            </ul>
+                        </li>
+                        <li><span class="highlight">Simultaneous DNA synthesis:</span> The C-terminal polymerase domain of Pol I simultaneously synthesizes DNA from the 3'-OH at the nick, filling in the gap created by exonuclease activity
+                            <ul>
+                                <li>Uses the template strand to direct synthesis</li>
+                                <li>Incorporates dNTPs to replace the removed RNA</li>
+                                <li>Moves the nick in the 5' to 3' direction along the DNA</li>
+                            </ul>
+                        </li>
+                        <li><span class="highlight">Net result:</span> The nick "translates" along the DNA, progressively replacing RNA with DNA</li>
+                    </ul>
+                    
+                    <h3>Step-by-Step Process</h3>
+                    <ol>
+                        <li><span class="highlight">Okazaki fragment completion:</span> DNA Pol III synthesizes an Okazaki fragment until it encounters the RNA primer of the previous fragment, leaving a nick</li>
+                        <li><span class="highlight">Pol I recruitment:</span> DNA Pol I binds to the nick structure, recognizing the discontinuity in the DNA strand</li>
+                        <li><span class="highlight">Nick translation:</span> Pol I simultaneously removes the RNA primer using its 5' to 3' exonuclease while filling in with DNA using its polymerase activity
+                            <ul>
+                                <li>Typically removes 10-12 ribonucleotides</li>
+                                <li>May remove additional deoxyribonucleotides beyond the primer</li>
+                                <li>Synthesizes DNA to fill the gap</li>
+                            </ul>
+                        </li>
+                        <li><span class="highlight">Final nick:</span> After complete primer removal and gap filling, a single nick remains between the newly synthesized DNA and the 5' end of the downstream Okazaki fragment</li>
+                        <li><span class="highlight">Ligation:</span> DNA ligase seals this final nick (discussed in next section)</li>
+                    </ol>
+                    <div class="image-container">
+                        <img src="https://betabiosciences.github.io/Biochemistry-animations/Primer%20remoal%20prokaryote.png" alt="Primer Removal Diagram">
+                    </div>
+
+                    
+                    <h3>Alternative and Backup Pathways</h3>
+                    
+                    <h4>RNase H</h4>
+                    <p>RNase H enzymes can contribute to primer removal:</p>
+                    <ul>
+                        <li><span class="highlight">RNase HI:</span> Cleaves RNA in RNA-DNA hybrids, generating multiple cleavage sites within the primer
+                            <ul>
+                                <li>Degrades most of the primer but typically leaves 1-2 ribonucleotides at the RNA-DNA junction</li>
+                                <li>Creates internal cleavages in longer primers</li>
+                                <li>Not essential for viability as Pol I can compensate</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `
+            }
+        };
+
+        function displaySection(sectionNum) {
+            const wrapper = document.getElementById('content-wrapper');
+            wrapper.innerHTML = `<div class="content-section active">${sections[sectionNum].content}</div>`;
+        }
+
+        function updateSection() {
+            displaySection(currentSection);
+            document.getElementById('current-section').textContent = currentSection;
+            document.getElementById('prev-btn').disabled = currentSection === 1;
+            document.getElementById('next-btn').disabled = currentSection === totalSections;
+            document.getElementById('content-wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function navigateSection(direction) {
+            const newSection = currentSection + direction;
+            if (newSection >= 1 && newSection <= totalSections) {
+                currentSection = newSection;
+                updateSection();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                navigateSection(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateSection(1);
+            }
+        });
+
+        // Initialize the page
+        updateSection();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
