@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prokaryotic Replication Regulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 15px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(20, 10, 40, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            position: relative;
+            min-height: 600px;
+        }
+
+        h1 {
+            color: #bb86fc;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+        }
+
+        .progress-indicator {
+            text-align: center;
+            color: #9d7bd8;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            padding: 8px;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 8px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #03dac6;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(3, 218, 198, 0.3);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #bb86fc;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #d4c5f9;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #d4c5f9;
+        }
+
+        .highlight {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .emphasis {
+            color: #ff6ec7;
+            font-style: italic;
+        }
+
+        .key-point {
+            background: rgba(187, 134, 252, 0.1);
+            padding: 12px;
+            border-left: 4px solid #bb86fc;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .prev-btn {
+            background: linear-gradient(135deg, #6a4c93, #8b5cf6);
+            color: white;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #03dac6, #00bfa5);
+            color: #1a0b2e;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(187, 134, 252, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .intro-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .intro-section p {
+            text-align: center;
+            font-size: 1.1em;
+            color: #bb86fc;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            p, li {
+                font-size: 0.95em;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.95em;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Regulation of DNA Replication in Prokaryotes</h1>
+        <div class="progress-indicator" id="progress">Section 1 of 7</div>
+
+        <!-- Section 0: Introduction -->
+        <div class="section active" id="section-0">
+            <div class="intro-section">
+                <h2>Introduction</h2>
+            </div>
+            <p>DNA replication in prokaryotes is a highly regulated process that must be precisely coordinated with cell growth and division. In bacteria such as <span class="emphasis">Escherichia coli</span>, replication initiates at a single origin of replication called <span class="highlight">oriC</span>, and the timing of initiation is controlled by multiple overlapping regulatory mechanisms.</p>
+            
+            <p>These regulatory systems work together to ensure that:</p>
+            <ul>
+                <li>Replication initiates <span class="emphasis">once and only once</span> per cell cycle</li>
+                <li>Initiation timing is coordinated with cell mass and growth rate</li>
+                <li>Premature re-initiation at oriC is prevented</li>
+                <li>Chromosome replication is completed before cell division</li>
+            </ul>
+
+            <div class="key-point">
+                <strong>Central Regulator:</strong> The protein <span class="highlight">DnaA</span> serves as the master initiator of replication. In its ATP-bound form (DnaA-ATP), it binds to specific sequences in oriC and triggers the unwinding of DNA strands, allowing the replication machinery to assemble. The regulation of DnaA activity and availability is the primary target of most regulatory mechanisms.
+            </div>
+        </div>
+
+        <!-- Section 1: Origin Sequestration -->
+        <div class="section" id="section-1">
+            <h2>1. Origin Sequestration (SeqA-Mediated Regulation)</h2>
+            
+            <h3>Molecular Mechanism</h3>
+            <p>Origin sequestration is a critical mechanism that prevents immediate re-initiation of replication after a round of DNA synthesis has begun. This process is mediated by the <span class="highlight">SeqA protein</span>, which specifically recognizes and binds to <span class="emphasis">hemimethylated GATC sequences</span> in newly replicated DNA.</p>
+
+            <div class="key-point">
+                <strong>Hemimethylation Window:</strong> Immediately after replication, DNA exists in a hemimethylated state where the parental strand is methylated by Dam methylase at GATC sequences, but the newly synthesized strand is not yet methylated. This creates a temporal window of approximately 10-15 minutes during which SeqA can act.
+            </div>
+
+            <h3>The Sequestration Process</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Origin%20sequestration%20new%20fig.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <p>The oriC region contains <span class="highlight">11 GATC sequences</span> that are clustered within approximately 250 base pairs. When replication occurs:</p>
+            
+            <ul>
+                <li><strong>Immediate binding:</strong> SeqA rapidly binds to hemimethylated GATC sites in the newly replicated oriC regions</li>
+                <li><strong>Spatial organization:</strong> SeqA oligomerizes on the DNA, forming a higher-order structure that physically sequesters oriC at the cell membrane</li>
+                <li><strong>DnaA exclusion:</strong> The SeqA-bound oriC is inaccessible to DnaA-ATP, preventing premature re-initiation</li>
+                <li><strong>Timed release:</strong> Only after Dam methylase gradually methylates the new strand does SeqA dissociate, making oriC available for the next initiation event</li>
+            </ul>
+
+            <h3>Functional Significance</h3>
+            <p>This mechanism creates an <span class="emphasis">absolute refractory period</span> following replication initiation. Even if sufficient DnaA-ATP accumulates during this period, it cannot access oriC. This is crucial for maintaining once-per-cell-cycle replication, as it provides a temporal separation between successive initiation events that is independent of other regulatory systems.</p>
+
+            <div class="key-point">
+                <strong>Clinical Relevance:</strong> Mutations in seqA or alterations in Dam methylase activity can lead to over-initiation of replication, resulting in abnormal chromosome copy numbers and compromised cell viability. This principle is being explored for developing novel antimicrobial strategies.
+            </div>
+        </div>
+
+        <!-- Section 2: Transcriptional Regulation -->
+        <div class="section" id="section-2">
+            <h2>2. Transcriptional Activities Near oriC</h2>
+
+            <h3>The mioC-oriC Transcriptional Unit</h3>
+            <p>The region surrounding oriC is not transcriptionally silent but rather harbors active promoters that directly influence replication initiation. The most significant is the <span class="highlight">mioC gene</span>, whose promoter (PmioC) is located within the oriC region itself.</p>
+
+            <h3>Transcription-Replication Interference</h3>
+            <p>Transcription through oriC creates both positive and negative regulatory effects:</p>
+
+            <ul>
+                <li><strong>DNA topology changes:</strong> RNA polymerase generates positive supercoils ahead and negative supercoils behind as it transcribes. Since DnaA-ATP binding and DNA unwinding are sensitive to DNA topology, transcription-induced topological changes can modulate the efficiency of replication initiation</li>
+                <li><strong>DnaA binding site occlusion:</strong> Active transcription can temporarily displace DnaA from its binding sites in oriC, creating a dynamic competition between transcription and replication machineries</li>
+            </ul>
+
+            <h3>The gidA Locus and Long-Range Regulation</h3>
+            <p>Located approximately 32 kb from oriC, the <span class="highlight">gidA</span> promoter drives transcription that extends from oriC. This provides a mechanism for regulating accesibility of the oriC:</p>
+
+        </div>
+
+        <!-- Section 3: DnaA Titration -->
+        <div class="section" id="section-3">
+            <h2>3. DnaA Titration by datA Locus</h2>
+
+            <h3>The Concept of Molecular Titration</h3>
+            <p>DnaA titration represents an elegant regulatory strategy where the cell maintains <span class="emphasis">decoy binding sites</span> that sequester excess DnaA protein, preventing it from accumulating at oriC to levels that would trigger untimely replication initiation.</p>
+
+            <h3>The datA Locus Architecture</h3>
+            <p>The <span class="highlight">datA (DnaA titration) locus</span> is located at approximately 94 minutes on the <span class="emphasis">E. coli</span> chromosome, distant from oriC. This region contains:</p>
+
+            <ul>
+                <li><strong>High-affinity DnaA boxes:</strong> datA contains a cluster of DnaA binding sites (DnaA boxes) with binding affinities comparable to or even higher than those at oriC</li>
+                <li><strong>IHF binding sites:</strong> Integration Host Factor (IHF) binding sites are interspersed, which help to organize the local DNA structure</li>
+                <li><strong>Megabase localization:</strong> The genomic position of datA ensures it replicates at a different time than oriC, creating temporal dynamics in its availability</li>
+            </ul>
+
+            <h3>Mechanism of Titration</h3>
+            <p>The titration mechanism operates through competitive binding dynamics:</p>
+
+            <div class="key-point">
+                <strong>Dynamic Equilibrium:</strong> DnaA protein is distributed between oriC, datA, and other chromosomal sites. As DnaA is synthesized, a significant fraction binds to datA, effectively reducing the free pool of DnaA available to accumulate at oriC. This buffering effect means that DnaA concentration must rise substantially above the titration capacity before sufficient DnaA-ATP can accumulate at oriC to trigger initiation.
+            </div>
+
+            <h3>Temporal Dynamics During Cell Cycle</h3>
+            <p>The effectiveness of datA titration changes during the cell cycle:</p>
+
+            <ul>
+                <li><strong>Post-initiation:</strong> After oriC replication, there are two copies of oriC but still only one copy of datA (which replicates later). This shifts the titration balance</li>
+                <li><strong>datA replication:</strong> When datA itself is replicated, the doubling of titration sites provides enhanced suppression of re-initiation</li>
+                <li><strong>Fast-growth adaptation:</strong> In rapidly growing cells with overlapping replication rounds, multiple copies of oriC and datA exist simultaneously, creating complex titration dynamics</li>
+            </ul>
+
+        </div>
+
+        <!-- Section 4: RIDA Complex Regulation -->
+        <div class="section" id="section-4">
+            <h2>4. Regulation by RIDA Complex</h2>
+
+            <h3>RIDA: Regulatory Inactivation of DnaA</h3>
+            <p>The RIDA system represents a sophisticated mechanism for <span class="emphasis">actively converting DnaA-ATP to DnaA-ADP</span>, thereby inactivating the initiator protein. This is accomplished through the stimulation of DnaA's intrinsic ATPase activity.</p>
+
+            <h3>Molecular Components</h3>
+            <p>The RIDA mechanism involves two key molecular players:</p>
+
+            <ul>
+                <li><strong>Hda protein (Homologous to DnaA):</strong> A member of the AAA+ ATPase family that shares structural similarity with DnaA. Hda acts as the catalytic component that stimulates ATP hydrolysis by DnaA</li>
+                <li><strong>β-clamp (dnaN product):</strong> The DNA polymerase III sliding clamp that serves as a platform for Hda recruitment and serves as the signal that replication is ongoing</li>
+            </ul>
+
+            <h3>The RIDA Mechanism</h3>
+            <p>RIDA operates through a replication-dependent activation cascade:</p>
+
+            <div class="key-point">
+                <strong>Replication-Coupled Inactivation:</strong> The RIDA system is elegantly coupled to active DNA replication. The β-clamp is loaded onto DNA by the clamp loader complex during replication initiation and remains on the DNA during elongation. Hda recognizes the β-clamp specifically when it is loaded on DNA, forming a ternary complex (Hda-β-clamp-DNA) that can then interact with DnaA-ATP.
+            </div>
+
+            <h3>Step-by-Step Process</h3>
+            
+            <ul>
+                <li><strong>Step 1 - Replication initiation:</strong> DnaA-ATP initiates replication at oriC, and the replisome is assembled including the β-clamp</li>
+                <li><strong>Step 2 - Hda recruitment:</strong> Hda-ATP binds to DNA-loaded β-clamp, forming the active RIDA complex</li>
+                <li><strong>Step 3 - DnaA interaction:</strong> The Hda-β-clamp complex recruits DnaA-ATP molecules from the cellular pool</li>
+                <li><strong>Step 4 - ATP hydrolysis:</strong> Hda stimulates the intrinsic ATPase activity of DnaA, converting DnaA-ATP to DnaA-ADP</li>
+                <li><strong>Step 5 - DnaA release:</strong> DnaA-ADP has lower DNA-binding affinity and dissociates, unable to initiate replication</li>
+            </ul>
+
+            <h3>Feedback Architecture</h3>
+            <p>RIDA creates a negative feedback loop that is exquisitely sensitive to replication status:</p>
+
+            <div class="key-point">
+                <strong>Self-Limiting Initiation:</strong> The very act of replication initiation triggers the mechanism that will prevent subsequent initiation events. As replisomes move along the chromosome, they leave behind trails of β-clamp molecules that serve as platforms for continuous RIDA activity, progressively depleting the cellular pool of DnaA-ATP.
+            </div>
+
+        </div>
+
+        <!-- Section 5: DARS Regulation -->
+        <div class="section" id="section-5">
+            <h2>5. Regulation by DARS Sequences</h2>
+
+            <h3>DARS: DnaA-Reactivating Sequences</h3>
+            <p>While most regulatory mechanisms act to inhibit or inactivate DnaA, the <span class="highlight">DARS (DnaA-Reactivating Sequences)</span> represent a crucial positive regulatory system that promotes the <span class="emphasis">regeneration of DnaA-ATP from DnaA-ADP</span>, enabling the next round of replication initiation.</p>
+
+            <h3>Discovery and Location</h3>
+            <p>Two major DARS loci have been identified in <span class="emphasis">E. coli</span>:</p>
+
+            <ul>
+                <li><strong>DARS1:</strong> Located at approximately 36.3 minutes on the chromosome</li>
+                <li><strong>DARS2:</strong> Located at approximately 82.8 minutes on the chromosome</li>
+            </ul>
+
+            <p>Both loci are positioned far from oriC and replicate at different times during the replication cycle, creating temporal dynamics in DnaA reactivation capacity.</p>
+
+            <h3>The Nucleotide Exchange Mechanism</h3>
+            <p>DARS loci function as molecular machines that catalyze nucleotide exchange on DnaA:</p>
+
+            <div class="key-point">
+                <strong>Cooperative Reactivation:</strong> DARS sequences form specialized nucleoprotein structures where DnaA-ADP is recruited through cooperative binding to multiple DnaA boxes. The specific architecture of these complexes, stabilized by IHF and Fis, promotes the release of bound ADP from DnaA. Because cellular ATP concentrations are much higher than ADP, the empty nucleotide binding pocket of DnaA preferentially binds ATP, regenerating active DnaA-ATP.
+            </div>
+
+            <h3>Mechanism Details</h3>
+            <p>The reactivation process involves several coordinated steps:</p>
+
+            <ul>
+                <li><strong>Recruitment phase:</strong> DnaA-ADP is recruited to DARS through low-affinity DnaA boxes that can accommodate the ADP-bound form</li>
+                <li><strong>Oligomerization:</strong> Multiple DnaA molecules assemble on DARS in a specific orientation, facilitated by architectural proteins (IHF, Fis)</li>
+                <li><strong>Conformational change:</strong> The oligomeric structure induces conformational changes in DnaA that weaken ADP binding</li>
+                <li><strong>Nucleotide release:</strong> ADP dissociates from DnaA while the protein remains bound to DARS</li>
+                <li><strong>ATP binding:</strong> The high cellular ATP concentration drives ATP binding to the empty pocket</li>
+                <li><strong>DnaA-ATP release:</strong> Reactivated DnaA-ATP dissociates from DARS and is available for oriC binding</li>
+            </ul>
+
+            <h3>Temporal Regulation During Cell Cycle</h3>
+            <p>DARS activity is regulated both spatially and temporally:</p>
+
+            <div class="key-point">
+                <strong>Copy Number Dynamics:</strong> As the replication forks pass through DARS loci, the number of DARS sites doubles, increasing the reactivation capacity of the cell. This doubling occurs at specific times relative to oriC replication, creating a temporal program of DnaA-ATP regeneration that helps to prepare the cell for the next initiation event.
+            </div>
+
+            <p>This confirms that DARS-mediated reactivation is essential for efficient, timely replication initiation and represents a critical component of the integrated regulatory network controlling prokaryotic chromosome duplication.</p>
+        </div>
+
+        <!-- Section 6: Multifork Replication -->
+        <div class="section" id="section-6">
+            <h2>6. Multifork Replication</h2>
+
+            <h3>The Phenomenon Defined</h3>
+            <p><span class="highlight">Multifork replication</span> (also called <span class="emphasis">multiple rounds of replication</span>) is a remarkable phenomenon observed in rapidly growing bacteria where <span class="emphasis">new rounds of DNA replication initiate before the previous round has completed</span>. This results in more than two replication forks simultaneously progressing along the chromosome.</p>
+
+            <h3>The C+D Constraint</h3>
+            <p>To understand multifork replication, we must consider the temporal parameters of the bacterial cell cycle:</p>
+
+            <ul>
+                <li><strong>C period:</strong> The time required to replicate the entire chromosome (approximately 40 minutes in <span class="emphasis">E. coli</span> at 37°C)</li>
+                <li><strong>D period:</strong> The time between completion of replication and cell division (approximately 20 minutes)</li>
+                <li><strong>C+D = ~60 minutes:</strong> The minimum time from initiation to cell division</li>
+            </ul>
+
+            <div class="key-point">
+                <strong>The Fast-Growth Paradox:</strong> When bacteria grow with doubling times shorter than C+D (e.g., 20-minute generation time in rich media), a mathematical impossibility arises: cells must divide before they could complete replication of DNA initiated at birth. The solution is multifork replication - initiating new rounds before previous rounds complete.
+            </div>
+
+            <h3>Visualization of Multifork Replication</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Multiforking.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <p>Consider a cell with a 20-minute doubling time:</p>
+
+            <ul>
+                <li><strong>Time 0:</strong> Cell born with 2 oriCs (from previous multifork replication), 4 replication forks already progressing</li>
+                <li><strong>Time 20 min (division):</strong> Previous replication rounds complete at terminus; cell divides. Each daughter inherits 2 oriCs</li>
+                <li><strong>Immediately after division:</strong> New initiation occurs at both oriCs in each daughter, creating 4 new forks</li>
+                <li><strong>Time 40 min (next division):</strong> Pattern repeats with each daughter again having 2 oriCs and ongoing replication</li>
+            </ul>
+
+            <p>The phenomenon of multifork replication exemplifies the remarkable sophistication of prokaryotic replication control. The regulatory network that governs replication initiation - comprising origin sequestration, transcriptional modulation, DnaA titration, RIDA inactivation, and DARS reactivation - must scale seamlessly to accommodate multiple simultaneous replication rounds while maintaining precise once-per-origin-per-cell-cycle fidelity. This integration of multiple regulatory layers ensures robust chromosome duplication across the wide range of growth conditions that bacteria encounter in their natural environments.</p>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="navigation">
+            <button class="prev-btn" id="prev-btn" disabled>Previous</button>
+            <button class="next-btn" id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progress = document.getElementById('progress');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            // Function to update the display
+            function updateDisplay() {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                sections[currentSection].classList.add('active');
+                
+                // Update progress indicator
+                progress.textContent = `Section ${currentSection + 1} of ${totalSections}`;
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateDisplay();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    updateDisplay();
+                }
+            });
+            
+            // Initialize display
+            updateDisplay();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
