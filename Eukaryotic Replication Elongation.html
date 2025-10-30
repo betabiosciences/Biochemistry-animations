@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic DNA Replication Elongation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(30, 15, 60, 0.85);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(147, 112, 219, 0.3);
+        }
+
+        h1 {
+            color: #bb86fc;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(147, 112, 219, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #bb86fc, #6a4c93);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #cf6fff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(147, 112, 219, 0.4);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #b794f6;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: #d4c5f9;
+            text-align: justify;
+        }
+
+        .highlight {
+            background: rgba(187, 134, 252, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #e0d4f7;
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: rgba(106, 76, 147, 0.3);
+            border-left: 4px solid #bb86fc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #d4c5f9;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-prev {
+            background: linear-gradient(135deg, #6a4c93, #4a2e6e);
+            color: #e0d4f7;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #bb86fc, #9d5ddb);
+            color: #1a0b2e;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(187, 134, 252, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .section-indicator {
+            text-align: center;
+            color: #b794f6;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .diagram {
+            background: rgba(20, 10, 40, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid rgba(187, 134, 252, 0.3);
+        }
+
+        .enzyme {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .dna {
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p, li {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 DNA Replication Elongation in Eukaryotes</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Section 1: Introduction -->
+        <div class="section active" id="section1">
+            <h2>Introduction to Eukaryotic Replication</h2>
+            
+            <p>DNA replication in eukaryotes is a highly coordinated and complex process that ensures accurate duplication of the entire genome before cell division. The <span class="highlight">elongation phase</span> represents the core synthetic stage where new DNA strands are continuously synthesized.</p>
+
+            <div class="info-box">
+                <strong>Key Distinction:</strong> Unlike prokaryotes, eukaryotic replication involves multiple origins of replication (10,000-100,000 origins in humans), shorter Okazaki fragments (~100-200 nucleotides), and more complex protein machinery.
+            </div>
+
+            <h3>Overview of the Process</h3>
+            <p>Elongation occurs bidirectionally from each replication origin, creating <span class="highlight">replication forks</span> that move in opposite directions. Each fork contains a sophisticated assembly of proteins called the <span class="highlight">replisome</span> that coordinates the synthesis of both leading and lagging strands simultaneously.</p>
+
+            <p>The process must overcome several challenges including chromatin structure, topological stress, and maintaining fidelity while achieving speeds of approximately 50 nucleotides per second per fork.</p>
+        </div>
+
+        <!-- Section 2: The Replisome Complex -->
+        <div class="section" id="section2">
+            <h2>The Replisome Complex</h2>
+
+            <p>The <span class="highlight">replisome</span> is the molecular machine responsible for DNA synthesis during elongation. It consists of numerous proteins that work in concert to replicate the genome with remarkable precision.</p>
+
+            <h3>Core Components</h3>
+            <ul>
+                <li><span class="enzyme">DNA Polymerase δ (Pol δ):</span> Primary polymerase for lagging strand synthesis; also completes leading strand synthesis</li>
+                <li><span class="enzyme">DNA Polymerase ε (Pol ε):</span> Principal polymerase for leading strand synthesis</li>
+                <li><span class="enzyme">PCNA (Proliferating Cell Nuclear Antigen):</span> Sliding clamp that tethers polymerases to DNA, increasing processivity dramatically</li>
+                <li><span class="enzyme">RFC (Replication Factor C):</span> Clamp loader that loads PCNA onto DNA in an ATP-dependent manner</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>Processivity Enhancement:</strong> PCNA increases the processivity of DNA polymerases from ~20 nucleotides to over 5,000 nucleotides per binding event, making continuous synthesis possible.
+            </div>
+
+            <h3>Additional Regulatory Proteins</h3>
+            <p>The replisome includes numerous accessory factors such as <span class="enzyme">RPA (Replication Protein A)</span> which coats single-stranded DNA, <span class="enzyme">topoisomerases</span> that relieve tension, and <span class="enzyme">helicases</span> that unwind the double helix.</p>
+        </div>
+
+        <!-- Section 3: Leading Strand Synthesis -->
+        <div class="section" id="section3">
+            <h2>Leading Strand Synthesis</h2>
+
+            <p>The <span class="dna">leading strand</span> is synthesized continuously in the 5' to 3' direction, following the direction of replication fork movement. This strand is synthesized with relative simplicity compared to the lagging strand.</p>
+
+            <h3>The Process</h3>
+            <p>After <span class="enzyme">Primase (Pol α-primase complex)</span> synthesizes an initial RNA primer of approximately 8-12 nucleotides followed by 20-30 DNA nucleotides, <span class="enzyme">DNA Polymerase ε</span> takes over and extends the primer continuously.</p>
+
+            <div class="info-box">
+                <strong>High Fidelity:</strong> Pol ε has 3' to 5' exonuclease activity, allowing it to proofread and excise incorrectly incorporated nucleotides. This reduces error rate to approximately 1 in 10⁷ nucleotides.
+            </div>
+
+            <h3>PCNA's Role</h3>
+            <p>The <span class="enzyme">PCNA</span> clamp encircles the DNA like a ring and slides along it, maintaining association with Pol ε. This processivity factor is essential for efficient continuous synthesis across long stretches of DNA without dissociation.</p>
+        </div>
+
+        <!-- Section 4: Lagging Strand Synthesis -->
+        <div class="section" id="section4">
+            <h2>Lagging Strand Synthesis</h2>
+
+            <p>The <span class="dna">lagging strand</span> presents a more complex challenge because DNA polymerases can only synthesize in the 5' to 3' direction, but the strand must be synthesized opposite to fork movement.</p>
+
+            <h3>Okazaki Fragments</h3>
+            <p>The solution is discontinuous synthesis through short segments called <span class="highlight">Okazaki fragments</span> (100-200 nucleotides in eukaryotes). Each fragment requires its own priming event and subsequent processing.</p>
+
+            <h3>Synthesis Cycle</h3>
+            <ul>
+                <li><span class="enzyme">Pol α-primase</span> synthesizes a short RNA-DNA primer (~30-40 nucleotides total)</li>
+                <li><span class="enzyme">RFC</span> recognizes the primer-template junction and loads PCNA</li>
+                <li><span class="enzyme">DNA Polymerase δ</span> displaces Pol α and extends the fragment</li>
+                <li>Pol δ synthesizes until it encounters the previous Okazaki fragment</li>
+                <li>The cycle repeats every 100-200 nucleotides</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>Coordination:</strong> Despite the complexity, leading and lagging strand synthesis occur simultaneously with the replisome maintaining coordination between both processes through physical linkage of the polymerases.
+            </div>
+        </div>
+
+        <!-- Section 5: Okazaki Fragment Processing -->
+        <div class="section" id="section5">
+            <h2>Okazaki Fragment Processing</h2>
+
+            <p>After Okazaki fragments are synthesized, they must be processed to create a continuous DNA strand. This involves removing RNA primers and ligating the fragments together.</p>
+
+            <h3>Primer Removal</h3>
+            <p>Two main pathways exist for removing RNA primers from Okazaki fragments:</p>
+
+            <div class="info-box">
+                <strong>Short Flap Pathway:</strong> <span class="enzyme">Pol δ</span> displaces a short flap from the primer region of the Okazaki fragment. <span class="enzyme">FEN1 (Flap Endonuclease 1)</span> then cleaves the cleaves the flap as Pol δ extends the upstream fragment, moving the nick further downstream."
+            </div>
+
+            <div class="info-box">
+                <strong>Long Flap Pathway:</strong> <span class="enzyme">Pol δ</span> displaces a short flap from the primer region of the Okazaki fragment. <span class="enzyme">It is further unwound by Pif1 displacing the downstream primer and creating a longer flap (>10 nucleotides). These are bound by <span class="enzyme">RPA</span> and then processed by <span class="enzyme">Dna2 nuclease/helicase</span> in conjunction with FEN1.
+            </div>
+
+            <h3>Ligation</h3>
+            <p>After primer removal and gap filling by Pol δ, <span class="enzyme">DNA Ligase I</span> seals the nick between adjacent Okazaki fragments by catalyzing phosphodiester bond formation. This enzyme requires ATP and creates a continuous phosphate-sugar backbone.</p>
+
+            <p>DNA Ligase I specifically recognizes the PCNA clamp, ensuring it acts at appropriate sites along the lagging strand.</p>
+        </div>
+
+        <!-- Section 6: Topological Challenges -->
+        <div class="section" id="section6">
+            <h2>Managing Topological Stress</h2>
+
+            <p>As the replication fork advances, unwinding the double helix creates severe topological problems. The rotation of DNA ahead of the fork generates positive supercoils that must be resolved to prevent fork stalling.</p>
+
+            <h3>The Topological Problem</h3>
+            <p>For every 10 base pairs unwound (one helical turn), one positive supercoil forms ahead of the replication fork. Without resolution, this overwinding would halt replication within seconds.</p>
+
+            <h3>Topoisomerase Solutions</h3>
+            <p><span class="enzyme">Topoisomerase I</span> relieves positive supercoils by creating transient single-strand breaks, allowing rotation and relaxation before resealing. This enzyme works continuously ahead of each replication fork.</p>
+
+            <p><span class="enzyme">Topoisomerase II</span> (Topo II) is essential for resolving more complex topological issues, particularly catenanes (interlinked DNA circles) that form when replication forks from adjacent origins converge. Topo II creates transient double-strand breaks and passes another DNA duplex through before resealing.</p>
+
+            <div class="info-box">
+                <strong>Clinical Relevance:</strong> Many anticancer drugs target topoisomerases, exploiting the fact that rapidly dividing cancer cells are particularly sensitive to replication stress. Examples include camptothecins (Topo I inhibitors) and etoposide (Topo II inhibitor).
+            </div>
+        </div>
+
+        <!-- Section 7: Chromatin Challenges -->
+        <div class="section" id="section7">
+            <h2>Replication Through Chromatin</h2>
+
+            <p>Unlike prokaryotic DNA, eukaryotic DNA is packaged into chromatin with histones forming nucleosomes. The replisome must navigate this complex structure during elongation.</p>
+
+            <h3>Nucleosome Disruption</h3>
+            <p>Ahead of the replication fork, nucleosomes must be disassembled or displaced to allow the replisome access to DNA. <span class="enzyme">Histone chaperones</span> like <span class="highlight">FACT (Facilitates Chromatin Transcription)</span> and <span class="highlight">Asf1</span> facilitate this process by temporarily binding histones removed from DNA.</p>
+
+        </div>
+
+        <div class="navigation">
+            <button class="btn-prev" id="prevBtn" onclick="previousSection()">← Previous</button>
+            <button class="btn-next" id="nextBtn" onclick="nextSection()">Next →</button>
+        </div>
+
+        <div class="section-indicator" id="sectionIndicator">Section 1 of 7</div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 7;
+
+        function updateDisplay() {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                const section = document.getElementById(`section${i}`);
+                if (section) {
+                    section.classList.remove('active');
+                }
+            }
+            
+            // Show current section
+            const currentSectionEl = document.getElementById(`section${currentSection}`);
+            if (currentSectionEl) {
+                currentSectionEl.classList.add('active');
+            }
+            
+            // Update progress bar
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Update section indicator
+            document.getElementById('sectionIndicator').textContent = `Section ${currentSection} of ${totalSections}`;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentSection === 1;
+            document.getElementById('nextBtn').disabled = currentSection === totalSections;
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                updateDisplay();
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                updateDisplay();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                nextSection();
+            } else if (event.key === 'ArrowLeft') {
+                previousSection();
+            }
+        });
+
+        // Touch swipe navigation for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                nextSection();
+            }
+            if (touchEndX > touchStartX + 50) {
+                previousSection();
+            }
+        }
+
+        // Initialize
+        updateDisplay();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
