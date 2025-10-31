@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic Replication & Telomeres</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Ensure the content area pushes the nav to the bottom */
+        .content-wrapper {
+            min-height: calc(100vh - 150px); /* Adjust 150px based on header/footer height */
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-gray-300">
+
+    <!-- Main App Container -->
+    <div class="max-w-2xl mx-auto w-full p-4 sm:p-6 md:p-8 flex flex-col min-h-screen">
+
+        <!-- Header -->
+        <header class="mb-6 border-b border-indigo-700 pb-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-indigo-300">
+                Eukaryotic Replication & Telomeres
+            </h1>
+        </header>
+
+        <!-- Content Area: Sections will be swapped here -->
+        <main class="flex-grow content-wrapper">
+
+            <!-- Section 1: Termination Mechanism -->
+            <section id="section-1" class="content-section">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">1. Termination Mechanism in Eukaryotes</h2>
+                <p class="mb-4 leading-relaxed">
+                    Eukaryotic termination is less understood than initiation, primarily because it's a stochastic (random) event rather than a programmed one. It occurs when two replication forks, moving in opposite directions (head-on collision), or one fork and the end of the chromosome, meet.
+                </p>
+                <ul class="list-disc list-outside ml-5 space-y-2 mb-4">
+                    <li>
+                        <strong>Fork Convergence:</strong> When two replisomes (the entire replication machinery) collide, they don't just stop. The CMG (Cdc45-MCM-GINS) helicase complex from both forks must be disassembled.
+                    </li>
+                    <li>
+                        <strong>Replisome Disassembly:</strong> This process is actively regulated. The CMG complex is ubiquitinated (tagged for destruction/removal) by the SCF-Dia2 ubiquitin ligase (in yeast) or other factors, leading to its removal from the DNA. This disassembly is crucial to allow access for downstream repair and processing enzymes.
+                    </li>
+                    <li>
+                        <strong>Ligation and Catenane Resolution:</strong> Once the replisomes are removed, any remaining nicks in the newly synthesized lagging strands are sealed by DNA ligase I. The two new sister chromatids are often topologically interlocked (catenated). These interlinks, or "catenanes," are resolved by Topoisomerase II, which creates a temporary double-strand break in one DNA molecule to pass the other through, before resealing the break.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 2: End Replication Problem -->
+            <section id="section-2" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">2. The End Replication Problem</h2>
+                <p class="mb-4 leading-relaxed">
+                    The "End Replication Problem" is a fundamental challenge for linear chromosomes. DNA polymerases are unidirectional (5' to 3') and require a pre-existing 3'-OH group, provided by an RNA primer, to begin synthesis.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/End%20replication%20problem.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <p class="mb-4 leading-relaxed">
+                    On the leading strand, synthesis is continuous. On the lagging strand, it's discontinuous, requiring multiple RNA primers.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    The problem arises at the very 5' end of the newly synthesized lagging strand. When the final RNA primer is removed, there is no upstream 3'-OH group available for DNA polymerase to fill the gap.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    This results in a short, single-stranded 3' overhang on the parental template strand and, consequently, a progressive shortening of the chromosome with every single cell division.
+                </p>
+            </section>
+
+            <!-- Section 3: Telomere Structure and Significance -->
+            <section id="section-3" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">3. Telomere Structure and Significance</h2>
+                <p class="mb-4 leading-relaxed">
+                    Telomeres are specialized nucleoprotein structures at the ends of linear eukaryotic chromosomes.
+                </p>
+                <ul class="list-disc list-outside ml-5 space-y-2 mb-4">
+                    <li>
+                        <strong>Structure:</strong> They consist of long stretches of repetitive, non-coding DNA sequences. In humans and other vertebrates, the repeat is <strong>TTAGGG</strong>. This sequence is repeated thousands of times. The G-rich strand (TTAGGG) terminates in a 3' single-stranded overhang (the G-overhang) that is typically 50-300 nucleotides long.
+                    </li>
+                    <li>
+                        <strong>Significance (The "Cap"):</strong> Telomeres are not just sacrificial DNA. They act as protective caps that:
+                        <ul class="list-decimal list-outside ml-6 mt-2 space-y-1">
+                            <li><strong>Prevent Degradation:</strong> Protect the coding DNA from being eroded by the end replication problem.</li>
+                            <li><strong>Mask from DNA Repair:</strong> Prevent the cell's DNA damage repair (DDR) machinery from mistaking the chromosome end for a dangerous double-strand break (DSB).</li>
+                            <li><strong>Stop Fusion:</strong> An uncapped end would be "sticky" and prone to fusing with other chromosome ends (non-homologous end joining), leading to massive genomic instability.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Telomere%20simple%20diagram.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </section>
+
+            <!-- Section 4: Telomerase Enzyme -->
+            <section id="section-4" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">4. Telomerase: Structure and Function</h2>
+                <p class="mb-4 leading-relaxed">
+                    Telomerase is the enzyme that solves the end replication problem. It is a unique <strong>ribonucleoprotein (RNP)</strong> that functions as a <strong>reverse transcriptase</strong>.
+                </p>
+                <ul class="list-disc list-outside ml-5 space-y-2 mb-4">
+                    <li>
+                        <strong>Core Structure:</strong>
+                        <ul class="list-decimal list-outside ml-6 mt-2 space-y-1">
+                            <li><strong>TERT (Telomerase Reverse Transcriptase):</strong> This is the catalytic protein subunit. It provides the reverse transcriptase activity, synthesizing DNA from an RNA template.</li>
+                            <li><strong>TERC (Telomerase RNA Component):</strong> This is an essential, non-coding RNA molecule. It contains a short sequence (e.g., 3'-CAAUCCCAA-5' in humans) that serves as the <strong>template</strong> for synthesizing the TTAGGG DNA repeats.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Function:</strong> Telomerase binds to the 3' G-overhang and extends it by adding new TTAGGG repeats. It does this by repeatedly aligning its TERC template, synthesizing a repeat with TERT, and then translocating to the new end to start again.
+                    </li>
+                    <li>
+                        <strong>Activity:</strong> Telomerase is highly active in germline cells, embryonic stem cells, and actively dividing single-celled eukaryotes. Most human somatic (body) cells have very low or undetectable levels of telomerase activity. This is why their telomeres shorten over time.
+                    </li>
+                </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Telomeres-and-Telomerase.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </section>
+
+            <!-- Section 5: Mechanism of Telomere Replication -->
+            <section id="section-5" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">5. Mechanism of Telomere Replication</h2>
+                <p class="mb-4 leading-relaxed">
+                    Telomere maintenance is a multi-step process involving telomerase and the conventional replication machinery.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Telomerase%20mechaism.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ol class="list-decimal list-outside ml-5 space-y-3 mb-4">
+                    <li>
+                        <strong>Binding and Annealing:</strong> Telomerase (with its TERC and TERT components) recognizes and binds to the 3' G-overhang at the chromosome end. The TERC RNA template aligns with and anneals to the last few nucleotides of the overhang.
+                    </li>
+                    <li>
+                        <strong>Elongation (Reverse Transcription):</strong> The TERT subunit synthesizes a 6-nucleotide DNA repeat (TTAGGG) using its internal TERC as a template, extending the 3' end.
+                    </li>
+                    <li>
+                        <strong>Translocation:</strong> The enzyme then moves ("translocates") forward, repositioning its TERC template to the new 3' end. This cycle of elongation and translocation can be repeated many times, adding hundreds of bases to the G-strand.
+                    </li>
+                    <li>
+                        <strong>C-Strand Synthesis (Fill-in):</strong> After the G-strand has been sufficiently elongated by telomerase, the conventional replication machinery comes in. An RNA primer is synthesized by the <strong>Pol &alpha;-primase</strong> complex on the newly extended G-strand.
+                    </li>
+                    <li>
+                        <strong>Lagging Strand Synthesis:</strong> <strong>DNA Polymerase &delta;</strong> (Pol &delta;) extends this primer, synthesizing the complementary C-strand (AATCCC repeats). The resulting RNA primer is removed, and nicks are ligated, leaving a newly elongated duplex with a 3' overhang (which is essential for capping).
+                    </li>
+                </ol>
+            </section>
+
+            <!-- Section 6: Sequestration of Overhangs -->
+            <section id="section-6" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">6. Sequestration of Overhangs: The T-Loop</h2>
+                <p class="mb-4 leading-relaxed">
+                    Even after replication, the 3' single-stranded overhang must be protected. An exposed DNA end is a "red flag" for DNA damage. This is achieved by a protein complex and a unique DNA structure.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Telomere%20end%20sequestration.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ul class="list-disc list-outside ml-5 space-y-2 mb-4">
+                    <li>
+                        <strong>The Shelterin Complex:</strong> This is a 6-protein complex (TRF1, TRF2, POT1, TPP1, TIN2, RAP1) that binds specifically to telomeric DNA. It acts as the primary guardian of the telomere.
+                    </li>
+                    <li>
+                        <strong>TRF2 and POT1:</strong> These are key Shelterin components. TRF2 binds to the double-stranded telomeric repeats, while POT1 binds to the single-stranded 3' overhang.
+                    </li>
+                    <li>
+                        <strong>T-Loop Formation:</strong> The "cap" is formed when the chromosome end loops back on itself. The 3' single-stranded overhang, coated by POT1, is guided by TRF2 to invade the upstream double-stranded telomeric region.
+                    </li>
+                    <li>
+                        <strong>Structure:</strong> This creates a lariat-like structure called a <strong>T-loop</strong>. The overhang's 3' end is tucked away and base-paired within the duplex DNA, forming a stable "displacement loop" (D-loop).
+                    </li>
+                    <li>
+                        <strong>Function:</strong> The T-loop physically sequesters the 3' end, hiding it from all DNA repair pathways (like ATM and ATR) and preventing end-to-end fusions.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 7: Hayflick's Limit -->
+            <section id="section-7" class="content-section hidden">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-purple-300">7. The Hayflick Limit</h2>
+                <p class="mb-4 leading-relaxed">
+                    The Hayflick Limit is the observation, first made by Leonard Hayflick in 1961, that normal human somatic cells can only divide a finite number of times (typically 40-60 divisions) in vitro before they stop dividing and enter a state of <strong>replicative senescence</strong>.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    This phenomenon is now known to be a direct consequence of the end replication problem.
+                </p>
+                <ul class="list-disc list-outside ml-5 space-y-2 mb-4">
+                    <li>
+                        <strong>Molecular Clock:</strong> In most somatic cells, telomerase is not active. Therefore, with each cell division, the telomeres shorten.
+                    </li>
+                    <li>
+                        <strong>Triggering Senescence:</strong> After many divisions, the telomeres become critically short. The Shelterin complex can no longer bind effectively, and the T-loop structure fails.
+                    </li>
+                    <li>
+                        <strong>Damage Signal:</strong> The now "uncapped" telomere is recognized by the cell as a persistent, irreparable double-strand break. This activates the DNA damage response (DDR) pathway, leading to a permanent cell-cycle arrest (senescence) mediated by tumor suppressors like p53 and pRb.
+                    </li>
+                    <li>
+                        <strong>Significance:</strong> Replicative senescence is a powerful, built-in anti-tumor mechanism. It prevents aging cells with potentially damaged DNA from continuing to proliferate and becoming cancerous. Cancer cells, in over 90% of cases, bypass this limit by reactivating telomerase.
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <!-- Navigation Buttons -->
+        <footer class="flex-shrink-0 pt-6 mt-auto border-t border-indigo-700">
+            <div class="flex justify-between items-center">
+                <button id="prevButton" class="bg-indigo-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-indigo-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <span id="sectionIndicator" class="text-sm text-indigo-300">1 / 7</span>
+                <button id="nextButton" class="bg-indigo-600 text-white font-semibold py-2 px-5 rounded-lg shadow-md hover:bg-indigo-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
+        </footer>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentSection = 1;
+            const totalSections = 7; // Total number of sections
+
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const sectionIndicator = document.getElementById('sectionIndicator');
+            const sections = document.querySelectorAll('.content-section');
+
+            function showSection(sectionNumber) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Show the current section
+                const activeSection = document.getElementById(`section-${sectionNumber}`);
+                if (activeSection) {
+                    activeSection.classList.remove('hidden');
+                }
+
+                // Update section indicator
+                sectionIndicator.textContent = `${sectionNumber} / ${totalSections}`;
+
+                // Update button states
+                prevButton.disabled = (sectionNumber === 1);
+                nextButton.disabled = (sectionNumber === totalSections);
+                
+                // Scroll to the top of the content area
+                window.scrollTo(0, 0);
+            }
+
+            // Next button click
+            nextButton.addEventListener('click', () => {
+                if (currentSection < totalSections) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            });
+
+            // Previous button click
+            prevButton.addEventListener('click', () => {
+                if (currentSection > 1) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+
+            // Show the first section initially
+            showSection(currentSection);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
