@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chromatin Structure & Replication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 50%, #1a0f2e 100%);
+            min-height: 100vh;
+            color: #e0d4f7;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 20, 50, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        h1 {
+            color: #a78bfa;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #c4b5fd;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #7c3aed;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #ddd6fe;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #fbbf24;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #e0d4f7;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #e0d4f7;
+        }
+
+        strong {
+            color: #fbbf24;
+        }
+
+        em {
+            color: #60a5fa;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            font-size: 1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #4c1d95;
+        }
+
+        .progress {
+            text-align: center;
+            margin-top: 20px;
+            color: #a78bfa;
+            font-size: 0.9em;
+        }
+
+        .highlight {
+            background: rgba(124, 58, 237, 0.3);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chromatin Structure & Replication</h1>
+
+        <!-- Section 1: Structure of Chromatin -->
+        <div class="section active" id="section1">
+            <h2>1. Structure of Chromatin</h2>
+            <p>Chromatin is the complex of DNA and proteins that forms chromosomes within the nucleus of eukaryotic cells. It serves as the physiological template for all genomic processes and represents an elegant solution to the challenge of packaging enormous lengths of DNA into the confines of the nucleus while maintaining accessibility for transcription, replication, and repair.</p>
+            
+            <h3>Hierarchical Organization</h3>
+            <p>Chromatin exhibits a hierarchical structure with multiple levels of organization:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Primary%20secondary%20tertiary%20structure%20of%20chromatin.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li><strong>Primary structure (10 nm fiber):</strong> Often called "beads-on-a-string," this represents the most basic level where DNA wraps around histone octamers to form nucleosomes. Each nucleosome consists of approximately 147 base pairs of DNA wrapped 1.65 turns around the histone core.</li>
+                <li><strong>Secondary structure (30 nm fiber):</strong> Nucleosomes compact further through interactions between histone tails and adjacent nucleosomes, forming a solenoid structure. This level of compaction reduces the linear dimension by approximately 6-fold.</li>
+                <li><strong>Tertiary structure:</strong> The 30 nm fiber forms loops anchored to a nuclear scaffold or matrix, creating loop domains typically ranging from 50,000 to 200,000 base pairs.</li>
+                <li><strong>Quaternary structure:</strong> Further condensation occurs through coiling and folding, ultimately forming the metaphase chromosome visible during cell division, representing a 10,000-fold compaction of the DNA molecule.</li>
+            </ul>
+
+            <h3>Functional States</h3>
+            <p>Chromatin exists in two functionally distinct states:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Heterochromatin-euchromatin.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <p><strong>Euchromatin:</strong> This loosely packed, transcriptionally active form appears lighter under microscopy. It is enriched in genes that are actively transcribed and contains histone modifications associated with transcriptional activation, such as H3K4me3 and H3K9ac.</p>
+            <p><strong>Heterochromatin:</strong> This densely packed, transcriptionally inactive form can be further divided into constitutive heterochromatin (permanently silenced regions like centromeres and telomeres) and facultative heterochromatin (regions that can be activated under specific conditions, such as the inactive X chromosome in females).</p>
+
+            <h3>Linker DNA and H1 Histone</h3>
+            <p>Between nucleosome core particles lies the <em>linker DNA</em>, typically ranging from 20 to 80 base pairs depending on the organism and cell type. The linker histone H1 binds to this linker DNA and the entry-exit point of DNA on the nucleosome, stabilizing higher-order chromatin structure and facilitating the transition from the 10 nm fiber to the 30 nm fiber.</p>
+        </div>
+
+        <!-- Section 2: Histone Proteins Structure and Types -->
+        <div class="section" id="section2">
+            <h2>2. Histone Proteins: Structure and Types</h2>
+            <p>Histones are small, highly conserved basic proteins that serve as the primary protein components of chromatin. Their positive charge, due to high lysine and arginine content, facilitates electrostatic interactions with the negatively charged DNA phosphate backbone.</p>
+
+            <h3>Core Histones</h3>
+            <p>The four core histones form the octameric core of the nucleosome:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Nucleosome%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li><strong>Histone H3 (15.4 kDa):</strong> Contains 135 amino acids with a highly basic N-terminal tail (residues 1-42) that extends from the nucleosome core. The structured domain contains the histone fold motif consisting of three α-helices. H3 is subject to extensive post-translational modifications, particularly on lysines 4, 9, 27, and 36.</li>
+                <li><strong>Histone H4 (11.4 kDa):</strong> The most conserved histone protein, comprising 102 amino acids. Its N-terminal tail (residues 1-23) is critical for chromatin folding and contains key acetylation sites at lysines 5, 8, 12, and 16. The H4 tail interacts with the acidic patch on adjacent nucleosomes.</li>
+                <li><strong>Histone H2A (14 kDa):</strong> Contains approximately 129 amino acids with both N-terminal and C-terminal tails. The C-terminal tail is unique among core histones and contains a conserved docking domain. H2A has numerous variants with specialized functions.</li>
+                <li><strong>Histone H2B (13.8 kDa):</strong> Consists of about 125 amino acids with an N-terminal tail that is important for chromatin remodeling. H2B ubiquitination at lysine 120 (K120) is crucial for transcription elongation and DNA repair.</li>
+            </ul>
+
+            <h3>Linker Histone</h3>
+            <p><strong>Histone H1:</strong> Unlike core histones, H1 is more variable in sequence and size (approximately 21 kDa, 215 amino acids). It consists of a short N-terminal tail, a central globular domain that binds to linker DNA, and a long basic C-terminal tail. H1 has multiple subtypes (H1.1-H1.5, H1t, H1oo) expressed in different cell types and developmental stages.</p>
+
+            <h3>Histone Variants</h3>
+            <p>Histone variants are non-allelic isoforms that replace canonical histones and confer specialized functions:</p>
+            <ul>
+                <li><strong>H3 variants:</strong> H3.3 (replication-independent, marks active genes), CENP-A (centromere-specific, essential for kinetochore assembly), H3.X and H3.Y (testis-specific)</li>
+                <li><strong>H2A variants:</strong> H2A.Z (regulates transcription start sites), H2A.X (phosphorylated γH2A.X marks DNA double-strand breaks), macroH2A (contains a large C-terminal macro domain, involved in X-inactivation), H2A.Bbd (excludes H1, associated with active chromatin)</li>
+                <li><strong>H2B variants:</strong> TSH2B (testis-specific), H2BFWT (fertilization-specific)</li>
+            </ul>
+
+            <h3>Structural Features</h3>
+            <p>All core histones share the <span class="highlight">histone fold domain</span>: a characteristic three-helix bundle (α1-α2-α3) connected by loops. This domain mediates histone-histone interactions through handshake motifs. The N-terminal tails are largely unstructured and protrude from the nucleosome core, serving as platforms for post-translational modifications that regulate chromatin function.</p>
+        </div>
+
+        <!-- Section 3: Structural Features of Nucleosomes -->
+        <div class="section" id="section3">
+            <h2>3. Structural Features of Nucleosomes</h2>
+            <p>The nucleosome is the fundamental repeating unit of chromatin, consisting of an octameric histone core around which DNA is wrapped. First visualized by Roger Kornberg in 1974 and subsequently crystallized in 1997, the nucleosome represents one of the most extensively studied protein-DNA complexes.</p>
+
+            <h3>Histone Octamer Architecture</h3>
+            <p>The histone octamer has a tripartite organization:</p>
+            <ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Nucleosome%20space%20fill%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <li><strong>Central (H3-H4)₂ tetramer:</strong> Forms through a four-helix bundle where H3-H3' interact via a handshake at the dyad axis. This tetramer is highly stable and serves as the deposition intermediate during nucleosome assembly. The (H3-H4)₂ tetramer binds approximately 60 base pairs of central DNA.</li>
+                <li><strong>Two H2A-H2B dimers:</strong> Flank the (H3-H4)₂ tetramer on either side. These dimers are more dynamic and can be displaced during transcription or remodeling. Each dimer contacts approximately 30 base pairs of DNA, and their presence completes the wrapping of 147 base pairs around the octamer.</li>
+            </ul>
+
+            <h3>DNA-Histone Interactions</h3>
+            <p>DNA wraps around the histone octamer in a left-handed superhelix, making 1.65 turns. The DNA-histone interactions involve:</p>
+            <ul>
+                <li><strong>Fourteen contact points:</strong> DNA contacts histones at 14 distinct sites, occurring approximately every 10 base pairs (one helical turn). These contacts are primarily mediated by minor groove interactions.</li>
+                <li><strong>Salt bridges and hydrogen bonds:</strong> Positively charged arginine and lysine residues from histones form ionic interactions with the negatively charged DNA phosphate backbone. Specific residues, particularly in the L1 and L2 loops of histones, insert into the DNA minor groove.</li>
+                <li><strong>DNA bending:</strong> The DNA is bent and compressed, with sharp kinks occurring at specific locations (superhelix locations ±1.5, ±4.5). This bending is energetically costly and contributes to the metastability of nucleosomes.</li>
+            </ul>
+        </div>
+
+        <!-- Section 4: Assembly of Nucleosome Core Particle (from gemini2.html) -->
+        <div class="section" id="section4">
+            <h2>4. Assembly of Nucleosome Core Particle</h2>
+            <p>Nucleosome assembly is a highly regulated, step-wise process mediated by histone chaperones. This process is crucial during DNA replication, repair, and transcription.</p>
+            
+            <h3>Key Chaperones</h3>
+            <ul>
+                <li><strong>ASF1 (Anti-Silencing Function 1):</strong> Binds to newly synthesized, acetylated H3-H4 dimers and escorts them to the nucleus.</li>
+                <li><strong>CAF-1 (Chromatin Assembly Factor 1):</strong> A three-subunit complex that receives the H3-H4 dimers from ASF1. CAF-1 is recruited to the replication fork via interaction with PCNA (Proliferating Cell Nuclear Antigen) and deposits the (H3-H4)₂ tetramer onto newly synthesized DNA.</li>
+                <li><strong>NAP1 (Nucleosome Assembly Protein 1):</strong> A chaperone primarily responsible for handling H2A-H2B dimers, facilitating their deposition onto the (H3-H4)₂-DNA complex to complete the nucleosome.</li>
+            </ul>
+
+            <h3>Step-wise Assembly</h3>
+            <ol>
+                <li>CAF-1 deposits the (H3-H4)₂ tetramer onto the DNA.</li>
+                <li>This is followed by the NAP1-mediated deposition of two H2A-H2B dimers, one on each side of the tetramer.</li>
+                <li>This sequential assembly is energy-independent and driven by the electrostatic interactions and protein-protein affinities.</li>
+            </ol>
+        </div>
+
+        <!-- Section 5: Histone Modifications and Their Significance (from gemini2.html) -->
+        <div class="section" id="section5">
+            <h2>5. Histone Modifications and Their Significance</h2>
+            <p>The N-terminal tails of histones are subject to a vast array of post-translational modifications (PTMs). These modifications act as a complex signaling platform, a concept known as the <strong>"histone code."</strong></p>
+            
+            <h3>Major Modifications</h3>
+            <ul>
+                <li><strong>Acetylation (on Lysine, K):</strong> Catalyzed by Histone Acetyltransferases (HATs) and reversed by Histone Deacetylases (HDACs). Acetylation neutralizes the lysine's positive charge, weakening the histone-DNA interaction and opening up chromatin (associated with transcription).</li>
+                <li><strong>Methylation (on Lysine, K & Arginine, R):</strong> Catalyzed by Histone Methyltransferases (HMTs) and reversed by Histone Demethylases (HDMs). Unlike acetylation, methylation doesn't change the charge but creates binding sites for "reader" proteins. Its effect is context-dependent (e.g., H3K4me3 is activating, H3K9me3 and H3K27me3 are repressive).</li>
+                <li><strong>Phosphorylation (on Serine, S & Threonine, T):</strong> Adds a negative charge. It is involved in diverse processes, including transcription (H3S10ph) and chromosome condensation during mitosis.</li>
+                <li><strong>Ubiquitination (on Lysine, K):</strong> The addition of a small protein, ubiquitin. It can be monoubiquitination (e.g., H2AK119ub for gene silencing) or polyubiquitination (for degradation).</li>
+            </ul>
+
+            <h3>Significance</h3>
+            <p>These modifications recruit specific effector proteins (readers) that contain domains like Bromodomains (bind acetyl-lysine) and Chromodomains (bind methyl-lysine), which then execute downstream functions like chromatin remodeling or recruitment of the transcription machinery.</p>
+        </div>
+
+        <!-- Section 6: Chromatin Replication: Strategies (from gemini2.html) -->
+        <div class="section" id="section6">
+            <h2>6. Chromatin Replication: Strategies</h2>
+            <p>Replicating the genome requires duplicating not just the DNA sequence but also the chromatin state (epigenetic information). This occurs during the S phase of the cell cycle.</p>
+            
+            <h3>Replication-Dependent Histones</h3>
+            <p>These are the canonical histones (H2A, H2B, H3.1, H4). Their synthesis is tightly coupled to S-phase and DNA replication. Their mRNAs are not polyadenylated but have a characteristic 3' stem-loop structure, ensuring rapid synthesis during S-phase and rapid degradation afterward.</p>
+
+            <h3>Replication-Independent Histones (Histone Variants)</h3>
+            <p>These include variants like H3.3, H2A.Z, and CENP-A. They are synthesized throughout the cell cycle and are deposited by specialized chaperone complexes (e.g., HIRA deposits H3.3) in a DNA replication-independent manner, often at active genes or specialized loci.</p>
+
+            <h3>General Strategy</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/General%20strtegy%20of%20histone%20replication.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ol>
+                <li><strong>Disassembly:</strong> Ahead of the replication fork, parental nucleosomes must be partially or fully disassembled. Chaperones like FACT (Facilitates Chromatin Transcription) are involved.</li>
+                <li><strong>DNA Synthesis:</strong> The replication machinery (DNA polymerase, helicase, etc.) synthesizes two daughter strands.</li>
+                <li><strong>Reassembly:</strong> New nucleosomes are rapidly assembled on both daughter duplexes, using a mixture of recycled parental histones and newly synthesized histones. This process is coordinated by the replication-coupled assembly pathway (CAF-1, PCNA).</li>
+            </ol>
+        </div>
+
+        <!-- Section 7: H3-H4 Inheritance After Replication (from gemini2.html) -->
+        <div class="section" id="section7">
+            <h2>7. H3-H4 Inheritance After Replication</h2>
+            <p>The inheritance of H3-H4 histones is the primary mechanism for transmitting epigenetic information, as these histones carry the bulk of modifications (like H3K9me3, H3K27me3).</p>
+            
+            <h3>Intact Tetramer Inheritance Model</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Histone%20assemble%20disassembly%20mechanism.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li>This model proposes that the parental (H3-H4)₂ tetramer, a highly stable structure, is <strong>not split</strong> during replication.</li>
+                <li>Instead, the entire intact parental tetramer is transferred to one of the two daughter DNA duplexes (either leading or lagging strand), in a "conservative" manner.</li>
+                <li>The other daughter duplex is then assembled with a <strong>completely new (H3-H4)₂ tetramer</strong>, synthesized and deposited by chaperones like CAF-1.</li>
+                <li>This results in one daughter duplex inheriting the "old" parental tetramer (and its modifications) while the other gets a "new" unmodified tetramer.</li>
+            </ul>
+
+            <h3>Significance</h3>
+            <p>This model suggests a different mechanism for epigenetic propagation. The intact parental tetramer acts as a complete unit of information. "Reader-writer" complexes would then be recruited to this site and would have to spread the modifications to adjacent *newly assembled nucleosomes* on the same duplex, as well as potentially signaling to the other daughter duplex (which received the all-new tetramer) to re-establish the correct chromatin state.</p>
+        </div>
+
+        <!-- Section 8: H2A-H2B Inheritance (from gemini2.html) -->
+        <div class="section" id="section8">
+            <h2>8. H2A-H2B Inheritance</h2>
+            <p>The inheritance of H2A-H2B dimers follows a different and more dynamic strategy compared to H3-H4 tetramers.</p>
+            
+            <h3>The Current Model (Dimer Exchange)</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Histone%20assemble%20disassembly%20mechanism.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li>Parental H2A-H2B dimers are <strong>completely displaced</strong> from the DNA ahead of the replication fork and enter a "soluble pool" within the nucleoplasm.</li>
+                <li>This is in contrast to the H3-H4 tetramer, which remains associated with the DNA.</li>
+                <li>After the new (H3-H4)₂ tetramers (both parental/new hybrids and fully new ones) are deposited on the daughter strands, the H2A-H2B dimers are added back.</li>
+                <li>This re-deposition step draws from the combined pool of <strong>both parental and newly synthesized H2A-H2B dimers</strong>.</li>
+                <li>The chaperone <strong>FACT (Facilitates Chromatin Transcription)</strong> is thought to play a key role in removing the H2A-H2B dimers, while <strong>NAP1</strong> is involved in their deposition.</li>
+            </ul>
+
+            <h3>Significance</h3>
+            <p>This "dimer exchange" mechanism means there is no direct, conservative inheritance of H2A-H2B dimers. Their modifications (like H2AK119ub) are less stably propagated and are often re-established *de novo* after replication, based on the underlying H3-H4 modification state.</p>
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSection(-1)">Previous</button>
+            <button id="nextBtn" onclick="changeSection(1)">Next</button>
+        </div>
+        
+        <div class="progress">
+            <span id="sectionIndicator">Section 1 of 8</span>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 8;
+
+        function showSection(n) {
+            const sections = document.getElementsByClassName('section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicator = document.getElementById('sectionIndicator');
+
+            if (n > totalSections) {
+                currentSection = totalSections;
+            }
+            if (n < 1) {
+                currentSection = 1;
+            }
+
+            for (let i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+
+            sections[currentSection - 1].classList.add('active');
+            
+            prevBtn.disabled = (currentSection === 1);
+            nextBtn.disabled = (currentSection === totalSections);
+
+            indicator.textContent = `Section ${currentSection} of ${totalSections}`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSection(n) {
+            currentSection += n;
+            showSection(currentSection);
+        }
+
+        showSection(currentSection);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
