@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rolling Circle Replication</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #6a4c93;
+            --light-text: #e6e6e6;
+            --highlight: #ffd166;
+            --secondary: #06d6a0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--light-text);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 1.5rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1rem;
+            font-style: italic;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--highlight);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .step {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(106, 76, 147, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .step-title {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .enzyme-list {
+            list-style-type: none;
+            padding-left: 1rem;
+        }
+        
+        .enzyme-list li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .enzyme-list li:before {
+            content: "•";
+            color: var(--secondary);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -0.3rem;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border: 1px solid rgba(106, 76, 147, 0.3);
+        }
+        
+        .comparison-table th {
+            background-color: rgba(106, 76, 147, 0.2);
+            color: var(--highlight);
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(106, 76, 147, 0.1);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: rgba(106, 76, 147, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+            gap: 0.5rem;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(106, 76, 147, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--secondary);
+            transform: scale(1.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+ /* Print prevention */
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Rolling Circle Replication</h1>
+        </header>
+        
+        <div class="progress">
+            <div class="progress-dot active" data-section="0"></div>
+            <div class="progress-dot" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+            <div class="progress-dot" data-section="3"></div>
+            <div class="progress-dot" data-section="4"></div>
+        </div>
+        
+        <!-- Section 1: Introduction -->
+        <section id="section1" class="section active">
+            <h2>Introduction to Rolling Circle Replication</h2>
+            <p>Rolling circle replication (RCR) is a process of unidirectional nucleic acid replication that rapidly synthesizes multiple copies of circular DNA or RNA molecules. It is used by various viruses, plasmids, and in some cellular processes.</p>
+            
+            <div class="step">
+                <div class="step-title">Basic RCR Mechanism</div>
+                <p>The process begins with a circular DNA molecule that receives a single-stranded nick. DNA synthesis then proceeds continuously from the 3' end of the nick, displacing the original strand. This creates a long single-stranded tail that can be converted to double-stranded DNA.</p>
+            </div>
+            
+            <p>Unlike the bidirectional replication seen in chromosomal DNA, RCR proceeds in a single direction around the circular template, producing long concatenated copies of the original sequence.</p>
+            
+            <p>This mechanism is particularly efficient for rapid amplification of genetic material and is exploited by many pathogens for their reproduction.</p>
+        </section>
+        
+        <!-- Section 2: Key Enzymes -->
+        <section id="section2" class="section">
+            <h2>Key Enzymes Involved</h2>
+            <p>Several specialized enzymes facilitate the rolling circle replication process:</p>
+            
+            <ul class="enzyme-list">
+                <li>
+                    <strong>Replication Initiator Protein (Rep):</strong> Site-specific endonuclease that introduces the initial nick at the DSO. Remains covalently attached to the 5' phosphate end.
+                </li>
+                <li>
+                    <strong>DNA Helicase:</strong> Unwinds the DNA double helix ahead of the replication fork, facilitating strand separation.
+                </li>
+                <li>
+                    <strong>DNA Polymerase:</strong> Synthesizes new DNA strands by adding nucleotides to the growing 3' end. In bacteria, DNA polymerase III is primarily responsible for replication.
+                </li>
+                <li>
+                    <strong>Single-Strand Binding Proteins (SSBs):</strong> Stabilize the displaced single-stranded DNA, preventing secondary structure formation and protecting against nucleases.
+                </li>
+                <li>
+                    <strong>DNA Ligase:</strong> Seals nicks in the newly synthesized DNA strands, creating continuous phosphodiester bonds.
+                </li>
+                <li>
+                    <strong>Topoisomerases:</strong> Relieve torsional stress that builds up ahead of the replication fork during unwinding.
+                </li>
+            </ul>
+            
+            <div class="step">
+                <div class="step-title">Enzyme Coordination in RCR</div>
+                <p>The enzymes work in a coordinated manner: Rep protein nicks the DNA, helicase unwinds the double helix, SSB proteins stabilize single-stranded regions, DNA polymerase synthesizes new strands, and ligase seals nicks to complete the process.</p>
+            </div>
+        </section>
+        
+        <!-- Section 3: Steps in Detail -->
+        <section id="section3" class="section">
+            <h2>Detailed Steps of Rolling Circle Replication</h2>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Rolling%20circle%20replication.jpeg" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <div class="step">
+                <div class="step-title">Initiation Phase</div>
+                <p>The replication initiator protein (Rep) recognizes and binds to the DSO. It then introduces a specific nick in the positive strand, creating a 3'-OH primer for DNA polymerase. The protein remains covalently attached to the 5' end of the nicked strand.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Elongation Phase</div>
+                <p>DNA polymerase III (in bacteria) extends the 3'-OH end, using the circular negative strand as a template. The replication fork proceeds unidirectionally around the circular DNA, displacing the original positive strand.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Strand Displacement</div>
+                <p>As the new positive strand is synthesized, it displaces the original positive strand, which forms a tail of increasing length. This displaced strand can serve as a template for lagging strand synthesis, producing double-stranded DNA copies.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Termination and Re-initiation</div>
+                <p>When the replication machinery completes one round and returns to the DSO, the initiator protein can introduce another nick, allowing the process to begin again. This results in multiple linear copies of the genome in a head-to-tail concatemer.</p>
+            </div>
+        </section>
+        
+        <!-- Section 4: Biological Significance -->
+        <section id="section4" class="section">
+            <h2>Biological Significance</h2>
+            <p>Rolling circle replication plays crucial roles in various biological contexts:</p>
+            
+            <div class="step">
+                <div class="step-title">Viral Reproduction</div>
+                <p>Many bacteriophages (e.g., φX174) and eukaryotic viruses (e.g., geminiviruses) use RCR for genome amplification. This allows rapid production of viral DNA within host cells.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Plasmid Propagation</div>
+                <p>Some bacterial plasmids employ RCR for their replication and transfer during conjugation. This enables horizontal gene transfer between bacteria.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">DNA Amplification Techniques</div>
+                <p>RCR principles are exploited in molecular biology techniques like rolling circle amplification (RCA), used for ultrasensitive DNA detection and sequencing.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Gene Amplification in Eukaryotes</div>
+                <p>In some eukaryotes, RCR-like mechanisms amplify specific genes, such as ribosomal RNA genes in amphibian oocytes and chorion genes in insects.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Adaptive Advantages</div>
+                <p>RCR allows rapid amplification of genetic material without the complex regulation of chromosomal replication. Its unidirectional nature simplifies the replication machinery requirements.</p>
+            </div>
+        </section>
+        
+        <!-- Section 5: Comparison with Theta Replication -->
+        <section id="section5" class="section">
+            <h2>Comparison with Theta Replication</h2>
+            <p>Rolling circle replication differs significantly from the theta (θ) replication used by most bacterial chromosomes and plasmids:</p>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Feature</th>
+                    <th>Rolling Circle Replication</th>
+                    <th>Theta Replication</th>
+                </tr>
+                <tr>
+                    <td>Replication Direction</td>
+                    <td>Unidirectional</td>
+                    <td>Bidirectional</td>
+                </tr>
+                <tr>
+                    <td>Initiation</td>
+                    <td>Site-specific nicking by Rep protein</td>
+                    <td>Formation of replication bubble at origin</td>
+                </tr>
+                <tr>
+                    <td>Products</td>
+                    <td>Linear concateners</td>
+                    <td>Discrete circular molecules</td>
+                </tr>
+                <tr>
+                    <td>Speed</td>
+                    <td>Rapid, continuous synthesis</td>
+                    <td>Slower, coordinated synthesis</td>
+                </tr>
+                <tr>
+                    <td>Strand Displacement</td>
+                    <td>Extensive</td>
+                    <td>Limited</td>
+                </tr>
+                <tr>
+                    <td>Common Usage</td>
+                    <td>Viruses, some plasmids, amplification</td>
+                    <td>Chromosomal DNA, most plasmids</td>
+                </tr>
+            </table>
+            
+            <div class="step">
+                <div class="step-title">Key Differences</div>
+                <p>While theta replication produces two circular daughter molecules through bidirectional replication from an origin, RCR generates multiple linear copies through unidirectional replication. RCR is generally faster but less regulated than theta replication.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-title">Evolutionary Implications</div>
+                <p>The simplicity of RCR makes it advantageous for genetic elements that need to amplify quickly, such as viruses and selfish genetic elements. Theta replication, with its tighter regulation, is better suited for stable inheritance of chromosomal DNA.</p>
+            </div>
+        </section>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>
+                <span>Previous</span>
+            </button>
+            <button id="nextBtn">
+                <span>Next</span>
+            </button>
+        </div>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.textContent = currentSection === sections.length - 1 ? 'Finish' : 'Next';
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the current section
+                sections[index].classList.add('active');
+                
+                // Update current section index
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Progress dot click event
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const sectionIndex = parseInt(this.getAttribute('data-section'));
+                    showSection(sectionIndex);
+                });
+            });
+            
+            // Previous button click event
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            // Next button click event
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                } else {
+                    // Optionally, you could add a completion action here
+                    alert('You have completed the Rolling Circle Replication guide!');
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
