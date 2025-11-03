@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Mutations</title>
+    <style>
+        :root {
+            --dark-bg: #0a0a2a;
+            --darker-bg: #05051a;
+            --accent: #5d3fd3;
+            --text-light: #e6e6ff;
+            --text-muted: #b8b8d6;
+            --highlight: #ff6b9d;
+            --highlight-alt: #4deeea;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(93, 63, 211, 0.3);
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        
+        .content-area {
+            background: rgba(10, 10, 42, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--highlight-alt);
+            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(77, 238, 234, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            color: var(--accent);
+            margin: 1.2rem 0 0.7rem;
+            font-size: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .definition-box {
+            background: rgba(93, 63, 211, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .term {
+            color: var(--highlight-alt);
+            font-weight: bold;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(93, 63, 211, 0.3);
+        }
+        
+        button:hover {
+            background: var(--highlight);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: var(--highlight);
+            transform: scale(1.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+            
+            button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Types of Mutations</h1>
+        </header>
+        
+        <div class="content-area">
+            <!-- Section 1: Definitions -->
+            <div class="section active" id="section1">
+                <h2>DNA Damage, Lesions, and Mutations</h2>
+                
+                <div class="definition-box">
+                    <p><span class="term">DNA Damage:</span> Physical or chemical alterations to the DNA molecule that may disrupt its normal structure or function. These can be caused by environmental factors like UV radiation, chemicals, or errors during DNA replication.</p>
+                </div>
+                
+                <div class="definition-box">
+                    <p><span class="term">DNA Lesion:</span> A specific site of damage in the DNA molecule. Lesions can include breaks in the DNA backbone, chemical modifications to bases, or cross-links between DNA strands.</p>
+                </div>
+                
+                <div class="definition-box">
+                    <p><span class="term">DNA Mutation:</span> A permanent alteration in the DNA sequence that makes up a gene. Mutations can range in size from a single DNA base pair to a large segment of a chromosome. Not all DNA damage leads to mutations if properly repaired.</p>
+                </div>
+                
+                <h3>Key Differences</h3>
+                <p>DNA damage refers to abnormal chemical structures, while mutations are changes in the DNA sequence. Lesions are specific sites of damage that may or may not lead to mutations depending on DNA repair mechanisms.</p>
+            </div>
+            
+            <!-- Section 2: Base Substitution Mutations -->
+            <div class="section" id="section2">
+                <h2>Base Substitution Mutations</h2>
+                <p>Base substitution mutations involve the replacement of one nucleotide base with another in the DNA sequence.</p>
+                
+                <h3>Transition</h3>
+                <p>A purine base (Adenine or Guanine) is replaced by another purine, or a pyrimidine base (Cytosine or Thymine) is replaced by another pyrimidine.</p>
+                <p><span class="term">Example:</span> A → G or C → T</p>
+                
+                <h3>Transversion</h3>
+                <p>A purine base is replaced by a pyrimidine base, or vice versa.</p>
+                <p><span class="term">Example:</span> A → C or G → T</p>
+                
+                <h3>Impact</h3>
+                <p>Transitions occur more frequently than transversions because DNA polymerases are more likely to mispair similar-shaped bases.</p>
+            </div>
+            
+            <!-- Section 3: Insertion/Deletion and Frameshift Mutations -->
+            <div class="section" id="section3">
+                <h2>Insertion/Deletion and Frameshift Mutations</h2>
+                
+                <h3>Insertion/Deletion Mutations</h3>
+                <p>These mutations involve the addition (insertion) or removal (deletion) of one or more nucleotide base pairs from the DNA sequence.</p>
+                
+                <h3>Frameshift Mutations</h3>
+                <p>When insertions or deletions involve a number of base pairs that is not a multiple of three, they disrupt the reading frame of the gene. This alters all subsequent codons, typically resulting in a completely different amino acid sequence or premature stop codon.</p>
+                
+                <h3>In-Frame Mutations</h3>
+                <p>When insertions or deletions involve a number of base pairs that is a multiple of three, the reading frame remains intact. These mutations add or remove entire amino acids from the protein without disrupting the rest of the sequence.</p>
+                
+                <p><span class="term">Note:</span> Frameshift mutations generally have more severe consequences than in-frame mutations.</p>
+            </div>
+            
+            <!-- Section 4: Point Mutation Effects -->
+            <div class="section" id="section4">
+                <h2>Effects of Point Mutations</h2>
+                
+                <h3>Missense Mutation</h3>
+                <p>A single nucleotide change that results in the substitution of one amino acid for another in the protein product.</p>
+                <p><span class="term">Example:</span> Sickle cell anemia results from a missense mutation that changes glutamic acid to valine in hemoglobin.</p>
+                
+                <h3>Nonsense Mutation</h3>
+                <p>A point mutation that changes a codon for an amino acid into a stop codon, resulting in premature termination of protein synthesis.</p>
+                
+                <h3>Silent Mutation</h3>
+                <p>A nucleotide substitution that does not change the amino acid sequence of the protein due to the degeneracy of the genetic code.</p>
+                
+                <h3>Neutral Mutation</h3>
+                <p>A mutation that changes the amino acid sequence but does not significantly alter the protein's function, typically because the new amino acid has similar properties.</p>
+            </div>
+            
+            <!-- Section 5: Other Mutation Types -->
+            <div class="section" id="section5">
+                <h2>Additional Mutation Types</h2>
+                
+                <h3>Forward Mutation</h3>
+                <p>A mutation that changes a wild-type allele to a different allele.</p>
+                
+                <h3>Reverse Mutation</h3>
+                <p>A mutation that changes a mutant allele back to the wild-type or a less severe mutant form.</p>
+                
+                <h3>Loss-of-Function Mutation</h3>
+                <p>A mutation that reduces or eliminates the function of a gene product. These are typically recessive. It can be <strong>Amorphic or Hypomorphic.</strong> Amorphic mutations lead to complete absence of function, while hypomorphic mutations only partially reduce it.</p>
+                
+                <h3>Gain-of-Function Mutation</h3>
+                <p>A mutation that confers new or enhanced activity to a gene product. It can be <strong>Hypermorphic or Neomorphic:</strong> A mutation that increases the normal function of the gene product (hypermorphic) or causes the gene product to exhibit a new function not seen in the wild type (neomorphic). These are often dominant.</p>
+                
+                <h3>Lethal Mutation</h3>
+                <p>A mutation that results in the death of the organism, either during development or before reproductive age.</p>
+                
+                <h3>Suppressor Mutation</h3>
+                <p>A mutation that counteracts the effects of another mutation, either within the same gene (intragenic) or in a different gene (extragenic).</p>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-dot active" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+            <div class="progress-dot" data-section="3"></div>
+            <div class="progress-dot" data-section="4"></div>
+            <div class="progress-dot" data-section="5"></div>
+        </div>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Update next button text on last section
+                if (currentSection === sections.length - 1) {
+                    nextBtn.textContent = 'Restart';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                sections[index].classList.add('active');
+                
+                // Update current section
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                } else {
+                    // Restart from the beginning
+                    showSection(0);
+                }
+            });
+            
+            // Event listeners for progress dots
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    const sectionIndex = parseInt(this.getAttribute('data-section')) - 1;
+                    showSection(sectionIndex);
+                });
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
