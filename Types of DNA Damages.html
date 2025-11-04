@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of DNA Damage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 10px;
+            background: rgba(76, 40, 130, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(138, 92, 246, 0.3);
+        }
+
+        h1 {
+            color: #c4b5fd;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(196, 181, 253, 0.5);
+        }
+
+        .subtitle {
+            color: #a78bfa;
+            font-size: 0.9rem;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(45, 27, 78, 0.5);
+            border-radius: 20px;
+            padding: 25px 20px;
+            border: 1px solid rgba(138, 92, 246, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            overflow-y: auto;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #c4b5fd;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(167, 139, 250, 0.5);
+            text-shadow: 0 0 15px rgba(196, 181, 253, 0.3);
+        }
+
+        h3 {
+            color: #a78bfa;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: #e0d4f7;
+            font-size: 0.95rem;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #d8c9f5;
+        }
+
+        strong {
+            color: #ddd6fe;
+        }
+
+        .highlight {
+            background: rgba(167, 139, 250, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ede9fe;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(45, 27, 78, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(138, 92, 246, 0.4);
+            gap: 15px;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: 2px solid #8b5cf6;
+            background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+            color: #f3f0ff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            flex: 1;
+            max-width: 120px;
+        }
+
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: rgba(109, 40, 217, 0.3);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+
+        .progress {
+            text-align: center;
+            color: #a78bfa;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 2px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6 0%, #c4b5fd 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            p, li {
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .content-wrapper {
+                padding: 20px 15px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧬 Types of DNA Damage</h1>
+            <p class="subtitle">Interactive Guide to Genetic Material Degradation</p>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Section 1: Radiation Damage -->
+            <div class="section active" id="section-1">
+                <h2>1. Radiation Damage</h2>
+                
+                <h3>Ionizing Radiation</h3>
+                <p>Ionizing radiation, including <span class="highlight">X-rays, gamma rays, and cosmic radiation</span>, causes severe DNA damage through multiple mechanisms. These high-energy particles possess sufficient energy to eject electrons from atoms, creating reactive ions that attack DNA molecules.</p>
+                
+                <p><strong>Direct Effects:</strong> High-energy photons directly strike DNA, causing immediate chemical bond breakage. This leads to single-strand breaks (SSBs) where one phosphodiester bond is severed, or double-strand breaks (DSBs) where both strands are simultaneously fractured at nearby locations. DSBs are particularly catastrophic as they can result in chromosomal aberrations, translocations, and cell death if not properly repaired.</p>
+                
+                <p><strong>Indirect Effects:</strong> Radiation interacts with cellular water molecules, producing highly reactive <span class="highlight">hydroxyl radicals (•OH)</span>, superoxide radicals, and hydrogen peroxide. These reactive oxygen species (ROS) diffuse through the cell and attack DNA, causing base modifications, strand breaks, and DNA-protein crosslinks. The indirect pathway accounts for approximately 70% of radiation-induced DNA damage.</p>
+
+                <h3>Non-Ionizing Radiation</h3>
+                <p><strong>Ultraviolet (UV) Radiation:</strong> UV light, particularly <span class="highlight">UV-B (280-320 nm) and UV-C (200-280 nm)</span>, is directly absorbed by DNA bases, primarily thymine and cytosine. This absorption triggers photochemical reactions that create covalent bonds between adjacent pyrimidine bases on the same DNA strand.</p>
+
+                <p>The primary lesions formed are <strong>cyclobutane pyrimidine dimers (CPDs)</strong> and <strong>6-4 photoproducts</strong>. CPDs result from the formation of a cyclobutane ring between C5-C6 double bonds of adjacent pyrimidines, with thymine-thymine dimers being most common. These distort the DNA helix by unwinding it approximately 9 degrees and altering minor groove width.</p>
+
+                <p>6-4 photoproducts form when the C6 position of one pyrimidine bonds with the C4 position of the adjacent pyrimidine, creating even more severe helical distortion (approximately 44 degrees unwinding). Both lesions block DNA replication and transcription, potentially leading to mutations if bypass mechanisms introduce incorrect bases.</p>
+            </div>
+
+            <!-- Section 2: Instability of DNA in Water -->
+            <div class="section" id="section-2">
+                <h2>2. Instability of DNA in Water</h2>
+                
+                <h3>Hydrolytic Depurination</h3>
+                <p>Despite water being essential for life, it paradoxically causes spontaneous DNA damage through hydrolysis reactions. <span class="highlight">Depurination</span> is the hydrolytic cleavage of the N-glycosidic bond connecting purine bases (adenine and guanine) to the deoxyribose sugar backbone.</p>
+
+                <p>This reaction occurs spontaneously at physiological pH and temperature, with an estimated rate of <strong>5,000-10,000 purines lost per human cell per day</strong>. The mechanism involves nucleophilic attack by water molecules on the glycosidic bond, facilitated by the positive charge on purines at physiological pH. Guanine residues, particularly when protonated, are especially susceptible.</p>
+
+                <p>The resulting <strong>apurinic (AP) sites</strong> or abasic sites are mutagenic and cytotoxic. If not repaired, DNA polymerase may insert an incorrect base opposite the AP site during replication (often adenine by default), leading to mutations. The exposed deoxyribose can also undergo β-elimination, causing strand breaks.</p>
+
+                <h3>Hydrolytic Deamination</h3>
+                <p><strong>Cytosine Deamination:</strong> Cytosine spontaneously loses its amino group through hydrolysis, converting to uracil at a rate of approximately <span class="highlight">100-500 events per cell per day</span>. This is particularly problematic because uracil base-pairs with adenine rather than guanine, potentially causing C→T transition mutations if not corrected before replication.</p>
+
+                <p><strong>5-Methylcytosine Deamination:</strong> In vertebrate DNA, cytosines in CpG dinucleotides are often methylated to 5-methylcytosine for epigenetic regulation. When 5-methylcytosine undergoes deamination, it produces thymine—a normal DNA base—making detection and repair more challenging. This contributes to the mutational "hotspots" observed at CpG sites in human genetic diseases.</p>
+
+                <p><strong>Adenine and Guanine Deamination:</strong> Adenine deaminates to hypoxanthine, which pairs with cytosine instead of thymine, causing A→G transitions. Guanine deaminates to xanthine, which has ambiguous base-pairing properties. While these reactions occur at lower rates than cytosine deamination, they still contribute significantly to spontaneous mutation rates.</p>
+            </div>
+
+            <!-- Section 3: DNA Damage by Tautomeric Shift -->
+            <div class="section" id="section-3">
+                <h2>3. DNA Damage by Tautomeric Shift</h2>
+                
+                <h3>Molecular Basis of Tautomerism</h3>
+                <p>DNA bases exist in equilibrium between different structural isomers called <span class="highlight">tautomers</span>, which differ in the position of hydrogen atoms and double bonds. Under normal conditions, bases exist predominantly in their standard "canonical" forms, but rare tautomeric forms can spontaneously arise through proton migration.</p>
+
+                <p>The four tautomeric forms relevant to DNA are: <strong>amino-imino, lactam-lactim, keto-enol, and N-7/N-9 tautomerism</strong>. The equilibrium typically favors canonical forms by factors of 10³ to 10⁴, but the rare tautomers, though present at low concentrations, can significantly impact DNA replication fidelity.</p>
+
+                <h3>Mutagenic Consequences</h3>
+                <p><strong>Adenine Tautomerism:</strong> The canonical amino form of adenine pairs with thymine via two hydrogen bonds. However, the rare imino tautomer of adenine can form stable base pairs with cytosine instead of thymine. If adenine exists in its imino form during DNA replication, adenine-cytosine mispairs can be incorporated, leading to <span class="highlight">A:T → G:C transition mutations</span> in subsequent replication cycles.</p>
+
+                <p><strong>Cytosine Tautomerism:</strong> Standard amino-cytosine pairs with guanine, but the rare imino tautomer pairs with adenine. This causes C:G → T:A transitions. The lactim form of cytosine can also mispair with adenine.</p>
+
+                <p><strong>Guanine and Thymine:</strong> Guanine's rare enol tautomer pairs with thymine instead of cytosine, causing G:C → A:T transitions. Thymine's enol form pairs with guanine instead of adenine, resulting in T:A → C:G transitions.</p>
+
+                <p>The frequency of tautomeric shifts is influenced by <strong>pH, temperature, metal ions, and base modifications</strong>. Polymerase enzymes cannot reliably distinguish rare tautomers from canonical forms during the brief time bases spend in the active site, making these spontaneous errors an unavoidable source of mutations that shaped evolution and continues to drive genetic variation.</p>
+            </div>
+
+            <!-- Section 4: Oxidative Damage -->
+            <div class="section" id="section-4">
+                <h2>4. Oxidative Damage to DNA</h2>
+                
+                <h3>Sources of Reactive Oxygen Species</h3>
+                <p>Oxidative DNA damage results from <span class="highlight">reactive oxygen species (ROS)</span> generated through normal cellular metabolism, particularly in mitochondrial respiration, where approximately 1-2% of consumed oxygen is converted to superoxide radicals (O₂•⁻). Additional sources include inflammatory responses, xenobiotic metabolism, radiation exposure, and environmental pollutants.</p>
+
+                <p>The primary ROS include <strong>superoxide radicals, hydrogen peroxide (H₂O₂), hydroxyl radicals (•OH), singlet oxygen, and peroxynitrite (ONOO⁻)</strong>. Among these, hydroxyl radicals are most reactive, capable of attacking DNA at nearly diffusion-limited rates (10⁹-10¹⁰ M⁻¹s⁻¹).</p>
+
+                <h3>8-Oxoguanine Formation</h3>
+                <p>The most abundant and well-studied oxidative lesion is <strong>8-oxo-7,8-dihydroguanine (8-oxoG)</strong>, with approximately <span class="highlight">10⁴-10⁵ lesions formed per human cell daily</span>. Guanine is particularly vulnerable to oxidation due to its low redox potential.</p>
+
+                <p>8-oxoG is highly mutagenic because it can adopt a syn conformation around the glycosidic bond, allowing it to form Hoogsteen base pairs with adenine instead of Watson-Crick pairs with cytosine. This results in G:C → T:A transversion mutations during replication if not repaired. The oxidation proceeds through radical addition to the C8 position of guanine, followed by deprotonation and rearrangement.</p>
+
+                <h3>Additional Oxidative Lesions</h3>
+                <p><strong>Thymine Glycol:</strong> Formed by hydroxyl radical attack on thymine's 5-6 double bond, creating 5,6-dihydroxy-5,6-dihydrothymine. This lesion strongly blocks DNA polymerase progression and induces predominantly T→C transitions when bypassed.</p>
+            </div>
+
+            <!-- Section 5: Base Modifying Agents -->
+            <div class="section" id="section-5">
+                <h2>5. Base Modifying Agents</h2>
+                
+                <h3>Nitrous Acid</h3>
+                <p><span class="highlight">Nitrous acid (HNO₂)</span> is a potent deaminating agent that converts amino groups on DNA bases to carbonyl groups. It can arise endogenously from nitrite metabolism or exogenously from dietary nitrites and nitrosamines.</p>
+
+                <p><strong>Mechanism:</strong> Nitrous acid generates nitrosyl cations (NO⁺) that react with the exocyclic amino groups of cytosine, adenine, and guanine. Cytosine deamination produces uracil, causing C→T transitions. Adenine deamination yields hypoxanthine, which pairs with cytosine, resulting in A→G transitions. Guanine deamination produces xanthine, though this is less mutagenic.</p>
+
+                <h3>Hydroxylamine</h3>
+                <p><strong>Hydroxylamine (NH₂OH)</strong> specifically reacts with cytosine residues, adding a hydroxyl group that promotes deamination to uracil. This reagent exhibits remarkable specificity for cytosine over other bases.</p>
+
+                <p>The mechanism involves nucleophilic attack by hydroxylamine on the C4 carbonyl of cytosine, forming an unstable intermediate that readily eliminates water to generate N⁴-hydroxycytosine, which spontaneously deaminates to uracil. This causes exclusively <span class="highlight">C:G → T:A transition mutations</span>.</p>
+
+                <h3>Bisulfite</h3>
+                <p><strong>Sodium bisulfite (NaHSO₃)</strong> selectively deaminates cytosine residues, particularly in single-stranded DNA. This specificity has made it an invaluable tool in epigenetic studies for DNA methylation mapping.</p>
+
+                <p>Bisulfite adds to the 5-6 double bond of cytosine, creating a sulfonated intermediate that readily undergoes hydrolytic deamination to uracil sulfonate, which then eliminates sulfite to yield uracil. Importantly, 5-methylcytosine is resistant to bisulfite deamination, allowing researchers to distinguish methylated from unmethylated cytosines.</p>
+            </div>
+
+            <!-- Section 6: Alkylating Agents -->
+            <div class="section" id="section-6">
+                <h2>6. Alkylating Agents</h2>
+                
+                <h3>Types and Mechanisms</h3>
+                <p><span class="highlight">Alkylating agents</span> transfer alkyl groups (methyl, ethyl, or larger groups) to nucleophilic sites on DNA bases, sugar moieties, and phosphate groups. These agents are classified based on mechanism: <strong>SN1 agents</strong> (form carbocations) and <strong>SN2 agents</strong> (direct nucleophilic substitution).</p>
+
+                <h3>Methylating Agents</h3>
+                <p><strong>Methyl Methanesulfonate (MMS):</strong> A classical SN2 alkylating agent that predominantly methylates the N⁷ position of guanine (70% of lesions) and the N³ position of adenine (10%). While N⁷-methylguanine is relatively benign, it destabilizes the glycosidic bond, leading to spontaneous depurination and AP site formation.</p>
+
+                <p><strong>N-Methyl-N-Nitrosourea (MNU):</strong> An SN1 agent generating methyl diazonium ions. It produces <span class="highlight">O⁶-methylguanine</span> at significant frequency (8% of adducts), which is highly mutagenic because it pairs with thymine during replication, causing G:C → A:T transitions. This lesion is particularly problematic as it evades normal base excision repair.</p>
+
+                <p>MNU also generates N⁷-methylguanine, N³-methyladenine, and O⁴-methylthymine. N³-methyladenine is cytotoxic as it blocks DNA replication and transcription by preventing hydrogen bond formation.</p>
+
+                <h3>Ethylating Agents</h3>
+                <p><strong>Ethyl Methanesulfonate (EMS):</strong> Produces ethyl adducts with altered mutagenic spectra compared to methyl agents. O⁶-ethylguanine is even more miscoding than O⁶-methylguanine. EMS also generates N⁷-ethylguanine and O²-ethylthymine lesions.</p>
+
+                <p><strong>Diethyl Sulfate:</strong> Another ethylating agent used in mutagenesis studies, producing similar lesion patterns to EMS but with different reaction kinetics.</p>
+            </div>
+
+            <!-- Section 7: Cross-linking Agents -->
+            <div class="section" id="section-7">
+                <h2>7. Cross-linking Agents</h2>
+                
+                <h3>Interstrand Cross-links (ICLs)</h3>
+                <p><span class="highlight">DNA cross-linking agents</span> create covalent bonds between bases on opposite DNA strands, physically linking them together. These <strong>interstrand cross-links</strong> are among the most toxic DNA lesions because they completely block strand separation required for replication and transcription.</p>
+
+                <h3>Bifunctional Alkylating Agents</h3>
+                <p><strong>Nitrogen Mustards:</strong> Including mechlorethamine, cyclophosphamide, and melphalan, these chemotherapeutic agents contain two reactive chloroethyl groups. Each group can alkylate DNA, preferentially at the N⁷ position of guanine residues on opposite strands, creating <span class="highlight">guanine-guanine ICLs</span>.</p>
+
+                <p><strong>Platinum Compounds:</strong> Cisplatin, carboplatin, and oxaliplatin are cornerstone cancer therapeutics. While they primarily form intrastrand cross-links (discussed below), they also create ICLs. Cisplatin binds to N⁷ of guanines on opposite strands, with ICLs representing approximately <span class="highlight">5-10% of total platinum lesions</span> but contributing disproportionately to cytotoxicity.</p>
+
+                <h3>Psoralen Compounds</h3>
+                <p><strong>Psoralens</strong> are photoactivatable cross-linking agents. When intercalated into DNA and exposed to UVA radiation (320-400 nm), psoralens undergo [2+2] cycloaddition reactions with thymine bases on both DNA strands, forming highly stable ICLs.</p>
+
+            </div>
+
+            <!-- Section 8: Base Analogs -->
+            <div class="section" id="section-8">
+                <h2>8. Base Analogs</h2>
+                
+                <h3>Concept and Mechanism</h3>
+                <p><span class="highlight">Base analogs</span> are compounds structurally similar to natural DNA bases that can be incorporated into DNA during replication, but with altered base-pairing properties. They cause mutations not by damaging DNA, but by mimicking normal bases while possessing ambiguous pairing specificities.</p>
+
+                <h3>Purine Analogs</h3>
+                <p><strong>2-Aminopurine (2-AP):</strong> An adenine analog with an amino group at C2 instead of C6. In its amino form, 2-AP pairs with thymine like adenine. However, it more readily undergoes tautomerization to an imino form that pairs with cytosine, causing both <span class="highlight">A:T → G:C and G:C → A:T transitions</span> depending on when tautomerization occurs during replication.</p>
+
+                <p>2-AP exhibits a higher frequency of tautomerization than natural bases (~10⁻² vs. ~10⁻⁴), making it a potent mutagen. It's particularly valuable in research for studying DNA replication fidelity and polymerase discrimination mechanisms.</p>
+
+                <h3>Pyrimidine Analogs</h3>
+                <p><strong>5-Bromouracil (5-BrU):</strong> A thymine analog where the methyl group is replaced by bromine. In its common keto form, 5-BrU pairs normally with adenine. However, the electronegative bromine increases the stability of the rare enol tautomer, which pairs with guanine instead of adenine.</p>
+
+                <p>When 5-BrU is incorporated opposite adenine and subsequently shifts to its enol form, it causes <strong>A:T → G:C transitions</strong>. Alternatively, if the enol form pairs with guanine during incorporation and later shifts to keto, it produces G:C → A:T transitions. This bidirectional mutagenicity makes 5-BrU highly effective in inducing mutations.</p>
+
+                <p>The bromine atom also makes the glycosidic bond more susceptible to radiation-induced breakage, contributing to 5-BrU's use as a radiosensitizer in cancer therapy.</p>
+
+                <h3>Mutagenic Potential</h3>
+                <p>Base analogs demonstrate that structural mimicry can cause genetic damage without chemical modification. Their ability to be "invisible" to proofreading mechanisms while possessing altered pairing properties makes them powerful tools in molecular biology and medicine, but also highlights vulnerabilities in DNA replication fidelity.</p>
+            </div>
+
+            <!-- Section 9: Intercalating Agents -->
+            <div class="section" id="section-9">
+                <h2>9. Intercalating Agents</h2>
+                
+                <h3>Mechanism of Intercalation</h3>
+                <p><span class="highlight">Intercalating agents</span> are planar, polycyclic aromatic molecules that insert between stacked DNA base pairs, disrupting the helical structure without forming covalent bonds. The intercalation process involves the planar molecule sliding between bases, causing DNA unwinding by approximately 26 degrees per intercalator and lengthening the helix by 3.4 Å.</p>
+
+                <p>These agents stabilize the DNA structure they create, but this stabilization paradoxically interferes with essential DNA processes including replication, transcription, and repair. The distorted geometry can cause <strong>frameshift mutations</strong> through slippage mechanisms during DNA synthesis.</p>
+
+                <h3>Acridine Compounds</h3>
+                <p><strong>Proflavin and Acridine Orange:</strong> Classic intercalators with three-ring structures that fluoresce when bound to DNA. These agents preferentially intercalate at GC-rich regions due to stronger stacking interactions.</p>
+
+                <p>During DNA replication, intercalated acridines cause the polymerase to either skip a base (causing deletions) or insert an extra base (causing additions), resulting in <span class="highlight">+1 or -1 frameshift mutations</span>. The Ames test, a crucial mutagenicity assay, uses acridine-induced reversion of frameshift mutations in bacteria to screen chemicals for mutagenic potential.</p>
+
+                <p>The mutagenic mechanism involves the polymerase misreading the template strand. When acridine is intercalated, the DNA appears to have an extra base pair, leading to insertion of an additional nucleotide opposite the intercalation site. Alternatively, if the intercalator is in the newly synthesized strand, a deletion occurs.</p>
+
+                <h3>Ethidium Bromide</h3>
+                <p><strong>Ethidium bromide (EtBr)</strong> is perhaps the most widely used intercalator in molecular biology for visualizing DNA. Its phenanthridinium ring system intercalates between base pairs, increasing DNA fluorescence 20-30 fold under UV light.</p>
+
+                <p>Beyond its utility as a stain, EtBr is mutagenic and potentially carcinogenic. It causes frameshift mutations, inhibits DNA topoisomerases by stabilizing intercalated DNA, and can displace proteins from DNA. The unwinding caused by EtBr intercalation (26° per molecule) is exploited in supercoiled plasmid analysis.</p>
+
+                <h3>Frameshift Mutagenesis Mechanism</h3>
+                <p>Intercalators cause frameshift mutations through the "dislocation mutagenesis" model. During replication through intercalated DNA, strand slippage occurs in repetitive sequences. The intercalator stabilizes looped-out structures where one strand contains an extra base (or gap). If this occurs in the template strand, an addition results; in the nascent strand, a deletion occurs.</p>
+
+                <p>The preference for specific sequences and the polarity of mutations depend on intercalator structure, binding affinity, and the specific DNA polymerase encountering the lesion. This makes intercalators particularly useful for genetic studies of frameshift mutation mechanisms and for developing improved chemotherapeutics.</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="navigate(-1)">← Previous</button>
+            <div class="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span id="sectionCounter">Section 1 of 9</span>
+            </div>
+            <button id="nextBtn" onclick="navigate(1)">Next →</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 9;
+
+        function navigate(direction) {
+            const newSection = currentSection + direction;
+            
+            if (newSection < 1 || newSection > totalSections) return;
+            
+            // Hide current section
+            document.getElementById(`section-${currentSection}`).classList.remove('active');
+            
+            // Update current section
+            currentSection = newSection;
+            
+            // Show new section
+            document.getElementById(`section-${currentSection}`).classList.add('active');
+            
+            // Update UI
+            updateUI();
+            
+            // Scroll to top of content
+            document.querySelector('.content-wrapper').scrollTop = 0;
+        }
+
+        function updateUI() {
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentSection === 1;
+            document.getElementById('nextBtn').disabled = currentSection === totalSections;
+            
+            // Update counter
+            document.getElementById('sectionCounter').textContent = `Section ${currentSection} of ${totalSections}`;
+            
+            // Update progress bar
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Initialize UI
+        updateUI();
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') navigate(-1);
+            if (e.key === 'ArrowRight') navigate(1);
+        });
+
+        // Touch swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.querySelector('.content-wrapper').addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.querySelector('.content-wrapper').addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next
+                    navigate(1);
+                } else {
+                    // Swipe right - previous
+                    navigate(-1);
+                }
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
