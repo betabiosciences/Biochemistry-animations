@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ames Test - Mutagenicity Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 15, 60, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        h1 {
+            color: #b794f6;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(183, 148, 246, 0.5);
+        }
+
+        h2 {
+            color: #9d7bea;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #6a4c9c;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #a88ddb;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #d4c5f0;
+            text-align: justify;
+        }
+
+        .highlight {
+            background: rgba(138, 43, 226, 0.3);
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #f0e6ff;
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: rgba(72, 35, 135, 0.4);
+            border-left: 4px solid #8b5cf6;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #d4c5f0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 10px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6a4c9c 0%, #8b5cf6 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+            flex: 1;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+        }
+
+        button:disabled {
+            background: #4a3566;
+            cursor: not-allowed;
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #b794f6;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6a4c9c 0%, #8b5cf6 100%);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strain-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .strain-table th,
+        .strain-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+        }
+
+        .strain-table th {
+            background: rgba(106, 76, 156, 0.4);
+            color: #b794f6;
+            font-weight: 600;
+        }
+
+        .strain-table tr:hover {
+            background: rgba(138, 43, 226, 0.1);
+        }
+
+        ol {
+            margin: 15px 0;
+            padding-left: 25px;
+            color: #d4c5f0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+
+            .strain-table {
+                font-size: 0.8em;
+            }
+
+            .strain-table th,
+            .strain-table td {
+                padding: 8px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Ames Test for Mutagenicity</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress" id="progress">Section 1 of 5</div>
+
+        <!-- Section 1: Introduction -->
+        <div class="section active" id="section1">
+            <h2>Introduction to the Ames Test</h2>
+            <p>The <span class="highlight">Ames test</span> is a widely employed bacterial reverse mutation assay used to assess the mutagenic potential of chemical compounds. Developed by <span class="highlight">Dr. Bruce Ames</span> in the 1970s, this test has become a cornerstone in <span class="highlight">genetic toxicology</span> and drug development.</p>
+            
+            <div class="info-box">
+                <strong>Key Principle:</strong> The test exploits the ability of mutagens to reverse histidine-dependent mutations in Salmonella typhimurium bacteria, allowing them to grow on histidine-deficient media.
+            </div>
+
+        </div>
+
+        <!-- Section 2: Scientific Principle -->
+        <div class="section" id="section2">
+            <h2>Scientific Principle & Mechanism</h2>
+            
+            <h3>Reverse Mutation Concept</h3>
+            <p>The Ames test is based on <span class="highlight">reverse mutation</span> or <span class="highlight">back mutation</span>. The bacterial strains used carry mutations in genes involved in histidine biosynthesis, making them <span class="highlight">histidine-auxotrophs</span> (his⁻). These bacteria cannot synthesize histidine and require external supplementation for growth.</p>
+
+            <div class="info-box">
+                <strong>Reverse Mutation:</strong> When exposed to a mutagen, the mutated histidine gene can revert to wild-type (his⁺), restoring the bacteria's ability to synthesize histidine independently.
+            </div>
+
+            <h3>Detection Mechanism</h3>
+            <p>Bacteria are plated on <span class="highlight">minimal medium</span> containing only trace amounts of histidine. This trace amount allows all bacteria to undergo a few cell divisions, but only revertants (bacteria that have undergone reverse mutation) can continue dividing to form visible colonies.</p>
+
+            <h3>Metabolic Activation</h3>
+            <p>Many chemicals are not inherently mutagenic but become so after <span class="highlight">metabolic activation</span> by liver enzymes. To detect these <span class="highlight">promutagens</span>, the test incorporates:</p>
+            <ul>
+                <li><strong>S9 fraction:</strong> Prepared from rat liver homogenate</li>
+                <li><strong>Cytochrome P450 enzymes:</strong> Mixed-function oxidases that convert promutagens to their active mutagenic forms</li>
+                <li><strong>Cofactors:</strong> NADP⁺, glucose-6-phosphate, and necessary salts to support enzymatic activity</li>
+            </ul>
+
+            <p>Tests are conducted both <span class="highlight">with and without S9</span> to detect both direct-acting mutagens and those requiring metabolic activation.</p>
+        </div>
+
+        <!-- Section 3: Bacterial Strains -->
+        <div class="section" id="section3">
+            <h2>Bacterial Strains Used</h2>
+            
+            <p>The Ames test employs multiple strains of <span class="highlight">Salmonella typhimurium</span>, each carrying different types of mutations in the histidine operon. This multi-strain approach enhances the test's ability to detect various classes of mutagens.</p>
+
+            <h3>Genetic Modifications</h3>
+            <p>Beyond the histidine mutations, these strains contain additional genetic modifications to enhance sensitivity:</p>
+            
+            <div class="info-box">
+                <strong>rfa mutation:</strong> Defective lipopolysaccharide coating allows increased permeability to large molecules
+            </div>
+            
+            <div class="info-box">
+                <strong>uvrB deletion:</strong> Removes excision repair mechanism, preventing DNA repair and increasing sensitivity
+            </div>
+            
+            <div class="info-box">
+                <strong>pKM101 plasmid:</strong> Contains error-prone DNA repair genes (mucAB), enhancing detection of certain mutagens
+            </div>
+        </div>
+
+        <!-- Section 4: Procedure -->
+        <div class="section" id="section4">
+            <h2>Procedure of the Ames Test</h2>
+            <p>The standard Ames test procedure involves several carefully controlled steps:</p>
+            
+            <h3>Step 1: Preparation of Test Strains</h3>
+            <p>Select appropriate Salmonella typhimurium strains (e.g., TA98, TA100) with specific mutations in the histidine operon. These strains are also engineered to be more sensitive to mutagens through additional mutations that affect DNA repair and cell wall permeability.</p>
+            
+            <h3>Step 2: Metabolic Activation</h3>
+            <p>Since many compounds require metabolic activation to become mutagenic, the test often includes a <span class="highlight">S9 fraction</span> (a liver homogenate) that contains mammalian metabolic enzymes.</p>
+            
+            <h3>Step 3: Inoculation and Incubation</h3>
+            <p>The test compound is mixed with the bacterial culture and plated on minimal glucose agar lacking histidine. The plates are then incubated for 48-72 hours.</p>
+            
+            <h3>Step 4: Counting and Analysis</h3>
+            <p>After incubation, the number of revertant colonies is counted. A significant increase in revertants compared to the negative control indicates mutagenicity.</p>
+
+        </div>
+
+        <!-- Section 5: Applications & Limitations -->
+        <div class="section" id="section5">
+            <h2>Applications and Limitations</h2>
+            <p>The Ames test has widespread applications but also important limitations that must be considered.</p>
+            
+            <h3>Applications:</h3>
+            <ul>
+                <li><span class="highlight">Pharmaceutical screening</span>: Early detection of potential mutagens in drug candidates</li>
+                <li><span class="highlight">Chemical safety assessment</span>: Evaluating industrial chemicals, pesticides, and food additives</li>
+                <li><span class="highlight">Environmental monitoring</span>: Testing water, air, and soil samples for mutagenic contaminants</li>
+            </ul>
+            
+            <h3>Fundamental Limitations</h3>
+            <ul>
+                <li><strong>Prokaryotic system:</strong> Bacteria lack many mammalian cellular processes and structures</li>
+                <li><strong>Limited metabolism:</strong> Rat liver S9 cannot replicate all human metabolic pathways</li>
+                <li><strong>Gene specificity:</strong> Only detects mutations at the histidine locus, missing other genomic events</li>
+                <li><strong>Single endpoint:</strong> Tests only point mutations and frameshifts, not chromosomal aberrations</li>
+                <li><span class="highlight">Not predictive for all carcinogens</span>: Some non-mutagenic carcinogens won't be detected</li>
+            </ul>
+
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSection(-1)" disabled>← Previous</button>
+            <button id="nextBtn" onclick="changeSection(1)">Next →</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 5;
+
+        function changeSection(direction) {
+            const currentSectionEl = document.getElementById(`section${currentSection}`);
+            currentSectionEl.classList.remove('active');
+            
+            currentSection += direction;
+            
+            const newSectionEl = document.getElementById(`section${currentSection}`);
+            newSectionEl.classList.add('active');
+            
+            updateNavigation();
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+            
+            if (currentSection === totalSections) {
+                nextBtn.textContent = '✓ Completed';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        function updateProgress() {
+            const progress = document.getElementById('progress');
+            const progressFill = document.getElementById('progressFill');
+            
+            progress.textContent = `Section ${currentSection} of ${totalSections}`;
+            progressFill.style.width = `${(currentSection / totalSections) * 100}%`;
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft' && currentSection > 1) {
+                changeSection(-1);
+            } else if (event.key === 'ArrowRight' && currentSection < totalSections) {
+                changeSection(1);
+            }
+        });
+
+        // Touch swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold && currentSection < totalSections) {
+                changeSection(1);
+            }
+            if (touchEndX > touchStartX + swipeThreshold && currentSection > 1) {
+                changeSection(-1);
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
