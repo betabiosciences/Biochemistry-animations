@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Repair Mechanisms</title>
+    <style>
+        :root {
+            --bg-primary: #0f1629;
+            --bg-secondary: #1a233f;
+            --accent: #4a1e8c;
+            --text-primary: #e6e6ff;
+            --text-secondary: #b8b8ff;
+            --highlight: #8a4fff;
+            --button-bg: #2d1b69;
+            --button-hover: #3d2485;
+            --subtopic-bg: rgba(45, 27, 105, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(26, 35, 63, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--text-primary);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(138, 79, 255, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .section-container {
+            position: relative;
+            min-height: 400px;
+            overflow: hidden;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+            padding: 20px 15px;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--highlight);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-left: 4px solid var(--highlight);
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: var(--text-secondary);
+            margin: 20px 0 10px;
+            font-size: 1.3rem;
+        }
+        
+        h4 {
+            color: var(--highlight);
+            margin: 15px 0 8px;
+            font-size: 1.1rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+        
+        .key-point {
+            background-color: rgba(74, 30, 140, 0.3);
+            border-left: 4px solid var(--highlight);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .subtopic {
+            background-color: var(--subtopic-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid var(--highlight);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: rgba(26, 35, 63, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th, .comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(138, 79, 255, 0.2);
+        }
+        
+        .comparison-table th {
+            background-color: rgba(74, 30, 140, 0.4);
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            background-color: var(--button-bg);
+            color: var(--text-primary);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            background-color: #3a3a5c;
+            color: #7a7a9c;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #3a3a5c;
+            margin: 0 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--highlight);
+            transform: scale(1.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table {
+                font-size: 0.9rem;
+            }
+            
+            .comparison-table th, .comparison-table td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DNA Repair Mechanisms</h1>
+        </header>
+        
+        <div class="section-container">
+            <!-- Section 1: Photoreactivation -->
+            <div class="section active" id="section1">
+                <h2>1. Photoreactivation (Photolyases)</h2>
+                
+                <p>Photoreactivation is a light-dependent DNA repair mechanism that directly reverses UV-induced DNA damage, specifically cyclobutane pyrimidine dimers (CPDs) and 6-4 photoproducts. This process is unique as it requires visible light (300-500 nm) and doesn't involve DNA backbone cleavage.</p>
+                
+                <h3>Photolyase Enzymes: Structure and Function</h3>
+                <p>Photolyases are flavoproteins that contain two essential chromophores:</p>
+                <ul>
+                    <li><strong>FADH⁻ (fully reduced flavin adenine dinucleotide):</strong> The catalytic cofactor that transfers electrons to the damaged DNA</li>
+                    <li><strong>Light-harvesting chromophore:</strong> MTHF (methenyltetrahydrofolate) absorbs blue/UV-A light</li>
+                </ul>
+                
+                <div class="key-point">
+                    <p><strong>Key Insight:</strong> Photolyases are evolutionarily ancient enzymes found in bacteria, fungi, plants, and many animals, but interestingly, placental mammals have lost this repair pathway, relying instead on nucleotide excision repair.</p>
+                </div>
+                
+                <h3>CPD Photolyase</h3>
+                <div class="subtopic">
+                    <h4>Structure and Specificity</h4>
+                    <p>CPD photolyase specifically recognizes and repairs cyclobutane pyrimidine dimers, which form when adjacent pyrimidine bases (thymine or cytosine) become covalently linked by UV radiation.</p>
+                    
+                    <h4>Catalytic Mechanism</h4>
+                    <p>The repair process occurs through the following steps:</p>
+                    <ol>
+                        <li><strong>DNA Scanning and Recognition:</strong> CPD photolyase scans DNA nonspecifically until it encounters a cyclobutane pyrimidine dimer through a unique flipping mechanism that extrudes the damaged bases from the DNA helix into the enzyme's active site.</li>
+                        <li><strong>Light Absorption:</strong> The antenna chromophore (MTHF) absorbs a photon of blue/UV-A light (300-500 nm).</li>
+                        <li><strong>Energy Transfer:</strong> The excitation energy is transferred to FADH⁻ via fluorescence resonance energy transfer (FRET) with high efficiency (≈90%).</li>
+                        <li><strong>Electron Transfer:</strong> Photoexcited FADH⁻ donates an electron to the pyrimidine dimer, generating a transient anion radical that destabilizes the cyclobutane ring.</li>
+                        <li><strong>Bond Cleavage:</strong> The cyclobutane ring undergoes splitting via a concerted mechanism, restoring the two original pyrimidine bases.</li>
+                        <li><strong>Electron Return and Product Release:</strong> The electron returns to FADH, regenerating the active enzyme, and the repaired DNA is released.</li>
+                    </ol>
+                    
+                    <h4>Evolutionary Distribution</h4>
+                    <p>CPD photolyases are widely distributed across all three domains of life:</p>
+                    <ul>
+                        <li><strong>Bacteria:</strong> Present in many species including E. coli (encoded by the phr gene)</li>
+                        <li><strong>Archaea:</strong> Found in some halophilic and thermophilic species</li>
+                        <li><strong>Eukarya:</strong> Present in plants, fungi, insects, fish, amphibians, and marsupials</li>
+                    </ul>
+                    
+                    <div class="key-point">
+                        <p><strong>Advanced Detail:</strong> The quantum yield of CPD photolyase is remarkably high (≈0.9), meaning nearly every photon absorbed results in a repaired dimer, making it one of the most efficient enzymes known. The enzyme achieves this through optimal positioning of cofactors and precise electron transfer pathways.</p>
+                    </div>
+                </div>
+                
+                <h3>6-4 Photolyase</h3>
+                <div class="subtopic">
+                    <h4>Structure and Specificity</h4>
+                    <p>6-4 photolyase specifically repairs 6-4 photoproducts, which form when UV radiation induces a covalent bond between the C6 position of one pyrimidine and the C4 position of an adjacent pyrimidine. These lesions are more distorting to DNA structure than CPDs.</p>
+                    
+                    <h4>Catalytic Mechanism</h4>
+                    <p>The repair mechanism for 6-4 photoproducts differs significantly from CPD repair:</p>
+                    <ol>
+                        <li><strong>Substrate Recognition:</strong> 6-4 photolyase recognizes the more structurally distorted 6-4 photoproduct through specific interactions with the altered bases.</li>
+                        <li><strong>Light Absorption and Energy Transfer:</strong> Similar to CPD photolyase, the antenna chromophore absorbs light and transfers energy to FADH⁻.</li>
+                        <li><strong>Electron Transfer and Intermediate Formation:</strong> FADH⁻ transfers an electron to the 6-4 photoproduct, generating an anion radical. This leads to formation of an oxetane or azetidine intermediate.</li>
+                        <li><strong>Bond Rearrangement:</strong> The unstable intermediate undergoes spontaneous rearrangement, breaking the covalent bonds between the pyrimidines.</li>
+                        <li><strong>Restoration of Original Bases:</strong> The original pyrimidine bases are restored, though sometimes with altered tautomeric states that gradually convert to the normal forms.</li>
+                    </ol>
+                    
+                    <h4>Evolutionary Distribution</h4>
+                    <p>6-4 photolyases have a more restricted distribution than CPD photolyases:</p>
+                    <ul>
+                        <li><strong>Bacteria:</strong> Less common than CPD photolyases</li>
+                        <li><strong>Eukarya:</strong> Found in insects, fish, amphibians, and some plants, but absent in fungi</li>
+                    </ul>
+                    
+                    <div class="key-point">
+                        <p><strong>Advanced Detail:</strong> Some organisms possess "photolyase-like" proteins that share structural similarities with photolyases but function as circadian rhythm regulators (cryptochromes) rather than DNA repair enzymes. This highlights the evolutionary repurposing of this protein fold.</p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Section 2: Suicide Enzymes -->
+            <div class="section" id="section2">
+                <h2>2. Suicide Enzymes</h2>
+                
+                <p>Suicide enzymes, also known as suicide inactivators or mechanism-based inactivators, are enzymes that catalyze their own irreversible inactivation during the processing of their substrates.</p>
+                
+                <h3>Definition and Characteristics</h3>
+                <p>Suicide enzymes are unique in that they:</p>
+                <ul>
+                    <li>Recognize and bind specific substrate molecules</li>
+                    <li>Initiate a catalytic reaction that transforms the substrate</li>
+                    <li>Generate a highly reactive intermediate during catalysis</li>
+                    <li>This reactive intermediate covalently modifies and permanently inactivates the enzyme</li>
+                </ul>
+                
+                <h3>Role in DNA Repair</h3>
+                <p>In DNA repair contexts, suicide enzymes play crucial roles:</p>
+                <ol>
+                    <li><strong>O⁶-alkylguanine-DNA alkyltransferase (AGT):</strong> Directly transfers alkyl groups from damaged DNA to its own cysteine residue, inactivating itself in the process</li>
+                </ol>
+                
+                <div class="key-point">
+                    <p><strong>Clinical Relevance:</strong> The suicide enzyme O⁶-methylguanine-DNA methyltransferase (MGMT) is a critical determinant in the effectiveness of alkylating chemotherapeutic agents. Tumors with low MGMT expression are more susceptible to these drugs.</p>
+                </div>
+                
+            </div>
+            
+            <!-- Section 3: Alpha Ketoglutarate Dependent Dioxygenase -->
+            <div class="section" id="section3">
+                <h2>3. Alpha Ketoglutarate Dependent Dioxygenase</h2>
+                
+                <p>Alpha-ketoglutarate (αKG)-dependent dioxygenases are a large enzyme family that utilizes molecular oxygen and α-ketoglutarate to catalyze hydroxylation reactions, with important roles in DNA repair, particularly for alkylation damage.</p>
+                
+                <h3>Enzyme Family Overview</h3>
+                <p>These enzymes share a common reaction mechanism:</p>
+                <ul>
+                    <li>Require Fe²⁺ as a cofactor</li>
+                    <li>Utilize α-ketoglutarate as a cosubstrate</li>
+                    <li>Consume one molecule of O₂ per reaction cycle</li>
+                    <li>Generate succinate and CO₂ as byproducts</li>
+                </ul>
+                
+                <h3>DNA Repair Applications</h3>
+                <p>In DNA repair, the most significant αKG-dependent dioxygenases are:</p>
+                <ol>
+                    <li><strong>AlkB homologs (ALKBH1-8 in humans):</strong> Directly reverse alkylation damage by oxidative demethylation</li>
+                </ol>
+                
+                <div class="key-point">
+                    <p><strong>Key Mechanism:</strong> ALKBH2 and ALKBH3 repair 1-methyladenine and 3-methylcytosine lesions by oxidizing the methyl group to hydroxymethyl, which spontaneously releases formaldehyde, restoring the undamaged base.</p>
+                </div>
+                
+               
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-dot active" data-section="0"></div>
+            <div class="progress-dot" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            
+            // Function to update section visibility
+            function updateSections() {
+                sections.forEach((section, index) => {
+                    if (index === currentSection) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    updateSections();
+                }
+            });
+            
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateSections();
+                }
+            });
+            
+            // Progress dot click handlers
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-section'));
+                    updateSections();
+                });
+            });
+            
+            // Initialize the view
+            updateSections();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
