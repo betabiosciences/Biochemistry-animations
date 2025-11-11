@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nucleotide Excision Repair (NER)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Using Inter font as a good default */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for a more integrated feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b4b; /* dark indigo */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* indigo-600 */
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1; /* indigo-500 */
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gray-900 text-slate-200 min-h-screen flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
+
+    <main class="bg-slate-900/70 backdrop-blur-sm border border-indigo-900/50 shadow-2xl shadow-indigo-900/30 rounded-2xl w-full max-w-2xl overflow-hidden">
+        
+        <!-- Header -->
+        <header class="p-6 border-b border-indigo-800/60">
+            <h1 class="text-2xl md:text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-blue-300">
+                Nucleotide Excision Repair (NER)
+            </h1>
+        </header>
+
+        <!-- Content Sections Container -->
+        <div class="p-6 md:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+
+            <!-- Section 1: Overall Summary -->
+            <section id="section-1" class="content-section space-y-4">
+                <h2 class="text-xl md:text-2xl font-semibold text-teal-300">Overall Summary of NER</h2>
+                <p class="text-base md:text-lg leading-relaxed">
+                    Nucleotide Excision Repair (NER) is a major DNA repair pathway that corrects "bulky" lesions in the DNA helix. These lesions are typically caused by environmental mutagens like ultraviolet (UV) light or chemical carcinogens. Examples include pyrimidine dimers (formed by UV radiation) and large chemical adducts that distort the DNA's double-helix structure.
+                </p>
+                <p class="text-base md:text-lg leading-relaxed">
+                    The fundamental mechanism of NER can be described as a "cut and patch" process. It involves several key steps:
+                </p>
+                <ul class="list-disc list-inside space-y-2 pl-2 text-base md:text-lg leading-relaxed">
+                    <li><strong>Damage Recognition:</strong> The cell's machinery constantly scans the DNA for structural distortions.</li>
+                    <li><strong>Incision/Excision:</strong> Once a bulky lesion is identified, the repair machinery makes two cuts in the damaged DNA strand—one on each side of the lesion. This results in the removal (excision) of a short, single-stranded DNA fragment containing the damage.</li>
+                    <li><strong>Synthesis:</strong> The resulting single-strand gap is filled in by a DNA polymerase, which uses the undamaged complementary strand as a template to synthesize a new, correct patch.</li>
+                    <li><strong>Ligation:</strong> Finally, a DNA ligase enzyme seals the nick, joining the newly synthesized patch to the rest of the DNA strand and fully restoring the helix.</li>
+                </ul>
+                <p class="text-base md:text-lg leading-relaxed">
+                    This pathway is essential for maintaining genomic stability and preventing mutations that can lead to diseases, including cancer.
+                </p>
+            </section>
+
+            <!-- Section 2: Prokaryotic NER -->
+            <section id="section-2" class="content-section hidden space-y-4">
+                <h2 class="text-xl md:text-2xl font-semibold text-teal-300">Prokaryotic NER Mechanism</h2>
+                <p class="text-base md:text-lg leading-relaxed">
+                    In prokaryotes, such as *E. coli*, the NER pathway is primarily mediated by the <strong>Uvr (Ultraviolet repair)</strong> protein system, often called the UvrABC endonuclease.
+                </p>
+                
+                <h3 class="text-lg md:text-xl font-semibold text-violet-300 pt-2">Core Mechanism (Uvr Proteins)</h3>
+                <ol class="list-decimal list-inside space-y-2 pl-2 text-base md:text-lg leading-relaxed">
+                    <li><strong>Damage Scanning & Recognition:</strong> A complex of two <strong>UvrA</strong> proteins and one <strong>UvrB</strong> protein (A2B) scans the DNA. UvrA is responsible for detecting helical distortions.</li>
+                    <li><strong>Verification & Binding:</strong> Upon finding a potential lesion, the complex pauses. UvrB verifies the damage, and the complex's affinity for the DNA increases. UvrA then dissociates, leaving UvrB tightly bound to the damaged site.</li>
+                    <li><strong>Incision (Excinuclease):</strong> <strong>UvrC</strong> is recruited to the UvrB-DNA complex. UvrC acts as the excinuclease, making two incisions: one 4-5 nucleotides 3' to the lesion and another 8 nucleotides 5' to the lesion. This brackets a 12-13 nucleotide fragment.</li>
+                    <li><strong>Excision & Unwinding:</strong> <strong>UvrD (Helicase II)</strong> is recruited. It unwinds and removes the 12-13 nucleotide fragment containing the damage (along with UvrC). UvrB is also released.</li>
+                    <li><strong>Synthesis & Ligation:</strong> <strong>DNA Polymerase I</strong> fills the gap, and <strong>DNA Ligase</strong> seals the final nick, completing the repair.</li>
+                </ol>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NER%20prokaryotes%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NER%20prokaryotes%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+                <h3 class="text-lg md:text-xl font-semibold text-violet-300 pt-2">Sub-Pathways in Prokaryotes</h3>
+                <ul class="list-disc list-inside space-y-2 pl-2 text-base md:text-lg leading-relaxed">
+                    <li><strong>Global Genomic Repair (GGR):</strong> This is the default pathway, where the UvrA2B complex scans the entire genome, including non-transcribed regions and the non-transcribed strand of genes, for damage.</li>
+                    <li><strong>Transcription-Coupled Repair (TCR):</strong> This pathway provides a rapid response to lesions that block transcription. When a <strong>stalled RNA polymerase (RNAP)</strong> encounters a lesion on the transcribed strand, it acts as a damage signal. The <strong>Mfd (Mutation Frequency Decline)</strong> protein recognizes the stalled RNAP, displaces it, and recruits the UvrA2B complex directly to the damage site, prioritizing the repair of active genes.</li>
+                </ul>
+            </section>
+
+            <!-- Section 3: Eukaryotic NER -->
+            <section id="section-3" class="content-section hidden space-y-4">
+                <h2 class="text-xl md:text-2xl font-semibold text-teal-300">Eukaryotic NER Mechanism</h2>
+                <p class="text-base md:text-lg leading-relaxed">
+                    Eukaryotic NER is significantly more complex, involving over 30 different proteins. However, it follows the same fundamental "cut and patch" logic and is also divided into two major sub-pathways based on how damage is initially recognized.
+                </p>
+
+                <h3 class="text-lg md:text-xl font-semibold text-violet-300 pt-2">Sub-Pathways & Recognition</h3>
+                <ul class="list-disc list-inside space-y-2 pl-2 text-base md:text-lg leading-relaxed">
+                    <li><strong>Global Genomic Repair (GGR):</strong> This pathway surveys the entire genome. Initial damage recognition is primarily performed by the <strong>XPC</strong> complex (which includes RAD23B and CETN2). This complex detects the helical distortion. For some types of damage (like certain UV lesions), the <strong>DDB1/DDB2 (XPE)</strong> complex may bind first and help recruit XPC.</li>
+                    <li><strong>Transcription-Coupled Repair (TCR):</strong> This pathway is initiated when a <strong>stalled RNA Polymerase II (RNAPII)</strong> encounters a lesion on the transcribed strand. The stalled polymerase is recognized by the <strong>CSB (Cockayne Syndrome B)</strong> protein, which then recruits the core NER machinery.</li>
+                </ul>
+                
+                <h3 class="text-lg md:text-xl font-semibold text-violet-300 pt-2">Core Repair Mechanism</h3>
+                <p class="text-base md:text-lg leading-relaxed">
+                    After initial recognition by either GGR or TCR, the subsequent steps converge:
+                </p>
+                <ol class="list-decimal list-inside space-y-2 pl-2 text-base md:text-lg leading-relaxed">
+                    <li><strong>Unwinding & Bubble Formation:</strong> The <strong>TFIIH (Transcription Factor II H)</strong> complex is recruited. TFIIH contains two helicases: <strong>XPB</strong> (unwinds 3' to 5') and <strong>XPD</strong> (unwinds 5' to 3'). These helicases unwind the DNA around the lesion, creating a stable "bubble" of about 30 nucleotides.</li>
+                    <li><strong>Bubble Stabilization:</strong> <strong>XPA</strong> protein binds within the bubble to verify the damage and help position other proteins. <strong>RPA (Replication Protein A)</strong> binds to the undamaged single strand to protect it and stabilize the bubble.</li>
+                    <li><strong>Dual Incision:</strong> Two endonucleases are recruited to cut the damaged strand. <strong>XPF</strong> (complexed with ERCC1) makes the 5' incision. <strong>XPG</strong> makes the 3' incision. These cuts excise a larger fragment than in prokaryotes, typically 24-32 nucleotides long.</li>
+                    <li><strong>Synthesis & Ligation:</strong> The excised fragment is released. The gap is filled by <strong>DNA Polymerase δ (delta)</strong> or <strong>ε (epsilon)</strong>, assisted by the sliding clamp <strong>PCNA</strong>. Finally, <strong>DNA Ligase I</strong> (or Ligase III) seals the nick.</li>
+                </ol>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NER%20eukaryotes.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <p class="text-base md:text-lg leading-relaxed pt-2">
+                    Defects in these eukaryotic NER proteins (like XPA-XPG, or CSB) are linked to severe human genetic disorders, such as <strong>Xeroderma Pigmentosum (XP)</strong>, which is characterized by extreme sun sensitivity and a high incidence of skin cancer, and <strong>Cockayne Syndrome (CS)</strong>.
+                </p>
+            </section>
+
+        </div>
+
+        <!-- Navigation -->
+        <footer class="p-6 border-t border-indigo-800/60">
+            <div class="flex justify-between items-center">
+                <button id="prev-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Previous
+                </button>
+                <div id="step-indicator" class="text-sm text-slate-400">Section 1 / 3</div>
+                <button id="next-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+        </footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const stepIndicator = document.getElementById('step-indicator');
+            let currentSection = 0;
+            const totalSections = sections.length;
+
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach((section, i) => {
+                    if (i === index) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+
+                // Update step indicator
+                stepIndicator.textContent = `Section ${index + 1} / ${totalSections}`;
+
+                // Update button states
+                prevBtn.disabled = index === 0;
+                nextBtn.disabled = index === totalSections - 1;
+            }
+
+            // Next button click
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            });
+
+            // Previous button click
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+
+            // Initial show
+            showSection(currentSection);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
