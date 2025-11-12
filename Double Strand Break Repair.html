@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Double-Strand Break Repair</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Using Inter font as a modern, readable default */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Custom scrollbar for a more polished look */
+            scrollbar-width: thin;
+            scrollbar-color: #6D28D9 #1F2937;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1F2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #6D28D9;
+            border-radius: 20px;
+            border: 2px solid #1F2937;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 text-indigo-100 p-4 pt-8 md:p-8">
+
+    <!-- Main Content Area -->
+    <main class="w-full max-w-3xl mx-auto flex-grow">
+        
+        <!-- Header -->
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-6 text-purple-300">
+            DNA Double-Strand Break Repair
+        </h1>
+        
+        <!-- Content Card -->
+        <div class="bg-gray-800 bg-opacity-50 backdrop-blur-lg rounded-2xl shadow-xl p-6 md:p-8">
+
+            <!-- Section 1: Introduction -->
+            <div class="content-section">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300">Section 1: The Double-Strand Break (DSB)</h2>
+                <div class="space-y-4 text-gray-200">
+                    <p>A Double-Strand Break (DSB) is the most cytotoxic form of DNA damage, where both strands of the DNA helix are severed. If left unrepaired, or repaired incorrectly, DSBs can lead to chromosomal rearrangements, genomic instability, and ultimately cell death (apoptosis) or carcinogenesis.</p>
+                    <p>These breaks are generated by both endogenous sources (e.g., reactive oxygen species, replication fork collapse) and exogenous agents (e.g., ionizing radiation, chemotherapeutics).</p>
+                    <p>To combat this threat, eukaryotic cells have evolved two primary, sophisticated pathways for DSB repair:</p>
+                    <ul class="list-disc list-inside pl-4 space-y-2">
+                        <li><strong class="text-purple-300">Homology Directed Repair (HDR)</strong>: An "error-free" pathway that uses an undamaged homologous DNA sequence as a template.</li>
+                        <li><strong class="text-gray-300">Non-Homologous End Joining (NHEJ)</strong>: A more "error-prone" pathway that directly ligates the broken ends together, often with small insertions or deletions.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 2: Homology Directed Repair (HDR) -->
+            <div class="content-section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300">Section 2: Homology Directed Repair (HDR)</h2>
+                <div class="space-y-4 text-gray-200">
+                    <p>HDR is a high-fidelity repair mechanism restricted to the S and G2 phases of the cell cycle, as it critically requires the presence of a sister chromatid to serve as a repair template.</p>
+                    
+                    <h3 class="text-xl font-semibold text-purple-300">Key Steps in HDR:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Homology%20Directed%20Repair.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <ol class="list-decimal list-inside pl-4 space-y-3">
+                        <li>
+                            <strong>Break Detection & Resection:</strong> The DSB is first recognized by the <strong class="text-gray-300">MRN complex (Mre11-Rad50-Nbs1)</strong>, which, along with <strong class="text-gray-300">CtIP</strong>, initiates the 5' to 3' resection of the broken ends. This resection is extended by exonucleases like <strong class="text-gray-300">EXO1</strong> and <strong class="text-gray-300">DNA2</strong>, creating long 3' single-stranded DNA (ssDNA) tails.
+                        </li>
+                        <li>
+                            <strong>RPA Coating:</strong> The newly formed ssDNA tails are immediately coated by <strong class="text-gray-300">Replication Protein A (RPA)</strong> to protect them from degradation and remove secondary structures.
+                        </li>
+                        <li>
+                            <strong>RAD51 Filament Formation:</strong> The tumor suppressor protein <strong class="text-gray-300">BRCA2</strong> acts as a critical mediator, displacing RPA and loading the recombinase <strong class="text-gray-300">RAD51</strong> onto the ssDNA tails. RAD51 forms a nucleoprotein filament, which is the active machinery for the homology search.
+                        </li>
+                        <li>
+                            <strong>Homology Search & Strand Invasion:</strong> The RAD51 filament searches the genome for a homologous sequence. Upon finding the sister chromatid, it invades the intact duplex, displacing one strand and forming a <strong class="text-gray-300">Displacement-loop (D-loop)</strong>.
+                        </li>
+                        <li>
+                            <strong>DNA Synthesis & Resolution:</strong> A DNA polymerase extends the invading 3' end, using the intact strand as a template. This can be resolved via two main sub-pathways:
+                            <ul class="list-disc list-inside pl-6 mt-2 space-y-1">
+                                <li><strong>Synthesis-Dependent Strand Annealing (SDSA):</strong> The newly synthesized strand is displaced, unwinds from the D-loop, and anneals to the other resected end. Gaps are filled and ligated. This is the most common HDR outcome in mammals and <strong class="text-gray-300">does not</strong> result in crossover.</li>
+                                <li><strong>Double-Holliday Junction (dHJ) Pathway:</strong> The second broken end is captured, leading to the formation of two <strong class="text-gray-300">Holliday Junctions</strong>. These can be "dissolved" (by the BTR complex, no crossover) or "resolved" (by resolvases, can result in crossover or non-crossover).</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Section 3: Non-Homologous End Joining (NHEJ) -->
+            <div class="content-section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300">Section 3: Non-Homologous End Joining (NHEJ)</h2>
+                <div class="space-y-4 text-gray-200">
+                    <p>NHEJ is the dominant DSB repair pathway in mammalian cells, active throughout all cell cycle phases (especially G1). It is much faster than HDR but is inherently mutagenic, as it directly ligates ends without a template, often causing small insertions or deletions (indels).</p>
+                    
+                    <h3 class="text-xl font-semibold text-purple-300">Key Steps in NHEJ:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NHEJ.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <ol class="list-decimal list-inside pl-4 space-y-3">
+                        <li>
+                            <strong>End Recognition:</strong> The <strong class="text-gray-300">Ku70/Ku80</strong> heterodimer, a ring-shaped complex, rapidly binds to the broken DNA ends. It acts as a scaffold, protecting the ends from resection and recruiting other NHEJ factors.
+                        </li>
+                        <li>
+                            <strong>Synapsis & Kinase Activation:</strong> Ku recruits the catalytic subunit of the <strong class="text-gray-300">DNA-dependent protein kinase (DNA-PKcs)</strong>. DNA-PKcs bridges the two ends, forming a synaptic complex. Its kinase activity is activated, leading to autophosphorylation and the phosphorylation of other repair factors.
+                        </li>
+                        <li>
+                            <strong>End Processing:</strong> DSB ends are often "dirty" (not blunt 5'-P and 3'-OH). NHEJ employs a toolkit to clean them:
+                            <ul class="list-disc list-inside pl-6 mt-2 space-y-1">
+                                <li><strong class="text-gray-300">Artemis:</strong> An endonuclease (activated by DNA-PKcs) that trims 5' and 3' overhangs and opens hairpin structures.</li>
+                                <li><strong class="text-gray-300">PNKP (Polynucleotide Kinase Phosphatase):</strong> Corrects the end chemistry, adding 5' phosphates and removing 3' phosphates.</li>
+                                <li><strong class="text-gray-300">Polymerases μ and λ:</strong> Family X polymerases that fill in small gaps, often in a template-independent manner.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Ligation:</strong> The final step is performed by the <strong class="text-gray-300">Ligase IV-XRCC4-XLF complex</strong>. This complex is recruited to the site and ligates the processed ends, sealing the break.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Section 4: Pathway Choice -->
+            <div class="content-section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300">Section 4: Pathway Choice (HDR vs. NHEJ)</h2>
+                <div class="space-y-4 text-gray-200">
+                    <p>The decision between HDR and NHEJ is one of the most critical events in DSB repair. The choice is not random and is tightly regulated, primarily by the cell cycle.</p>
+                    
+                    <h3 class="text-xl font-semibold text-purple-300">Key Determinants:</h3>
+                    <ul class="list-disc list-inside pl-4 space-y-3">
+                        <li>
+                            <strong>Cell Cycle Phase:</strong> This is the master regulator.
+                            <ul class="list-disc list-inside pl-6 mt-2 space-y-1">
+                                <li><strong>G1 Phase:</strong> No sister chromatid is available, so HDR is impossible. The cell actively suppresses resection, and <strong class="text-gray-300">NHEJ is the only option</strong>.</li>
+                                <li><strong>S & G2 Phases:</strong> A sister chromatid is present, making HDR possible. The cell actively promotes HDR.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>The Resection "Switch":</strong> The initiation of 5' end resection is the key commitment step.
+                            <ul class="list-disc list-inside pl-6 mt-2 space-y-1">
+                                <li>In S/G2, <strong class="text-gray-300">CDKs (Cyclin-Dependent Kinases)</strong> are highly active. They phosphorylate <strong class="text-gray-300">CtIP</strong>, activating its resecting function with the MRN complex. This resection evicts the Ku proteins and commits the cell to HDR.</li>
+                                <li>In G1, CDK activity is low. CtIP is not phosphorylated, resection is suppressed, and the Ku proteins bind stably, committing the cell to NHEJ.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Protein Competition:</strong> At the break site, there is a "race" between the <strong class="text-gray-300">Ku complex (for NHEJ)</strong> and the <strong class="text-gray-300">MRN/CtIP complex (for HDR)</strong>. The cell cycle state tips the balance of this competition.</li>
+                        <li>
+                            <strong>Chromatin Structure:</strong> The local chromatin environment (e.g., euchromatin vs. heterochromatin) also influences the accessibility of the break to repair factors and can bias the pathway choice.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    
+    <!-- Navigation Buttons -->
+    <nav class="w-full max-w-3xl mx-auto mt-6">
+        <div class="flex justify-between">
+            <button id="prevBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <button id="nextBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+    </nav>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    <!-- JavaScript for Interactivity -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSectionIndex = 0;
+
+            function updateUI() {
+                // Hide all sections
+                sections.forEach((section, index) => {
+                    section.classList.toggle('hidden', index !== currentSectionIndex);
+                });
+
+                // Update button states
+                prevBtn.disabled = currentSectionIndex === 0;
+                nextBtn.disabled = currentSectionIndex === (sections.length - 1);
+            }
+
+            // Event Listeners
+            nextBtn.addEventListener('click', () => {
+                if (currentSectionIndex < sections.length - 1) {
+                    currentSectionIndex++;
+                    updateUI();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    updateUI();
+                }
+            });
+
+            // Initial UI setup
+            updateUI();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
