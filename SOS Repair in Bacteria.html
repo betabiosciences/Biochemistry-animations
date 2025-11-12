@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS DNA Repair in Prokaryotes</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Using Inter font as a clean, modern default */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for disabled buttons */
+        .btn-disabled {
+            background-color: #374151; /* gray-700 */
+            color: #9ca3af; /* gray-400 */
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gray-900">
+
+    <!-- 
+      Main application container.
+      This provides the dark, gradient background and centers the content.
+      It's optimized for mobile with padding and responsive max-width.
+    -->
+    <div id="app-container" class="min-h-screen p-4 sm:p-8 bg-gradient-to-br from-indigo-950 via-slate-900 to-violet-950 text-gray-200 flex items-center justify-center">
+        <div class="w-full max-w-2xl bg-slate-900/50 backdrop-blur-md rounded-2xl shadow-2xl border border-indigo-800/30 overflow-hidden">
+            
+            <header class="p-6 border-b border-indigo-800/30">
+                <h1 class="text-3xl sm:text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-violet-400">
+                    The SOS DNA Repair System
+                </h1>
+            </header>
+
+            <!-- 
+              Content sections container.
+              JavaScript will show/hide these sections.
+            -->
+            <main class="p-6 sm:p-8">
+                
+                <!-- Section 1: Introduction -->
+                <div id="section-1" class="content-section">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">1. What is the SOS Response?</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The SOS response is a global emergency response in prokaryotes, like <i class="font-italic">E. coli</i>, triggered by extensive DNA damage. When the cell's replication machinery encounters damage it can't fix, it stalls. This stalling exposes single-stranded DNA (ssDNA), which is the primary distress signal.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        This isn't a single pathway, but rather a <strong class="font-semibold text-yellow-300">regulon</strong>—a collection of over 40 different genes—that is switched on to deal with the crisis. The system's goal is simple: <strong class="font-semibold text-yellow-300">survive at all costs</strong>, even if it means introducing mutations.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-300">
+                        <li><strong class="text-white">Repressor (Normal State):</strong> <code class="bg-indigo-800/50 px-2 py-1 rounded">LexA</code> protein keeps the SOS genes turned OFF.</li>
+                        <li><strong class="text-white">Sensor (Damage State):</strong> <code class="bg-indigo-800/50 px-2 py-1 rounded">RecA</code> protein detects the ssDNA signal.</li>
+                    </ul>
+                </div>
+
+                <!-- Section 2: The Trigger: RecA Nucleofilament -->
+                <div id="section-2" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">2. The Trigger: RecA Nucleofilament</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The SOS response is initiated when RecA proteins encounter the ssDNA patches that form at stalled replication forks or DNA gaps. 
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        RecA polymerizes onto this ssDNA, forming a helical <strong class="font-semibold text-yellow-300">RecA-ssDNA nucleoprotein filament</strong>. This structure is the activated form of RecA, often denoted as <strong class="font-semibold text-yellow-300">RecA*</strong>.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        This RecA* filament is now an active co-protease, meaning it can help other proteins cut themselves. Its primary target is the <code class="bg-indigo-800/50 px-2 py-1 rounded">LexA</code> repressor.
+                    </p>
+                </div>
+
+                <!-- Section 3: LexA Autocatalytic Cleavage -->
+                <div id="section-3" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">3. LexA Autocatalytic Cleavage</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        In a healthy cell, the LexA repressor protein binds to specific 20-base-pair DNA sequences called <strong class="font-semibold text-yellow-300">SOS boxes</strong>. These boxes are located in the promoter region of all SOS genes, physically blocking RNA polymerase from transcribing them.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The activated <strong class="font-semibold text-yellow-300">RecA*</strong> filament finds and binds to LexA. This binding induces a conformational change in LexA, activating its *own* dormant protease function. LexA then cleaves itself in half (a process called <strong class="font-semibold text-yellow-300">autocatalysis</strong>).
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The cleaved LexA fragments can no longer bind to the SOS boxes. They fall off the DNA, de-repressing the entire SOS regulon. The genes are rapidly transcribed and translated, flooding the cell with repair proteins.
+                    </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/SOS%20repair%20general%20diagram.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                </div>
+
+                <!-- Section 4: The SOS Regulon Genes -->
+                <div id="section-4" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">4. Key Genes of the SOS Regulon</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        Once LexA is cleared, a diverse set of genes is expressed. They fall into several categories:
+                    </p>
+                    <ul class="list-disc list-inside space-y-3 text-gray-300">
+                        <li>
+                            <strong class="text-white">Error-Free Repair:</strong> Genes like <code class="bg-indigo-800/50 px-2 py-1 rounded">uvrA</code> and <code class="bg-indigo-800/50 px-2 py-1 rounded">uvrB</code> are upregulated, boosting Nucleotide Excision Repair (NER) to remove the damage.
+                        </li>
+                        <li>
+                            <strong class="text-white">Recombination:</strong> The <code class="bg-indigo-800/50 px-2 py-1 rounded">recA</code> gene itself is an SOS gene, creating a positive feedback loop. Other genes like <code class="bg-indigo-800/50 px-2 py-1 rounded">recF</code>, <code class="bg-indigo-800/50 px-2 py-1 rounded">recO</code>, and <code class="bg-indigo-800/50 px-2 py-1 rounded">recR</code> involved in recombinational repair are also induced.
+                        </li>
+                        <li>
+                            <strong class="text-white">Cell Division Block:</strong> The <code class="bg-indigo-800/50 px-2 py-1 rounded">sulA</code> (or <code class="bg-indigo-800/50 px-2 py-1 rounded">sfiA</code>) gene is expressed. SulA protein halts cell division. This buys the cell time to repair its chromosome before attempting to pass it to daughter cells.
+                        </li>
+                        <li>
+                            <strong class="text-white">Error-Prone Repair (The "Last Resort"):</strong> The <code class="bg-indigo-800/50 px-2 py-1 rounded">umuD</code> and <code class="bg-indigo-800/50 px-2 py-1 rounded">umuC</code> genes are expressed. These are the core of the mutagenic part of the SOS response.
+                        </li>
+                    </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/SOS%20repair%20general%20diagram.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                </div>
+
+                <!-- Section 5: Translesion Synthesis (TLS) -->
+                <div id="section-5" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">5. Error-Prone Repair: Translesion Synthesis</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        This is the most "famous" and dangerous part of the SOS response. When the cell's main polymerase (Pol III) encounters a lesion (like a thymine dimer) that it cannot read, it stalls.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The <code class="bg-indigo-800/50 px-2 py-1 rounded">umuD</code> and <code class="bg-indigo-800/50 px-2 py-1 rounded">umuC</code> proteins are produced. The UmuD protein must also be cleaved by RecA* to become its active form, <strong class="font-semibold text-yellow-300">UmuD'</strong>.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        Two UmuD' proteins and one UmuC protein assemble to form <strong class="font-semibold text-yellow-300">DNA Polymerase V (Pol V)</strong>.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        Pol V is a special "low-fidelity" polymerase. It has no proofreading (3'→5' exonuclease) activity and a loose, open active site. It temporarily displaces Pol III at the stalled fork, synthesizes a short patch of DNA *directly across* the lesion (this is <strong class="font-semibold text-yellow-300">Translesion Synthesis</strong> or TLS), and then falls off, allowing Pol III to resume.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        Because Pol V cannot read the damaged template, it often inserts random bases. This bypasses the lesion, allowing replication to complete, but it comes at the cost of <strong class="font-semibold text-yellow-300">introducing mutations</strong>.
+                    </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/SOS%20repair%20translesion1.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/SOS%20repair%20translesion%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                </div>
+
+                <!-- Section 6: De-induction (Shutting Down) -->
+                <div id="section-6" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">6. De-induction: Shutting Down the System</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The SOS response is not meant to be active forever. As the various repair pathways (NER, recombination, TLS) fix the DNA damage, the amount of ssDNA in the cell decreases.
+                    </p>
+                    <ul class="list-disc list-inside space-y-3 text-gray-300">
+                        <li>Without ssDNA, the <strong class="font-semibold text-yellow-300">RecA*</strong> filaments disassemble back into inactive RecA monomers.</li>
+                        <li>Without RecA*, LexA is no longer being cleaved.</li>
+                        <li>The cell is *always* slowly producing new, intact <code class="bg-indigo-800/50 px-2 py-1 rounded">LexA</code> (from a baseline-level-expressed <code class="bg-indigo-800/50 px-2 py-1 rounded">lexA</code> gene, which is also partially repressed by itself).</li>
+                        <li>These new LexA proteins accumulate, bind to the SOS boxes, and one by one, shut off the SOS genes.</li>
+                        <li>The unstable <code class="bg-indigo-800/50 px-2 py-1 rounded">SulA</code> protein is degraded, allowing cell division to resume.</li>
+                        <li>The cell returns to its normal, non-SOS state.</li>
+                    </ul>
+                </div>
+
+                 <!-- Section 7: Significance -->
+                 <div id="section-7" class="content-section hidden">
+                    <h2 class="text-2xl font-semibold mb-4 text-cyan-300">7. Significance and Summary</h2>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        The SOS response is a remarkable example of a cellular "life-or-death" decision. It is a high-risk, high-reward strategy.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        By activating Translesion Synthesis, the cell accepts a high probability of <strong class="font-semibold text-yellow-300">mutagenesis</strong> in exchange for a chance at <strong class="font-semibold text-yellow-300">survival</strong>. A cell with a few mutations is better than a dead cell with an incomplete chromosome.
+                    </p>
+                    <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-300">
+                        This mechanism is a major driver of bacterial evolution. It is also clinically important, as the mutagenic activity of the SOS response can accelerate the acquisition of <strong class="font-semibold text-yellow-300">antibiotic resistance</strong>. Some antibiotics, in fact, work by *causing* DNA damage, which ironically can trigger the very SOS response that allows the bacteria to mutate and survive the drug.
+                    </p>
+                </div>
+            </main>
+
+            <!-- 
+              Navigation buttons.
+              These will be enabled/disabled by JavaScript.
+            -->
+            <footer class="p-6 flex justify-between items-center border-t border-indigo-800/30">
+                <button id="prev-btn" class="px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    Previous
+                </button>
+                <div id="section-counter" class="text-sm text-indigo-300">
+                    Section 1 / 7
+                </div>
+                <button id="next-btn" class="px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md bg-cyan-500 text-slate-900 hover:bg-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    Next
+                </button>
+            </footer>
+
+        </div>
+    </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // State
+            let currentSection = 1;
+            const sections = document.querySelectorAll('.content-section');
+            const totalSections = sections.length;
+
+            // DOM Elements
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const sectionCounter = document.getElementById('section-counter');
+            
+            // Active/Disabled Button Classes
+            const activeBtnClasses = ['bg-cyan-500', 'text-slate-900', 'hover:bg-cyan-400'];
+            const disabledBtnClasses = ['btn-disabled']; // Custom class from <style>
+
+            /**
+             * Main function to show a specific section
+             * @param {number} sectionNumber - The section number to display (1-based index)
+             */
+            function showSection(sectionNumber) {
+                // Ensure sectionNumber is within bounds
+                if (sectionNumber < 1 || sectionNumber > totalSections) {
+                    console.error('Invalid section number:', sectionNumber);
+                    return;
+                }
+
+                // Hide all sections
+                sections.forEach(sec => {
+                    sec.classList.add('hidden');
+                });
+
+                // Show the target section
+                const targetSection = document.getElementById(`section-${sectionNumber}`);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+
+                // Update the state
+                currentSection = sectionNumber;
+                updateButtons();
+                updateCounter();
+            }
+
+            /**
+             * Updates the enabled/disabled state of the navigation buttons
+             */
+            function updateButtons() {
+                // Handle Previous Button
+                if (currentSection === 1) {
+                    prevBtn.disabled = true;
+                    prevBtn.classList.remove(...activeBtnClasses);
+                    prevBtn.classList.add(...disabledBtnClasses);
+                } else {
+                    prevBtn.disabled = false;
+                    prevBtn.classList.add(...activeBtnClasses);
+                    prevBtn.classList.remove(...disabledBtnClasses);
+                }
+
+                // Handle Next Button
+                if (currentSection === totalSections) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.remove(...activeBtnClasses);
+                    nextBtn.classList.add(...disabledBtnClasses);
+                } else {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.add(...activeBtnClasses);
+                    nextBtn.classList.remove(...disabledBtnClasses);
+                }
+            }
+
+            /**
+             * Updates the "Section X / Y" counter
+             */
+            function updateCounter() {
+                sectionCounter.textContent = `Section ${currentSection} / ${totalSections}`;
+            }
+
+            // --- Event Listeners ---
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 1) {
+                    showSection(currentSection - 1);
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < totalSections) {
+                    showSection(currentSection + 1);
+                }
+            });
+
+            // --- Initial Setup ---
+            showSection(1); // Show the first section and set button states on load
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
