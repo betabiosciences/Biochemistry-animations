@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mismatch DNA Repair (MMR)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply the Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Remove scrollbar styling */
+        .content-area::-webkit-scrollbar {
+            display: none;
+        }
+        .content-area {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* Highlight style for key terms - only text color */
+        .highlight {
+            color: #fde047; /* yellow-300 */
+            font-weight: 600;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-950 to-violet-950 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Card Container -->
+    <div class="w-full max-w-md bg-indigo-900/60 backdrop-blur-md border border-indigo-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col" style="height: 90vh; max-height: 700px;">
+
+        <!-- Header -->
+        <div class="p-5 border-b border-indigo-700">
+            <h1 class="text-2xl font-bold text-center text-violet-300">Mismatch DNA Repair</h1>
+        </div>
+
+        <!-- Content Area (Scrollable) -->
+        <div class="flex-grow p-6 overflow-y-auto content-area">
+
+            <!-- Section 1: Features & Significance -->
+            <div class="content-section">
+                <h2 class="text-xl font-semibold text-indigo-200 mb-4">1. Features & Significance</h2>
+                <p class="text-gray-200 mb-3">
+                    Mismatch Repair (MMR) is a crucial post-replicative proofreading system that scans the genome for errors that have escaped the <span class="highlight">3'→5' exonuclease</span> activity of <span class="highlight">DNA polymerase</span>.
+                </p>
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Key Significance</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li><strong>Genomic Fidelity:</strong> MMR increases the fidelity of DNA replication by 100- to 1000-fold, acting as a critical barrier against spontaneous mutation.</li>
+                    <li><strong>Error Correction:</strong> It primarily corrects base-base mismatches (e.g., <span class="highlight">G-T</span>, <span class="highlight">A-C</span>) and small insertion/deletion loops (<span class="highlight">IDLs</span>) that arise from polymerase "slippage," especially in repetitive DNA regions (<span class="highlight">microsatellites</span>).</li>
+                    <li><strong>Genome Stability:</strong> By preventing mutation accumulation, MMR is essential for maintaining genomic integrity and preventing cancer.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Core Features</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li><strong>Post-Replicative:</strong> It operates *after* the replication fork has passed.</li>
+                    <li><strong>Strand Discrimination:</strong> The most critical feature. The system must "know" which of the two mismatched bases is the correct one (on the template strand) and which is the error (on the newly synthesized strand). The mechanisms for this differ between prokaryotes and eukaryotes.</li>
+                    <li><strong>Conserved Components:</strong> The core machinery involves two key protein families:
+                        <ul class="list-circle list-inside ml-5 mt-1">
+                            <li><span class="highlight">MutS</span> homologs: Recognize the mismatch.</li>
+                            <li><span class="highlight">MutL</span> homologs: Act as matchmakers, linking MutS to downstream excision and resynthesis proteins.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 2: Prokaryotic Mechanism (E. coli) -->
+            <div class="content-section hidden">
+                <h2 class="text-xl font-semibold text-indigo-200 mb-4">2. Prokaryotic Mechanism (<span class="highlight">E. coli</span>)</h2>
+                <p class="text-gray-200 mb-3">
+                    The <span class="highlight">E. coli</span> model is the classic example, relying on DNA methylation for strand discrimination.
+                </p>
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Components</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-1">
+                    <li><span class="highlight">Dam Methylase</span>: Methylates the adenine in <span class="highlight">GATC</span> sequences.</li>
+                    <li><span class="highlight">MutS</span>: A homodimer that scans DNA and binds to the mismatch.</li>
+                    <li><span class="highlight">MutL</span>: A homodimer that binds MutS and activates MutH.</li>
+                    <li><span class="highlight">MutH</span>: A strand-specific endonuclease.</li>
+                    <li><span class="highlight">UvrD (Helicase II)</span> & Exonucleases: To unwind and degrade the error-containing strand.</li>
+                    <li><span class="highlight">DNA Pol III</span> & Ligase: To resynthesize and seal.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Step-by-Step Process</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/MMR%20prokarotes.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ol class="list-decimal list-inside text-gray-200 space-y-2">
+                    <li><strong>Recognition:</strong> <span class="highlight">MutS</span> scans the DNA, recognizes the distortion from the mismatch, and binds to it.</li>
+                    <li><strong>Assembly:</strong> <span class="highlight">MutL</span> is recruited, forming a <span class="highlight">MutS-MutL</span> complex. This complex translocates along the DNA.</li>
+                    <li><strong>Strand Discrimination:</strong> The DNA is transiently "hemimethylated" after replication. The template strand is methylated at <span class="highlight">GATC</span> sites, but the new strand is not yet. The <span class="highlight">MutS-MutL</span> complex finds the *nearest* hemimethylated <span class="highlight">GATC</span> site.</li>
+                    <li><strong>Incision:</strong> <span class="highlight">MutL</span> activates the <span class="highlight">MutH</span> endonuclease, which nicks the *unmethylated* (new) strand at the <span class="highlight">GATC</span> site. This nick can be 5' or 3' to the mismatch.</li>
+                    <li><strong>Excision:</strong> <span class="highlight">UvrD (Helicase II)</span> unwinds the nicked strand. Based on the nick's location, an exonuclease (e.g., <span class="highlight">ExoVII</span> or <span class="highlight">RecJ</span> for a 5' nick; <span class="highlight">ExoI</span> for a 3' nick) degrades the new strand from the nick *past* the mismatch.</li>
+                    <li><strong>Resynthesis:</strong> <span class="highlight">DNA Pol III</span> fills the large gap using the intact template strand.</li>
+                    <li><strong>Ligation:</strong> DNA ligase seals the final nick.</li>
+                </ol>
+            </div>
+
+            <!-- Section 3: Eukaryotic Mechanism -->
+            <div class="content-section hidden">
+                <h2 class="text-xl font-semibold text-indigo-200 mb-4">3. Eukaryotic Mechanism</h2>
+                <p class="text-gray-200 mb-3">
+                    Eukaryotic MMR is more complex and does not use methylation for strand discrimination. It is tightly coupled to the replication fork.
+                </p>
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Components (Human)</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-1">
+                    <li><strong>MutS Homologs (Heterodimers):</strong>
+                        <ul class="list-circle list-inside ml-5 mt-1">
+                            <li><span class="highlight">MutSα (MSH2-MSH6)</span>: Recognizes base-base mismatches and small (1-2 bp) IDLs.</li>
+                            <li><span class="highlight">MutSβ (MSH2-MSH3)</span>: Recognizes larger IDLs (up to ~16 bp).</li>
+                        </ul>
+                    </li>
+                    <li><strong>MutL Homologs (Heterodimers):</strong>
+                         <ul class="list-circle list-inside ml-5 mt-1">
+                            <li><span class="highlight">MutLα (MLH1-PMS2)</span>: The primary complex. Crucially, <span class="highlight">PMS2</span> has a cryptic endonuclease activity.</li>
+                            <li><span class="highlight">MutLβ (MLH1-PMS1)</span> & <span class="highlight">MutLγ (MLH1-MLH3)</span>: Other complexes with more specialized roles.</li>
+                        </ul>
+                    </li>
+                     <li><span class="highlight">PCNA</span>, <span class="highlight">RPA</span>, <span class="highlight">EXO1</span>, <span class="highlight">Pol δ</span>, <span class="highlight">Ligase I</span></li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Step-by-Step Process</h3>
+                <ol class="list-decimal list-inside text-gray-200 space-y-2">
+                    <li><strong>Recognition:</strong> <span class="highlight">MutSα</span> (or <span class="highlight">MutSβ</span>) binds the mismatch.</li>
+                    <li><strong>Assembly:</strong> <span class="highlight">MutLα</span> is recruited. The complex is loaded onto DNA in an ATP-dependent manner, likely sliding.</li>
+                    <li><strong>Strand Discrimination:</strong> This is the key difference. It is linked to replication. The newly synthesized strand is identified by its ends, specifically the nicks present in <span class="highlight">Okazaki fragments</span> on the lagging strand or transient nicks on the leading strand. <span class="highlight">PCNA (Proliferating Cell Nuclear Antigen)</span>, the sliding clamp, is enriched on the new strand and helps orient the MMR machinery.</li>
+                    <li><strong>Incision:</strong> The endonuclease activity of <span class="highlight">MutLα (PMS2)</span> is activated upon interaction with the <span class="highlight">MutS</span>-mismatch complex and <span class="highlight">PCNA</span>. It introduces a nick in the new (error-containing) strand.</li>
+                    <li><strong>Excision:</strong> <span class="highlight">EXO1 (Exonuclease 1)</span> is recruited and, in a 5'→3' direction, degrades the new strand from the nick past the mismatch. <span class="highlight">RPA (Replication Protein A)</span> coats the exposed single strand.</li>
+                    <li><strong>Resynthesis:</strong> <span class="highlight">DNA Polymerase δ (delta)</span>, loaded by <span class="highlight">PCNA</span>, fills the gap.</li>
+                    <li><strong>Ligation:</strong> <span class="highlight">DNA Ligase I</span> seals the nick.</li>
+                </ol>
+            </div>
+
+            <!-- Section 4: Defects in MMR -->
+            <div class="content-section hidden">
+                <h2 class="text-xl font-semibold text-indigo-200 mb-4">4. Defects in Mismatch Repair</h2>
+                <p class="text-gray-200 mb-3">
+                    Failure of the MMR system has severe consequences, leading to a "<span class="highlight">mutator phenotype</span>" and a high predisposition to cancer.
+                </p>
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Microsatellite Instability (MSI)</h3>
+                <p class="text-gray-200 mb-3">
+                    The hallmark of a defective MMR system. <span class="highlight">Microsatellites</span> are short, repetitive DNA sequences (e.g., -CACACA-). During replication, DNA polymerase is prone to "slipping" on these repeats, creating small <span class="highlight">IDLs</span>.
+                </p>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li>In a <span class="font-semibold text-green-300">healthy cell</span>, MMR efficiently recognizes and repairs these slippage-induced <span class="highlight">IDLs</span>.</li>
+                    <li>In an <span class="font-semibold text-red-300">MMR-deficient cell</span>, these errors are not corrected. This results in microsatellites expanding or contracting in length, a state known as <span class="highlight">Microsatellite Instability (MSI)</span>.</li>
+                </ul>
+
+                <h3 class="text-lg font-semibold text-violet-300 mt-4 mb-2">Lynch Syndrome (HNPCC)</h3>
+                <ul class="list-disc list-inside text-gray-200 space-y-2">
+                    <li><strong>Definition:</strong> The most common hereditary cancer syndrome. It is an autosomal dominant condition caused by a germline mutation in one copy of an <span class="highlight">MMR gene</span> (most commonly <span class="highlight">MLH1</span> or <span class="highlight">MSH2</span>, also <span class="highlight">MSH6</span> or <span class="highlight">PMS2</span>).</li>
+                    <li><strong>Mechanism:</strong> Individuals are born with one mutated allele. A "second hit" (somatic mutation or epigenetic silencing) that inactivates the remaining healthy allele in a cell leads to complete <span class="highlight">MMR deficiency</span>.</li>
+                    <li><strong>Result:</strong> That cell rapidly accumulates mutations (<span class="highlight">MSI</span>) and progresses to cancer, particularly colorectal, endometrial, ovarian, and stomach cancers.</li>
+                </ul>
+                
+            </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="p-4 bg-indigo-950/70 border-t border-indigo-700 flex justify-between items-center">
+            <button id="prevButton" class="py-2 px-5 font-semibold text-white bg-violet-600 rounded-lg shadow-md hover:bg-violet-500 transition duration-200 disabled:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <div id="section-indicator" class="text-sm text-indigo-300">
+                <!-- Indicator will be updated by JS -->
+            </div>
+            <button id="nextButton" class="py-2 px-5 font-semibold text-white bg-violet-600 rounded-lg shadow-md hover:bg-violet-500 transition duration-200 disabled:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all the content sections
+            const sections = document.querySelectorAll('.content-section');
+            // Get navigation buttons
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            // Get the section indicator text
+            const sectionIndicator = document.getElementById('section-indicator');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+
+            // Function to update the view
+            function showSection(index) {
+                // Hide all sections first
+                sections.forEach((section, i) => {
+                    section.classList.add('hidden');
+                });
+
+                // Show the target section
+                if (sections[index]) {
+                    sections[index].classList.remove('hidden');
+                }
+
+                // Update current section index
+                currentSection = index;
+
+                // Update navigation button states
+                updateNavButtons();
+            }
+
+            // Function to update the navigation buttons (disabled state)
+            function updateNavButtons() {
+                // Update Previous button
+                if (currentSection === 0) {
+                    prevButton.disabled = true;
+                } else {
+                    prevButton.disabled = false;
+                }
+
+                // Update Next button
+                if (currentSection === totalSections - 1) {
+                    nextButton.disabled = true;
+                } else {
+                    nextButton.disabled = false;
+                }
+
+                // Update section indicator
+                sectionIndicator.textContent = `Section ${currentSection + 1} / ${totalSections}`;
+            }
+
+            // Event listener for the "Next" button
+            nextButton.addEventListener('click', () => {
+                if (currentSection < totalSections - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+
+            // Event listener for the "Previous" button
+            prevButton.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+
+            // Initialize the first section on page load
+            showSection(0);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
