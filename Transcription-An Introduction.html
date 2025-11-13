@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Transcription - Complete Guide</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a3a;
+            --darker-bg: #0f0f23;
+            --accent: #4a4a8a;
+            --light-accent: #6b6ba8;
+            --text-primary: #e6e6ff;
+            --text-secondary: #b8b8e6;
+            --highlight: #ffcc00;
+            --highlight-secondary: #ff9900;
+            --primary-dark: #0a0a1a;
+            --primary: #1a1a3a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker-bg), var(--dark-bg));
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: var(--highlight);
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content-section {
+            background: rgba(26, 26, 58, 0.8);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            color: var(--highlight);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--highlight-secondary);
+            margin: 20px 0 10px;
+        }
+        
+        h4 {
+            color: var(--highlight-secondary);
+            margin: 15px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+        
+        .diagram {
+            background: var(--darker-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid var(--accent);
+        }
+        
+        .interactive-area {
+            background: var(--darker-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--accent);
+        }
+        
+        .code-block {
+            background: #0a0a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            color: #8be9fd;
+            border-left: 3px solid var(--highlight);
+            overflow-x: auto;
+        }
+        
+        .highlight {
+            color: var(--highlight);
+            font-weight: bold;
+        }
+        
+        .dna-strand {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .nucleotide {
+            width: 30px;
+            height: 40px;
+            margin: 0 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .base-a { background-color: #ff5555; }
+        .base-t { background-color: #55aaff; }
+        .base-c { background-color: #55ff55; }
+        .base-g { background-color: #ffff55; }
+        .base-u { background-color: #ff55ff; }
+        
+        .strand-label {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .promoter-box {
+            background: rgba(255, 204, 0, 0.2);
+            border: 1px dashed var(--highlight);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        
+        .interactive-content {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            min-height: 80px;
+        }
+        
+        .info-box {
+            background: rgba(255, 204, 0, 0.1);
+            border-left: 4px solid var(--highlight);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .visualization-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .visualization {
+            flex: 1;
+            min-width: 300px;
+            background: var(--darker-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+            
+            .visualization-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DNA Transcription</h1>
+        </header>
+        
+        <!-- Central Dogma Section -->
+        <div class="content-section" id="central-dogma">
+            <h2>1. Central Dogma in Molecular Biology</h2>
+            <p>The Central Dogma of molecular biology describes the flow of genetic information within a biological system. It was first articulated by Francis Crick in 1958.</p>
+            
+            <div class="diagram">
+                <h3>DNA → RNA → Protein</h3>
+                <p>The fundamental principle of genetic information flow</p>
+            </div>
+            
+            <p>The process consists of two main stages:</p>
+            <ul>
+                <li><span class="highlight">Transcription</span>: DNA is copied to RNA by RNA polymerase</li>
+                <li><span class="highlight">Translation</span>: RNA is used to synthesize proteins by ribosomes</li>
+            </ul>
+            
+            <h3>Key Points:</h3>
+            <p>• Information flows from DNA to RNA to protein, but not in reverse</p>
+            <p>• RNA serves as an intermediary between DNA and protein</p>
+            <p>• Some exceptions exist (reverse transcription in retroviruses)</p>
+            
+            <div class="interactive-area">
+                <h3>Central Dogma Visualization</h3>
+                
+                <div class="visualization-container">
+                    <div class="visualization">
+                        <h4>DNA Structure</h4>
+                        <div class="dna-strand">
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-t">T</div>
+                            <div class="nucleotide base-g">G</div>
+                            <div class="nucleotide base-c">C</div>
+                            <div class="nucleotide base-t">T</div>
+                            <div class="nucleotide base-a">A</div>
+                        </div>
+                        <div class="strand-label">DNA Double Helix</div>
+                        <div class="interactive-content">
+                            <h4>DNA Structure Details</h4>
+                            <p>• Double-stranded helix with complementary base pairing</p>
+                            <p>• Contains genetic information in the sequence of nucleotides</p>
+                            <p>• Bases: Adenine (A), Thymine (T), Guanine (G), Cytosine (C)</p>
+                            <p>• A pairs with T, G pairs with C</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Transcription Process</h4>
+                        <div class="dna-strand">
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-t">T</div>
+                            <div class="nucleotide base-g">G</div>
+                            <div class="nucleotide base-c">C</div>
+                            <div class="nucleotide base-t">T</div>
+                            <div class="nucleotide base-a">A</div>
+                        </div>
+                        <div class="strand-label">DNA Template</div>
+                        <div style="margin: 10px 0; text-align: center;">↓ Transcription</div>
+                        <div class="dna-strand">
+                            <div class="nucleotide base-u">U</div>
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-c">C</div>
+                            <div class="nucleotide base-g">G</div>
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-u">U</div>
+                        </div>
+                        <div class="strand-label">mRNA Transcript</div>
+                        <div class="interactive-content">
+                            <h4>Transcription Process Details</h4>
+                            <p>• RNA polymerase synthesizes RNA using DNA as template</p>
+                            <p>• Only one DNA strand (template strand) is transcribed</p>
+                            <p>• RNA sequence is complementary to DNA template strand</p>
+                            <p>• Thymine (T) in DNA is replaced by Uracil (U) in RNA</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Translation Process</h4>
+                        <div class="dna-strand">
+                            <div class="nucleotide base-u">U</div>
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-c">C</div>
+                            <div class="nucleotide base-g">G</div>
+                            <div class="nucleotide base-a">A</div>
+                            <div class="nucleotide base-u">U</div>
+                        </div>
+                        <div class="strand-label">mRNA Codons</div>
+                        <div style="margin: 10px 0; text-align: center;">↓ Translation</div>
+                        <div style="padding: 15px; background: rgba(255,255,255,0.1); border-radius: 5px; text-align: center;">
+                            Met - Thr - Val (Protein)
+                        </div>
+                        <div class="strand-label">Polypeptide Chain</div>
+                        <div class="interactive-content">
+                            <h4>Translation Process Details</h4>
+                            <p>• Ribosomes read mRNA in triplets (codons)</p>
+                            <p>• Each codon specifies a particular amino acid</p>
+                            <p>• Transfer RNA (tRNA) brings amino acids to ribosome</p>
+                            <p>• Polypeptide chain grows from N-terminus to C-terminus</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Strands Section -->
+        <div class="content-section" id="strands">
+            <h2>2. Coding/Sense & Non-coding/Antisense Strands</h2>
+            <p>During transcription, only one DNA strand serves as the template for RNA synthesis.</p>
+            
+            <h3>Coding Strand (Sense Strand)</h3>
+            <ul>
+                <li>Has the same sequence as the mRNA (except T instead of U)</li>
+                <li>Also called the "non-template" strand</li>
+                <li>Contains the genetic code for protein synthesis</li>
+            </ul>
+            
+            <h3>Non-coding Strand (Antisense Strand)</h3>
+            <ul>
+                <li>Serves as the template for RNA synthesis</li>
+                <li>Complementary to both the coding strand and the mRNA</li>
+                <li>Also called the "template" strand</li>
+            </ul>
+            
+            <div class="interactive-area">
+                <h3>DNA Strand Comparison</h3>
+                <div class="dna-strand">
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-t">T</div>
+                    <div class="nucleotide base-g">G</div>
+                    <div class="nucleotide base-c">C</div>
+                    <div class="nucleotide base-t">T</div>
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-g">G</div>
+                    <div class="nucleotide base-c">C</div>
+                </div>
+                <div class="strand-label">Coding Strand (5' → 3')</div>
+                
+                <div class="dna-strand">
+                    <div class="nucleotide base-t">T</div>
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-c">C</div>
+                    <div class="nucleotide base-g">G</div>
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-t">T</div>
+                    <div class="nucleotide base-c">C</div>
+                    <div class="nucleotide base-g">G</div>
+                </div>
+                <div class="strand-label">Non-coding Strand (3' → 5')</div>
+                
+                <div class="dna-strand">
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-u">U</div>
+                    <div class="nucleotide base-g">G</div>
+                    <div class="nucleotide base-c">C</div>
+                    <div class="nucleotide base-u">U</div>
+                    <div class="nucleotide base-a">A</div>
+                    <div class="nucleotide base-g">G</div>
+                    <div class="nucleotide base-c">C</div>
+                </div>
+                <div class="strand-label">mRNA (5' → 3')</div>
+            </div>
+            
+            <p><span class="highlight">Note:</span> The mRNA sequence is identical to the coding strand, with uracil (U) replacing thymine (T).</p>
+        </div>
+        
+        <!-- Promoter Section -->
+        <div class="content-section" id="promoter">
+            <h2>3. General Features of a Promoter</h2>
+            <p>A promoter is a DNA sequence where RNA polymerase binds to initiate transcription.</p>
+            
+            <h3>General Promoter Features</h3>
+            <ul>
+                <li>Located upstream of the transcription start site</li>
+                <li>Contains specific DNA sequences recognized by RNA polymerase</li>
+                <li>Determines the exact position where transcription begins</li>
+                <li>Controls the efficiency and rate of transcription initiation</li>
+                <li>May contain binding sites for regulatory proteins</li>
+                <li>Strength of promoter affects transcription frequency</li>
+                <li>Can be constitutive (always active) or regulated (conditionally active)</li>
+            </ul>
+            
+            <div class="interactive-area">
+                <h3>Promoter Structure Visualization</h3>
+                <div style="display: flex; justify-content: center; margin: 20px 0;">
+                    <div class="promoter-box">Promoter Region</div>
+                    <div style="background: var(--highlight); color: var(--darker-bg); padding: 10px; border-radius: 5px;">+1</div>
+                    <div style="background: var(--light-accent); padding: 10px; border-radius: 5px;">Gene</div>
+                </div>
+                <div style="text-align: center; margin-bottom: 15px;">Upstream → Transcription Start Site → Downstream</div>
+                
+                <div class="visualization-container">
+                    <div class="visualization">
+                        <h4>Promoter Location</h4>
+                        <div class="interactive-content">
+                            <p>• Typically located immediately upstream of the transcription start site</p>
+                            <p>• In bacteria, key elements are often at -10 and -35 positions</p>
+                            <p>• In eukaryotes, promoter elements can be more variable in location</p>
+                            <p>• Some promoters contain downstream elements as well</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Promoter Function</h4>
+                        <div class="interactive-content">
+                            <p>• Determines where transcription begins</p>
+                            <p>• Controls the efficiency of transcription initiation</p>
+                            <p>• Provides binding site for RNA polymerase</p>
+                            <p>• Can be influenced by regulatory proteins</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Polymerase Recognition</h4>
+                        <div class="interactive-content">
+                            <p>• RNA polymerase recognizes specific sequences in the promoter</p>
+                            <p>• Sigma factors in bacteria help polymerase recognize promoters</p>
+                            <p>• Transcription factors assist polymerase binding in eukaryotes</p>
+                            <p>• Promoter strength affects binding efficiency</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sequences Section -->
+        <div class="content-section" id="sequences">
+            <h2>4. Upstream and Downstream Sequences and Their Annotation</h2>
+            <p>DNA sequences are annotated relative to the transcription start site (+1).</p>
+            
+            <h3>Upstream Sequences</h3>
+            <ul>
+                <li>Located before the transcription start site (negative numbers)</li>
+                <li>Contain regulatory elements like promoters and enhancers</li>
+                <li>Example: -10 element (Pribnow box in bacteria), -35 element</li>
+                <li>Binding sites for transcription factors and regulatory proteins</li>
+            </ul>
+            
+            <h3>Downstream Sequences</h3>
+            <ul>
+                <li>Located after the transcription start site (positive numbers)</li>
+                <li>Include the transcribed region and termination signals</li>
+                <li>Example: +1 to +... (gene coding region)</li>
+                <li>May contain regulatory elements that affect transcription elongation</li>
+            </ul>
+            
+            <div class="code-block">
+                // DNA Sequence Annotation Example<br>
+                -35 region: TTGACA (in bacteria)<br>
+                -10 region: TATAAT (in bacteria)<br>
+                +1: Transcription Start Site<br>
+                +1 to +...: Coding Sequence<br>
+                Termination: GC-rich region or hairpin structure
+            </div>
+            
+            <div class="interactive-area">
+                <h3>Sequence Annotation Visualization</h3>
+                <div style="display: flex; justify-content: space-between; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <div style="background: var(--accent); padding: 10px; border-radius: 5px;">Upstream</div>
+                        <div style="margin-top: 5px;">-100 to -1</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="background: var(--highlight); color: var(--darker-bg); padding: 10px; border-radius: 5px;">+1</div>
+                        <div style="margin-top: 5px;">Start Site</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="background: var(--light-accent); padding: 10px; border-radius: 5px;">Downstream</div>
+                        <div style="margin-top: 5px;">+2 to +...</div>
+                    </div>
+                </div>
+                
+                <h4>Sequence Examples at Different Positions</h4>
+                <div class="visualization-container">
+                    <div class="visualization">
+                        <h5>Upstream Region (-35 to -1)</h5>
+                        <div style="font-family: monospace; text-align: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+                            ...TGACGTCTAGCATGC...<br>
+                            ...ACTGCAGATCGTACG...
+                        </div>
+                        <p>Contains promoter elements like -10 and -35 boxes</p>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h5>Transcription Start Site (+1)</h5>
+                        <div style="font-family: monospace; text-align: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+                            ...TATAAT<span style="background: var(--highlight); color: var(--darker-bg);">A</span>GCTAGCAT...<br>
+                            ...ATATTA<span style="background: var(--highlight); color: var(--darker-bg);">T</span>CGATCGTAG...
+                        </div>
+                        <p>The +1 position marks where transcription begins</p>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h5>Downstream Region (+2 to +n)</h5>
+                        <div style="font-family: monospace; text-align: center; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+                            ...TATAATA<span style="background: var(--light-accent);">GCTAGC</span>AT...<br>
+                            ...ATATTAT<span style="background: var(--light-accent);">CGATCG</span>TAG...
+                        </div>
+                        <p>Contains the coding sequence of the gene</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transcription Bubble Section -->
+        <div class="content-section" id="bubble">
+            <h2>5. Transcription Bubble</h2>
+            <p>The transcription bubble is a localized region of DNA unwinding where RNA synthesis occurs.</p>
+            
+            <h3>Structure and Function</h3>
+            <ul>
+                <li>Approximately 14-17 base pairs of DNA are unwound</li>
+                <li>RNA polymerase moves along the template strand</li>
+                <li>RNA-DNA hybrid forms within the bubble (8-9 bp)</li>
+                <li>DNA rewinds behind the moving polymerase</li>
+                <li>Maintains a consistent size during elongation</li>
+                <li>Creates positive supercoiling ahead and negative supercoiling behind</li>
+            </ul>
+            
+            <div class="interactive-area">
+                <h3>Transcription Bubble Dynamics</h3>
+                <p>The bubble moves with RNA polymerase during elongation. The size remains relatively constant as DNA unwinds ahead and rewinds behind the polymerase.</p>
+                
+                <p>Key components of the transcription bubble:</p>
+                <ul>
+                    <li>Unwound DNA region</li>
+                    <li>RNA-DNA hybrid</li>
+                    <li>Growing RNA transcript</li>
+                    <li>RNA polymerase enzyme</li>
+                    <li>Template and non-template DNA strands</li>
+                </ul>
+                
+                <div class="visualization-container">
+                    <div class="visualization">
+                        <h4>Closed Complex</h4>
+                        <div class="interactive-content">
+                            <p>• RNA polymerase binds to promoter but DNA remains double-stranded</p>
+                            <p>• Initial recognition step before bubble formation</p>
+                            <p>• DNA is not yet unwound</p>
+                            <p>• Reversible binding state</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Open Complex (Transcription Bubble)</h4>
+                        <div class="interactive-content">
+                            <p>• DNA strands separate forming the transcription bubble</p>
+                            <p>• Approximately 14-17 base pairs are unwound</p>
+                            <p>• Template strand accessible for RNA synthesis</p>
+                            <p>• Irreversible commitment to transcription initiation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Elongation Complex</h4>
+                        <div class="interactive-content">
+                            <p>• RNA polymerase moves along DNA template</p>
+                            <p>• Transcription bubble moves with polymerase</p>
+                            <p>• RNA-DNA hybrid maintained within bubble</p>
+                            <p>• DNA rewinds behind the polymerase</p>
+                            <p>• RNA transcript elongates progressively</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Components Section -->
+        <div class="content-section" id="components">
+            <h2>6. Components on DNA Required for Transcription: Transcription Unit</h2>
+            <p>A transcription unit is a DNA sequence that is transcribed into a single RNA molecule.</p>
+            
+            <h3>Essential Components</h3>
+            <ul>
+                <li><span class="highlight">Promoter</span>: RNA polymerase binding site</li>
+                <li><span class="highlight">Transcription Start Site</span>: Where transcription begins (+1)</li>
+                <li><span class="highlight">Coding Sequence</span>: DNA segment that is transcribed</li>
+                <li><span class="highlight">Terminator</span>: Sequence that signals transcription end</li>
+            </ul>
+            
+            <div class="code-block">
+                Transcription Unit Structure:<br>
+                [Promoter] - [Transcription Start Site] - [RNA Coding Region] - [Terminator]
+            </div>
+            
+            <h3>Transcription Machinery</h3>
+            <ul>
+                <li><span class="highlight">RNA Polymerase</span>: Enzyme that catalyzes RNA synthesis</li>
+                <li><span class="highlight">Transcription Factors</span>: Proteins that regulate transcription</li>
+                <li><span class="highlight">NTPs</span>: Ribonucleotide triphosphates (ATP, GTP, CTP, UTP)</li>
+                <li><span class="highlight">Mg²⁺ ions</span>: Cofactors required for catalytic activity</li>
+                <li><span class="highlight">DNA Template</span>: Provides the sequence information</li>
+            </ul>
+            
+            <div class="interactive-area">
+                <h3>Transcription Unit Interactive Diagram</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; flex-wrap: wrap;">
+                    <div style="text-align: center; flex: 1; min-width: 120px; margin: 5px;">
+                        <div style="background: var(--accent); padding: 10px; border-radius: 5px;">Promoter</div>
+                        <div style="margin-top: 5px;">-35 to -10</div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 120px; margin: 5px;">
+                        <div style="background: var(--highlight); color: var(--darker-bg); padding: 10px; border-radius: 5px;">+1</div>
+                        <div style="margin-top: 5px;">Start Site</div>
+                    </div>
+                    <div style="text-align: center; flex: 2; min-width: 120px; margin: 5px;">
+                        <div style="background: var(--light-accent); padding: 10px; border-radius: 5px;">Coding Region</div>
+                        <div style="margin-top: 5px;">+2 to +n</div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 120px; margin: 5px;">
+                        <div style="background: #ff5555; padding: 10px; border-radius: 5px;">Terminator</div>
+                        <div style="margin-top: 5px;">End Signal</div>
+                    </div>
+                </div>
+                
+                <div class="visualization-container">
+                    <div class="visualization">
+                        <h4>Promoter</h4>
+                        <div class="interactive-content">
+                            <p>• DNA sequence where RNA polymerase binds to initiate transcription</p>
+                            <p>• Contains specific elements recognized by transcription machinery</p>
+                            <p>• Determines transcription start site and efficiency</p>
+                            <p>• Can be regulated by transcription factors and epigenetic modifications</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>RNA Polymerase</h4>
+                        <div class="interactive-content">
+                            <p>• Enzyme that synthesizes RNA from DNA template</p>
+                            <p>• In bacteria: single RNA polymerase for all transcription</p>
+                            <p>• In eukaryotes: RNA polymerase I, II, and III with different functions</p>
+                            <p>• RNA polymerase II transcribes mRNA</p>
+                            <p>• Requires Mg²⁺ ions as cofactors</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Transcription Factors</h4>
+                        <div class="interactive-content">
+                            <p>• Proteins that regulate transcription by binding to DNA</p>
+                            <p>• General transcription factors required for all transcription</p>
+                            <p>• Specific transcription factors regulate particular genes</p>
+                            <p>• Can be activators or repressors</p>
+                            <p>• May respond to cellular signals or environmental cues</p>
+                        </div>
+                    </div>
+                    
+                    <div class="visualization">
+                        <h4>Terminator</h4>
+                        <div class="interactive-content">
+                            <p>• DNA sequence that signals the end of transcription</p>
+                            <p>• In bacteria: often a GC-rich region followed by poly-U</p>
+                            <p>• In eukaryotes: cleavage and polyadenylation signals</p>
+                            <p>• Causes RNA polymerase to dissociate from DNA</p>
+                            <p>• Ensures proper transcript length and processing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+                 alt="BETA Biosciences Logo" class="footer-logo">
+            <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+            <p class="footer-text">Email: betabiosciences@gmail.com</p>
+            <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
