@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prokaryotic Transcription Initiation</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Set base font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for a more thematic feel (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f1f3a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a4a7c;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6a6afc;
+        }
+
+        /* Simple fade-in animation for section transitions */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section {
+            /* All sections are hidden by default */
+            display: none;
+        }
+        
+        /* The active section will have 'display: block' added by JS */
+        .section-active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#1a1a2e] to-[#1f1f3a] min-h-screen text-gray-100 flex items-center justify-center p-4">
+
+    <!-- Main content card -->
+    <main class="w-full max-w-2xl bg-gray-900 bg-opacity-70 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-indigo-900">
+        
+        <!-- Header -->
+        <header class="p-6 border-b border-indigo-800">
+            <h1 class="text-2xl sm:text-3xl font-bold text-center text-cyan-300">
+                Initiation of Prokaryotic Transcription
+            </h1>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-6 sm:p-8">
+            
+            <!-- Section 1: Overview -->
+            <section class="content-section" data-section="0">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">The Stages of Initiation</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                    <p>Transcription initiation is the process where the RNA polymerase (RNAP) holoenzyme binds to a specific DNA sequence called a promoter, unwinds the DNA to form a "transcription bubble," and begins synthesizing a short RNA molecule. It is the primary point of regulation for gene expression.</p>
+                    <p>This intricate process doesn't happen in one step. It involves a series of conformational changes in both the polymerase and the DNA, progressing through several distinct structural intermediates, which we will explore one by one.</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Closed Promoter Complex (RCC) -->
+            <section class="content-section" data-section="1">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">1. Closed Promoter Complex (RCC)</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p>The first step is the reversible binding of the RNAP holoenzyme (the core enzyme plus a specificity sigma factor, e.g., σ⁷⁰) to the promoter. This forms the <strong class="text-cyan-300">Closed Promoter Complex (RCC)</strong>.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>State:</strong> The promoter DNA is still fully double-stranded (hence "closed").</li>
+                        <li><strong>Mechanism:</strong> This binding is primarily driven by the sigma (σ) factor recognizing and binding to key promoter elements, such as the -35 and -10 boxes.</li>
+                        <li><strong>Nature:</strong> This initial complex is relatively unstable and reversible. The polymerase is "scanning" or "searching" for its target. The equilibrium constant (K<sub>B</sub>) is typically in the range of 10⁶ to 10⁹ M⁻¹.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 3: Intermediate Stage -->
+            <section class="content-section" data-section="2">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">2. The Intermediate Stage</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p>Between the closed and open complexes lies a short-lived, transient <strong class="text-cyan-300">Intermediate Stage</strong>. This is not a stable "stop" but rather the *process* of isomerization.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Conformational Change:</strong> This stage involves significant structural changes in both the RNAP and the DNA. The DNA, often at the AT-rich -10 region, begins to bend and "kink."</li>
+                        <li><strong>Rate-Limiting:</strong> This transition, often called isomerization, is typically the rate-limiting step of initiation. It's the "point of no return."</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 4: Open Promoter Complex (RPO) -->
+            <section class="content-section" data-section="3">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">3. Open Promoter Complex (RPO)</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p>This is the "go" signal. The <strong class="text-cyan-300">Open Promoter Complex (RPO)</strong> is a stable, long-lived complex where the DNA is locally unwound.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>State:</strong> A "transcription bubble" of ~12-14 base pairs is formed, spanning from approximately -11 to +2 or +3 relative to the transcription start site (+1).</li>
+                        <li><strong>Mechanism:</strong> This "melting" is achieved without ATP hydrolysis. The non-template strand is stabilized by the σ factor, while the template strand is threaded into the RNAP active site.</li>
+                        <li><strong>Competence:</strong> The complex is now "transcriptionally competent." The active site is properly assembled, and the template strand is ready to be read. This complex is, for all practical purposes, irreversible.</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Section 5: Scrunched Complex -->
+            <section class="content-section" data-section="4">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">4. The Scrunched Complex</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p>Once the RPO is formed, RNAP begins synthesizing the first few ribonucleotides. However, the polymerase itself remains <strong class="text-cyan-300">stationary</strong> on the promoter. This creates a stressed intermediate called the <strong class="text-cyan-300">Scrunched Complex</strong>.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Mechanism:</strong> As RNAP synthesizes the nascent RNA chain, it pulls downstream DNA *into* the complex without moving its "front" end.</li>
+                        <li><strong>Analogy:</strong> Imagine pulling a rope towards you while your feet are glued to the floor. The rope (DNA) bunches up in your arms (within the polymerase).</li>
+                        <li><strong>Stored Energy:</strong> This "scrunching" builds up considerable potential energy within the complex. This energy is crucial for the next steps.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 6: Abortive Initiation -->
+            <section class="content-section" data-section="5">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">5. Abortive Initiation</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p><strong class="text-cyan-300">Abortive Initiation</strong> is a "stuttering" process where the scrunched complex repeatedly synthesizes and then releases short RNA transcripts (typically 2-15 nucleotides) without leaving the promoter.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Common Outcome:</strong> This is the most common fate of an initial transcribing complex. Many abortive cycles can occur before one successful "escape."</li>
+                        <li><strong>Mechanism:</strong> The nascent RNA chain "collides" with a part of the σ factor (specifically region 3.2) that partially blocks the RNA exit channel.</li>
+                        <li><strong>Reset:</strong> The scrunch energy is released, the short RNA transcript dissociates, and the polymerase resets to the RPO state, ready to try again.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 7: Promoter Clearance -->
+            <section class="content-section" data-section="6">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">6. Promoter Clearance</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p><strong class="text-cyan-300">Promoter Clearance</strong> is the "checkpoint" that a transcribing complex must pass to end the abortive cycle. It's the event of successfully synthesizing an RNA transcript that is long enough to avoid being aborted.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Critical Length:</strong> This typically occurs when the nascent RNA chain reaches a length of ~10-15 nucleotides.</li>
+                        <li><strong>Mechanism:</strong> At this length, the growing RNA chain is now "strong" enough to displace the σ factor's 3.2 loop from the RNA exit channel.</li>
+                        <li><strong>Stability:</strong> This displacement creates a more stable ternary complex (DNA-RNA-Polymerase) and "clears" the path for the RNA to exit. The complex is now poised to escape.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 8: Promoter Escape -->
+            <section class="content-section" data-section="7">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">7. Promoter Escape</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p><strong class="text-cyan-300">Promoter Escape</strong> is the climax of initiation. It is the physical transition from a stationary, promoter-bound complex to a mobile, processive elongation complex.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Energy Release:</strong> The polymerase uses the stored "scrunch" energy to break its strong tethers to the promoter elements (both upstream and downstream).</li>
+                        <li><strong>Key Break:</strong> This includes breaking the strong interactions between the σ factor and the -10 and -35 boxes, as well as core enzyme contacts.</li>
+                        <li><strong>Movement:</strong> The polymerase "leaps" forward, its "front" end (downstream clamp) finally moving down the DNA. The transcription bubble moves with it.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 9: TEC Formation -->
+            <section class="content-section" data-section="8">
+                <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-emerald-300">8. The Transcription Elongation Complex (TEC)</h2>
+                <div class="space-y-4 text-sm sm:text-base leading-relaxed">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Transcription%20initiation%20stages%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <p>Once promoter escape is complete, the <strong class="text-cyan-300">Transcription Elongation Complex (TEC)</strong> is formed. This is the final, stable, and highly processive machine that will synthesize the remainder of the gene.</p>
+                    <ul class="list-disc list-inside space-y-2 pl-2">
+                        <li><strong>Sigma Dissociation:</strong> The σ factor, having served its purpose for initiation, becomes less tightly bound and typically dissociates from the core enzyme.</li>
+                        <li><strong>Core Enzyme:</strong> The core RNAP enzyme is the engine of elongation. It maintains the transcription bubble, unwinds DNA ahead, re-anneals it behind, and polymerizes the RNA chain.</li>
+                        <li><strong>High Processivity:</strong> The TEC is incredibly stable, capable of synthesizing thousands of nucleotides without falling off the DNA template, moving at speeds of 50-100 nucleotides per second.</li>
+                        <li><strong>Factor Binding:</strong> Elongation factors (like NusA and NusG) may now bind to the core enzyme to regulate its speed, pausing, and termination.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Navigation -->
+        <footer class="p-4 bg-gray-900 bg-opacity-80 border-t border-indigo-800 flex justify-between items-center">
+            <button id="prev-btn" class="bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <div id="section-counter" class="text-sm text-gray-400"></div>
+            <button id="next-btn" class="bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </footer>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const sectionCounter = document.getElementById('section-counter');
+            let currentSection = 0;
+            const totalSections = sections.length;
+
+            function showSection(index) {
+                // Hide all sections first
+                sections.forEach(section => {
+                    section.classList.remove('section-active');
+                });
+                
+                // Show the target section
+                const activeSection = document.querySelector(`.content-section[data-section="${index}"]`);
+                if (activeSection) {
+                    activeSection.classList.add('section-active');
+                }
+            }
+
+            function updateButtons() {
+                // Update counter text
+                sectionCounter.textContent = `Section ${currentSection + 1} of ${totalSections}`;
+
+                // Disable/enable Previous button
+                if (currentSection === 0) {
+                    prevBtn.disabled = true;
+                } else {
+                    prevBtn.disabled = false;
+                }
+
+                // Disable/enable Next button
+                if (currentSection === totalSections - 1) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+            }
+
+            // Next button click
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                    updateButtons();
+                }
+            });
+
+            // Previous button click
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                    updateButtons();
+                }
+            });
+
+            // Initial setup
+            showSection(currentSection);
+            updateButtons();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
