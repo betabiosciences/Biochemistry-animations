@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prokaryotic Transcription: Elongation Stage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a3a 0%, #2d1b69 100%);
+            color: #e6e6ff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(25, 25, 55, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #4a3b8c;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #a594f9;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: #b8b8ff;
+            font-size: 1rem;
+        }
+        
+        .content {
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .section {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: #c8b6ff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #4a3b8c;
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: #b8b8ff;
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .factor {
+            background-color: rgba(74, 59, 140, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #a594f9;
+        }
+        
+        .factor-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .factor-name {
+            font-weight: bold;
+            color: #c8b6ff;
+            margin-right: 10px;
+        }
+        
+        .factor-role {
+            font-style: italic;
+            color: #b8b8ff;
+            font-size: 0.9rem;
+        }
+        
+        .proofreading-type {
+            background-color: rgba(74, 59, 140, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff9e7d;
+        }
+        
+        .proofreading-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .proofreading-name {
+            font-weight: bold;
+            color: #ff9e7d;
+            margin-right: 10px;
+        }
+        
+        .proofreading-role {
+            font-style: italic;
+            color: #ffccbc;
+            font-size: 0.9rem;
+        }
+        
+        .movement-diagram {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(74, 59, 140, 0.2);
+            border-radius: 10px;
+        }
+        
+        .rna-pol {
+            display: inline-block;
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff9e7d, #ff6e40);
+            border-radius: 10px;
+            position: relative;
+            margin: 20px 0;
+            animation: stutter 3s infinite;
+        }
+        
+        .dna-strand {
+            height: 2px;
+            background-color: #b8b8ff;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .dna-base {
+            position: absolute;
+            width: 4px;
+            height: 10px;
+            background-color: #a594f9;
+            top: -4px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #4a3b8c;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #4a3b8c, #6a50c9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background: linear-gradient(135deg, #6a50c9, #8a6fdf);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background: linear-gradient(135deg, #3a2b6c, #4a3b8c);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress {
+            text-align: center;
+            margin-top: 10px;
+            color: #b8b8ff;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes stutter {
+            0%, 85%, 100% { transform: translateX(0); }
+            90% { transform: translateX(-5px); }
+            95% { transform: translateX(5px); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .rna-pol {
+                width: 100px;
+                height: 50px;
+            }
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Prokaryotic Transcription: Elongation Stage</h1>
+        </header>
+        
+        <div class="content">
+            <div class="section active" id="section1">
+                <h2>Elongation Factors</h2>
+                <p>During transcription elongation, RNA polymerase is assisted by various elongation factors that modulate its activity, enhance processivity, and facilitate proofreading.</p>
+                
+                <div class="factor">
+                    <div class="factor-title">
+                        <span class="factor-name">NusG</span>
+                        <span class="factor-role">Transcription-Translation Coupling</span>
+                    </div>
+                    <p>NusG plays a critical role in coupling transcription with translation in prokaryotes. It binds to RNA polymerase and the ribosome, ensuring that translation closely follows transcription. This coupling is essential for maintaining transcription processivity and preventing premature termination.</p>
+                </div>
+                
+                <div class="factor">
+                    <div class="factor-title">
+                        <span class="factor-name">NusA</span>
+                        <span class="factor-role">Transcription Pausing and Termination</span>
+                    </div>
+                    <p>NusA modulates transcription pausing and termination. It binds to RNA polymerase and enhances its ability to recognize pause and termination signals. NusA also participates in antitermination complexes that allow RNA polymerase to read through certain termination signals.</p>
+                </div>
+                
+                <div class="factor">
+                    <div class="factor-title">
+                        <span class="factor-name">NusE</span>
+                        <span class="factor-role">Ribosomal Protein S10</span>
+                    </div>
+                    <p>NusE is actually the ribosomal protein S10, which participates in transcription antitermination complexes. It helps form the "Nus" complex that prevents premature termination at specific sites, particularly in rRNA operons.</p>
+                </div>
+                
+                <div class="factor">
+                    <div class="factor-title">
+                        <span class="factor-name">GreA</span>
+                        <span class="factor-role">Transcript Cleavage Factor</span>
+                    </div>
+                    <p>GreA is involved in transcript cleavage during elongation. It assists RNA polymerase in backtracking and cleaving the nascent RNA when the polymerase encounters obstacles, facilitating transcription restart.</p>
+                </div>
+                
+                <div class="factor">
+                    <div class="factor-title">
+                        <span class="factor-name">GreB</span>
+                        <span class="factor-role">Transcript Cleavage and Proofreading</span>
+                    </div>
+                    <p>GreB stimulates the endonucleolytic cleavage activity of RNA polymerase. It helps resolve backtracked transcription complexes by promoting cleavage of the 3' end of the nascent RNA, which is crucial for proofreading and recovery from transcriptional arrest.</p>
+                </div>
+            </div>
+            
+            <div class="section" id="section2">
+                <h2>Proofreading by RNA Polymerase</h2>
+                <p>RNA polymerase employs multiple proofreading mechanisms to ensure transcription fidelity despite lacking the intrinsic 3'→5' exonuclease activity of DNA polymerases.</p>
+                
+                <div class="proofreading-type">
+                    <div class="proofreading-title">
+                        <span class="proofreading-name">Kinetic Proofreading (Pyrophosphorolytic Editing)</span>
+                    </div>
+                    <p>This proofreading mechanism relies on the difference in kinetics between correct and incorrect nucleotide incorporation. When an incorrect nucleotide is incorporated, the elongation complex becomes less stable and tends to slide backward.</p>
+                    <p>Pyrophosphorolytic editing involves the reverse reaction of nucleotide addition. RNA polymerase can use pyrophosphate (PPi) to remove incorrectly incorporated nucleotides through the reverse of the polymerization reaction: RNA(n) + NTP ⇌ RNA(n+1) + PPi.</p>
+                    <p>This mechanism is particularly effective when the concentration of PPi is relatively high, favoring the reverse reaction and excision of misincorporated nucleotides.</p>
+                </div>
+                
+                <div class="proofreading-type">
+                    <div class="proofreading-title">
+                        <span class="proofreading-name">Nucleolytic Proofreading (Hydrolytic Editing)</span>
+                    </div>
+                    <p>Hydrolytic editing involves the direct cleavage of the RNA transcript. When RNA polymerase incorporates an incorrect nucleotide, it may backtrack, displacing the 3' end of the RNA from the active site.</p>
+                    <p>In this backtracked state, the polymerase can cleave the RNA transcript, removing the misincorporated nucleotide and several adjacent nucleotides. This cleavage reaction is stimulated by transcription factors like GreA and GreB.</p>
+                    <p>After cleavage, RNA polymerase can resume transcription from the newly generated 3' end, having effectively corrected the error. This mechanism is particularly important for recovering from prolonged transcriptional pauses.</p>
+                </div>
+            </div>
+            
+            <div class="section" id="section3">
+                <h2>RNA Polymerase Movement During Elongation</h2>
+                <p>RNA polymerase does not move smoothly along the DNA template during elongation. Instead, it exhibits a "stuttering" movement characterized by periods of rapid elongation interspersed with pauses and backtracking.</p>
+                
+                <div class="movement-diagram">
+                    <div class="dna-strand">
+                        <div class="dna-base" style="left: 10%;"></div>
+                        <div class="dna-base" style="left: 20%;"></div>
+                        <div class="dna-base" style="left: 30%;"></div>
+                        <div class="dna-base" style="left: 40%;"></div>
+                        <div class="dna-base" style="left: 50%;"></div>
+                        <div class="dna-base" style="left: 60%;"></div>
+                        <div class="dna-base" style="left: 70%;"></div>
+                        <div class="dna-base" style="left: 80%;"></div>
+                        <div class="dna-base" style="left: 90%;"></div>
+                    </div>
+                    <div class="rna-pol">RNA Pol</div>
+                    <p>RNA polymerase movement with characteristic stuttering</p>
+                </div>
+                
+                <h3>Stuttering Mechanism</h3>
+                <p>The stuttering movement of RNA polymerase serves several important functions:</p>
+                
+                <p><strong>Pausing:</strong> RNA polymerase frequently pauses during elongation. These pauses can be:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Elementary pauses (lasting milliseconds)</li>
+                    <li>Backtracked pauses (lasting seconds to minutes)</li>
+                    <li>Regulatory pauses (at specific DNA sequences)</li>
+                </ul>
+                
+                <p><strong>Backtracking:</strong> During backtracking, RNA polymerase moves backward along the DNA template while maintaining its contact with the transcript. This displaces the 3' end of the RNA from the active site, temporarily halting elongation.</p>
+                
+                <p><strong>Functional Significance:</strong> Stuttering allows for:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Proofreading and error correction</li>
+                    <li>Coordination with other cellular processes</li>
+                    <li>Regulation of gene expression through pausing</li>
+                    <li>Facilitation of transcription-coupled repair</li>
+                </ul>
+                
+                <p>The stuttering behavior is influenced by DNA sequence, transcription factors, and the cellular environment, making it a regulated aspect of transcription elongation rather than a simple byproduct of the mechanism.</p>
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        
+        <div class="progress">
+            <span id="currentSection">1</span> of <span id="totalSections">3</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const currentSectionSpan = document.getElementById('currentSection');
+            const totalSectionsSpan = document.getElementById('totalSections');
+            
+            let currentSectionIndex = 0;
+            totalSectionsSpan.textContent = sections.length;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSectionIndex === 0;
+                nextBtn.disabled = currentSectionIndex === sections.length - 1;
+                
+                // Update progress indicator
+                currentSectionSpan.textContent = currentSectionIndex + 1;
+                
+                // Update button text for the last section
+                if (currentSectionIndex === sections.length - 1) {
+                    nextBtn.textContent = 'Restart';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the current section
+                sections[index].classList.add('active');
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSectionIndex < sections.length - 1) {
+                    currentSectionIndex++;
+                    showSection(currentSectionIndex);
+                } else {
+                    // Restart from the beginning
+                    currentSectionIndex = 0;
+                    showSection(currentSectionIndex);
+                }
+            });
+            
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSectionIndex > 0) {
+                    currentSectionIndex--;
+                    showSection(currentSectionIndex);
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
