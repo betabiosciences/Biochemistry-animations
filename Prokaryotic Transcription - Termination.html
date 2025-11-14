@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prokaryotic Transcription Termination</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Apply Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Hide all sections by default */
+        .transcription-section {
+            display: none;
+        }
+        
+        /* Show the first section by default */
+        #section-1 {
+            display: block;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-indigo-900 to-violet-950 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <main class="w-full max-w-md sm:max-w-lg md:max-w-xl bg-gray-800/60 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-6 sm:p-8">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-cyan-300">
+                Prokaryotic Transcription Termination
+            </h1>
+
+            <!-- Section 1: Overall Features -->
+            <section id="section-1" class="transcription-section">
+                <h2 class="text-2xl font-semibold mb-4 text-fuchsia-300">1. Overall Features</h2>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    Termination is the final, highly regulated stage of transcription. It ensures that the RNA polymerase (RNAP) stops synthesis at the correct position, releasing both the newly made RNA transcript and the DNA template.
+                </p>
+                <ul class="list-disc list-inside ml-4 mb-4 space-y-2 text-gray-300">
+                    <li>
+                        <strong class="font-semibold text-cyan-300">Signaling:</strong> Termination is triggered by specific sequences on the DNA template, known as terminators.
+                    </li>
+                    <li>
+                        <strong class="font-semibold text-cyan-300">Dissociation:</strong> The process involves the dissociation of the entire transcription elongation complex (RNAP, DNA, and RNA).
+                    </li>
+                    <li>
+                        <strong class="font-semibold text-cyan-300">Fidelity:</strong> Prevents "read-through" into downstream genes, which is crucial for correct gene expression and conserving cellular energy.
+                    </li>
+                    <li>
+                        <strong class="font-semibold text-cyan-300">Two Major Pathways:</strong> Prokaryotes utilize two primary strategies for termination, defined by their protein requirements.
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Section 2: Intrinsic (Rho-independent) Termination -->
+            <section id="section-2" class="transcription-section">
+                <h2 class="text-2xl font-semibold mb-4 text-fuchsia-300">2. Intrinsic Termination</h2>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    Also called Rho-independent, this mechanism relies *only* on the inherent sequence and structure of the RNA transcript itself. No external protein factors are required.
+                </p>
+                <p class="text-gray-300 mb-4">It is defined by two key sequence features:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Intrinsic%20terminator.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ul class="list-disc list-inside ml-4 mb-4 space-y-2 text-gray-300">
+                    <li>
+                        <strong class="font-semibold text-cyan-300">GC-Rich Inverted Repeat:</strong> A palindromic sequence that, when transcribed, allows the RNA to fold back on itself, forming a stable <strong class="text-white">stem-loop (hairpin)</strong> structure.
+                    </li>
+                    <li>
+                        <strong class="font-semibold text-cyan-300">U-Rich Tract:</strong> Immediately follows the hairpin sequence. This is transcribed from an A-rich region on the DNA template strand.
+                    </li>
+                </ul>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    <strong class="font-semibold text-fuchsia-300">Mechanism:</strong>
+                    The formation of the hairpin structure causes the RNAP to pause. This hairpin is thought to cause an allosteric change or a "jolt" to the RNAP complex, destabilizing it.
+                    During this pause, the RNAP is held to the template only by the <strong class="text-white">RNA-DNA hybrid</strong> in the transcription bubble. The U-rich tract of the RNA pairs with the A-rich tract of the DNA, forming a series of A-U base pairs. This is the weakest possible base pairing (only 2 hydrogen bonds), resulting in an extremely unstable hybrid.
+                    The combination of the hairpin-induced pause and the weak A-U hybrid is sufficient to "melt" the complex, causing the RNA transcript to be released and the RNAP to dissociate from the DNA.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Intrinsic%20termination%20mechanism.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </section>
+
+            <!-- Section 3: Extrinsic (Rho-dependent) Termination -->
+            <section id="section-3" class="transcription-section">
+                <h2 class="text-2xl font-semibold mb-4 text-fuchsia-300">3. Extrinsic Termination</h2>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    Also called Rho-dependent, this mechanism requires an external protein factor called <strong class="text-white">Rho (ρ)</strong>.
+                </p>
+                <p class="text-gray-300 mb-4">Key components:</p>
+                <ul class="list-disc list-inside ml-4 mb-4 space-y-2 text-gray-300">
+                    <li>
+                        <strong class="font-semibold text-cyan-300">Rho (ρ) Factor:</strong> A hexameric (6-subunit) protein that functions as an ATP-dependent RNA helicase and translocase.
+                    </li>
+                    <li>
+                        <strong class="font-semibold text-cyan-300">`rut` Site (Rho Utilization):</strong> A C-rich, G-poor, and largely unstructured sequence on the newly synthesized RNA transcript. It serves as the loading pad for the Rho factor.
+                    </li>
+                </ul>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    <strong class="font-semibold text-fuchsia-300">Mechanism:</strong>
+                    The Rho hexamer assembles onto the `rut` site of the nascent RNA. Using the energy from ATP hydrolysis, Rho acts as a <strong class="text-white">translocase</strong>, moving along the RNA transcript in the 5' to 3' direction, "chasing" the RNAP.
+                </p>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    RNAP eventually pauses at a downstream "Rho-dependent pause site." This pause allows Rho to catch up. Upon reaching the RNAP, Rho's <strong class="text-white">helicase</strong> activity is activated, and it actively unwinds the RNA-DNA hybrid within the transcription bubble.
+                </p>
+                <p class="text-base sm:text-lg leading-relaxed mb-4 text-gray-200">
+                    This "pulls" the RNA transcript out of the RNAP active site, leading to the dissociation of the entire complex. 
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Rho%20dependent%20termination.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Navigation -->
+        <div class="bg-gray-900/50 p-4 sm:p-6 flex justify-between">
+            <button id="prevBtn" class="px-6 py-3 rounded-lg font-semibold text-white bg-violet-600 hover:bg-violet-500 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <button id="nextBtn" class="px-6 py-3 rounded-lg font-semibold text-white bg-cyan-600 hover:bg-cyan-500 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentSection = 1;
+            const totalSections = 3;
+            
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const sections = document.querySelectorAll('.transcription-section');
+            const mainContent = document.querySelector('main');
+
+            function showSection(sectionNumber) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.style.display = 'none';
+                });
+
+                // Show the target section
+                const targetSection = document.getElementById(`section-${sectionNumber}`);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+                
+                currentSection = sectionNumber;
+                updateNavButtons();
+                
+                // Scroll to the top of the content area on section change
+                mainContent.scrollTop = 0;
+            }
+
+            function updateNavButtons() {
+                // Previous button
+                if (currentSection === 1) {
+                    prevBtn.disabled = true;
+                } else {
+                    prevBtn.disabled = false;
+                }
+
+                // Next button
+                if (currentSection === totalSections) {
+                    nextBtn.disabled = true;
+                } else {
+                    nextBtn.disabled = false;
+                }
+            }
+
+            // Event Listeners
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < totalSections) {
+                    showSection(currentSection + 1);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 1) {
+                    showSection(currentSection - 1);
+                }
+            });
+
+            // Initial setup
+            showSection(1);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
