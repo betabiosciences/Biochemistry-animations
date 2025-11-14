@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Processing in Prokaryotes</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --highlight: #0f3460;
+            --text-light: #e6e6e6;
+            --text-accent: #a3c4f3;
+            --button-bg: #2d4263;
+            --button-hover: #3d5a80;
+            --border-color: #3a506b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(22, 33, 62, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        header {
+            background-color: var(--highlight);
+            padding: 25px;
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        h1 {
+            color: var(--text-accent);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content-area {
+            padding: 25px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--text-accent);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--text-accent);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 25px;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(15, 52, 96, 0.3);
+        }
+        
+        button {
+            background-color: var(--button-bg);
+            color: var(--text-light);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:disabled {
+            background-color: #1a2d42;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--text-accent);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Processing of RNA in Prokaryotes</h1>
+        </header>
+        
+        <div class="content-area">
+            <div class="section active" id="section1">
+                <h2>1. Factors Affecting Stability of Prokaryotic mRNA</h2>
+                <p>Prokaryotic mRNA has a relatively short lifespan compared to eukaryotic mRNA, typically ranging from seconds to a few minutes. This rapid turnover allows prokaryotes to quickly adapt their gene expression in response to environmental changes.</p>
+                
+                <h3>Primary Factors Influencing mRNA Stability:</h3>
+                <ul>
+                    <li><strong>Secondary Structures:</strong> Stable stem-loop structures at the 5' and 3' ends can protect mRNA from exonucleases.</li>
+                    <li><strong>Ribosome Binding:</strong> Actively translated mRNA is generally more stable due to protection by ribosomes.</li>
+                    <li><strong>RNase Activity:</strong> The presence and activity of specific endo- and exoribonucleases directly impact degradation rates.</li>
+                    <li><strong>Polyadenylation:</strong> Unlike eukaryotes, poly(A) tails in prokaryotes often target mRNA for degradation rather than stabilization.</li>
+                    <li><strong>Global Cellular State:</strong> Growth phase, nutritional status, and stress conditions affect overall mRNA stability.</li>
+                </ul>
+                
+            </div>
+            
+            <div class="section" id="section2">
+                <h2>2. mRNA Degradation by mRNA Degradasome</h2>
+                <p>The mRNA degradasome is a multi-enzyme complex responsible for the coordinated degradation of mRNA in prokaryotes. This complex ensures efficient and regulated breakdown of mRNA molecules.</p>
+                
+                <h3>Core Components of the Degradasome:</h3>
+                <ul>
+                    <li><strong>RNase E:</strong> An endoribonuclease that serves as the scaffold of the complex and initiates degradation by cleaving internal sites.</li>
+                    <li><strong>PNPase:</strong> Polynucleotide phosphorylase, a 3'→5' exoribonuclease that processively degrades RNA fragments.</li>
+                    <li><strong>RhIB RNA Helicase:</strong> Unwinds secondary structures in RNA to facilitate degradation.</li>
+                    <li><strong>Enolase:</strong> A glycolytic enzyme that may link RNA degradation to cellular metabolism.</li>
+                </ul>
+                
+                <h3>Degradation Mechanism:</h3>
+                <p>The process begins with endonucleolytic cleavage by RNase E at specific sites, often in single-stranded regions. The resulting fragments are then processively degraded by PNPase in the 3'→5' direction. RhIB helicase unwinds any stable secondary structures that might impede degradation. The entire process is highly coordinated and energy-efficient.</p>
+                
+                <h3>Poly(A) Tail Addition in Prokaryotes:</h3>
+                <p>In prokaryotes, poly(A) tails are added to RNA by poly(A) polymerase I (PAP I). Unlike in eukaryotes where poly(A) tails generally stabilize mRNA, in prokaryotes they often serve as signals for degradation. The addition of a poly(A) tail to the 3' end of RNA fragments makes them better substrates for 3'→5' exonucleolytic degradation by PNPase and RNase II.</p>
+                
+                <h3>Regulation of Degradasome Activity:</h3>
+                <p>Degradasome assembly and activity are regulated by various factors including metabolic signals, small molecules, and protein modifications. This ensures mRNA degradation rates are appropriately matched to cellular needs.</p>
+            </div>
+            
+            <div class="section" id="section3">
+                <h2>3. Synthesis of rRNA: rrn Operons</h2>
+                <p>Ribosomal RNA (rRNA) constitutes the majority of cellular RNA and is essential for protein synthesis. In prokaryotes, rRNA genes are organized in operons called rrn operons.</p>
+                
+                <h3>Structure of rrn Operons:</h3>
+                <ul>
+                    <li><strong>Multiple Copies:</strong> E. coli has seven rrn operons (rrnA, B, C, D, E, G, H) to meet the high demand for ribosomes.</li>
+                    <li><strong>Gene Order:</strong> Typically arranged as 16S - tRNA - 23S - 5S, though variations exist between operons.</li>
+                    <li><strong>Promoter Elements:</strong> Contain strong promoters with multiple transcription start sites to ensure high-level expression.</li>
+                    <li><strong>Spacer Regions:</strong> Contain tRNA genes and antitermination sequences that prevent premature transcription termination.</li>
+                </ul>
+                
+            </div>
+            
+            <div class="section" id="section4">
+                <h2>4. Processing of pre-rRNA</h2>
+                <p>The primary rRNA transcript (pre-rRNA) undergoes several processing steps to generate mature rRNA species. Unlike eukaryotes, prokaryotic rRNA processing occurs concurrently with transcription.</p>
+                
+                <h3>Key Processing Steps:</h3>
+                <ul>
+                    <li><strong>Endonucleolytic Cleavages:</strong> RNase III cleaves double-stranded regions in the primary transcript, separating the individual rRNA species.</li>
+                    <li><strong>Maturation of Termini:</strong> Multiple RNases (including RNase E, RNase G, and RNase T) trim the ends to generate mature 5' and 3' termini.</li>
+                    <li><strong>tRNA Processing:</strong> When present in spacer regions, tRNAs are excised by RNase P and RNase Z.</li>
+                    <li><strong>Base Modifications:</strong> Specific nucleotides are methylated or pseudouridylated to enhance ribosomal function.</li>
+                </ul>
+                
+                <h3>Processing Enzymes:</h3>
+                <p>The maturation of rRNA involves a coordinated action of multiple ribonucleases:</p>
+                <ul>
+                    <li><strong>RNase III:</strong> Makes the initial cleavages in double-stranded regions.</li>
+                    <li><strong>RNase E:</strong> Processes the 5' end of 5S rRNA and participates in maturation of other rRNAs.</li>
+                    <li><strong>RNase G:</strong> Involved in 16S rRNA maturation.</li>
+                    <li><strong>RNase T:</strong> Trims the 3' ends of 5S and 23S rRNA.</li>
+                    <li><strong>RNase P:</strong> Processes the 5' ends of tRNAs embedded in rRNA operons.</li>
+                </ul>
+            </div>
+            
+            <div class="section" id="section5">
+                <h2>5. tRNA Processing</h2>
+                <p>Transfer RNA (tRNA) molecules undergo extensive processing to become functional in protein synthesis. In prokaryotes, tRNAs may be transcribed as part of rRNA operons, in clusters with other tRNAs, or as individual units.</p>
+                
+                <h3>Primary Processing Steps:</h3>
+                <ul>
+                    <li><strong>Endonucleolytic Cleavage:</strong> tRNAs are excised from larger precursors by RNase P (5' end) and RNase Z (3' end).</li>
+                    <li><strong>CCA Addition:</strong> The sequence CCA is added to the 3' end of all tRNAs by nucleotidyltransferase.</li>
+                    <li><strong>Nucleotide Modifications:</strong> Specific bases are chemically modified to enhance tRNA function and stability.</li>
+                    <li><strong>Splicing:</strong> Although rare in prokaryotes, some tRNAs contain introns that must be removed.</li>
+                </ul>
+                
+                <h3>Key Processing Enzymes:</h3>
+                <ul>
+                    <li><strong>RNase P:</strong> A ribozyme that cleaves the 5' leader sequence of pre-tRNA.</li>
+                    <li><strong>RNase Z:</strong> An endonuclease that removes the 3' trailer sequence.</li>
+                    <li><strong>tRNA Nucleotidyltransferase:</strong> Adds the CCA sequence to the 3' end.</li>
+                    <li><strong>Various Modification Enzymes:</strong> Introduce specific base modifications like methylation, deamination, and reduction.</li>
+                </ul>
+                
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        
+        <div class="progress-indicator">
+            <div class="progress-dot active" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+            <div class="progress-dot" data-section="3"></div>
+            <div class="progress-dot" data-section="4"></div>
+            <div class="progress-dot" data-section="5"></div>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSection);
+                });
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                sections[index].classList.add('active');
+                
+                // Update current section
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            // Event listeners for progress dots
+            progressDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    showSection(index);
+                });
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
