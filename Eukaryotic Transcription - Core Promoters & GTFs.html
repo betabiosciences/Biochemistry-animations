@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic Transcription</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #16213e;
+            --accent: #6a4c93;
+            --light-text: #e2e2e2;
+            --highlight: #f8f9fa;
+            --section-bg: #0f3460;
+            --button-bg: #4a4e69;
+            --button-hover: #5a5e79;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+            color: var(--light-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: #a78bfa;
+            margin: 20px 0 10px;
+            font-size: 1.3rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .section {
+            display: none;
+            background-color: var(--section-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--button-bg);
+            color: var(--light-text);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #3a3a4a;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            background-color: var(--darker-bg);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .section-counter {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #a5a5a5;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: var(--darker-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--dark-bg);
+        }
+        
+        th {
+            background-color: var(--accent);
+            color: var(--highlight);
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .code-block {
+            background-color: var(--darker-bg);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .highlight {
+            color: #f8c471;
+            font-weight: bold;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.4rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Eukaryotic Transcription</h1>
+        </header>
+        
+        <div class="section-counter">
+            <span id="current-section">1</span> of <span id="total-sections">4</span>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <!-- Section 1: RNA Polymerases -->
+        <div class="section active" id="section1">
+            <h2>1. RNA Polymerases in Eukaryotes</h2>
+            <p>Eukaryotes possess multiple RNA polymerases, each specialized for transcribing specific classes of genes. These enzymes are large, multi-subunit complexes that share structural similarities but have distinct functions and regulatory mechanisms.</p>
+            
+            <h3>Types of RNA Polymerases</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Polymerase</th>
+                            <th>Location</th>
+                            <th>Products</th>
+                            <th>Separation in Ion Exchange Chromatography</th>
+                            <th>Sensitivity to α-Amanitin</th>
+                            <th>Sensitivity to Actinomycin D</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RNA Polymerase I</td>
+                            <td>Nucleolus</td>
+                            <td>28S rRNA,18S rRNA, 5.8S rRNA</td>
+                            <td>Elutes first</td>
+                            <td>Insensitive</td>
+                            <td>Sensitive</td>
+                        </tr>
+                        <tr>
+                            <td>RNA Polymerase II</td>
+                            <td>Nucleoplasm</td>
+                            <td>mRNA, snRNA (U1, U2, U4, U5 snRNAs),siRNA, miRNA</td>
+                            <td>Elutes second</td>
+                            <td>Highly sensitive (inhibited at low concentrations)</td>
+                            <td>Sensitive</td>
+                        </tr>
+                        <tr>
+                            <td>RNA Polymerase III</td>
+                            <td>Nucleoplasm</td>
+                            <td>tRNA, 5S rRNA, U6 snRNA</td>
+                            <td>Elutes last</td>
+                            <td>Moderately sensitive (inhibited at high concentrations)</td>
+                            <td>Sensitive</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3>Key Details:</h3>
+            <ul>
+                <li><span class="highlight">Ion Exchange Chromatography:</span> RNA polymerases can be separated based on their net charge. Pol I elutes first, followed by Pol II, and finally Pol III.</li>
+                <li><span class="highlight">α-Amanitin:</span> A toxic compound from death cap mushrooms that specifically inhibits Pol II at low concentrations and Pol III at higher concentrations.</li>
+                <li><span class="highlight">Actinomycin D:</span> An antibiotic that intercalates into DNA and inhibits transcription by all three RNA polymerases.</li>
+            </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/IEX%20RNAP.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+        </div>
+        
+        <!-- Section 2: RNA Polymerase II Structure -->
+        <div class="section" id="section2">
+            <h2>2. Detailed Structure of RNA Polymerase II</h2>
+            <p>RNA Polymerase II is the most extensively studied eukaryotic RNA polymerase due to its central role in protein-coding gene expression. It consists of 12 subunits (Rpb1-Rpb12) with a total molecular weight of approximately 550 kDa.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Yeast%20and%20bacterial%20RNAP%20comparison.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            
+            <h3>Core Subunits and Their Functions:</h3>
+            <ul>
+                <li><span class="highlight">Rpb1:</span> Largest subunit, contains the catalytic site and C-terminal domain (CTD) with multiple heptapeptide repeats (YSPTSPS). The CTD undergoes phosphorylation during transcription initiation and elongation.</li>
+                <li><span class="highlight">Rpb2:</span> Second largest subunit, forms the active center together with Rpb1.</li>
+                <li><span class="highlight">Rpb3 and Rpb11:</span> Form a heterodimer that resembles the α subunit of bacterial RNA polymerase.</li>
+                <li><span class="highlight">Rpb4 and Rpb7:</span> Form a subcomplex that can dissociate and is involved in transcription initiation and mRNA export.</li>
+                <li><span class="highlight">Rpb5, Rpb6, Rpb8, Rpb9, Rpb10, Rpb12:</span> Common subunits shared among all three RNA polymerases.</li>
+            </ul>
+            
+            <h3>Structural Features:</h3>
+            <ul>
+                <li><span class="highlight">Active Center:</span> Located at the base of a deep cleft, formed primarily by Rpb1 and Rpb2.</li>
+                <li><span class="highlight">DNA Binding Channel:</span> Accommodates approximately 25 base pairs of DNA during transcription.</li>
+                <li><span class="highlight">RNA Exit Channel:</span> A tunnel through which the nascent RNA transcript exits the polymerase.</li>
+                <li><span class="highlight">C-Terminal Domain (CTD):</span> Unique to Pol II, consists of multiple repeats (26 in yeast, 52 in humans) of the heptapeptide sequence YSPTSPS. The phosphorylation state of these repeats regulates transcription and co-transcriptional processing.</li>
+            </ul>
+        </div>
+        
+        <!-- Section 3: Core Promoter Elements -->
+        <div class="section" id="section3">
+            <h2>3. RNA Polymerase II Core Promoter Elements</h2>
+            <p>The core promoter is the minimal DNA sequence required to accurately initiate transcription. It typically spans from approximately -40 to +40 relative to the transcription start site (TSS).</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/TFs%20interacting%20with%20core%20promoters.png" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <h3>Key Core Promoter Elements:</h3>
+            <ul>
+                <li><span class="highlight">TATA Box:</span> Consensus sequence TATA(A/T)A(A/T), located ~25-35 bp upstream of TSS. Recognized by TBP (TATA-binding protein) subunit of TFIID.</li>
+                <li><span class="highlight">Inr (Initiator):</span> Encompasses the TSS with consensus sequence YYAN(T/A)YY (where Y = pyrimidine).</li>
+                <li><span class="highlight">DPE (Downstream Promoter Element):</span> Located ~28-32 bp downstream of TSS with consensus sequence (A/G)G(A/T)(C/T)(G/A/C). Often found in TATA-less promoters.</li>
+                <li><span class="highlight">DCE (Downstream Core Element):</span> Comprises three subelements (I, II, III) located downstream of TSS.</li>
+                <li><span class="highlight">MTE (Motif Ten Element):</span> Located ~18-27 bp downstream of TSS, enhances transcription.</li>
+                <li><span class="highlight">CpG Islands:</span> Regions with high frequency of CpG dinucleotides, often associated with gene promoters, especially housekeeping genes.</li>
+            </ul>
+            
+            <h3>CpG Islands and DNA Methylation:</h3>
+            <p>CpG islands are genomic regions with high GC content and a high frequency of CpG dinucleotides. They are typically 0.5-2 kb in length and are often found in promoter regions.</p>
+            
+            <ul>
+                <li><span class="highlight">Methylation:</span> DNA methyltransferases add methyl groups to cytosine bases in CpG dinucleotides, forming 5-methylcytosine.</li>
+                <li><span class="highlight">Transcriptional Regulation:</span> Methylation of CpG islands in promoter regions generally leads to gene silencing by preventing transcription factor binding and recruiting repressive chromatin modifiers.</li>
+                <li><span class="highlight">Bisulfite Sequencing:</span> A technique used to identify methylated CpG sites. Treatment with bisulfite converts unmethylated cytosines to uracils (which are read as thymines in sequencing), while methylated cytosines remain unchanged.</li>
+            </ul>
+            
+            <div class="code-block">
+                // Bisulfite Sequencing Process:<br>
+                1. Treat DNA with sodium bisulfite<br>
+                2. PCR amplification<br>
+                3. Sequencing<br>
+                4. Compare to untreated control<br>
+                5. Identify methylated cytosines (protected from conversion)
+            </div>
+            
+            <h3>Focused vs. Dispersed Promoters</h3>
+            <p>Eukaryotic promoters can be broadly classified into two categories based on their transcription start site distribution:</p>
+            
+            <ul>
+                <li><span class="highlight">Focused Promoters:</span>
+                    <ul>
+                        <li>Contain a single, well-defined transcription start site (TSS)</li>
+                        <li>Often associated with tissue-specific or developmentally regulated genes</li>
+                        <li>Typically contain strong core promoter elements like TATA boxes</li>
+                        <li>Produce precise transcripts with defined 5' ends</li>
+                        <li>Examples: β-globin gene, many viral promoters</li>
+                    </ul>
+                </li>
+                <li><span class="highlight">Dispersed Promoters:</span>
+                    <ul>
+                        <li>Contain multiple transcription start sites spread over 50-100 nucleotides</li>
+                        <li>Often associated with housekeeping genes and genes involved in basic cellular functions</li>
+                        <li>Typically lack TATA boxes but often contain CpG islands</li>
+                        <li>Produce transcripts with heterogeneous 5' ends</li>
+                        <li>Examples: Most mammalian housekeeping genes, such as those encoding metabolic enzymes</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <p>The distinction between focused and dispersed promoters reflects different regulatory strategies - focused promoters allow precise control of gene expression, while dispersed promoters provide more robust, consistent expression across different cell types and conditions.</p>
+        </div>
+        
+        <!-- Section 4: General Transcription Factors -->
+        <div class="section" id="section4">
+            <h2>4. General Transcription Factors (GTFs)</h2>
+            <p>General Transcription Factors are proteins that assemble at the core promoter to facilitate the recruitment and proper positioning of RNA Polymerase II for transcription initiation.</p>
+            
+            <h3>TFIID</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> Multisubunit complex containing TBP (TATA-binding protein) and 13-14 TBP-associated factors (TAFs).</li>
+                <li><span class="highlight">Function:</span> Recognizes and binds core promoter elements (TATA box, Inr, DPE). Serves as a platform for assembly of the pre-initiation complex.</li>
+            </ul>
+            
+            <h3>TFIIA</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> Heterotrimeric complex.</li>
+                <li><span class="highlight">Function:</span> Stabilizes TBP binding to DNA, counteracts inhibitory factors, and assists in promoter recognition.</li>
+            </ul>
+            
+            <h3>TFIIB</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> Single polypeptide.</li>
+                <li><span class="highlight">Function:</span> Bridges TFIID and Pol II, helps determine transcription start site, and recruits Pol II-TFIIF complex.</li>
+            </ul>
+            
+            <h3>TFIIF</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> Heterotetramer (RAP74, RAP30, and two smaller subunits).</li>
+                <li><span class="highlight">Function:</span> Escorts Pol II to the pre-initiation complex, stabilizes Pol II binding, and plays a role in both initiation and elongation.</li>
+            </ul>
+            
+            <h3>TFIIE</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> Heterodimer (α and β subunits).</li>
+                <li><span class="highlight">Function:</span> Recruits and regulates TFIIH, helps open the promoter DNA, and transitions from initiation to elongation.</li>
+            </ul>
+            
+            <h3>TFIIH</h3>
+            <ul>
+                <li><span class="highlight">Composition:</span> 10-subunit complex with kinase (CDK7) and helicase (XPB, XPD) activities.</li>
+                <li><span class="highlight">Function:</span> Phosphorylates Pol II CTD, unwinds DNA at promoter (helicase activity), and plays roles in both transcription and DNA repair (nucleotide excision repair).</li>
+            </ul>
+            
+            <h3>Pre-initiation Complex Assembly:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/GTFs%20assembled%20at%20core%20promoter.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ol>
+                <li>TFIID binds to core promoter elements</li>
+                <li>TFIIA and TFIIB join the complex</li>
+                <li>Pol II-TFIIF complex is recruited</li>
+                <li>TFIIE and TFIIH join to complete the pre-initiation complex</li>
+                <li>TFIIH phosphorylates Pol II CTD and unwinds DNA</li>
+                <li>Transcription initiation begins</li>
+            </ol>
+        </div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const currentSectionElement = document.getElementById('current-section');
+            const totalSectionsElement = document.getElementById('total-sections');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            totalSectionsElement.textContent = totalSections;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update progress bar
+                const progress = ((currentSection + 1) / totalSections) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update section counter
+                currentSectionElement.textContent = currentSection + 1;
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the current section
+                sections[index].classList.add('active');
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            });
+            
+            // Initialize
+            showSection(currentSection);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
