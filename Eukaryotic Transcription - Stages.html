@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic Transcription Stages</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Section transition animation */
+        .transcription-section {
+            display: none;
+            /* Animation for sections fading in */
+            animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        .transcription-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Custom scrollbar for aesthetics (optional, but nice on dark themes) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b4b; /* dark indigo */
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #4f46e5; /* lighter indigo */
+            border-radius: 20px;
+            border: 2px solid #1e1b4b;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 text-gray-100 min-h-screen w-full flex items-center justify-center p-4">
+
+    <!-- Main Content Card -->
+    <main id="content-card" class="w-full max-w-3xl bg-slate-900 bg-opacity-80 backdrop-blur-sm rounded-xl shadow-2xl overflow-hidden border border-indigo-800">
+        
+        <header class="p-6 border-b border-indigo-800">
+            <h1 class="text-2xl md:text-3xl font-bold text-center text-indigo-300">
+                Stages in Eukaryotic Transcription
+            </h1>
+        </header>
+
+        <!-- Container for all sections -->
+        <div class="p-6 md:p-8 min-h-[500px] md:min-h-[550px] flex flex-col justify-between">
+            
+            <!-- Sections Content Area -->
+            <div id="sections-container" class="relative">
+
+                <!-- Section 1: Initiation Flowchart -->
+                <section class="transcription-section active">
+                    <h2 class="text-xl md:text-2xl font-semibold text-purple-300 mb-5">Stage 1: Initiation</h2>
+                    <div class="flex flex-col space-y-2">
+                        
+                        <!-- Step 1: Closed Chromatin -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">1. Closed Chromatin (Heterochromatin)</h3>
+                            <p class="text-sm text-gray-300 mt-1">Gene is inaccessible, DNA is tightly wound around histones.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 2: Open Chromatin -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">2. Open Chromatin (Euchromatin)</h3>
+                            <p class="text-sm text-gray-300 mt-1">Activator proteins recruit chromatin remodelers (e.g., SWI/SNF) and Histone Acetyltransferases (HATs) to expose the promoter region.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+
+                        <!-- Step 3: PIC Assembly -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">3. Pre-Initiation Complex (PIC) Assembly</h3>
+                            <p class="text-sm text-gray-300 mt-1">General Transcription Factors (GTFs) assemble. TFIID (with TBP) binds the TATA box, followed by TFIIA, B, Pol II/TFIIF, E, and H.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 4: Closed Promoter Complex -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">4. Closed Promoter Complex</h3>
+                            <p class="text-sm text-gray-300 mt-1">The complete PIC is assembled on the promoter, but the DNA remains double-stranded.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 5: Open Promoter Complex -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">5. Open Promoter Complex</h3>
+                            <p class="text-sm text-gray-300 mt-1">The helicase activity of TFIIH unwinds the DNA at the transcription start site, creating the "transcription bubble."</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 6: Abortive Initiation -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">6. Abortive Initiation</h3>
+                            <p class="text-sm text-gray-300 mt-1">Pol II synthesizes and releases short RNA transcripts (2-10 nucleotides) without moving from the promoter. This "scrunching" builds energy.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 7: Promoter Clearance -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">7. Promoter Clearance / Escape</h3>
+                            <p class="text-sm text-gray-300 mt-1">Pol II breaks its tethers to the promoter. Requires TFIIH kinase activity to phosphorylate Serine 5 (Ser5) on the Pol II C-Terminal Domain (CTD).</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 8: Pausing -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">8. Promoter-Proximal Pausing</h3>
+                            <p class="text-sm text-gray-300 mt-1">Pol II stalls ~30-60 bp downstream. Mediated by DSIF and NELF (Negative Elongation Factor). Allows for 5' capping.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+                        
+                        <!-- Step 9: SEC Assembly -->
+                        <div class="bg-slate-800 p-3 rounded-lg shadow-md">
+                            <h3 class="font-semibold text-indigo-300">9. Super Elongation Complex (SEC) Assembly</h3>
+                            <p class="text-sm text-gray-300 mt-1">P-TEFb (CDK9/CycT1) is recruited. It phosphorylates NELF (causing its release) and DSIF, converting it into a positive factor. P-TEFb also phosphorylates Serine 2 (Ser2) on the CTD.</p>
+                        </div>
+                        <div class="text-center text-purple-400 text-2xl font-light">↓</div>
+
+                        <!-- Step 10: Productive Elongation -->
+                        <div class="bg-green-800 p-3 rounded-lg shadow-md border border-green-600">
+                            <h3 class="font-semibold text-green-300">10. Productive Elongation</h3>
+                            <p class="text-sm text-gray-200 mt-1">Pol II is released from pausing and begins processive synthesis of the full-length RNA.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Section 2: Elongation -->
+                <section class="transcription-section">
+                    <h2 class="text-xl md:text-2xl font-semibold text-purple-300 mb-4">Stage 2: Elongation</h2>
+                    <p class="text-gray-300 mb-6">
+                        Once released from pausing, Pol II moves processively along the DNA template. The Ser2 phosphorylation of its CTD is a hallmark of this stage, serving as a docking site for RNA processing factors.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <!-- TFIIS -->
+                        <div class="bg-slate-800 p-4 rounded-lg border border-indigo-800">
+                            <h3 class="font-semibold text-lg text-indigo-300">Elongation Factor: TFIIS</h3>
+                            <p class="text-gray-300 mt-2">
+                                TFIIS acts as a "proofreading" and rescue factor. When Pol II encounters a difficult sequence or incorporates a wrong nucleotide, it can backtrack, pushing the new RNA 3' end out of the active site.
+                            </p>
+                            <p class="text-gray-300 mt-2">
+                                TFIIS re-aligns the active site by stimulating Pol II's intrinsic ribonuclease activity, cleaving the backtracked RNA and creating a new 3' end, allowing synthesis to resume.
+                            </p>
+                        </div>
+                        
+                        <!-- FACT -->
+                        <div class="bg-slate-800 p-4 rounded-lg border border-indigo-800">
+                            <h3 class="font-semibold text-lg text-indigo-300">Elongation Factor: FACT</h3>
+                            <p class="text-gray-300 mt-2">
+                                FACT (Facilitates Chromatin Transcription) is a histone chaperone complex essential for transcription through nucleosomes.
+                            </p>
+                            <p class="text-gray-300 mt-2">
+                                As Pol II approaches a nucleosome, FACT (composed of SPT16 and SSRP1) partially disassembles it by removing one H2A/H2B dimer. This allows Pol II to pass through. Behind the polymerase, FACT reassembles the nucleosome, maintaining chromatin integrity.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Termination -->
+                <section class="transcription-section">
+                    <h2 class="text-xl md:text-2xl font-semibold text-purple-300 mb-4">Stage 3: Termination</h2>
+                    <p class="text-gray-300 mb-6">
+                        Termination of Pol II transcription is complex and tightly linked to the 3' end processing (cleavage and polyadenylation) of the new mRNA.
+                    </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Termination%20torpedo%20model.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    
+                    <div class="bg-slate-800 p-4 rounded-lg border border-indigo-800">
+                        <h3 class="font-semibold text-lg text-indigo-300">Polyadenylation-Coupled "Torpedo" Model</h3>
+                        <div class="flex flex-col space-y-3 mt-3 text-gray-300">
+                            <p>
+                                <strong class="text-purple-300">1. Signal Recognition:</strong> Pol II transcribes past the poly(A) signal (AAUAAA) and a downstream G/U-rich element. These signals are recognized on the nascent RNA by CPSF (Cleavage and Polyadenylation Specificity Factor) and CstF (Cleavage Stimulation Factor), which ride on the Pol II CTD.
+                            </p>
+                            <p>
+                                <strong class="text-purple-300">2. RNA Cleavage:</strong> The RNA is cleaved between the two signals. The "upstream" part becomes the pre-mRNA and is rapidly polyadenylated by Poly(A) Polymerase (PAP).
+                            </p>
+                            <p>
+                                <strong class="text-purple-300">3. Torpedo Recruitment:</strong> The "downstream" part of the RNA remains attached to the transcribing Pol II. Its 5' end is now uncapped and exposed.
+                            </p>
+                            <p>
+                                <strong class="text-purple-300">4. Torpedo Action:</strong> A 5'-to-3' exonuclease (Xrn2 in humans) binds to this uncapped 5' end and begins rapidly degrading the RNA, "chasing" the polymerase.
+                            </p>
+                            <p>
+                                <strong class="text-purple-300">5. Dissociation:</strong> When the Xrn2 "torpedo" catches up to Pol II, it is thought to trigger a conformational change that dislodges the polymerase from the DNA template, terminating transcription.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="mt-8 pt-6 border-t border-indigo-800 flex justify-between items-center">
+                <button id="prevBtn" class="bg-indigo-700 hover:bg-indigo-600 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2 px-5 rounded-lg shadow-md transition-all duration-200">
+                    Previous
+                </button>
+                <span id="page-indicator" class="text-sm text-gray-400">1 / 3</span>
+                <button id="nextBtn" class="bg-indigo-700 hover:bg-indigo-600 disabled:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2 px-5 rounded-lg shadow-md transition-all duration-200">
+                    Next
+                </button>
+            </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.transcription-section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageIndicator = document.getElementById('page-indicator');
+            const contentCard = document.getElementById('content-card');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach((section) => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the target section
+                if (sections[index]) {
+                    sections[index].classList.add('active');
+                }
+                
+                // Update button states
+                prevBtn.disabled = (index === 0);
+                nextBtn.disabled = (index === totalSections - 1);
+
+                // Update page indicator
+                pageIndicator.textContent = `${index + 1} / ${totalSections}`;
+            }
+
+            function showNext() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                }
+            }
+
+            function showPrev() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            }
+
+            // Button event listeners
+            nextBtn.addEventListener('click', showNext);
+            prevBtn.addEventListener('click', showPrev);
+
+            // --- Touch/Swipe Navigation ---
+            let touchstartX = 0;
+            let touchstartY = 0;
+            let touchendX = 0;
+            let touchendY = 0;
+
+            contentCard.addEventListener('touchstart', function(event) {
+                touchstartX = event.changedTouches[0].screenX;
+                touchstartY = event.changedTouches[0].screenY;
+            }, { passive: true }); // Use passive for performance
+
+            contentCard.addEventListener('touchend', function(event) {
+                touchendX = event.changedTouches[0].screenX;
+                touchendY = event.changedTouches[0].screenY;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const deltaX = touchendX - touchstartX;
+                const deltaY = touchendY - touchstartY;
+
+                // Check for horizontal swipe (and not a vertical scroll)
+                // Swipe is significant and more horizontal than vertical
+                if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX < 0) {
+                        // Swipe Left
+                        showNext();
+                    } else {
+                        // Swipe Right
+                        showPrev();
+                    }
+                }
+            }
+
+            // Initialize the first section
+            showSection(currentSection);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
