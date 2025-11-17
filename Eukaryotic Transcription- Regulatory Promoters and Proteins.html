@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic Transcription Regulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%);
+            color: #e0d4f7;
+            min-height: 100vh;
+            padding: 15px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(25, 15, 45, 0.85);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.3);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #7b3ff2;
+        }
+
+        h1 {
+            color: #a78bfa;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
+        }
+
+        .subtitle {
+            color: #c4b5fd;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #c4b5fd;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        h3 {
+            color: #ddd6fe;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: #e0d4f7;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #e0d4f7;
+        }
+
+        strong {
+            color: #f0abfc;
+        }
+
+        em {
+            color: #c4b5fd;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(167, 139, 250, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+        }
+
+        .progress {
+            text-align: center;
+            color: #c4b5fd;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: rgba(124, 58, 237, 0.15);
+            border-left: 4px solid #a855f7;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 10px 18px;
+                font-size: 0.95em;
+            }
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Eukaryotic Transcriptional Regulation</h1>
+        </header>
+
+        <!-- Section 1: Features of Regulatory Promoters -->
+        <div class="section active" id="section1">
+            <h2>1. Features of Regulatory Promoters</h2>
+            
+            <p>Regulatory promoters in eukaryotes are sophisticated DNA sequences that control gene transcription through multiple regulatory elements. Unlike prokaryotic promoters, eukaryotic regulatory promoters are modular and complex, integrating diverse signals to fine-tune gene expression.</p>
+
+            <h3>Regulatory Architecture</h3>
+            <p>Beyond the core promoter, regulatory promoters contain multiple <em>cis</em>-regulatory modules that confer responsiveness to developmental signals, environmental stimuli, and cellular conditions. These modules include promoter-proximal elements, enhancers, silencers, and insulators positioned throughout the genomic landscape.</p>
+
+            <div class="highlight-box">
+                <strong>Key Distinction:</strong> The modular nature of eukaryotic promoters allows combinatorial control, where different combinations of regulatory proteins binding to various elements produce distinct transcriptional outcomes, enabling precise spatiotemporal gene expression patterns.
+            </div>
+
+        </div>
+
+        <!-- Section 2: Enhancers -->
+        <div class="section" id="section2">
+            <h2>2. Enhancers</h2>
+            
+            <p>Enhancers are <em>cis</em>-regulatory DNA sequences that dramatically increase transcription rates of target genes from distances up to one million base pairs away, functioning independently of their orientation relative to the promoter. They represent the primary mechanism for achieving tissue-specific and developmentally regulated gene expression in eukaryotes.</p>
+
+            <h3>Structural Organization</h3>
+            <p>Enhancers are typically 50-1500 bp in length and contain multiple <strong>transcription factor binding sites (TFBS)</strong> clustered together. This modular organization creates a regulatory platform where multiple transcription factors cooperatively bind to orchestrate transcriptional activation. Individual TFBS are often 6-12 bp sequences with degenerate consensus motifs that accommodate binding by protein families sharing DNA-binding domain homology.</p>
+
+            <h3>Mechanistic Principles</h3>
+            
+            <ul>
+                <li><strong>DNA looping:</strong> Enhancers physically interact with promoters through three-dimensional chromatin looping, mediated by protein-protein interactions between enhancer-bound activators and promoter-bound factors. The cohesin complex and mediator complex stabilize these loops.</li>
+            </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Enhancer%20PE%20interaction%20by%20looping.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+            <h3>Functional Properties</h3>
+            <div class="highlight-box">
+                <strong>Position and orientation independence:</strong> Enhancers function regardless of their position (upstream, downstream, or within introns) or orientation relative to the promoter, distinguishing them from promoter-proximal elements.
+            </div>
+
+            <ul>
+                <li><strong>Specificity:</strong> Enhancer-promoter interactions show selectivity, with enhancers preferentially activating cognate promoters through sequence-specific recognition and chromatin context.</li>
+                <li><strong>Additivity and synergy:</strong> Multiple enhancers can act on a single promoter, with effects ranging from additive to highly synergistic, depending on the combination of bound factors.</li>
+            </ul>
+
+            <h3>Active Enhancer Signatures</h3>
+            <p>Active enhancers display characteristic chromatin features:</p>
+            <ul>
+                <li>High levels of H3K27ac (histone H3 lysine 27 acetylation)</li>
+                <li>H3K4me1/H3K4me2 modifications</li>
+                <li>Accessible chromatin (DNase I hypersensitivity)</li>
+                <li>Bidirectional transcription producing enhancer RNAs (eRNAs)</li>
+                <li>Recruitment of p300/CBP histone acetyltransferases</li>
+            </ul>
+        </div>
+
+        <!-- Section 3: Promoter Proximal Elements -->
+        <div class="section" id="section3">
+            <h2>3. Promoter-Proximal Elements</h2>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/PE%20promoter.png" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <p>Promoter-proximal elements (PPEs) are regulatory DNA sequences located within approximately 200 bp upstream of the transcription start site. Unlike enhancers, their activity is highly position- and orientation-dependent, functioning optimally when positioned within this proximal region in a specific orientation relative to the core promoter.</p>
+
+            <h3>Common Promoter-Proximal Elements</h3>
+            
+            <div class="highlight-box">
+                <p><strong>CAAT Box:</strong> Consensus sequence GGCCAATCT, typically located -75 to -80 bp upstream of the TSS. Binds the CTF/NF-1 family of transcription factors. Found in approximately 50% of eukaryotic promoters, contributing significantly to basal transcription efficiency. Mutations in the CAAT box typically reduce transcription to 10-20% of wild-type levels.</p>
+            </div>
+
+            <p><strong>GC Box:</strong> Contains the consensus sequence GGGCGG, often present in multiple copies. Primary binding site for Sp1 transcription factor, a zinc finger protein. Particularly prevalent in housekeeping gene promoters and CpG island-containing promoters. The GC box can partially compensate for absent TATA boxes in TATA-less promoters.</p>
+
+            <h3>Functional Characteristics</h3>
+            
+            <ul>
+                <li><strong>Distance sensitivity:</strong> PPEs show optimal activity within defined distances from the TSS. Moving them beyond approximately 200 bp upstream typically results in dramatic loss of regulatory function.</li>
+                <li><strong>Orientation dependence:</strong> Unlike enhancers, most PPEs function optimally in a specific orientation. Inversion often reduces or abolishes their regulatory contribution.</li>
+                <li><strong>Basal transcription enhancement:</strong> PPEs primarily modulate basal transcription levels rather than conferring tissue specificity or inducibility, though exceptions exist.</li>
+                <li><strong>Cooperative interactions:</strong> Multiple PPEs often work synergistically with the core promoter and each other, creating combinatorial regulatory codes.</li>
+            </ul>
+
+            <h3>Mechanistic Insights</h3>
+            <p>PPE-bound transcription factors interact directly with components of the basal transcription machinery, particularly the mediator complex and TFIID. These short-range interactions facilitate preinitiation complex (PIC) assembly and stabilization. The spatial constraints of these protein-protein interactions explain the position and orientation dependence of PPEs.</p>
+
+            <p>Some PPEs, particularly GC boxes, also influence chromatin structure locally by recruiting histone-modifying enzymes and chromatin remodelers, creating a permissive chromatin environment for transcription initiation.</p>
+
+        </div>
+
+        <!-- Section 4: Silencers -->
+        <div class="section" id="section4">
+            <h2>4. Silencers</h2>
+            
+            <p>Silencers are <em>cis</em>-regulatory elements that negatively regulate transcription by recruiting transcriptional repressors and chromatin-modifying complexes. Like enhancers, silencers can function over long distances and in an orientation-independent manner, but they suppress rather than activate transcription.</p>
+
+            <h3>Mechanistic Categories</h3>
+            
+            <p><strong>Direct Repression Mechanisms:</strong></p>
+            <ul>
+                <li><strong>Competition for binding sites:</strong> Repressors compete with activators for overlapping or adjacent DNA binding sites, preventing activator recruitment.</li>
+                <li><strong>Quenching:</strong> Repressors bound at silencers directly interact with activators bound at enhancers or promoters, neutralizing their activation domains without preventing DNA binding.</li>
+                <li><strong>Direct interference:</strong> Repressors interact with components of the basal transcription machinery, inhibiting preinitiation complex assembly or RNA polymerase II activity.</li>
+            </ul>
+
+            <p><strong>Chromatin-Mediated Repression:</strong></p>
+            <ul>
+                <li><strong>Histone deacetylation:</strong> Silencer-bound repressors recruit histone deacetylase (HDAC) complexes, removing activating acetyl marks and promoting chromatin compaction.</li>
+                <li><strong>Repressive histone modifications:</strong> Recruitment of histone methyltransferases that deposit H3K9me3 or H3K27me3, establishing heterochromatin or facultative heterochromatin.</li>
+                <li><strong>Chromatin remodeling:</strong> Some repressors recruit ATP-dependent chromatin remodeling complexes that increase nucleosome density or position nucleosomes over regulatory elements.</li>
+            </ul>
+
+            <h3>Biological Significance</h3>
+            <p>Silencers play critical roles in development, cell differentiation, and disease. They ensure tissue-specific gene expression by suppressing inappropriate gene expression programs. Dysregulation of silencer function contributes to cancer, with oncogene silencers frequently mutated or epigenetically inactivated in tumors. Additionally, silencers are important in X-chromosome inactivation, genomic imprinting, and retrotransposon suppression.</p>
+        </div>
+
+        <!-- Section 5: Insulators -->
+        <div class="section" id="section5">
+            <h2>5. Insulators</h2>
+            
+            <p>Insulators, also called <strong>boundary elements</strong>, are DNA sequences that organize chromatin into discrete regulatory domains, preventing inappropriate interactions between enhancers and promoters. They serve as architectural elements that partition the genome into functionally independent neighborhoods, ensuring proper gene regulation.</p>
+
+            <h3>Functional Classes of Insulators</h3>
+            
+            <p><strong>Enhancer-Blocking Insulators:</strong> When positioned between an enhancer and a promoter, these insulators prevent enhancer-promoter communication without affecting the enhancer's ability to activate other promoters or the promoter's ability to be activated by enhancers on the opposite side of the insulator. This blocking activity is typically orientation-independent and requires the insulator to be located between the two regulatory elements.</p>
+
+            <p><strong>Barrier Insulators:</strong> These elements prevent the spread of heterochromatin into adjacent euchromatic regions, protecting active genes from silencing. They maintain boundaries between transcriptionally active and inactive chromatin domains. Barrier activity is position-dependent, requiring the insulator to be located at the junction between the two chromatin states.</p>
+
+            <h3>Functional Implications</h3>
+            <ul>
+                <li><strong>Gene regulation specificity:</strong> Insulators ensure enhancers activate only appropriate target genes, preventing regulatory cross-talk.</li>
+                <li><strong>Chromosomal stability:</strong> By organizing chromatin, insulators may influence DNA replication, repair, and recombination.</li>
+                <li><strong>Disease mechanisms:</strong> Structural variants that disrupt TAD boundaries can cause developmental disorders by creating neo-TADs with aberrant enhancer-promoter contacts.</li>
+                <li><strong>Evolution:</strong> Insulators may facilitate regulatory evolution by allowing new enhancers to arise without disrupting existing regulatory relationships.</li>
+            </ul>
+        </div>
+
+        <!-- Section 6: Regulatory Proteins -->
+        <div class="section" id="section6">
+            <h2>6. Regulatory Proteins that Bind Regulatory Promoters</h2>
+            
+            <p>Eukaryotic transcriptional regulation requires the coordinated action of sequence-specific DNA-binding proteins that recognize and bind regulatory elements. These regulatory proteins, or <strong>transcription factors (TFs)</strong>, serve as the primary interpreters of genomic regulatory information, translating DNA sequence into transcriptional output.</p>
+
+            <h3>Structural Organization of Transcription Factors</h3>
+            
+            <p>Most transcription factors possess modular architecture with distinct functional domains:</p>
+
+            <p><strong>DNA-Binding Domain (DBD):</strong> Confers sequence-specific DNA recognition through direct contact with DNA bases in the major groove and backbone contacts. Common DBD families include:</p>
+            <ul>
+                <li><strong>Helix-turn-helix (HTH):</strong> Simple motif with recognition helix inserted into major groove (e.g., homeobox proteins, POU domain factors)</li>
+                <li><strong>Zinc fingers:</strong> Cys₂His₂ or Cys₄ coordination of zinc ions stabilizes DNA-contacting loops (e.g., TFIIIA, Sp1, CTCF, steroid receptors)</li>
+                <li><strong>Basic leucine zipper (bZIP):</strong> Basic region contacts DNA while leucine zipper mediates dimerization (e.g., AP-1, C/EBP, ATF/CREB)</li>
+                <li><strong>Basic helix-loop-helix (bHLH):</strong> Similar to bZIP but with HLH dimerization domain (e.g., MyoD, Myc, SREBP)</li>
+                <li><strong>Beta-scaffold factors:</strong> Beta-sheets provide DNA-contacting surface (e.g., NF-κB, p53, STAT proteins)</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Activation or Repression Domain:</strong> Intrinsically disordered regions enriched in acidic, glutamine-rich, or proline-rich residues. These domains recruit coactivators or corepressors through transient, multivalent interactions. The "fuzzy" nature of these interactions enables combinatorial control and context-dependent function.</p>
+            </div>
+
+            <p><strong>Regulatory Domains:</strong> Respond to cellular signals through post-translational modifications, ligand binding, or protein-protein interactions. These domains integrate cellular information to control TF activity, localization, or stability.</p>
+
+
+            <h3>Major Classes of Regulatory Proteins</h3>
+            
+            <p><strong>Sequence-Specific Activators:</strong> Bind enhancers and promoter-proximal elements to stimulate transcription. Function by recruiting coactivators, chromatin remodelers, and mediator. Examples include nuclear receptors (ligand-regulated), CREB (signal-responsive), and tissue-specific factors like MyoD.</p>
+
+            <p><strong>Sequence-Specific Repressors:</strong> Suppress transcription through various mechanisms. Include constitutive repressors maintaining silent chromatin states and regulated repressors responding to developmental or environmental cues.</p>
+
+            <p><strong>Architectural Proteins:</strong> Organize chromatin structure without necessarily affecting transcription directly.</p>
+
+            <h3>Regulation of Transcription Factor Activity</h3>
+            <ul>
+                <li><strong>Synthesis and degradation:</strong> TF levels controlled transcriptionally and post-translationally through ubiquitin-proteasome pathway</li>
+                <li><strong>Subcellular localization:</strong> Nuclear import/export signals regulated by signals like phosphorylation (e.g., NF-κB sequestered by IκB)</li>
+                <li><strong>Ligand binding:</strong> Nuclear receptors activated by hormones, vitamins, lipids</li>
+                <li><strong>Post-translational modifications:</strong> Phosphorylation, acetylation, methylation, ubiquitination modulate activity, stability, interactions</li>
+                <li><strong>Protein-protein interactions:</strong> Partners can enhance, inhibit, or redirect TF activity</li>
+            </ul>
+        </div>
+
+        <!-- Section 7: Activators -->
+        <div class="section" id="section7">
+            <h2>7. Activators - Structure and Function</h2>
+            
+            <p>Transcriptional activators are regulatory proteins that enhance the rate of transcription initiation by facilitating recruitment and assembly of the RNA polymerase II transcriptional machinery. They represent the primary positive regulators of gene expression in eukaryotes, converting cellular signals into transcriptional responses.</p>
+
+            <h3>Structural Architecture of Activators</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Activator%20combinations.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            
+            <p><strong>DNA-Binding Domains:</strong> Provide sequence-specific recognition of enhancer and promoter elements.</p>
+            <ul>
+
+            <div class="highlight-box">
+                <p><strong>Activation Domains (ADs):</strong> Intrinsically disordered regions that stimulate transcription through protein-protein interactions with coactivators and transcriptional machinery. Despite low sequence conservation, ADs share functional properties and can be classified into subtypes based on amino acid composition.</p>
+            </div>
+
+            <h3>Types of Activation Domains</h3>
+            
+            <p><strong>Acidic Activation Domains:</strong> Enriched in aspartate and glutamate residues, creating regions of negative charge. These domains undergo disorder-to-order transitions upon binding partners.</p>
+
+            <p><strong>Glutamine-Rich Domains:</strong> Contain high proportions of glutamine (Q) and often asparagine (N).</p>
+
+            <p><strong>Proline-Rich Domains:</strong> The proline-rich character restricts conformational flexibility, potentially providing interaction specificity.</p>
+
+            <p><strong>Hydrophobic Activation Domains:</strong> Amphipathic helices with clustered hydrophobic residues (Leu, Ile, Val).</p>
+
+            <h3>Mechanisms of Transcriptional Activation</h3>
+            
+            <p><strong>Recruitment of Coactivators:</strong> Activators bind coactivator complexes that modify chromatin and facilitate PIC assembly:</p>
+            <ul>
+                <li><strong>HAT complexes:</strong> p300/CBP, SAGA, NuA4 acetylate histones, neutralizing positive charges and loosening DNA-histone contacts</li>
+                <li><strong>Chromatin remodelers:</strong> SWI/SNF, ISWI, CHD complexes reposition or evict nucleosomes using ATP hydrolysis</li>
+                <li><strong>Mediator complex:</strong> Massive multisubunit complex bridging activators to Pol II and GTFs, allosterically stimulating PIC formation</li>
+            </ul>
+
+            <p><strong>Stabilization of Preinitiation Complex:</strong> Activators enhance PIC stability through multiple mechanisms. They increase the residence time of GTFs and Pol II at promoters, reduce the activation energy for conformational changes required for transcription initiation, and promote multiple rounds of reinitiation by maintaining promoter in an accessible state.</p>
+
+            <p><strong>Facilitation of Promoter-Enhancer Looping:</strong> Activators bound at enhancers interact with promoter-bound factors, bringing enhancers and promoters into spatial proximity. This looping is stabilized by coactivators, particularly mediator and cohesin. The formation of phase-separated transcriptional condensates may further concentrate transcriptional machinery.</p>
+
+            <h3>Regulatory Mechanisms</h3>
+            
+            <p><strong>Signal-Dependent Activation:</strong> Many activators are regulated by extracellular signals:</p>
+            <ul>
+                <li><strong>Nuclear receptors:</strong> Ligand binding induces conformational changes exposing activation domains and promoting coactivator recruitment while releasing corepressors</li>
+                <li><strong>CREB:</strong> Phosphorylation at Ser133 by PKA creates binding site for CBP/p300</li>
+                <li><strong>STATs:</strong> Cytokine-induced phosphorylation enables dimerization, nuclear import, and DNA binding</li>
+                <li><strong>NF-κB:</strong> Released from IκB inhibitor upon inflammatory signals, translocates to nucleus</li>
+            </ul>
+
+            <p><strong>Combinatorial Control:</strong> Most genes require multiple activators acting synergistically.</p>
+        </div>
+
+        <!-- Section 8: Repressors -->
+        <div class="section" id="section8">
+            <h2>8. Repressors - Structure and Function</h2>
+            
+            <p>Transcriptional repressors are regulatory proteins that decrease transcription rates through diverse mechanisms including competition with activators, recruitment of corepressors, and establishment of repressive chromatin states. Repression is as important as activation for proper gene regulation, ensuring genes are silenced in inappropriate contexts.</p>
+
+            <h3>Structural Organization</h3>
+            
+            <p>Like activators, repressors contain modular domains:</p>
+            <ul>
+                <li><strong>DNA-Binding Domain:</strong> Confers sequence-specific binding to silencer elements or competition with activators at shared binding sites. Often structurally similar to activator DBDs.</li>
+                <li><strong>Repression Domain:</strong> Mediates transcriptional inhibition through recruitment of corepressor complexes or direct interference with transcriptional machinery. Less well-characterized than activation domains but include KRAB domains, SID (Sin3-interaction domain), and EAR motifs.</li>
+                <li><strong>Regulatory Domains:</strong> Allow signal-dependent control of repressor activity, localization, or stability.</li>
+            </ul>
+
+            <h3>Mechanisms of Transcriptional Repression</h3>
+            
+            <p><strong>1. Passive Repression (Competition):</strong></p>
+            <p>Repressors compete with activators for overlapping or adjacent DNA binding sites. When a repressor occupies a site, it prevents activator binding without actively inhibiting transcription. This mechanism is particularly important at composite regulatory elements where activators and repressors recognize similar sequences.</p>
+
+            <p><strong>2. Active Repression - Direct Mechanisms:</strong></p>
+            
+            <div class="highlight-box">
+                <p><strong>Quenching:</strong> Repressors physically interact with activators, masking activation domains without preventing DNA binding. The repressor-activator interaction neutralizes the activator's ability to recruit coactivators or contact transcriptional machinery. This mechanism allows repression even when activator remains bound to DNA.</p>
+            </div>
+
+            <p><strong>Direct interference with basal machinery:</strong> Some repressors interact with GTFs or Pol II, inhibiting PIC formation or promoter escape.</p>
+
+            <p><strong>3. Active Repression - Chromatin-Mediated Mechanisms:</strong></p>
+            
+            <p><strong>Histone Deacetylation:</strong> Repressors recruit histone deacetylase (HDAC) complexes that remove acetyl groups from histone lysine residues. Deacetylation increases positive charge on histones, strengthening DNA-histone interactions and compacting chromatin.</p>
+
+            <p><strong>Repressive Histone Modifications:</strong> Repressors recruit histone methyltransferases depositing silencing marks:</p>
+            <ul>
+                <li><strong>H3K9 methylation</strong> </li>
+                <li><strong>H3K27 methylation</strong> </li>
+                <li><strong>H3K4 demethylation</strong> </li>
+            </ul>
+
+            <p><strong>DNA Methylation:</strong> Some repressors recruit DNA methyltransferases (DNMTs) that add methyl groups to cytosines in CpG dinucleotides. DNA methylation creates binding sites for methyl-CpG binding proteins (MeCP2, MBD1-4) that recruit additional corepressors and HDACs, establishing stable repression. This mechanism is critical for genomic imprinting, X-inactivation, and retrotransposon silencing.</p>
+
+            <p><strong>Chromatin Remodeling:</strong> While chromatin remodelers are often associated with activation, some repressors recruit remodelers that increase nucleosome density over regulatory elements or reposition nucleosomes to occlude activator binding sites.</p>
+
+            <h3>Regulatory Control of Repressors</h3>
+            <ul>
+                <li><strong>Signal-dependent derepression:</strong> Ligand binding (nuclear receptors), phosphorylation, or other modifications can inactivate repressors</li>
+                <li><strong>Developmental timing:</strong> Stage-specific expression or activity ensures temporal gene regulation</li>
+                <li><strong>Antagonism by activators:</strong> Some activators can displace repressors or reverse repressive modifications</li>
+                <li><strong>Targeted degradation:</strong> Ubiquitin-mediated proteolysis removes repressors in response to signals</li>
+            </ul>
+
+            <h3>Biological Significance</h3>
+            <p>Repressors are essential for maintaining cell identity by silencing alternative lineage programs, preventing inappropriate gene expression during development, suppressing transposable elements and maintaining genome stability, establishing genomic imprinting and X-chromosome inactivation, and responding to environmental stress through adaptive gene silencing. Dysregulation of repression contributes to cancer, developmental disorders, and neurological diseases.</p>
+        </div>
+
+        <!-- Section 9: Chromatin Organization -->
+        <div class="section" id="section9">
+            <h2>9. Influence of Chromatin Organization on Transcription</h2>
+            
+            <p>Chromatin structure profoundly influences transcriptional regulation in eukaryotes. The packaging of DNA into nucleosomes and higher-order chromatin structures creates barriers to transcription factor access and RNA polymerase progression, while simultaneously providing regulatory opportunities through dynamic chromatin remodeling and modification.</p>
+
+            <h3>Nucleosome Structure and Transcriptional Regulation</h3>
+            
+            <p>The <strong>nucleosome core particle</strong> consists of ~147 bp of DNA wrapped 1.65 turns around a histone octamer containing two copies each of H2A, H2B, H3, and H4. This fundamental packaging unit occludes DNA from protein access and creates energetic barriers to transcription.</p>
+
+            <p><strong>Nucleosome Positioning:</strong> The precise positioning of nucleosomes relative to regulatory elements critically influences gene regulation:</p>
+            <ul>
+                <li><strong>Nucleosome-depleted regions (NDRs):</strong> Active promoters typically contain NDRs spanning 100-300 bp upstream of the TSS, providing access for transcription factors and GTFs. NDRs are maintained by active remodeling, AT-rich sequences that disfavor nucleosome formation, and transcription factor binding that competes with nucleosomes.</li>
+                <li><strong>+1 nucleosome:</strong> Immediately downstream of the TSS, this well-positioned nucleosome often contains H3K4me3 and H2A.Z, marking active promoters. Pol II must navigate or remove this nucleosome during transcription initiation.</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Chromatin Accessibility:</strong> The accessibility of DNA within chromatin determines transcription factor occupancy and gene expression. Open chromatin regions (euchromatin) allow TF binding and transcription, while closed chromatin (heterochromatin) is generally transcriptionally silent. Accessibility is dynamically regulated through chromatin remodeling and histone modifications.</p>
+            </div>
+
+            <h3>Chromatin States and Transcription</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Epigenetic%20inheritance.png" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <p><strong>Euchromatin:</strong> Loosely packed chromatin enriched in active genes. Characteristics include:</p>
+            <ul>
+                <li>High levels of histone acetylation (especially H3K27ac, H3K9ac)</li>
+                <li>H3K4 methylation (H3K4me3 at promoters, H3K4me1 at enhancers)</li>
+                <li>H3K36me3 in actively transcribed gene bodies</li>
+                <li>Incorporation of histone variants (H2A.Z, H3.3)</li>
+                <li>DNase I hypersensitivity and ATAC-seq accessibility</li>
+            </ul>
+
+            <p><strong>Facultative Heterochromatin:</strong> Reversibly silenced chromatin that can be reactivated. Marked by:</p>
+            <ul>
+                <li>H3K27me3 deposited by Polycomb complexes</li>
+                <li>Low histone acetylation</li>
+                <li>Absence of active marks (H3K4me3, H3K27ac)</li>
+                <li>Reversible compaction allowing developmental reactivation</li>
+            </ul>
+
+            <p><strong>Constitutive Heterochromatin:</strong> Stably silenced chromatin at repetitive sequences, centromeres, telomeres. Features:</p>
+            <ul>
+                <li>Dense H3K9me3 creating HP1 binding sites</li>
+                <li>DNA methylation at CpG dinucleotides</li>
+                <li>Late replication timing</li>
+                <li>Nuclear periphery localization</li>
+                <li>Generally irreversible in differentiated cells</li>
+            </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Location%20of%20hetero%20and%20euchromatin%20in%20nucleus.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+            <h3>Chromatin and Transcriptional Elongation</h3>
+            
+            <p>Nucleosomes present barriers to elongating RNA polymerase II. Mechanisms for navigating nucleosomes include:</p>
+            <ul>
+                <li><strong>Nucleosome eviction:</strong> Complete removal of nucleosomes ahead of Pol II</li>
+                <li><strong>Nucleosome remodeling:</strong> Transient disruption allowing Pol II passage, followed by reassembly</li>
+                <li><strong>Histone chaperones:</strong> FACT (facilitates chromatin transcription) complex assists Pol II through nucleosomes by temporarily removing H2A-H2B dimers</li>
+                <li><strong>H3K36 methylation:</strong> Deposited by Set2 in transcribed regions, recruits HDACs to restore chromatin structure and prevent spurious internal initiation</li>
+            </ul>
+
+            <h3>Chromatin Dynamics During Transcription</h3>
+            
+            <p>Active transcription involves continuous chromatin remodeling:</p>
+            <ul>
+                <li>Pioneer transcription factors bind condensed chromatin, nucleating accessibility</li>
+                <li>Chromatin remodelers continuously reposition nucleosomes</li>
+                <li>Histone-modifying enzymes establish active chromatin marks</li>
+                <li>Transcription itself disrupts chromatin structure</li>
+                <li>Following transcription, chromatin is restored by reassembly factors</li>
+            </ul>
+        </div>
+
+        <!-- Section 10: Factors Affecting Chromatin Organization -->
+        <div class="section" id="section10">
+            <h2>10. Factors Affecting Chromatin Organization</h2>
+            
+            <p>Chromatin organization is dynamically regulated by multiple classes of factors that modify histones, remodel nucleosomes, and alter DNA structure. These factors integrate developmental and environmental signals to control gene expression through chromatin-based mechanisms.</p>
+
+            <h3>A. Epigenetic Modifications</h3>
+            
+            <p><strong>Histone Post-Translational Modifications (PTMs):</strong></p>
+            
+            <p>Histone proteins undergo extensive covalent modifications, particularly on N-terminal tails protruding from the nucleosome core. These modifications alter chromatin structure and serve as binding platforms for effector proteins.</p>
+
+            <p><strong>1. Histone Acetylation:</strong></p>
+            <ul>
+                <li><strong>Writers:</strong> Histone acetyltransferases (HATs). Transfer acetyl groups from acetyl-CoA to lysine ε-amino groups.</li>
+                <li><strong>Readers:</strong> Bromodomain-containing proteins recognize and bind acetylated lysines.</li>
+                <li><strong>Erasers:</strong> Histone deacetylases (HDACs) remove acetyl groups.</li>
+                <li><strong>Functional consequences:</strong> Acetylation neutralizes positive charge, weakening DNA-histone contacts. Generally associated with transcriptional activation. H3K27ac marks active enhancers and promoters. H4K16ac prevents chromatin compaction.</li>
+            </ul>
+
+            <p><strong>2. Histone Methylation:</strong></p>
+            
+            <div class="highlight-box">
+                <p>Lysine and arginine residues can be methylated (mono-, di-, or tri-methylation for lysines; mono- or di-methylation for arginines). Unlike acetylation, methylation does not alter charge but creates binding platforms. The functional consequence depends on the specific residue and methylation state.</p>
+            </div>
+
+            <p><strong>Activating methylation marks:</strong></p>
+            <ul>
+                <li><strong>H3K4me3:</strong> At active promoters.</li>
+                <li><strong>H3K4me1:</strong> At active enhancers.</li>
+            </ul>
+
+            <p><strong>Repressive methylation marks:</strong></p>
+            <ul>
+                <li><strong>H3K9me2/me3:</strong> Constitutive heterochromatin markers.</li>
+            </ul>
+
+            <p><strong>3. Histone Phosphorylation:</strong></p>
+
+            <p><strong>4. Histone Ubiquitination:</strong></p>
+
+            <p><strong>5. Histone Sumoylation, Biotinylation, ADP-ribosylation:</strong> Less well-characterized modifications with emerging roles in transcription regulation and DNA repair.</p>
+
+            <h3>DNA Methylation</h3>
+            
+            <p><strong>Mechanism and Distribution:</strong> Addition of methyl groups to the 5-position of cytosine, predominantly at CpG dinucleotides in mammals. ~70-80% of CpGs are methylated in mammalian genomes, with exceptions at CpG islands in active promoters.</p>
+
+            <p><strong>Functional Consequences:</strong></p>
+            <ul>
+                <li>Promoter DNA methylation generally represses transcription</li>
+                <li>Gene body methylation may facilitate transcriptional elongation</li>
+                <li>Silences transposable elements, maintaining genome stability</li>
+                <li>Essential for genomic imprinting and X-chromosome inactivation</li>
+                <li>Abnormal DNA methylation patterns in cancer (global hypomethylation, CpG island hypermethylation)</li>
+            </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Chromatin%20organization%20in%20nucleus.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+            <h3>B. Coactivators and Corepressors</h3>
+            
+            <p>Coactivators and corepressors are proteins that do not bind DNA directly but are recruited by sequence-specific transcription factors to modulate transcription. They serve as adapters between DNA-binding factors and chromatin-modifying or transcriptional machinery.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/HDAC%20and%20HAT%20activity.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+
+            <h3>C. Chromatin Remodeling Complexes</h3>
+            
+            <p>ATP-dependent chromatin remodeling complexes use energy from ATP hydrolysis to alter nucleosome structure and positioning. They slide nucleosomes along DNA, evict nucleosomes, insert histone variants, or restructure nucleosomes. Multiple families exist, defined by their ATPase subunit:</p>
+
+            <p><strong>1. SWI/SNF (BAF/PBAF) Family:</strong></p>
+            <ul>
+                <li><strong>Function:</strong> Evicts or slides nucleosomes, creating accessible chromatin at regulatory elements. Generally associated with transcriptional activation.</li>
+            </ul>
+
+            <p><strong>2. ISWI Family:</strong></p>
+            <ul>
+                <li><strong>Function:</strong> Primarily space nucleosomes regularly, establishing and maintaining ordered nucleosome arrays. Generally involved in transcriptional repression and chromatin assembly.</li>
+            </ul>
+
+            <p><strong>Mechanisms of Chromatin Remodeling:</strong></p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Chromatin%20remodellers%20mechanisms.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li><strong>Nucleosome sliding:</strong> Translocates nucleosomes along DNA without eviction</li>
+                <li><strong>Nucleosome eviction:</strong> Complete removal of histone octamer from DNA</li>
+                <li><strong>Histone variant exchange:</strong> Replaces canonical histones with variants (H2A.Z, H3.3)</li>
+                <li><strong>Nucleosome restructuring:</strong> Alters DNA-histone contacts within nucleosome</li>
+            </ul>
+
+            <p>These activities require ATP hydrolysis to drive conformational changes in the ATPase that are transduced to the nucleosome, disrupting DNA-histone contacts through a DNA translocation mechanism.</p>
+        </div>
+
+        <!-- Section 11: Mediator Complex -->
+        <div class="section" id="section11">
+            <h2>11. Structure and Function of Mediator in Transcription</h2>
+            
+            <p>The Mediator complex is a massive, evolutionarily conserved multi-subunit complex that serves as a central integrator of transcriptional regulation in eukaryotes. It functions as a molecular bridge between sequence-specific transcription factors bound at enhancers/promoters and the RNA polymerase II transcriptional machinery at core promoters.</p>
+
+            <h3>Structural Organization</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Mediator%20pIC%20interaction.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            
+            <p>The Mediator complex consists of approximately 30 subunits in mammals (~26 in yeast) with a total molecular weight of ~1.4 MDa. It is organized into four modules with distinct structures and functions:</p>
+
+            <p><strong>1. Head Module (~500 kDa):</strong></p>
+            <ul>
+                <li><strong>Function:</strong> Directly contacts RNA Pol II through interaction with the Pol II CTD (C-terminal domain). Essential for basal transcription and PIC stability. Makes extensive contacts with general transcription factors, particularly TFIIB and TFIIE.</li>
+                <li><strong>Structure:</strong> Forms a compact module with a hook-like structure that engages Pol II</li>
+            </ul>
+
+            <p><strong>2. Middle Module (~450 kDa):</strong></p>
+            <ul>
+                <li><strong>Function:</strong> Serves as a scaffold organizing the overall Mediator structure. Contains interaction surfaces for transcriptional activators and repressors.</li>
+                <li><strong>Structure:</strong> Provides structural framework connecting Head and Tail modules</li>
+            </ul>
+
+            <p><strong>3. Tail Module (~500 kDa):</strong></p>
+            <ul>
+                <li><strong>Function:</strong> Primary site for transcription factor interactions. Different tail subunits bind distinct families of activators. </li>
+                <li><strong>Structure:</strong> Extended, flexible module enabling interactions with distant enhancers</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>4. Kinase Module (CDK8 Module) (~500 kDa):</strong> Reversibly associates with core Mediator. When bound, generally inhibits transcription. Dissociation of kinase module from core Mediator correlates with transcriptional activation. Provides an additional layer of regulation, integrating signals including Wnt/β-catenin, Notch, and TGF-β pathways.</p>
+            </div>
+
+            <h3>Molecular Functions of Mediator</h3>
+            
+            <p><strong>1. Bridging Activators to Pol II:</strong> The fundamental function of Mediator is to transduce regulatory signals from enhancer-bound activators to the basal transcription machinery. The Tail and Middle modules contain multiple activation domain-binding surfaces, while the Head module contacts Pol II. This architecture allows Mediator to simultaneously interact with both activators and Pol II, forming a physical bridge.</p>
+
+            <p><strong>2. Stimulation of Preinitiation Complex Formation:</strong> Mediator enhances PIC assembly through multiple mechanisms:</p>
+            <ul>
+                <li>Stabilizes Pol II binding to promoter DNA</li>
+                <li>Facilitates recruitment and stabilization of general transcription factors (GTFs)</li>
+                <li>Promotes proper positioning of Pol II at the TSS</li>
+                <li>Stimulates conformational changes in Pol II required for transcription initiation</li>
+            </ul>
+
+            <p><strong>3. Regulation of Pol II CTD Phosphorylation:</strong> The Pol II CTD consists of heptapeptide repeats (YSPTSPS) that undergo dynamic phosphorylation controlling transcription cycle progression.</p>
+
+            <p><strong>4. Facilitating Enhancer-Promoter Communication:</strong> Mediator is crucial for long-range enhancer function:</p>
+            <ul>
+                <li>Binds simultaneously to enhancer-bound activators (via Tail/Middle) and promoter-bound Pol II (via Head)</li>
+                <li>Stabilizes chromatin loops bringing enhancers and promoters into proximity</li>
+                <li>Concentrates activators and coactivators at promoters</li>
+                <li>May participate in phase-separated transcriptional condensates concentrating transcriptional machinery</li>
+            </ul>
+
+            <p><strong>5. Integration of Multiple Signals:</strong> Mediator integrates inputs from numerous transcription factors binding cooperatively to complex enhancers. Different activators contact distinct Mediator subunits, and the combinatorial occupancy of these binding surfaces determines transcriptional output. This allows sophisticated signal integration.</p>
+
+            <p>The Mediator complex thus represents a pinnacle of transcriptional regulatory complexity, serving as the central integration hub where genomic regulatory information, cellular signaling, and transcriptional machinery converge to control gene expression with exquisite precision.</p>
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="changeSection(-1)">← Previous</button>
+            <div class="progress">
+                <span id="currentSection">1</span> / 11
+            </div>
+            <button id="nextBtn" onclick="changeSection(1)">Next →</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 11;
+
+        function showSection(n) {
+            const sections = document.getElementsByClassName('section');
+            
+            if (n > totalSections) {
+                currentSection = totalSections;
+            }
+            if (n < 1) {
+                currentSection = 1;
+            }
+            
+            for (let i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            sections[currentSection - 1].classList.add('active');
+            
+            document.getElementById('currentSection').textContent = currentSection;
+            
+            document.getElementById('prevBtn').disabled = currentSection === 1;
+            document.getElementById('nextBtn').disabled = currentSection === totalSections;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSection(n) {
+            currentSection += n;
+            showSection(currentSection);
+        }
+
+        showSection(currentSection);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
