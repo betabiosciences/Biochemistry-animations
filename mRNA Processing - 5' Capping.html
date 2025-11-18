@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5' mRNA Capping in Eukaryotes</title>
+    <style>
+        :root {
+            --bg-primary: #1a1b2e;
+            --bg-secondary: #252845;
+            --text-primary: #e2e2e2;
+            --text-secondary: #a0a0d0;
+            --accent: #6c63ff;
+            --accent-light: #8a84ff;
+            --border: #3a3b5c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .content-area {
+            background-color: rgba(37, 40, 69, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--accent-light);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        h3 {
+            color: var(--accent-light);
+            margin: 15px 0 10px;
+            font-size: 1.3rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background-color: rgba(108, 99, 255, 0.2);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            background-color: var(--border);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--border);
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background-color: var(--accent);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-area {
+                padding: 20px;
+                min-height: 450px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>5' mRNA Capping in Eukaryotes</h1>
+        </header>
+
+        <div class="content-area">
+            <!-- Section 1: Structure of the 5' Cap -->
+            <div id="section1" class="section active">
+                <h2>Structure of the 5' Cap</h2>
+                <p>The 5' cap is a modified guanine nucleotide added to the 5' end of eukaryotic mRNA. This structure plays a crucial role in mRNA stability, transport, and translation initiation.</p>
+                
+                <h3>Core Structure</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Cap%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <p>The basic 5' cap structure consists of:</p>
+                <ul>
+                    <li>A <span class="highlight">7-methylguanosine (m7G)</span> residue</li>
+                    <li>Connected to the first transcribed nucleotide via a <span class="highlight">5'-5' triphosphate bridge</span></li>
+                    <li>The first nucleotide of the mRNA transcript may also be methylated</li>
+                </ul>
+                
+                <h3>Chemical Composition</h3>
+                <p>The 5' cap has the chemical formula: m7G(5')ppp(5')N, where:</p>
+                <ul>
+                    <li><span class="highlight">m7G</span> = 7-methylguanosine</li>
+                    <li><span class="highlight">ppp</span> = triphosphate bridge</li>
+                    <li><span class="highlight">N</span> = the first nucleotide of the mRNA</li>
+                </ul>
+                
+                <p>This unique 5'-5' linkage is distinct from the standard 3'-5' phosphodiester bonds found in the RNA chain, making the cap resistant to most 5' exonucleases.</p>
+            </div>
+
+            <!-- Section 2: Mechanism of Capping -->
+            <div id="section2" class="section">
+                <h2>Mechanism of Capping</h2>
+                <p>The capping process occurs co-transcriptionally and involves three sequential enzymatic reactions that modify the 5' end of the nascent RNA transcript.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Capping%20reactions.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                
+                <h3>Step 1: Removal of Terminal Phosphate</h3>
+                <p>The first step is catalyzed by <span class="highlight">RNA triphosphatase</span>, which removes the γ-phosphate from the 5' triphosphate end of the nascent RNA, leaving a diphosphate terminus.</p>
+                
+                <h3>Step 2: GMP Addition</h3>
+                <p><span class="highlight">Guanylyltransferase</span> then catalyzes the addition of a GMP moiety from GTP to the 5' diphosphate RNA, forming the G(5')ppp(5')N structure.</p>
+                
+                <h3>Step 3: Methylation</h3>
+                <p>Finally, <span class="highlight">guanine-N7-methyltransferase</span> transfers a methyl group from S-adenosylmethionine (SAM) to the N7 position of the terminal guanine, forming the mature m7G cap.</p>
+                
+                <h3>Additional Methylations</h3>
+                <p>Depending on the organism and mRNA type, additional methylations may occur on the ribose of the first and second nucleotides, forming cap1 and cap2 structures respectively.</p>
+            </div>
+
+            <!-- Section 3: Types of Caps -->
+            <div id="section3" class="section">
+                <h2>Different Types of Caps</h2>
+                <p>While the basic m7G cap is common in yeast and lower eukaryotes, different organisms and contexts can produce variations in cap structure.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Types%20of%20cap.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                
+                <h3>Cap 0</h3>
+                <p>This is the basic cap structure found in lower eukaryotes: <span class="highlight">m7GpppN</span> (where N is any nucleotide). It provides protection from exonucleases and facilitates translation initiation.</p>
+                
+                <h3>Cap 1</h3>
+                <p>In this structure, the first transcribed nucleotide (N1) is methylated at the 2'-O position of the ribose: <span class="highlight">m7GpppN1m</span>. This modification is common in higher eukaryotes and provides additional protection from degradation.</p>
+                
+                <h3>Cap 2</h3>
+                <p>This structure has methylation at both the first and second nucleotides: <span class="highlight">m7GpppN1mpN2m</span>. Cap2 is less common but provides enhanced stability and may play roles in specific regulatory contexts.</p>
+
+    <h3>Cap 4 (Trimethyl Guanosine Cap)</h3>
+    <p>This specialized cap structure, <span class="highlight">m2,2,7GpppN</span>, features a trimethylated guanosine residue and is found primarily on:</p>
+    <ul>
+        <li>Small nuclear RNAs (snRNAs), especially those involved in splicing (U1, U2, U4, U5)</li>
+        <li>Some small nucleolar RNAs (snoRNAs)</li>
+        <li>Telomerase RNA component</li>
+    </ul>
+    <p>The trimethyl guanosine cap (TMG cap) is formed by hypermethylation of the standard m7G cap, adding two additional methyl groups to the N2 position of guanine.</p>
+
+                
+            </div>
+
+            <!-- Section 4: Significance of Capping -->
+            <div id="section4" class="section">
+                <h2>Significance of Capping mRNA</h2>
+                <p>The 5' cap serves multiple essential functions in eukaryotic gene expression, affecting nearly every aspect of mRNA metabolism.</p>
+                
+                <h3>Protection from Degradation</h3>
+                <p>The cap structure protects mRNA from 5'→3' exonucleases, significantly increasing mRNA half-life. Uncapped mRNAs are rapidly degraded in the cytoplasm.</p>
+                
+                <h3>Translation Initiation</h3>
+                <p>The cap is recognized by the eIF4E complex, which recruits the 40S ribosomal subunit to initiate translation. This cap-dependent translation is the primary mechanism for protein synthesis in eukaryotes.</p>
+                
+                <h3>Nuclear Export</h3>
+                <p>The cap-binding complex (CBC) associates with the 5' cap and facilitates mRNA export from the nucleus to the cytoplasm through nuclear pore complexes.</p>
+                
+                <h3>Splicing Regulation</h3>
+                <p>The cap enhances the efficiency of pre-mRNA splicing, particularly for the first intron, by promoting the assembly of the spliceosome.</p>
+                
+                <h3>Immune Recognition</h3>
+                <p>In vertebrates, the cap structure helps distinguish self-RNA from non-self RNA, as many viral RNAs lack proper 5' caps or have different cap structures.</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-dot active" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+            <div class="progress-dot" data-section="3"></div>
+            <div class="progress-dot" data-section="4"></div>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            // Function to update the display of sections and buttons
+            function updateDisplay() {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                sections[currentSection].classList.add('active');
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateDisplay();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    updateDisplay();
+                }
+            });
+            
+            // Event listeners for progress dots
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-section')) - 1;
+                    updateDisplay();
+                });
+            });
+            
+            // Initialize display
+            updateDisplay();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
