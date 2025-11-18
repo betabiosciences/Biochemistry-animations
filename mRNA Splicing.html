@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced mRNA Splicing</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom dark theme and fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Dark bluish-violet background */
+            background-color: #1A1B3A;
+        }
+
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #11122B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4A5568;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+
+        /* Section transition (optional, but smooth) */
+        .section {
+            transition: opacity 0.3s ease-in-out;
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="text-gray-300">
+
+    <!-- Main Content Wrapper -->
+    <!-- pb-24 adds padding to the bottom to avoid overlap with the fixed nav bar -->
+    <div class="max-w-3xl mx-auto p-6 pb-24">
+        
+        <h1 class="text-3xl md:text-4xl font-bold mb-6 text-center text-indigo-300">
+            Eukaryotic mRNA Splicing
+        </h1>
+
+        <!-- Sections Container -->
+        <div>
+            <!-- Section 1: General Features -->
+            <div id="section-1" class="section">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">1. General Features of Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    Splicing is a critical step in eukaryotic gene expression that occurs in the nucleus. After a gene is transcribed into pre-mRNA (primary transcript), splicing removes non-coding regions called <strong class="text-teal-200">introns</strong> and joins the coding regions, or <strong class="text-teal-200">exons</strong>, together.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    This precise cut-and-paste process ensures that only the protein-coding sequences are translated by the ribosome. It is performed by a massive molecular machine called the <strong class="text-teal-200">spliceosome</strong>. Splicing often occurs <strong class="text-teal-200">co-transcriptionally</strong>, meaning it happens while the pre-mRNA is still being synthesized by RNA polymerase II.
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-2">
+                    <li><strong class="text-indigo-200">Product:</strong> Mature messenger RNA (mRNA).</li>
+                    <li><strong class="text-indigo-200">Location:</strong> Nucleus.</li>
+                    <li><strong class="text-indigo-200">Machinery:</strong> Spliceosome (for most introns).</li>
+                    <li><strong class="text-indigo-200">Purpose:</strong> To create a continuous coding sequence for protein translation.</li>
+                </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Splicing%20general%20diagram.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </div>
+
+            <!-- Section 2: Features of Introns -->
+            <div id="section-2" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">2. Features of Introns in Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    Spliceosomal introns have highly conserved sequences that act as signals for the splicing machinery. These <strong class="text-teal-200">cis-acting elements</strong> are recognized by components of the spliceosome.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Splice%20sites.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">5' Splice Site (Donor Site):</strong> Located at the 5' end of the intron. It almost always has a <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">GU</code> dinucleotide sequence (the "GU-AG rule").
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">3' Splice Site (Acceptor Site):</strong> Located at the 3' end of the intron. It is almost always marked by an <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">AG</code> dinucleotide.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Branch Point (or Branch Site):</strong> An adenine (A) residue located 15-45 nucleotides upstream of the 3' splice site. This adenine's <strong class="text-teal-200">2'-OH group</strong> is crucial for the first catalytic step.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Polypyrimidine Tract (Py-tract):</strong> A stretch of 10-20 pyrimidines (cytosine and uracil) located between the branch point and the 3' splice site. It's essential for recruiting splicing factors to the 3' end of the intron.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 3: The Splicing Mechanism -->
+            <div id="section-3" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">3. The Splicing Mechanism (Two-Step Reaction)</h2>
+                <p class="mb-4 leading-relaxed">
+                    The removal of an intron is a two-step chemical reaction, both of which are <strong class="text-teal-200">transesterification reactions</strong>. This means one phosphodiester bond is broken and another is formed simultaneously, requiring no net energy input (though ATP is used for spliceosome assembly).
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Lariat%20formation.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">Step 1: Lariat Formation</strong>
+                        <p class="ml-4 mt-1">
+                            The <strong class="text-teal-200">2'-OH group</strong> of the branch point adenine (A) performs a nucleophilic attack on the phosphodiester bond at the <strong class="text-teal-200">5' splice site</strong>. This breaks the bond between the 5' exon and the intron, and forms a unique <strong class="text-teal-200">2'-5' phosphodiester bond</strong>. The intron curls into a loop structure called a <strong class="text-teal-200">lariat</strong>. The 5' exon is now free, possessing a 3'-OH group.
+                        </p>
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Step 2: Exon Ligation</strong>
+                        <p class="ml-4 mt-1">
+                            The newly freed <strong class="text-teal-200">3'-OH group</strong> of the 5' exon performs a second nucleophilic attack, this time on the phosphodiester bond at the <strong class="text-teal-200">3' splice site</strong>. This reaction joins the two exons together (ligates them) and releases the intron lariat, which is subsequently degraded in the nucleus.
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 4: The Spliceosome -->
+            <div id="section-4" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">4. The Spliceosome</h2>
+                <p class="mb-4 leading-relaxed">
+                    The spliceosome is the massive, dynamic molecular complex that carries out pre-mRNA splicing. It is one of the largest complexes in the cell, comparable in size to a ribosome (approx. 4.8 MDa).
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    It is not a pre-formed machine; rather, it <strong class="text-teal-200">assembles step-wise</strong> onto the pre-mRNA at each intron. Its core components are five <strong class="text-teal-200">small nuclear ribonucleoproteins (snRNPs)</strong> and a large number of non-snRNP accessory proteins (over 150 different proteins).
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    The catalytic activity of the spliceosome is not performed by proteins, but by its RNA components, making it a <strong class="text-teal-200">ribozyme</strong> (an RNA enzyme).
+                </p>
+            </div>
+
+            <!-- Section 5: Synthesis of snRNPs -->
+            <div id="section-5" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">5. Synthesis of snRNPs</h2>
+                <p class="mb-4 leading-relaxed">
+                    The core of the spliceosome is built from small nuclear ribonucleoproteins, or <strong class="text-teal-200">snRNPs</strong> (pronounced "snurps"). Each snRNP consists of one <strong class="text-teal-200">small nuclear RNA (snRNA)</strong> molecule and a complex of associated proteins.
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">snRNAs:</strong> The five snRNAs involved in splicing are <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U1</code>, <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U2</code>, <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U4</code>, <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U5</code>, and <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U6</code>. They are rich in uridine.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Transcription:</strong> U1, U2, U4, and U5 are transcribed by <strong class="text-teal-200">RNA Polymerase II</strong> (like mRNA). U6 is transcribed by <strong class="text-teal-200">RNA Polymerase III</strong> (like tRNA).
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Assembly:</strong> The snRNAs (except U6) are exported to the cytoplasm. There, they associate with a ring of seven <strong class="text-teal-200">Sm proteins</strong> to form the snRNP core. After further modification (like hypermethylation of their 5' cap), they are re-imported into the nucleus to function. U6 remains in the nucleus, where it assembles with LSm (Sm-like) proteins.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 6: Spliceosomal Splicing Mechanism -->
+            <div id="section-6" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">6. Mechanism of Spliceosomal Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    Spliceosome assembly is a highly ordered, dynamic process involving multiple complexes:
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Spliceosomal%20splicing.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">E (Early) Complex:</strong> <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U1 snRNP</code> binds to the 5' splice site via RNA-RNA base pairing. Splicing Factor 1 (SF1) binds the branch point.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">A (Activation) Complex:</strong> <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U2 snRNP</code> (aided by U2AF factor) binds to the branch point, displacing SF1. This binding forces the branch point adenine to bulge out, making its 2'-OH group available for catalysis.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">B (Assembly) Complex:</strong> The pre-assembled <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U4/U6.U5 tri-snRNP</code> complex joins the A complex. At this stage, <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U4</code> and <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U6</code> are extensively base-paired, inactivating U6.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">C (Catalytic) Complex:</strong> This is the activated spliceosome. Major RNA-RNA rearrangements occur:
+                        <ul class="list-decimal list-inside ml-6 mt-2 space-y-1">
+                            <li><code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U1</code> and <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U4</code> are released.</li>
+                            <li><code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U6</code> displaces U1 at the 5' splice site.</li>
+                            <li><code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U6</code> base-pairs with <code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U2</code>, forming the <strong class="text-teal-200">catalytic core</strong>.</li>
+                            <li><code class="bg-indigo-900 text-pink-300 px-1 py-0.5 rounded-sm font-mono text-sm">U5</code> holds the 5' and 3' exons in close proximity.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Catalysis:</strong> The U2/U6 catalytic core facilitates the two transesterification reactions (lariat formation and exon ligation).
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Disassembly:</strong> After exon ligation, the mature mRNA is released. The spliceosome disassembles, and the snRNPs are recycled for another round.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 7: Regulation of Splicing -->
+            <div id="section-7" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">7. Regulation of Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    Splicing is not automatic; it is a major point of gene regulation. The choice of which splice sites to use is controlled by <strong class="text-teal-200">trans-acting protein factors</strong> that bind to <strong class="text-teal-200">cis-acting sequence elements</strong> on the pre-mRNA.
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">Splicing Enhancers (ESE/ISE):</strong> These are sequences within exons (Exonic Splicing Enhancers) or introns (Intronic Splicing Enhancers) that <strong class="text-teal-200">promote</strong> splicing at nearby sites.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">SR Proteins:</strong> Enhancers are typically bound by <strong class="text-teal-200">SR proteins</strong> (rich in Serine and Arginine). SR proteins recruit U1 and U2AF to the correct splice sites, effectively "flagging" them for the spliceosome.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Splicing Silencers (ESS/ISS):</strong> These sequences (in exons or introns) <strong class="text-teal-200">repress</strong> splicing at nearby sites.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">hnRNPs:</strong> Silencers are often bound by <strong class="text-teal-200">heterogeneous nuclear ribonucleoproteins (hnRNPs)</strong>. These proteins can block the binding of SR proteins or snRNPs, or cause the RNA to loop in a way that hides a splice site, leading to its exclusion.
+                    </li>
+                </ul>
+                <p class="leading-relaxed">
+                    The final splicing pattern is determined by the <strong class="text-teal-200">combinatorial code</strong> of these competing positive (SR) and negative (hnRNP) factors.
+                </s_p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Cross%20exon%20recognition%20complex.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </div>
+
+            <!-- Section 8: Alternative Splicing -->
+            <div id="section-8" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">8. Alternative Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    Alternative splicing is a regulated process that allows a single gene to produce multiple distinct mRNA transcripts (isoforms) by selectively including or excluding certain exons.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    This is a primary mechanism for generating <strong class="text-teal-200">proteomic diversity</strong> in eukaryotes. It is estimated that over <strong class="text-teal-200">95% of human multi-exon genes</strong> undergo alternative splicing.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    By changing the combination of exons, a cell can produce protein isoforms with different functions, localizations, or stabilities, all from the same gene. This is crucial for cell differentiation, development, and responding to environmental signals.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Alternative%20splicing.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </div>
+
+            <!-- Section 9: Types of Alternative Splicing -->
+            <div id="section-9" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">9. Types of Alternative Splicing</h2>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Alternative%20splicing%20types.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <p class="mb-4 leading-relaxed">
+                    Alternative splicing can occur through several common patterns:
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">Constitutive Splicing:</strong> This is the "default" pattern where all introns are removed and all exons are joined in their linear order. It serves as the baseline.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Cassette Exon (Exon Skipping):</strong> The most common type. An exon (the "cassette") can be either included in the mature mRNA or skipped (spliced out along with its flanking introns).
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Mutually Exclusive Exons:</strong> Only one exon from a cluster of two or more exons is included in the final mRNA, while all others are skipped.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Alternative Splice Sites (Cryptic Splicing):</strong> An alternative 5' or 3' splice site is used, making an exon longer or shorter. "Cryptic" sites are splicing signals that are normally hidden or weak but become activated under certain conditions.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Intron Retention:</strong> An entire intron is retained in the mature mRNA, rather than being spliced out. This often introduces a premature stop codon, leading to a truncated protein or degradation of the mRNA via <strong class="text-teal-200">Nonsense-Mediated Decay (NMD)</strong>.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 10: Self-Splicing Introns -->
+            <div id="section-10" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">10. Self-Splicing Introns (Ribozymes)</h2>
+                <p class="mb-4 leading-relaxed">
+                    Some introns can catalyze their own removal <strong class="text-teal-200">without the help of the spliceosome</strong>. These are known as self-splicing introns, or <strong class="text-teal-200">ribozymes</strong>. They are found in some bacteria, archaea, lower eukaryotes, and in the mitochondria and chloroplasts of plants.
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">Group I Introns:</strong> These introns fold into a complex 3D structure that binds an <strong class="text-teal-200">external guanosine (GTP, GDP, or GMP)</strong> as a cofactor. The 3'-OH of this G attacks the 5' splice site. The free 3'-OH of the 5' exon then attacks the 3' splice site, ligating the exons.
+                    </li>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Group1%20intron.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <li>
+                        <strong class="text-indigo-200">Group II Introns:</strong> These are mechanistically remarkable. They use an internal <strong class="text-teal-200">branch point adenine (A)</strong>, just like the spliceosome. The 2'-OH of this A attacks the 5' splice site to form a <strong class="text-teal-200">lariat</strong> structure. This mechanism is so similar to spliceosomal splicing that Group II introns are believed to be the <strong class="text-teal-200">evolutionary ancestors</strong> of both nuclear introns and the snRNAs (like U2 and U6) that form the spliceosome's catalytic core.
+                    </li>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Group%20II%20intron%20mechanism.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                </ul>
+            </div>
+
+            <!-- Section 11: Trans-Splicing -->
+            <div id="section-11" class="section hidden">
+                <h2 class="text-2xl font-semibold mb-4 text-teal-300 border-b border-teal-700 pb-2">11. Trans-Splicing</h2>
+                <p class="mb-4 leading-relaxed">
+                    While standard (cis) splicing joins exons from the <strong class="text-teal-200">same</strong> pre-mRNA molecule, trans-splicing is a rare event that joins exons from <strong class="text-teal-200">two different</strong> pre-mRNA transcripts.
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    This process is common in protozoans (like trypanosomes) and lower invertebrates (like nematodes, e.g., *C. elegans*).
+                </p>
+                <ul class="list-disc list-inside mb-4 ml-4 space-y-3">
+                    <li>
+                        <strong class="text-indigo-200">Mechanism:</strong> In these organisms, many genes are transcribed as long <strong class="text-teal-200">polycistronic</strong> (multi-gene) transcripts. Trans-splicing is used to cut this long transcript into individual, mature mRNAs.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Spliced Leader (SL) RNA:</strong> A short, common 5' exon, called the <strong class="text-teal-200">Spliced Leader (SL)</strong>, is transcribed from its own gene. The SL RNA (in the form of an SL-snRNP) provides its exon to the 5' end of many different pre-mRNAs.
+                    </li>
+                    <li>
+                        <strong class="text-indigo-200">Function:</strong> This process simultaneously resolves the polycistronic message into monocistronic ones and adds a <strong class="text-teal-200">5' cap</strong> (which is part of the SL RNA) to each mRNA, making it ready for translation.
+                    </li>
+                </ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Trans%20splicing.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            </div>
+
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <!-- Fixed Bottom Navigation Bar -->
+    <!-- backdrop-blur-md creates a nice frosted-glass effect -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#11122B]/80 backdrop-blur-md border-t border-indigo-900 p-4">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <button id="prev-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <div id="section-counter" class="text-sm text-indigo-300">
+                Section 1 / 11
+            </div>
+            <button id="next-btn" class="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+    </nav>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentSection = 1;
+            const sections = document.querySelectorAll('.section');
+            const totalSections = sections.length;
+
+            const prevButton = document.getElementById('prev-btn');
+            const nextButton = document.getElementById('next-btn');
+            const sectionCounter = document.getElementById('section-counter');
+
+            // Function to show the correct section
+            function showSection(sectionIndex) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                    section.classList.remove('opacity-100');
+                });
+
+                // Show the target section
+                const targetSection = document.getElementById(`section-${sectionIndex}`);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    // Use a timeout for a slight fade-in effect
+                    setTimeout(() => targetSection.classList.add('opacity-100'), 50);
+                }
+
+                currentSection = sectionIndex;
+                updateButtonStates();
+                
+                // Scroll to the top of the page on section change
+                window.scrollTo(0, 0);
+            }
+
+            // Function to update the disabled state of buttons
+            function updateButtonStates() {
+                prevButton.disabled = (currentSection === 1);
+                nextButton.disabled = (currentSection === totalSections);
+                sectionCounter.textContent = `Section ${currentSection} / ${totalSections}`;
+            }
+
+            // Event listeners for buttons
+            nextButton.addEventListener('click', () => {
+                if (currentSection < totalSections) {
+                    showSection(currentSection + 1);
+                }
+            });
+
+            prevButton.addEventListener('click', () => {
+                if (currentSection > 1) {
+                    showSection(currentSection - 1);
+                }
+            });
+
+            // Initial setup
+            showSection(1);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</body>
+</html>
