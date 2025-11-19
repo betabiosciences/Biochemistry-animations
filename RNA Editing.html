@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Editing in Eukaryotes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0c29;
+            background-image: linear-gradient(315deg, #0f0c29 0%, #302b63 74%, #24243e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .glass-panel {
+            background: rgba(30, 27, 75, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .slide-enter {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight-text {
+            color: #a78bfa; /* violet-400 */
+            font-weight: 600;
+        }
+
+        .accent-header {
+            color: #2dd4bf; /* teal-400 */
+        }
+        
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b4b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6366f1; 
+            border-radius: 4px;
+        }
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 sm:p-6">
+
+    <!-- Main Container -->
+    <div class="w-full max-w-3xl relative min-h-[85vh] flex flex-col">
+        
+        <!-- Content Area -->
+        <div class="flex-grow relative overflow-hidden rounded-2xl glass-panel p-6 sm:p-8 shadow-2xl" id="content-container">
+            
+            <!-- Slide 1: Introduction -->
+            <div class="slide slide-enter block" id="slide-0">
+                <div class="h-full flex flex-col justify-center items-center text-center space-y-6">
+                    <div class="w-20 h-1 bg-gradient-to-r from-fuchsia-500 to-cyan-500 rounded-full"></div>
+                    <h2 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-fuchsia-400 pb-2">
+                        RNA Editing
+                    </h2>
+                    <p class="text-xl text-slate-300 font-light">
+                        Beyond the Central Dogma in Eukaryotes
+                    </p>
+                    <div class="bg-slate-900/50 p-6 rounded-lg border-l-4 border-fuchsia-500 text-left mt-8 w-full">
+                        <p class="text-sm text-slate-400 uppercase tracking-widest mb-2 font-bold">Definition</p>
+                        <p class="leading-relaxed">
+                            A post-transcriptional molecular process in which the nucleotide sequence of an RNA molecule is altered via insertion, deletion, or conversion of nucleotides, resulting in an mRNA sequence that differs from the DNA template.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Overall Features -->
+            <div class="slide hidden" id="slide-1">
+                <h3 class="text-2xl font-bold accent-header mb-6 border-b border-slate-700 pb-3">1. General Features & Scope</h3>
+                
+                <div class="space-y-6 text-slate-200">
+                    <div>
+                        <h4 class="text-lg font-semibold text-fuchsia-300 mb-2">Where does it occur?</h4>
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            While initially discovered in the mitochondria of trypanosomes (kinetoplastids), RNA editing is widespread across eukaryotes. It occurs in the nucleus (mammals), mitochondria (trypanosomes, plants), and plastids (chloroplasts).
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-indigo-950/50 p-4 rounded-lg border border-indigo-500/20">
+                            <strong class="block text-cyan-300 mb-1">Timing</strong>
+                            <p class="text-xs text-slate-300">Occurs post-transcriptionally.</p>
+                        </div>
+                        <div class="bg-indigo-950/50 p-4 rounded-lg border border-indigo-500/20">
+                            <strong class="block text-cyan-300 mb-1">Specificity</strong>
+                            <p class="text-xs text-slate-300">Highly specific; enzymes recognize specific secondary structures or sequence motifs.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-semibold text-fuchsia-300 mb-2">Types of Editing</h4>
+                        <ul class="list-none space-y-3 text-sm">
+                            <li class="flex items-start">
+                                <span class="text-cyan-400 mr-2">▸</span>
+                                <span><strong class="text-white">Substitution Editing:</strong> Chemical modification of a base (e.g., A→I, C→U). Common in mammals and higher plants.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-cyan-400 mr-2">▸</span>
+                                <span><strong class="text-white">Insertion/Deletion Editing:</strong> Adding or removing Uracils. Prominent in protozoan mitochondria (Trypanosomes).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Substitution Editing Details -->
+            <div class="slide hidden" id="slide-2">
+                <h3 class="text-2xl font-bold accent-header mb-6 border-b border-slate-700 pb-3">2. Substitution Editing</h3>
+                
+                <div class="space-y-8">
+                    <!-- A to I -->
+                    <div class="relative pl-4 border-l-2 border-purple-500">
+                        <h4 class="text-xl font-bold text-white mb-2">A-to-I Editing (Adenosine to Inosine)</h4>
+                        <p class="text-sm text-slate-300 mb-3">
+                            The most prevalent form in mammals. Mediated by the <span class="code-font text-fuchsia-300">ADAR</span> (Adenosine Deaminase Acting on RNA) family of enzymes.
+                        </p>
+                        <div class="bg-slate-900/60 p-3 rounded text-sm font-mono text-cyan-200">
+                            Reaction: Adenosine + H₂O → Inosine + NH₃
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">
+                            <strong>Impact:</strong> The translation machinery reads Inosine (I) as Guanosine (G). Thus, an A is functionally converted to a G, potentially altering the amino acid sequence (Recoding).
+                        </p>
+                    </div>
+
+                    <!-- C to U -->
+                    <div class="relative pl-4 border-l-2 border-teal-500">
+                        <h4 class="text-xl font-bold text-white mb-2">C-to-U Editing (Cytidine to Uridine)</h4>
+                        <p class="text-sm text-slate-300 mb-3">
+                            Involves deamination of Cytidine. Mediated by the <span class="code-font text-fuchsia-300">APOBEC</span> complex (CDAR - Cytidine Deaminase Acting on RNA).
+                        </p>
+                        <div class="bg-slate-900/60 p-3 rounded text-sm font-mono text-cyan-200">
+                            Reaction: Cytidine + H₂O → Uridine + NH₃
+                        </div>
+                        <p class="text-xs text-slate-400 mt-2">
+                            <strong>Impact:</strong> Often creates stop codons or changes amino acid identity. Crucial in plant mitochondria and chloroplasts, as well as specific mammalian transcripts.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: ApoB Example -->
+            <div class="slide hidden" id="slide-3">
+                <h3 class="text-2xl font-bold accent-header mb-4 border-b border-slate-700 pb-3">Example: Apolipoprotein B</h3>
+                <p class="text-sm text-slate-400 mb-6">The classic textbook example of tissue-specific C-to-U editing in mammals.</p>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Liver Scenario -->
+                    <div class="bg-indigo-900/30 p-5 rounded-xl border border-indigo-500/30">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-lg font-bold text-fuchsia-400">In The Liver</h4>
+                            <span class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-400">Unedited</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-2">
+                            The transcript contains the codon <span class="code-font font-bold text-white">CAA</span> (Glutamine) at position 2153.
+                        </p>
+                        <div class="w-full bg-slate-900 h-2 rounded-full mb-2 overflow-hidden">
+                            <div class="bg-cyan-600 h-full w-full"></div>
+                        </div>
+                        <p class="text-xs text-cyan-300 font-mono">Result: ApoB-100 (Full length protein)</p>
+                        <p class="text-xs text-slate-500 mt-1">Function: ApoB100 is the major apolipoprotein component of VLDL (Very Low-Density Lipoprotein) and LDL (Low-Density Lipoprotein), responsible for transporting lipids from the liver to peripheral tissues.</p>
+                    </div>
+
+                    <!-- Intestine Scenario -->
+                    <div class="bg-indigo-900/30 p-5 rounded-xl border border-indigo-500/30 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 bg-teal-500/20 w-20 h-20 rounded-full blur-2xl"></div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-lg font-bold text-teal-400">In The Intestine</h4>
+                            <span class="text-xs bg-teal-900/50 px-2 py-1 rounded text-teal-300 border border-teal-500/30">Edited</span>
+                        </div>
+                        <p class="text-sm text-slate-300 mb-2">
+                            Enzyme <span class="text-white font-bold">ACF/APOBEC-1</span> deaminates C to U.
+                            <br>Sequence changes: <span class="code-font text-red-400 line-through">CAA</span> &rarr; <span class="code-font text-green-400 font-bold">UAA</span>
+                        </p>
+                        <p class="text-sm text-red-300 font-bold mb-2">⚠ UAA is a STOP codon.</p>
+                        <div class="w-full bg-slate-900 h-2 rounded-full mb-2 overflow-hidden">
+                            <div class="bg-cyan-600 h-full w-[48%]"></div>
+                        </div>
+                        <p class="text-xs text-cyan-300 font-mono">Result: ApoB-48 (Truncated protein)</p>
+                        <p class="text-xs text-slate-500 mt-1">Function:  ApoB48 is essential for chylomicron assembly and dietary lipid absorption in the small intestine.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Insertion/Deletion Editing -->
+            <div class="slide hidden" id="slide-4">
+                <h3 class="text-2xl font-bold accent-header mb-6 border-b border-slate-700 pb-3">3. Pan-Editing (Indels)</h3>
+                
+                <div class="space-y-5 text-slate-200">
+                    <p class="text-sm leading-relaxed">
+                        Found primarily in the kinetoplast mitochondria of Trypanosomes (e.g., <em>Trypanosoma brucei</em>). This mechanism can rewrite huge sections of mRNA, creating start codons, stop codons, and reading frames where none existed in the DNA.
+                    </p>
+
+                    <div class="bg-black/20 p-4 rounded-lg border-l-4 border-fuchsia-600">
+                        <h4 class="font-bold text-white mb-1">Key Player: Guide RNA (gRNA)</h4>
+                        <p class="text-sm text-slate-400">Small RNAs encoded by minicircles in the kinetoplast DNA. They contain the complementary sequence to the <em>edited</em> product.</p>
+                    </div>
+
+                    <h4 class="text-md font-bold text-cyan-300 mt-4">The "Editosome" Mechanism:</h4>
+                    <ol class="relative border-l border-slate-700 ml-3 space-y-4 pb-2">
+                        <li class="mb-2 ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-900 rounded-full -left-3 ring-4 ring-[#0f0c29] text-xs font-mono">1</span>
+                            <strong class="text-white block">Anchoring</strong>
+                            <span class="text-sm text-slate-400">gRNA base-pairs with the pre-mRNA just downstream of the editing site.</span>
+                        </li>
+                        <li class="mb-2 ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-900 rounded-full -left-3 ring-4 ring-[#0f0c29] text-xs font-mono">2</span>
+                            <strong class="text-white block">Cleavage</strong>
+                            <span class="text-sm text-slate-400">Endonuclease cleaves the mRNA at the mismatch site.</span>
+                        </li>
+                        <li class="mb-2 ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-900 rounded-full -left-3 ring-4 ring-[#0f0c29] text-xs font-mono">3</span>
+                            <strong class="text-white block">Addition/Deletion</strong>
+                            <span class="text-sm text-slate-400">
+                                <span class="text-fuchsia-300">TUTase</span> adds Uracils (Insertion) or <span class="text-fuchsia-300">Exonuclease</span> removes them (Deletion) to match the gRNA template.
+                            </span>
+                        </li>
+                        <li class="ml-6">
+                            <span class="absolute flex items-center justify-center w-6 h-6 bg-indigo-900 rounded-full -left-3 ring-4 ring-[#0f0c29] text-xs font-mono">4</span>
+                            <strong class="text-white block">Ligation</strong>
+                            <span class="text-sm text-slate-400">RNA Ligase seals the backbone.</span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Slide 6: Significance -->
+            <div class="slide hidden" id="slide-5">
+                <h3 class="text-2xl font-bold accent-header mb-6 border-b border-slate-700 pb-3">4. Biological Significance</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Box 1 -->
+                    <div class="bg-gradient-to-br from-indigo-900/40 to-slate-900 p-4 rounded-xl border border-indigo-500/20">
+                        <div class="text-3xl mb-2">🧬</div>
+                        <h4 class="font-bold text-white mb-2">Protein Diversity</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Allows a single gene to encode multiple protein variants with distinct functions (e.g., ApoB, Serotonin receptors, Glutamate receptors). This increases the proteome complexity without increasing genome size.
+                        </p>
+                    </div>
+
+                    <!-- Box 2 -->
+                    <div class="bg-gradient-to-br from-indigo-900/40 to-slate-900 p-4 rounded-xl border border-indigo-500/20">
+                        <div class="text-3xl mb-2">🧠</div>
+                        <h4 class="font-bold text-white mb-2">Neurological Function</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            A-to-I editing is highly active in the brain. Editing of the <em>Gria2</em> transcript (Glutamate receptor) is essential for preventing calcium permeability. Lack of editing leads to epilepsy and neuronal death.
+                        </p>
+                    </div>
+
+                    <!-- Box 3 -->
+                    <div class="bg-gradient-to-br from-indigo-900/40 to-slate-900 p-4 rounded-xl border border-indigo-500/20">
+                        <div class="text-3xl mb-2">🛡️</div>
+                        <h4 class="font-bold text-white mb-2">Defense Mechanism</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ADAR enzymes can target double-stranded RNA produced by viruses, mutating their genetic code to suppress replication (Hypermutation). It also suppresses innate immune responses to self-dsRNA.
+                        </p>
+                    </div>
+
+                    <!-- Box 4 -->
+                    <div class="bg-gradient-to-br from-indigo-900/40 to-slate-900 p-4 rounded-xl border border-indigo-500/20">
+                        <div class="text-3xl mb-2">🐛</div>
+                        <h4 class="font-bold text-white mb-2">Evolutionary Repair</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            In mitochondria and chloroplasts, editing often corrects genomic mutations, restoring functional Start/Stop codons and conserving essential amino acids required for respiration/photosynthesis.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-fuchsia-400 font-semibold animate-pulse">End of Module</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation Footer -->
+        <div class="mt-6 flex justify-between items-center gap-4">
+            <button onclick="changeSlide(-1)" id="prevBtn" class="flex-1 py-3 px-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed border border-slate-600">
+                &larr; Previous
+            </button>
+            <button onclick="changeSlide(1)" id="nextBtn" class="flex-1 py-3 px-6 rounded-lg bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white font-bold shadow-lg shadow-purple-900/50 transition-all">
+                Next &rarr;
+            </button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateUI() {
+            // Toggle Visibility
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.remove('hidden');
+                    slide.classList.add('slide-enter');
+                } else {
+                    slide.classList.add('hidden');
+                    slide.classList.remove('slide-enter');
+                }
+            });
+
+            // Update Buttons
+            prevBtn.disabled = currentSlide === 0;
+            
+            if (currentSlide === totalSlides - 1) {
+                nextBtn.innerHTML = "Finish ↺";
+                nextBtn.classList.remove('from-fuchsia-600', 'to-purple-600');
+                nextBtn.classList.add('from-teal-600', 'to-emerald-600');
+            } else {
+                nextBtn.innerHTML = "Next &rarr;";
+                nextBtn.classList.add('from-fuchsia-600', 'to-purple-600');
+                nextBtn.classList.remove('from-teal-600', 'to-emerald-600');
+            }
+
+            // Scroll top of container
+            document.getElementById('content-container').scrollTop = 0;
+        }
+
+        function changeSlide(direction) {
+            if (direction === 1 && currentSlide === totalSlides - 1) {
+                // Reset if at end
+                currentSlide = 0;
+            } else {
+                currentSlide += direction;
+            }
+            
+            // Bounds check
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+
+            updateUI();
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
