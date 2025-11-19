@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fate of mRNA in Eukaryotes</title>
+    <style>
+        :root {
+            --bg-dark: #0f0518;
+            --bg-card: #1a103c;
+            --accent-primary: #00f2ff; /* Cyan for primary headings */
+            --accent-secondary: #d946ef; /* Magenta for subheadings */
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --btn-hover: #2d1b4e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #2a1b54 0%, var(--bg-dark) 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 2px rgba(139, 92, 246, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 85vh; /* Fixed height for mobile consistency */
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Header */
+        header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 5, 24, 0.5);
+            backdrop-filter: blur(5px);
+            flex-shrink: 0;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--accent-primary);
+            line-height: 1.2;
+        }
+
+        /* Content Area */
+        .content-viewport {
+            flex-grow: 1;
+            overflow-y: auto;
+            position: relative;
+            padding: 25px;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar Styling */
+        .content-viewport::-webkit-scrollbar {
+            width: 8px;
+        }
+        .content-viewport::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        .content-viewport::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.4);
+            border-radius: 4px;
+        }
+
+        /* Slide Transition Logic */
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography within slides */
+        .topic-header {
+            color: var(--accent-secondary);
+            font-size: 1.3rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-secondary);
+            padding-left: 10px;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li::before {
+            content: "▹";
+            color: var(--accent-primary);
+            position: absolute;
+            left: 0;
+        }
+
+        strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .concept-tag {
+            display: inline-block;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--accent-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        /* Navigation Controls */
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--accent-primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        }
+
+        .nav-btn:disabled {
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.2);
+            cursor: not-allowed;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .container { height: 100vh; border-radius: 0; max-width: 100%; }
+            h2 { font-size: 1.5rem; }
+            p { font-size: 1rem; }
+            header { padding: 15px 20px; }
+            .navigation-controls { padding: 15px 0; }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h2 id="slide-title">Fate of mRNA</h2>
+        </header>
+
+        <div class="content-viewport" id="content-area">
+            
+            <!-- Slide 1: mRNA Export -->
+            <div class="slide active" data-title="mRNA Export to Cytosol">
+                <p>The translocation of messenger RNA (mRNA) from the nucleus to the cytoplasm is a tightly regulated quality control checkpoint. Only mature, fully processed mRNPs (messenger ribonucleoprotein particles) are competent for export.</p>
+
+                <div class="topic-header">The TREX Complex</div>
+                <p>Linking transcription to export, the <span class="concept-tag">TREX complex</span> (Transcription-Export) is recruited to the mRNA during splicing. A key component, the <strong>Aly/REF</strong> export factor, is deposited onto the mRNA exon-junction complex (EJC).</p>
+
+                <div class="topic-header">Nuclear Receptor Interaction</div>
+                <p>The general mRNA export receptor is a heterodimer composed of <span class="concept-tag">NXF1</span> (TAP) and <span class="concept-tag">NXT1</span> (p15). Unlike importins/exportins, NXF1-NXT1 does <strong>not</strong> rely on the Ran-GTP gradient.</p>
+                <ul>
+                    <li>NXF1 binds to RNA and REF/Aly proteins.</li>
+                    <li>The complex interacts transiently with FG-nucleoporins within the <strong>Nuclear Pore Complex (NPC)</strong> channel, allowing diffusion through the hydrophobic meshwork.</li>
+                </ul>
+
+                <div class="topic-header">Directionality via DEAD-box Helicase</div>
+                <p>Once the mRNP reaches the cytoplasmic face of the NPC, the DEAD-box RNA helicase <span class="concept-tag">Dbp5</span> (activated by Gle1 and IP6) strips the export factors off the mRNA. This ATP-dependent remodeling prevents back-sliding, ensuring directional transport into the cytosol.</p>
+                
+                <div class="navigation-controls">
+                    <div class="progress">Topic 1 of 4</div>
+                    <div class="controls">
+                        <button class="nav-btn prev-btn" disabled>Previous</button>
+                        <button class="nav-btn next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Intron Lariat Degradation -->
+            <div class="slide" data-title="Degradation of the Lariat">
+                <p>Splicing of pre-mRNA generates exons (which form the mature mRNA) and introns, which are excised in a lariat (lasso) configuration. This byproduct must be efficiently cleared from the nucleoplasm.</p>
+
+                <div class="topic-header">Debranching</div>
+                <p>The lariat structure is stabilized by a unique 2'-5' phosphodiester bond at the branch point adenosine. Before degradation can occur, the lariat must be linearized by the RNA <span class="concept-tag">Debranching Enzyme (Dbr1)</span>, which specifically hydrolyzes this 2'-5' bond.</p>
+
+                <div class="topic-header">Exosome-Mediated Decay</div>
+                <p>Once linearized, the intron RNA is rapidly degraded from the 3' end by the <strong>Nuclear Exosome</strong>.</p>
+                <ul>
+                    <li><strong>Rrp6</strong> and <strong>Rrp44/Dis3</strong> are the catalytic subunits providing exonuclease activity.</li>
+                    <li>This process recycles nucleotides for future transcription events.</li>
+                </ul>
+                <p><em>Note:</em> In some cases, stable lariats can serve as precursors for snoRNAs or miRNAs (mirtrons), escaping immediate degradation.</p>
+                
+                <div class="navigation-controls">
+                    <div class="progress">Topic 2 of 4</div>
+                    <div class="controls">
+                        <button class="nav-btn prev-btn">Previous</button>
+                        <button class="nav-btn next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: mRNA Degradation Pathways -->
+            <div class="slide" data-title="mRNA Degradation Pathways">
+                <p>Cytoplasmic mRNA turnover is a major determinant of gene expression levels. The half-life of mRNA varies from minutes to days.</p>
+
+                <div class="topic-header">1. Deadenylation-Dependent Decay (Major Pathway)</div>
+                <p>Most eukaryotic mRNAs are degraded via this biphasic process:</p>
+                <ul>
+                    <li><strong>Step A (Deadenylation):</strong> The poly(A) tail is shortened by the <span class="concept-tag">PAN2-PAN3</span> complex and the <span class="concept-tag">CCR4-NOT</span> complex. Loss of Poly(A) binding protein (PABP) destabilizes the interaction with eIF4G at the 5' cap.</li>
+                    <li><strong>Step B (Decapping):</strong> The 5' cap is removed by the <strong>Dcp1-Dcp2</strong> decapping complex (enhanced by activators like Edc3 and Lsm1-7).</li>
+                    <li><strong>Step C (Exonucleolytic Decay):</strong> The exposed RNA is degraded 5'→3' by <span class="concept-tag">Xrn1</span> or 3'→5' by the Cytoplasmic Exosome.</li>
+                </ul>
+
+                <div class="topic-header">2. Deadenylation-Independent Decay</div>
+                <p>Certain mRNAs are targeted for decapping without prior shortening of the poly(A) tail. For example, in yeast, the <strong>Rps28B</strong> protein recruits the decapping machinery directly to its own mRNA to autoregulate levels, bypassing the deadenylation step.</p>
+
+                <div class="topic-header">3. Endonuclease-Mediated Decay</div>
+                <p>This pathway involves internal cleavage of the mRNA, bypassing the need for deadenylation or decapping to initiate decay.</p>
+                <ul>
+                    <li><strong>RNAi Pathway:</strong> siRNA guides the RISC complex (containing <strong>Argonaute/Ago2</strong>) to cleave complementary mRNA.</li>
+                    <li><strong>Nonsense-Mediated Decay (NMD):</strong> Can involve endonucleolytic cleavage (e.g., by SMG6) near premature stop codons.</li>
+                    <li><strong>IRE1 Pathway:</strong> During unfolded protein response (UPR), IRE1 cleaves specific mRNAs in the ER.</li>
+                </ul>
+                
+                <div class="navigation-controls">
+                    <div class="progress">Topic 3 of 4</div>
+                    <div class="controls">
+                        <button class="nav-btn prev-btn">Previous</button>
+                        <button class="nav-btn next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: P-Bodies -->
+            <div class="slide" data-title="Processing Bodies (P-Bodies)">
+                <p>P-bodies are dynamic, non-membrane-bound cytoplasmic organelles (RNP granules) formed via <span class="concept-tag">Liquid-Liquid Phase Separation (LLPS)</span> and are dynamic—appearing, growing, dissolving depending on cellular stress and mRNA load.</p>
+
+                <div class="topic-header">Composition</div>
+                <p>P-bodies are enriched with translational repressors and mRNA decay machinery, but generally <strong>lack</strong> ribosomes and translation initiation factors. Key residents include:</p>
+                <ul>
+                    <li>Decapping enzymes (Dcp1/Dcp2).</li>
+                    <li>Decapping activators (Dhh1, Pat1, Lsm1-7 complex).</li>
+                    <li>5'-3' Exonuclease (Xrn1).</li>
+                    <li>GW182 (marker for miRNA pathway interaction).</li>
+                </ul>
+
+                <div class="topic-header">Functions: Storage vs. Decay</div>
+                <p>Historically viewed solely as sites of mRNA "burial" (degradation), recent evidence suggests a dual role:</p>
+                <ol>
+                    <li><strong>Transcriptional Repression:</strong> mRNAs can be temporarily sequestered in P-bodies away from the translation machinery.</li>
+                    <li><strong>Decay Hubs:</strong> High local concentrations of decay enzymes facilitate rapid turnover of targeted transcripts.</li>
+                    <li><strong>Reversibility:</strong> Under stress relief or specific signals, mRNAs can exit P-bodies and return to polysomes for translation.</li>
+                </ol>
+                
+                <div class="navigation-controls">
+                    <div class="progress">Topic 4 of 4</div>
+                    <div class="controls">
+                        <button class="nav-btn prev-btn">Previous</button>
+                        <button class="nav-btn next-btn">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const titleElement = document.getElementById('slide-title');
+            const contentArea = document.getElementById('content-area');
+            
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+
+            function updateUI() {
+                // Hide all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                
+                // Show current slide
+                const currentSlide = slides[currentIndex];
+                currentSlide.classList.add('active');
+                
+                // Update Header Title from data attribute
+                titleElement.textContent = currentSlide.getAttribute('data-title');
+                
+                // Update Navigation State
+                const prevBtns = document.querySelectorAll('.prev-btn');
+                const nextBtns = document.querySelectorAll('.next-btn');
+                const progressElements = document.querySelectorAll('.progress');
+                
+                prevBtns.forEach(btn => {
+                    btn.disabled = currentIndex === 0;
+                });
+                
+                nextBtns.forEach(btn => {
+                    if (currentIndex === totalSlides - 1) {
+                        btn.textContent = "Reset";
+                    } else {
+                        btn.textContent = "Next";
+                    }
+                });
+                
+                progressElements.forEach(el => {
+                    el.textContent = `Topic ${currentIndex + 1} of ${totalSlides}`;
+                });
+
+                // Scroll to top of content area when switching
+                contentArea.scrollTop = 0;
+            }
+
+            // Add event listeners to all navigation buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('next-btn')) {
+                    if (currentIndex < totalSlides - 1) {
+                        currentIndex++;
+                        updateUI();
+                    } else {
+                        // Reset logic
+                        currentIndex = 0;
+                        updateUI();
+                    }
+                } else if (e.target.classList.contains('prev-btn')) {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateUI();
+                    }
+                }
+            });
+
+            // Initialize
+            updateUI();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
