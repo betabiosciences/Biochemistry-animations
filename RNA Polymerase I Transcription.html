@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eukaryotic RNAP I Transcription</title>
+    <style>
+        :root {
+            --bg-dark: #0f0c29;
+            --bg-mid: #302b63;
+            --bg-light: #24243e;
+            --text-primary: #e0e6ed;
+            --text-secondary: #a9b5c6;
+            --accent: #00d2ff;
+            --accent-glow: rgba(0, 210, 255, 0.4);
+            --card-bg: rgba(23, 25, 50, 0.95);
+            --nav-btn-bg: #3a3a60;
+            --nav-btn-hover: #4a4a80;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid));
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Changed to flex-start for browser scroll */
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            min-height: 90vh; /* Changed to min-height */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent-glow);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Content Card */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            /* No overflow restrictions - let browser handle scrolling */
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            flex-grow: 1;
+        }
+
+        .content-section.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        li::before {
+            content: "▹";
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+        }
+
+        .highlight {
+            color: #fff;
+            font-weight: 600;
+            background: rgba(0, 210, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        button {
+            background-color: var(--nav-btn-bg);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--nav-btn-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Progress Indicator */
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Optimization Specifics */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.3rem; }
+            p { font-size: 0.95rem; }
+            .card { padding: 15px; }
+            .container { min-height: 95vh; }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>RNAP I Transcription</h1>
+            <div class="subtitle">Mechanisms & Regulation in Eukaryotes</div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="card" id="content-area">
+            
+            <!-- Section 1: Features of rRNA Genes -->
+            <div class="content-section active" id="sec-1">
+                <div class="content-wrapper">
+                    <h2>1. Features of rRNA Genes</h2>
+                    <p>The eukaryotic genome requires massive amounts of ribosomes to sustain protein synthesis. Consequently, the genes coding for ribosomal RNA (rRNA) possess unique genomic features designed for high-output transcription.</p>
+                    
+                    <h3>Genomic Organization</h3>
+                    <ul>
+                        <li><strong>Tandem Repeats (NORs):</strong> rRNA genes are not scattered but arranged in head-to-tail tandem arrays located at specific chromosomal regions called <span class="highlight">Nucleolar Organizer Regions (NORs)</span>. Humans have approximately 300–400 copies distributed across five acrocentric chromosomes.</li>
+                        <li><strong>The 45S Precursor:</strong> RNAP I transcribes a single long precursor transcript (45S pre-rRNA in mammals). This polycistronic transcript contains the sequences for <span class="highlight">18S, 5.8S, and 28S rRNAs</span>, separated by internal transcribed spacers (ITS) and flanked by external transcribed spacers (ETS).</li>
+                        <li><strong>5S rRNA Exception:</strong> Note that the 5S rRNA is <em>not</em> transcribed by RNAP I; it is transcribed by RNAP III from a separate gene cluster.</li>
+                    </ul>
+
+                    <h3>Intergenic Spacers (IGS)</h3>
+                    <p>Individual transcription units are separated by non-coding Intergenic Spacers (IGS). Far from being "junk DNA," the IGS contains enhancer elements and terminator sequences that facilitate the rapid recycling of RNAP I, effectively "handing over" the polymerase from the end of one gene to the start of the next.</p>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button id="prevBtn" onclick="navigate(-1)" disabled>
+                        &larr; Previous
+                    </button>
+                    <button id="nextBtn" onclick="navigate(1)">
+                        Next &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 2: RNAP I Promoter -->
+            <div class="content-section" id="sec-2">
+                <div class="content-wrapper">
+                    <h2>2. The RNAP I Promoter Assembly</h2>
+                    <p>RNAP I transcription initiation relies on a highly specific protein-DNA architecture. Unlike RNAP II, RNAP I does not require a large variety of promoters; it only recognizes one type of promoter sequence, but with extreme efficiency.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Core%20promoter%20RNAPI.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+                    <h3>Bipartite Promoter Structure</h3>
+                    <ul>
+                        <li><strong>Core Promoter (-45 to +20):</strong> Overlaps the Transcription Start Site (TSS). It is AT-rich (resembling a TATA box) but distinct in function. It is essential for the correct positioning of the polymerase.</li>
+                        <li><strong>Upstream Control Element (UCE):</strong> Located approximately 100 to 150 base pairs upstream (-150 to -100). It serves as the landing pad for regulatory factors.</li>
+                    </ul>
+
+                    <h3>The Pre-Initiation Complex (PIC)</h3>
+                    <p>The assembly follows a strict hierarchical order:</p>
+                    <ol>
+                        <li><span class="highlight">UBF (Upstream Binding Factor):</span> A dimer of UBF binds to both the UCE and the Core Promoter. UBF bends the DNA significantly (nearly 360° loops), bringing the UCE and Core regions into close physical proximity.</li>
+                        <li><span class="highlight">SL1 (Selectivity Factor 1):</span> Also known as TIF-IB in mice. Recruited by UBF, SL1 acts as the bridge. It contains TBP (TATA-binding protein) and several TAFs (TBP-associated factors) specific to Pol I.</li>
+                        <li><span class="highlight">RNAP I Recruitment:</span> The UBF-SL1-DNA complex creates a platform that recruits RNA Polymerase I to initiate transcription.</li>
+                    </ol>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button id="prevBtn" onclick="navigate(-1)">
+                        &larr; Previous
+                    </button>
+                    <button id="nextBtn" onclick="navigate(1)">
+                        Next &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Structure of Nucleolus -->
+            <div class="content-section" id="sec-3">
+                <div class="content-wrapper">
+                    <h2>3. Nucleolar Architecture</h2>
+                    <p>The nucleolus is the site of ribosome biogenesis. It is a membrane-less organelle formed through <em>liquid-liquid phase separation</em>. Its structure is strictly defined by the functional stages of ribosome assembly.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Nucleolus%20components.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+                    <h3>Structural Compartments</h3>
+                    <ul>
+                        <li><strong>Fibrillar Center (FC):</strong> The pale, inner core. This region contains the inactive or poised rDNA genes and stores the transcription machinery (UBF, RNAP I) when not in use.</li>
+                        <li><strong>Dense Fibrillar Component (DFC):</strong> A dense ring surrounding the FC. This is the site of <span class="highlight">active transcription</span> (at the FC/DFC interface) and early pre-rRNA processing (cleavage and modification). The protein <em>Fibrillarin</em> is a marker for this region.</li>
+                        <li><strong>Granular Component (GC):</strong> The grainy outer region. This is where the late processing steps occur and where ribosomal proteins assemble onto the RNA to form the pre-ribosomal subunits (40S and 60S).</li>
+                    </ul>
+
+                    <h3>Vectorial Movement</h3>
+                    <p>Ribosome biogenesis involves a physical movement of molecules from the center outward:</p>
+                    <p style="text-align: center; font-weight: bold; color: var(--accent);">Transcription (FC/DFC Interface) &rarr; Processing (DFC) &rarr; Assembly (GC) &rarr; Export to Cytoplasm</p>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button id="prevBtn" onclick="navigate(-1)">
+                        &larr; Previous
+                    </button>
+                    <button id="nextBtn" onclick="navigate(1)">
+                        Next &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 4: rRNA Processing -->
+            <div class="content-section" id="sec-4">
+                <div class="content-wrapper">
+                    <h2>4. rRNA Processing Machinery</h2>
+                    <p>The initial 45S transcript is chemically modified and cleaved to produce mature rRNAs. This is guided by non-coding RNAs acting as scaffolds and guides.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/rRNA%20processing.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <h3>The SSU Processome (90S)</h3>
+                    <p>This is a massive ribonucleoprotein complex that assembles cotranscriptionally at the 5' end of the nascent transcript. It coordinates the folding and early cleavage of the 18S rRNA component. It acts as a "chaperone" for the small ribosomal subunit.</p>
+
+                    <h3>snoRNPs (Small Nucleolar RNPs)</h3>
+                    <p>Modifications are directed by snoRNAs which base-pair with specific sequences on the pre-rRNA to target enzymes to that location. There are two main classes:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/snoRNA.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                    <ul>
+                        <li><strong>Box C/D snoRNPs:</strong>
+                            <br><span class="highlight">Function:</span> 2'-O-Methylation (adding a methyl group to the ribose sugar).
+                            <br><span class="highlight">Catalytic Enzyme:</span> Fibrillarin (Nop1).
+                            <br><em>Result:</em> Stabilizes the rRNA structure and protects it from hydrolysis.
+                        </li>
+                        <li><strong>Box H/ACA snoRNPs:</strong>
+                            <br><span class="highlight">Function:</span> Pseudouridylation (isomerization of uridine to pseudouridine).
+                            <br><span class="highlight">Catalytic Enzyme:</span> Dyskerin (Cbf5).
+                            <br><em>Result:</em> Enhances RNA-RNA and RNA-protein interactions within the ribosome.
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="navigation">
+                    <button id="prevBtn" onclick="navigate(-1)">
+                        &larr; Previous
+                    </button>
+                    <button id="nextBtn" onclick="navigate(1)">
+                        Finish
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Dots -->
+        <div class="progress-container" id="progress-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const sections = document.querySelectorAll('.content-section');
+        const dots = document.querySelectorAll('.dot');
+        const totalSections = sections.length;
+
+        function navigate(direction) {
+            // Remove active class from current
+            sections[currentSection].classList.remove('active');
+            dots[currentSection].classList.remove('active');
+
+            // Calculate new index
+            currentSection += direction;
+
+            // Boundary checks
+            if (currentSection < 0) currentSection = 0;
+            if (currentSection >= totalSections) currentSection = totalSections - 1;
+
+            // Add active class to new
+            sections[currentSection].classList.add('active');
+            dots[currentSection].classList.add('active');
+
+            // Update buttons state
+            updateButtons();
+
+            // Scroll to top of page when changing sections
+            window.scrollTo(0, 0);
+        }
+
+        function updateButtons() {
+            // Update all previous buttons
+            const allPrevBtns = document.querySelectorAll('#prevBtn');
+            allPrevBtns.forEach(btn => {
+                btn.disabled = currentSection === 0;
+            });
+            
+            // Update all next buttons
+            const allNextBtns = document.querySelectorAll('#nextBtn');
+            allNextBtns.forEach(btn => {
+                if (currentSection === totalSections - 1) {
+                    btn.innerHTML = 'Finish';
+                } else {
+                    btn.innerHTML = 'Next &rarr;';
+                }
+            });
+        }
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSection < totalSections - 1) {
+                navigate(1);
+            } else if (e.key === 'ArrowLeft' && currentSection > 0) {
+                navigate(-1);
+            }
+        });
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
