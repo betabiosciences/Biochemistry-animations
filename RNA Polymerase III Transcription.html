@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Polymerase III Transcription</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a3a 0%, #2d1b69 100%);
+            color: #e0e0ff;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(25, 25, 55, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 80, 200, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(120, 100, 220, 0.5);
+        }
+        
+        h1 {
+            color: #8a7cff;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: #b8b5ff;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+        
+        .content-section {
+            display: none;
+            padding: 20px;
+            background: rgba(35, 35, 65, 0.6);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #8a7cff;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        h2 {
+            color: #a594ff;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            border-bottom: 1px solid rgba(138, 124, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: #b8a9ff;
+            margin: 15px 0 10px;
+            font-size: 1.4rem;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background: rgba(138, 124, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid #8a7cff;
+        }
+        
+        .term {
+            color: #c5b6ff;
+            font-weight: bold;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #6a5acd, #8a7cff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to right, #7b68ee, #9d8eff);
+        }
+        
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .progress-container {
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .progress-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: rgba(100, 80, 200, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 15px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #6a5acd, #8a7cff);
+            width: 33.33%;
+            transition: width 0.5s ease;
+        }
+        
+        .section-indicator {
+            font-size: 0.9rem;
+            color: #b8b5ff;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .progress-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .progress-bar {
+                width: 100%;
+                margin: 0;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RNA Polymerase III Transcription</h1>
+        </header>
+        
+        <div class="progress-container">
+            <span class="section-indicator">Promoters & Factors</span>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <span class="section-indicator">tRNA Processing</span>
+        </div>
+        
+        <div id="section1" class="content-section active">
+            <h2>Types of RNAP III Promoters and General Transcription Factors</h2>
+            
+            <p>RNA Polymerase III (RNAP III) is responsible for transcribing small non-coding RNAs including tRNAs, 5S rRNA, U6 snRNA, and other small RNAs. Its promoters are unique in their positioning and transcription factor requirements.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/RNAP%20III%20Promoters.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <h3>Type 1 Promoters</h3>
+            <p>Type 1 promoters are found in <span class="term">5S rRNA genes</span> and consist of internal control regions:</p>
+            <ul>
+                <li><span class="term">Intermediate Element (IE)</span>: Located around +50 to +60</li>
+                <li><span class="term">A Block</span>: Around +80 to +90</li>
+                <li><span class="term">C Block</span>: Around +70 to +80</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>Transcription Factors:</strong> TFIIIA, TFIIIB, and TFIIIC</p>
+                <p>TFIIIA binds specifically to the internal control region of 5S rRNA genes, followed by TFIIIC recruitment, which then positions TFIIIB upstream of the transcription start site.</p>
+            </div>
+            
+            <h3>Type 2 Promoters</h3>
+            <p>Type 2 promoters are characteristic of <span class="term">tRNA genes</span> and contain two highly conserved internal sequences:</p>
+            <ul>
+                <li><span class="term">A Block</span> (TGGCNNAGTGG) at positions +8 to +19</li>
+                <li><span class="term">B Block</span> (GGTTCGANNCC) at positions +52 to +62</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>Transcription Factors:</strong> TFIIIB and TFIIIC</p>
+                <p>TFIIIC binds directly to the A and B blocks, serving as an assembly factor for TFIIIB, which then recruits RNAP III.</p>
+            </div>
+            
+            <h3>Type 3 Promoters</h3>
+            <p>Type 3 promoters are found in genes such as <span class="term">U6 snRNA</span> and <span class="term">7SK RNA</span>. Unlike types 1 and 2, these promoters are located upstream of the transcription start site and resemble RNAP II promoters.</p>
+            <ul>
+                <li>Contain a TATA box around -30</li>
+                <li>Have a Proximal Sequence Element (PSE) around -60</li>
+                <li>May include a Distal Sequence Element (DSE) further upstream</li>
+            </ul>
+            
+        </div>
+        
+        <div id="section2" class="content-section">
+            <h2>Mechanism of Transcription</h2>
+            
+            <p>The transcription mechanism of RNAP III involves a precise sequence of events that begins with promoter recognition and culminates in transcription termination.</p>
+            
+            <h3>Transcription Initiation</h3>
+            <p>The initiation process varies by promoter type but follows a general pattern:</p>
+            <ol>
+                <li><span class="term">Promoter Recognition</span>: Specific transcription factors recognize and bind to promoter elements</li>
+                <li><span class="term">Pre-initiation Complex Formation</span>: Assembly of TFIIIB at the transcription start site</li>
+                <li><span class="term">RNAP III Recruitment</span>: TFIIIB recruits RNAP III to the promoter</li>
+                <li><span class="term">DNA Melting</span>: Local unwinding of DNA to form the transcription bubble</li>
+            </ol>
+            
+            <div class="highlight">
+                <p><strong>Key Insight:</strong> TFIIIB remains stably bound at the promoter, enabling multiple rounds of transcription without reassembly of the entire pre-initiation complex.</p>
+            </div>
+            
+            <h3>Transcription Termination</h3>
+            <p>RNAP III termination is distinct from other RNA polymerases:</p>
+            <ul>
+                <li>Termination occurs at a simple <span class="term">T-rich sequence</span> in the DNA template</li>
+                <li>Typically, a run of 4-5 thymidine residues (T-tract) signals termination</li>
+                <li>No additional protein factors are required for termination</li>
+                <li>The nascent RNA forms a weak rU-dA hybrid that facilitates polymerase release</li>
+            </ul>
+            
+        </div>
+        
+        <div id="section3" class="content-section">
+            <h2>tRNA Processing and Export into Cytosol</h2>
+            
+            <p>Newly transcribed tRNA precursors undergo extensive processing before becoming functional molecules in the cytosol.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/tRNA%20processing.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+            
+            <h3>5' and 3' End Processing</h3>
+            <p>tRNA transcripts contain extra sequences at both ends that must be removed:</p>
+            <ul>
+                <li><span class="term">5' Leader Removal</span>: Catalyzed by RNase P, a ribozyme with catalytic RNA and protein components</li>
+                <li><span class="term">3' Trailer Removal</span>: Performed by endonucleases such as RNase Z that cleave after the discriminator base</li>
+                <li><span class="term">CCA Addition</span>: The sequence CCA is added to the 3' end by tRNA nucleotidyltransferase if not encoded in the gene</li>
+            </ul>
+            
+            <h3>Intron Splicing</h3>
+            <p>Some tRNA genes contain introns that must be removed:</p>
+            <ul>
+                <li>tRNA introns are typically short (14-60 nucleotides) and located one nucleotide 3' to the anticodon</li>
+                <li>Splicing involves cleavage by tRNA splicing endonuclease followed by ligation by tRNA ligase</li>
+                <li>The process occurs in the nucleus before export to the cytoplasm</li>
+            </ul>
+            
+            <h3>Nucleotide Modifications</h3>
+            <p>tRNAs contain the highest density of post-transcriptional modifications of any RNA class:</p>
+            <ul>
+                <li><span class="term">Base Modifications</span>: Methylation, deamination, reduction, and more complex alterations</li>
+                <li><span class="term">Ribose Modifications</span>: 2'-O-methylation and pseudouridylation</li>
+                <li>Over 100 different modifications have been identified in tRNAs</li>
+                <li>These modifications enhance stability, decoding accuracy, and folding</li>
+            </ul>
+            
+           
+            <h3>Nuclear Export</h3>
+            <p>Processed tRNAs are exported from the nucleus to the cytoplasm through nuclear pore complexes:</p>
+            <ul>
+                <li>Exportin-t (XPO-t) is the primary tRNA export receptor</li>
+                <li>Export requires RanGTP, which binds to Exportin-t and facilitates cargo release in the cytoplasm</li>
+                <li>Quality control mechanisms prevent improperly processed tRNAs from being exported.</li>
+            </ul>
+
+            <h3>Quality-control re-import/export cycles</h3>
+            <p>The quality-control mechanisms that ensure only perfect tRNAs reach the cytoplasm.</p>
+            <ul>
+                <li>Exportin-t essentially recognizes the tRNA’s 3D geometry rather than its sequence. Any misfolded structure stalls export.</li>
+                <li>Several modifications stabilize the L-shape or prevent misfolding. Unmodified or hypomodified tRNAs: (1) stay trapped in the nucleus (2) or get exported, then re-imported for correction (3) or get targeted for nuclear surveillance degradation.</li>
+                <li>Under nutrient stress or if misfolding is detected from the cytosol, the tRNA is sent back to the nucleus through a retrograde pathway (Importin-β family).</li>
+            </ul>
+
+            
+        </div>
+        
+        <div class="navigation">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progress = document.getElementById('progress');
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress bar
+                progress.style.width = `${((currentSection + 1) / sections.length) * 100}%`;
+                
+                // Update button text for last section
+                if (currentSection === sections.length - 1) {
+                    nextBtn.textContent = 'Restart';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                sections[index].classList.add('active');
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Next button click handler
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                } else {
+                    // Restart from the beginning
+                    currentSection = 0;
+                    showSection(currentSection);
+                }
+            });
+            
+            // Previous button click handler
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
