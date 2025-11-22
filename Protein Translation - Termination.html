@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termination of Translation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(30, 27, 75, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .keyword {
+            color: #c084fc; /* Purple-400 */
+            font-weight: 600;
+        }
+
+        .protein-name {
+            color: #2dd4bf; /* Teal-400 */
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #8b5cf6;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b4b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4c1d95; 
+            border-radius: 4px;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4 sm:p-6">
+
+    <!-- Main Container -->
+    <div class="glass-panel w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col" style="min-height: 80vh;">
+        
+        <!-- Header -->
+        <div class="p-6 border-b border-indigo-900/50 bg-indigo-950/30">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">Protein Translation</h1>
+            <p class="text-indigo-300 text-sm uppercase tracking-wider mt-1 font-semibold">The Termination Stage</p>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-800 h-1.5 mt-4 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-purple-500 h-full transition-all duration-500 ease-out" style="width: 25%"></div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-grow p-6 overflow-y-auto relative">
+            
+            <!-- Section 1: Overview -->
+            <div id="section-0" class="content-section active">
+                <h2 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-800/50 pb-2">1. Overview & Release Factors</h2>
+                
+                <p class="mb-4 leading-relaxed text-gray-300">
+                    Termination is the final phase of protein synthesis. Unlike initiation and elongation, which require specific tRNAs, termination relies on protein factors called <span class="keyword">Release Factors (RFs)</span> to recognize stop codons in the A-site of the ribosome.
+                </p>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-white mb-2">Class I Release Factors</h3>
+                    <p class="text-sm text-gray-300 mb-2">Responsible for specific codon recognition and hydrolysis of the peptidyl-tRNA bond.</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-400 ml-2">
+                        <li><span class="text-indigo-300">Function:</span> They mimic the shape of tRNA (molecular mimicry).</li>
+                        <li><span class="text-indigo-300">Mechanism:</span> They contain a universally conserved <span class="protein-name">GGQ motif</span> (Gly-Gly-Gln) that protrudes into the Peptidyl Transferase Center (PTC) to trigger hydrolysis.</li>
+                        <li><span class="text-indigo-300">Binding site:</span> They bind A-site of the ribosome.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-2">Class II Release Factors</h3>
+                    <p class="text-sm text-gray-300 mb-2">These are GTPases (GTP-binding proteins) that do not recognize codons directly.</p>
+                    <div class="highlight-box">
+                        <p class="text-sm italic text-gray-300">
+                            <i class="fas fa-info-circle mr-2 text-purple-400"></i>
+                            <span class="text-white font-semibold">Key Role:</span> Class II RFs stimulate the dissociation of Class I RFs from the ribosome after the polypeptide chain has been released.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Prokaryotic Termination -->
+            <div id="section-1" class="content-section">
+                <h2 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-800/50 pb-2">2. Termination in Prokaryotes</h2>
+                
+                <p class="mb-4 leading-relaxed text-gray-300">
+                    Prokaryotes utilize a dual-key system for codon recognition involving two distinct Class I factors.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-indigo-950/40 p-4 rounded-lg border border-indigo-800/30">
+                        <div class="protein-name text-xl mb-1">RF1</div>
+                        <div class="text-xs text-gray-400 uppercase mb-2">Recognizes</div>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-1 bg-purple-900/50 rounded text-xs font-mono border border-purple-700">UAA</span>
+                            <span class="px-2 py-1 bg-purple-900/50 rounded text-xs font-mono border border-purple-700">UAG</span>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-950/40 p-4 rounded-lg border border-indigo-800/30">
+                        <div class="protein-name text-xl mb-1">RF2</div>
+                        <div class="text-xs text-gray-400 uppercase mb-2">Recognizes</div>
+                        <div class="flex gap-2">
+                            <span class="px-2 py-1 bg-purple-900/50 rounded text-xs font-mono border border-purple-700">UAA</span>
+                            <span class="px-2 py-1 bg-purple-900/50 rounded text-xs font-mono border border-purple-700">UGA</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Termination%20prokaryotes.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <h3 class="text-lg font-semibold text-white mb-2">The Role of RF3</h3>
+                <p class="text-gray-300 mb-3 text-sm">
+                    <span class="protein-name">RF3</span> is the prokaryotic Class II factor. It binds to the ribosome in a GDP-bound state.
+                </p>
+                <ol class="list-decimal list-inside space-y-3 text-gray-300 text-sm">
+                    <li><span class="protein-name">RF1</span> or <span class="protein-name">RF2</span> binds the A-site and releases the peptide.</li>
+                    <li>The presence of RF1/RF2 induces <span class="protein-name">RF3-GDP</span> to bind.</li>
+                    <li>Interaction with the ribosome acts as a GEF (Guanine Nucleotide Exchange Factor), causing RF3 to exchange GDP for GTP.</li>
+                    <li>Binding of GTP induces a conformational change in RF3 that displaces RF1/RF2.</li>
+                    <li>RF3 hydrolyzes GTP to GDP and dissociates.</li>
+                </ol>
+            </div>
+
+            <!-- Section 3: Ribosome Recycling -->
+            <div id="section-2" class="content-section">
+                <h2 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-800/50 pb-2">3. Ribosome Recycling (Prokaryotes)</h2>
+                
+                <p class="mb-4 leading-relaxed text-gray-300">
+                    After termination, the ribosome remains as a <span class="keyword">Post-Termination Complex (Post-TC)</span> containing the 70S ribosome, mRNA, and a deacylated tRNA in the P-site. This must be disassembled to be reused.
+                </p>
+
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-white mb-1">Critical Factor: RRF</h3>
+                    <p class="text-sm text-purple-200 italic mb-3">Ribosome Recycling Factor</p>
+                    <p class="text-gray-300 text-sm mb-2">
+                        RRF is a protein that structurally mimics a tRNA (nearly identical L-shape). It binds to the A-site of the Post-TC.
+                    </p>
+                </div>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Ribosome%20recycling.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="bg-indigo-900/20 p-4 rounded-lg">
+                    <h4 class="text-sm font-bold text-teal-300 mb-2">The Recycling Mechanism:</h4>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-1 text-purple-500"><i class="fas fa-chevron-right"></i></span>
+                            <span><span class="protein-name">EF-G</span> (Elongation Factor G) binds to the ribosome, complexed with GTP.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-1 text-purple-500"><i class="fas fa-chevron-right"></i></span>
+                            <span>EF-G catalyzes a "translocation-like" event, pushing RRF deeper into the ribosome.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-1 text-purple-500"><i class="fas fa-chevron-right"></i></span>
+                            <span>This mechanical stress acts like a wedge, splitting the 70S ribosome into <span class="keyword">50S</span> and <span class="keyword">30S</span> subunits.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2 mt-1 text-purple-500"><i class="fas fa-chevron-right"></i></span>
+                            <span><span class="protein-name">IF3</span> binds the 30S subunit to release the final tRNA and mRNA, preventing re-association with the 50S subunit.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 4: Eukaryotic Termination -->
+            <div id="section-3" class="content-section">
+                <h2 class="text-xl font-bold text-purple-300 mb-4 border-b border-purple-800/50 pb-2">4. Termination in Eukaryotes</h2>
+                
+                <p class="mb-4 leading-relaxed text-gray-300">
+                    Eukaryotic termination is mechanistically similar but structurally distinct, utilizing a simpler recognition system but more complex regulation.
+                </p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Termination%20eukaryote.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-teal-300"><i class="fas fa-dna mr-2"></i>eRF1: The Universal Recognizer</h3>
+                        <p class="text-sm text-gray-300 mt-2">
+                            Unlike prokaryotes, eukaryotes use a single Class I factor, <span class="protein-name">eRF1</span>, which recognizes <strong>all three</strong> stop codons (UAA, UAG, UGA).
+                        </p>
+                        <div class="highlight-box mt-2">
+                            <p class="text-xs text-gray-300">
+                                eRF1 is a structural mimic of tRNA, with distinct domains representing the anticodon loop (domain 1), the acceptor stem (domain 2, containing the GGQ motif), and the T-stem (domain 3).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-teal-300"><i class="fas fa-bolt mr-2"></i>eRF3 & ATP Hydrolysis</h3>
+                        <ul class="list-none space-y-2 text-sm text-gray-300 mt-2">
+                            <li>
+                                <span class="font-bold text-white">eRF3:</span> A GTPase that associates with eRF1 *before* binding to the ribosome. GTP hydrolysis is required for eRF1 to undergo the conformational change necessary for peptide release.
+                            </li>
+                            <li>
+                                <span class="font-bold text-white">Recycling Differences:</span> Eukaryotes do not have a homolog to prokaryotic RRF. Instead, the ATPase <span class="protein-name">ABCE1</span> (Rli1 in yeast) plays a central role in splitting the ribosomal subunits after termination.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer / Navigation -->
+        <div class="p-6 border-t border-indigo-900/50 bg-indigo-950/30 flex justify-between items-center">
+            <button id="prev-btn" onclick="changeSection(-1)" class="px-6 py-3 rounded-lg font-bold text-sm transition-all duration-300 flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            
+            <span id="page-indicator" class="text-indigo-300 text-sm font-mono hidden sm:block">Page 1 of 4</span>
+
+            <button id="next-btn" onclick="changeSection(1)" class="px-6 py-3 rounded-lg font-bold text-sm transition-all duration-300 flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-900/50">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 4;
+
+        function updateUI() {
+            // Update Visibility of Sections
+            for (let i = 0; i < totalSections; i++) {
+                const el = document.getElementById(`section-${i}`);
+                if (i === currentSection) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            }
+
+            // Update Buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentSection === 0;
+            
+            if (currentSection === totalSections - 1) {
+                nextBtn.innerHTML = 'Finish <i class="fas fa-check"></i>';
+                nextBtn.classList.remove('from-purple-600', 'to-indigo-600');
+                nextBtn.classList.add('from-teal-600', 'to-emerald-600');
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                nextBtn.classList.add('from-purple-600', 'to-indigo-600');
+                nextBtn.classList.remove('from-teal-600', 'to-emerald-600');
+            }
+
+            // Update Progress Bar
+            const progress = ((currentSection + 1) / totalSections) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            
+            // Update Page Indicator
+            document.getElementById('page-indicator').innerText = `Page ${currentSection + 1} of ${totalSections}`;
+        }
+
+        function changeSection(direction) {
+            const newSection = currentSection + direction;
+            if (newSection >= 0 && newSection < totalSections) {
+                currentSection = newSection;
+                updateUI();
+            }
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSection(1);
+            if (e.key === 'ArrowLeft') changeSection(-1);
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
