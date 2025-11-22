@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Translation Elongation</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --accent: #4a3b8c;
+            --text-primary: #e6e6e6;
+            --text-secondary: #b8b8b8;
+            --highlight: #ff9a76;
+            --button-bg: #2d2d5c;
+            --button-hover: #3d3d7c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--highlight);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--highlight);
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+        
+        h3 {
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            background-color: var(--button-bg);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #444;
+            color: #777;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--highlight);
+            width: 20%;
+            transition: width 0.5s ease;
+        }
+        
+        .key-concept {
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid var(--highlight);
+        }
+        
+        .key-concept h4 {
+            color: var(--highlight);
+            margin-bottom: 10px;
+        }
+        
+        /* Table Styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .comparison-table th {
+            background-color: var(--accent);
+            color: var(--text-primary);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .comparison-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .prokaryotic {
+            border-left: 4px solid #4a8c7c;
+        }
+        
+        .eukaryotic {
+            border-left: 4px solid #8c7c5b;
+        }
+        
+        .function-cell {
+            background-color: rgba(74, 59, 140, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            p, li {
+                font-size: 1rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .comparison-table th, 
+            .comparison-table td {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Protein Translation: Elongation Stage</h1>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="section active" id="section1">
+            <h2>1. Overview of Translation Elongation</h2>
+            <p>The elongation stage is the central phase where the polypeptide chain is extended by sequentially adding amino acids. This process requires precise coordination between the ribosome, mRNA, transfer RNAs (tRNAs), and various elongation factors.</p>
+            
+            <div class="key-concept">
+                <h4>Peptidyl Transferase</h4>
+                <p>Peptidyl transferase is the enzymatic activity responsible for catalyzing the formation of peptide bonds between amino acids. This activity resides in the large ribosomal subunit (50S in prokaryotes, 60S in eukaryotes) and is fundamentally a ribozyme - an RNA enzyme. The catalytic center consists primarily of ribosomal RNA (rRNA), with proteins playing a supportive structural role.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Peptidyl%20tRNA%20reaction.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <p>The mechanism involves deprotonation of the amino group of the aminoacyl-tRNA in the A site, making it nucleophilic enough to attack the carbonyl carbon of the peptidyl-tRNA in the P site. This results in the transfer of the growing polypeptide chain to the aminoacyl-tRNA in the A site, extending the chain by one amino acid.</p>
+            </div>
+            
+            <div class="key-concept">
+                <h4>Translocation</h4>
+                <p>Translocation is the coordinated movement of the ribosome relative to the mRNA and tRNAs after peptide bond formation. This process shifts the tRNAs from the A (aminoacyl) and P (peptidyl) sites to the P and E (exit) sites respectively, making the A site available for the next aminoacyl-tRNA.</p>
+                
+                <p>Translocation is catalyzed by elongation factor G (EF-G) in prokaryotes and elongation factor 2 (eEF2) in eukaryotes. These factors hydrolyze GTP to provide the energy needed for the conformational changes in the ribosome that drive translocation. The process ensures that the mRNA moves exactly three nucleotides (one codon) through the ribosome, maintaining the correct reading frame.</p>
+            </div>
+            
+        </div>
+        
+        <div class="section" id="section2">
+            <h2>2. Elongation in Prokaryotes</h2>
+            <p>In prokaryotes, elongation is a highly coordinated process involving specific elongation factors and precise ribosomal movements. The process can be divided into three main steps: decoding, peptide bond formation, and translocation.</p>
+            
+            <h3>Step-by-Step Mechanism:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Elongation%20prokaryotes%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+            <ol>
+                <li><strong>Aminoacyl-tRNA Delivery:</strong> Elongation factor Tu (EF-Tu) in complex with GTP binds to aminoacyl-tRNA, forming a ternary complex. This complex delivers the aminoacyl-tRNA to the A site of the ribosome. The correct codon-anticodon pairing triggers GTP hydrolysis by EF-Tu, leading to its release from the ribosome.</li>
+                
+                <li><strong>Accommodation:</strong> After EF-Tu release, the aminoacyl-tRNA moves into the correct position in the A site for peptide bond formation. This movement, called accommodation, involves a conformational change in the tRNA from an A/T state (where it's bound to both the A site and EF-Tu) to the fully accommodated A/A state.</li>
+                
+                <li><strong>Peptide Bond Formation:</strong> The peptidyl transferase center catalyzes the nucleophilic attack of the amino group of the A-site aminoacyl-tRNA on the carbonyl carbon of the P-site peptidyl-tRNA. This transfers the growing polypeptide chain to the A-site tRNA, extending it by one amino acid.</li>
+                
+                <li><strong>Translocation:</strong> Elongation factor G (EF-G) in complex with GTP binds to the ribosome and catalyzes translocation. This moves the peptidyl-tRNA from the A site to the P site, the deacylated tRNA from the P site to the E site, and shifts the mRNA by exactly one codon.</li>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Prokaryote%20elongation%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+            </ol>
+            
+            <h3>Ribosome Ratcheting:</h3>
+            <p>Ribosome ratcheting refers to the rotational movement of the small ribosomal subunit relative to the large subunit by approximately 6-10 degrees during translocation. This movement is essential for moving tRNAs between binding sites and advancing the mRNA through the ribosome.</p>
+            
+            <p>The ratcheting motion is coupled to the GTP hydrolysis by EF-G. The energy from GTP hydrolysis induces conformational changes in EF-G that physically push against the ribosome, forcing the rotational movement. After ratcheting, the ribosome spontaneously returns to the non-rotated state, completing the translocation cycle.</p>
+            
+            <p>Ribosome ratcheting facilitates the movement of tRNA molecules by altering the geometry of their binding sites. In the rotated state, the A and P sites adopt hybrid configurations (A/P and P/E), where the anticodon ends remain associated with the small subunit while the acceptor ends move to interact with the large subunit sites normally associated with the next position.</p>
+        </div>
+        
+        <div class="section" id="section3">
+            <h2>3. Mechanisms to Increase Fidelity</h2>
+            <p>The ribosome employs multiple sophisticated mechanisms to ensure accurate translation with remarkably low error rates, typically around 10⁻³ to 10⁻⁴ per codon. These fidelity mechanisms operate at different stages of the elongation cycle.</p>
+            
+            <h3>Key Fidelity Mechanisms:</h3>
+            <ul>
+                <li><strong>Kinetic Proofreading:</strong> This two-step selection process significantly enhances discrimination between correct and incorrect tRNAs. The initial selection occurs when the aminoacyl-tRNA-EF-Tu complex binds to the ribosome. Correct codon-anticodon pairing increases the residence time, allowing GTP hydrolysis. After GTP hydrolysis, a second discrimination step occurs during accommodation, where incorrect tRNAs are more likely to dissociate before peptide bond formation.</li>
+                
+                <li><strong>Induced Fit:</strong> Correct codon-anticodon pairing induces conformational changes in the ribosome that stabilize tRNA binding. Specifically, conserved nucleotides in the decoding center of the small ribosomal subunit (such as A1492, A1493, and G530 in E. coli) monitor the geometry of the codon-anticodon helix. When correct Watson-Crick base pairing occurs, these nucleotides undergo conformational changes that close around the codon-anticodon duplex, stabilizing the interaction and promoting GTP hydrolysis by EF-Tu.</li>
+                
+                <li><strong>EF-Tu GTPase Activation:</strong> EF-Tu's GTPase activity is specifically activated by correct codon-anticodon pairing. The conformational changes in the decoding center triggered by correct pairing are transmitted to EF-Tu, accelerating GTP hydrolysis. For incorrect pairings, this activation is less efficient, allowing more time for the incorrect tRNA to dissociate before GTP hydrolysis commits it to accommodation.</li>
+            </ul>
+            
+            <p>These mechanisms work synergistically to achieve the remarkable accuracy of protein synthesis. The energy cost of this fidelity is the hydrolysis of GTP by EF-Tu and EF-G for each amino acid incorporated, making translation an energy-intensive process but ensuring the production of functional proteins.</p>
+            
+        </div>
+        
+        <div class="section" id="section4">
+            <h2>4. Elongation in Eukaryotes</h2>
+            <p>Eukaryotic elongation shares fundamental mechanisms with prokaryotes but involves more complex regulation and different elongation factors. The basic steps of decoding, peptide bond formation, and translocation are conserved, but the specific factors and regulatory mechanisms differ significantly.</p>
+            
+            <h3>Step-by-Step Mechanism:</h3>
+            <ol>
+                <li><strong>eEF1A Delivery:</strong> Eukaryotic elongation factor 1A (eEF1A) delivers aminoacyl-tRNA to the A site in a GTP-dependent manner. eEF1A is functionally analogous to prokaryotic EF-Tu but has a different structure and regulation. Correct codon-anticodon pairing triggers GTP hydrolysis by eEF1A.</li>
+                
+                <li><strong>eEF1B-Mediated Recycling:</strong> Eukaryotic elongation factor 1B (eEF1B) acts as a guanine nucleotide exchange factor (GEF) for eEF1A, catalyzing the exchange of GDP for GTP. This recycles eEF1A to its active form for subsequent rounds of elongation.</li>
+                
+                <li><strong>eEF2-Mediated Translocation:</strong> Eukaryotic elongation factor 2 (eEF2) promotes translocation in a GTP-dependent manner. eEF2 binds to the ribosome and induces conformational changes that move the mRNA and tRNAs. After translocation, eEF2-GDP dissociates from the ribosome.</li>
+            </ol>
+            
+        </div>
+        
+        <div class="section" id="section5">
+            <h2>5. Comparison of Elongation Factors</h2>
+            <p>Elongation factors are essential proteins that facilitate the translation elongation process. While prokaryotes and eukaryotes share similar elongation mechanisms, their elongation factors have distinct properties and regulatory mechanisms. The table below provides a comprehensive comparison:</p>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Prokaryotic Factor</th>
+                        <th>Eukaryotic Factor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="prokaryotic">
+                        <td class="function-cell">Aminoacyl-tRNA delivery to A site</td>
+                        <td>EF-Tu (Elongation Factor Thermo unstable)</td>
+                        <td>eEF1A (Eukaryotic Elongation Factor 1A)</td>
+                    </tr>
+                    <tr class="eukaryotic">
+                        <td class="function-cell">GTP recycling for aminoacyl-tRNA delivery factor</td>
+                        <td>EF-Ts (Elongation Factor Thermo stable)</td>
+                        <td>eEF1B (Eukaryotic Elongation Factor 1B)</td>
+                    </tr>
+                    <tr class="prokaryotic">
+                        <td class="function-cell">Translocation</td>
+                        <td>EF-G (Elongation Factor G)</td>
+                        <td>eEF2 (Eukaryotic Elongation Factor 2)</td>
+                    </tr>
+                    <tr class="prokaryotic">
+                        <td class="function-cell">Ribosome binding specificity</td>
+                        <td>Binds specifically to 70S ribosomes</td>
+                        <td>Binds specifically to 80S ribosomes</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="key-concept">
+                <h4>Evolutionary Conservation and Divergence</h4>
+                <p>Despite significant structural and regulatory differences, elongation factors share a common evolutionary origin. EF-Tu/eEF1A and EF-G/eEF2 belong to the GTPase superfamily and contain conserved structural domains responsible for GTP binding and hydrolysis. The core mechanisms of tRNA delivery and ribosome translocation have been conserved throughout evolution, while regulatory mechanisms have diversified to meet the specific needs of different organisms.</p>
+                
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            let currentSection = 0;
+            
+            // Update navigation and progress
+            function updateNavigation() {
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress bar
+                const progress = ((currentSection + 1) / sections.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            // Show current section
+            function showSection(index) {
+                sections.forEach((section, i) => {
+                    section.classList.toggle('active', i === index);
+                });
+                currentSection = index;
+                updateNavigation();
+            }
+            
+            // Event listeners for buttons
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
