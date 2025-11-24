@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenocysteine & Pyrrolysine Synthesis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0ff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(18, 18, 40, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #7e57c2;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #b388ff;
+            margin: 20px 0 15px;
+            border-bottom: 2px solid #7e57c2;
+            padding-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #d1c4e9;
+            margin: 15px 0 10px;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            background: linear-gradient(to right, #7e57c2, #5e35b1);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #8e6cc9, #6f42c1);
+        }
+
+        button:disabled {
+            background: #5a4a7a;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #2a2342;
+            border-radius: 3px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #7e57c2, #b388ff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #b388ff;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .structure {
+            background-color: rgba(40, 35, 70, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #7e57c2;
+        }
+
+        .structure h4 {
+            color: #d1c4e9;
+            margin-bottom: 10px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .highlight {
+            color: #00d2ff;
+            font-weight: 600;
+        }
+        
+        .highlight-pyl {
+            color: #ff9ff3;
+            font-weight: 600;
+        }
+
+        .chem-formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #ffd700;
+        }
+
+        .step-container {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            background: #7e57c2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .step-content {
+            padding-left: 10px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .sec-tag {
+            background: rgba(0, 210, 255, 0.2);
+            color: #00d2ff;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+
+        .pyl-tag {
+            background: rgba(255, 75, 31, 0.2);
+            color: #ff9ff3;
+            border: 1px solid rgba(255, 75, 31, 0.3);
+        }
+
+        .comparison-box {
+            background: rgba(40, 35, 70, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #b388ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Selenocysteine & Pyrrolysine Synthesis</h1>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <!-- Section 1: Introduction -->
+        <div class="section active" id="section1">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="display: inline-block; padding: 15px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); margin-bottom: 15px;">
+                    <i class="fas fa-dna" style="font-size: 2rem; color: #7e57c2;"></i>
+                </div>
+            </div>
+            
+            <p>Beyond the standard 20 amino acids, nature evolved mechanisms to incorporate 
+                <span class="highlight">Selenocysteine (Sec, U)</span> and 
+                <span class="highlight-pyl">Pyrrolysine (Pyl, O)</span>.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                <div class="info-card">
+                    <h3 style="color: #00d2ff; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                        Selenocysteine (21st)
+                    </h3>
+                    <ul style="list-style: none; margin-left: 0;">
+                        <li><i class="fas fa-atom" style="width: 20px; color: #00d2ff;"></i> Contains Selenium (Se)</li>
+                        <li><i class="fas fa-code" style="width: 20px; color: #00d2ff;"></i> Encoded by <strong>UGA</strong> (Opal)</li>
+                        <li><i class="fas fa-globe" style="width: 20px; color: #00d2ff;"></i> Found in all domains of life</li>
+                        <li><i class="fas fa-bolt" style="width: 20px; color: #00d2ff;"></i> Higher reduction potential than Cys</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h3 style="color: #ff9ff3; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                        Pyrrolysine (22nd)
+                    </h3>
+                    <ul style="list-style: none; margin-left: 0;">
+                        <li><i class="fas fa-ring" style="width: 20px; color: #ff9ff3;"></i> Contains Pyrroline ring</li>
+                        <li><i class="fas fa-code" style="width: 20px; color: #ff9ff3;"></i> Encoded by <strong>UAG</strong> (Amber)</li>
+                        <li><i class="fas fa-bacterium" style="width: 20px; color: #ff9ff3;"></i> Mostly Methanogenic Archaea</li>
+                        <li><i class="fas fa-key" style="width: 20px; color: #ff9ff3;"></i> Critical for methylamine metabolism</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="comparison-box">
+                <p><strong>Key Concept:</strong> Both amino acids utilize "Stop Codon Recoding," hijacking termination signals to insert an amino acid instead of stopping translation.</p>
+            </div>
+        </div>
+        
+        <!-- Section 2: Selenocysteine Structure -->
+        <div class="section" id="section2">
+            <div class="section-title">Selenocysteine: Structure & Properties</div>
+            
+            <div class="structure">
+                <h4>Chemical Structure</h4>
+                <p>Selenocysteine is essentially cysteine where the sulfur atom is replaced by selenium. The structure is <span class="chem-formula">H-Se-CH₂-CH(NH₂)-COOH</span>.</p>
+                
+                <div style="margin-top: 10px;">
+                    <span class="feature-tag sec-tag">pKa ~ 5.2</span>
+                    <span class="feature-tag sec-tag">High Nucleophilicity</span>
+                    <span class="feature-tag sec-tag">Redox Active</span>
+                </div>
+            </div>
+            
+            <h3>Structural Features</h3>
+            <ul>
+                <li>Contains a selenium atom in place of sulfur</li>
+                <li>The Se-H bond is weaker than S-H, making selenocysteine more reactive</li>
+                <li>Selenium has a larger atomic radius than sulfur, affecting protein structure</li>
+                <li>The selenolate anion (R-Se-) is a stronger nucleophile than the thiolate anion (R-S-)</li>
+            </ul>
+        </div>
+        
+        <!-- Section 3: Selenocysteine Biosynthesis -->
+        <div class="section" id="section3">
+            <div class="section-title">Selenocysteine: Biosynthesis</div>
+            
+            <h3>Biosynthetic Pathway (tRNA-Dependent)</h3>
+            
+            <div class="step-container">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>tRNA Charging (Serylation)</h4>
+                    <p>Unique to Sec synthesis: It is <strong>not</strong> synthesized freely. First, tRNA<sup>Sec</sup> is acylated with Serine by <em>Seryl-tRNA synthetase</em>.</p>
+                    <div style="margin-top: 5px; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                        tRNA<sup>Sec</sup> + Ser + ATP → Ser-tRNA<sup>Sec</sup> + AMP + PPi
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Synthesis of Selenophosphate</h4>
+                    <p>The Selenium donor, <span class="chem-formula">SePO₃³⁻</span>, is generated by <em>Selenophosphate synthetase (SelD)</em> using selenide and ATP.</p>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Conversion to Selenocysteine</h4>
+                    <p>The Serine attached to tRNA is converted directly into Selenocysteine. This mechanism varies slightly by domain:</p>
+                    
+                    <div style="margin-top: 10px;">
+                        <div class="info-card" style="border-left: 2px solid #00b894;">
+                            <p><strong>Bacteria (SelA):</strong> Dehydrates Ser to a dehydroalanyl intermediate, then accepts Se from selenophosphate.</p>
+                        </div>
+                        <div class="info-card" style="border-left: 2px solid #6c5ce7;">
+                            <p><strong>Archaea/Eukaryotes (SecS):</strong> Ser is first phosphorylated (by PSTK) to O-phosphoserine, then converted to Sec.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Ribosomal Incorporation (Translation)</h3>
+            
+            <div class="structure">
+                <h4>The SECIS Element</h4>
+                <p>The ribosome usually reads <strong>UGA</strong> as a stop signal. To redefine it as Selenocysteine, a structural element called the <strong>SECIS element</strong> (Selenocysteine Insertion Sequence) is required on the mRNA.</p>
+                <ul>
+                    <li>In Bacteria: Located immediately downstream of the UGA codon</li>
+                    <li>In Eukaryotes: Located in the 3' Untranslated Region (3' UTR)</li>
+                </ul>
+            </div>
+            
+            <div class="structure">
+                <h4>Specialized Elongation Factor (SelB/EF-Sec)</h4>
+                <p>Standard EF-Tu cannot bind Sec-tRNA<sup>Sec</sup>. Instead, a specialized elongation factor (<strong>SelB</strong> in bacteria, <strong>EF-Sec</strong> in eukaryotes) is required.</p>
+                <div class="info-card">
+                    <p><strong>Mechanism:</strong> SelB/EF-Sec binds Sec-tRNA<sup>Sec</sup> and simultaneously recognizes the SECIS element. This forms a quaternary complex that delivers the tRNA to the ribosomal A-site specifically at the UGA codon, preventing termination.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 4: Pyrrolysine Structure -->
+        <div class="section" id="section4">
+            <div class="section-title">Pyrrolysine: Structure & Properties</div>
+            
+            <div class="structure">
+                <h4>Chemical Structure</h4>
+                <p>Pyrrolysine is a Lysine derivative. A pyrroline ring is attached to the ε-nitrogen of Lysine via an amide bond.</p>
+                
+                <div style="margin-top: 10px;">
+                    <span class="feature-tag pyl-tag">Bulky Side Chain</span>
+                    <span class="feature-tag pyl-tag">Positively Charged</span>
+                </div>
+            </div>
+            
+            <h3>Structural Features</h3>
+            <ul>
+                <li>Contains a pyrroline ring connected to lysine</li>
+                <li>The pyrroline ring can undergo chemical modifications</li>
+                <li>Larger and more hydrophobic than lysine</li>
+            </ul>
+        </div>
+        
+        <!-- Section 5: Pyrrolysine Biosynthesis -->
+        <div class="section" id="section5">
+            <div class="section-title">Pyrrolysine: Biosynthesis</div>
+            
+            <div class="info-card" style="border-left: 2px solid #fdcb6e;">
+                <p><i class="fas fa-exclamation-triangle" style="margin-right: 5px;"></i> Contrast with Sec: Pyrrolysine is synthesized as a free amino acid <em>before</em> attachment to tRNA.</p>
+            </div>
+            
+            <h3>Biosynthetic Pathway (tRNA-Independent)</h3>
+            
+            <div class="step-container">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Lysine Precursor</h4>
+                    <p>Two molecules of L-lysine are used as precursors for pyrrolysine biosynthesis.</p>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Ring Formation</h4>
+                    <p>One lysine molecule forms the pyrroline ring.</p>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Amide Bond Formation</h4>
+                    <p>The pyrroline ring is linked to the second lysine molecule via an amide bond.</p>
+                </div>
+            </div>
+            
+            <div class="step-container">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Direct Charging (PylS)</h4>
+                    <p>Unlike Sec, the mature Pyl is recognized by a specific <em>Pyrrolysyl-tRNA synthetase (PylS)</em> and directly ligated to tRNA<sup>Pyl</sup>.</p>
+                </div>
+            </div>
+            
+            <h3>Ribosomal Incorporation (Translation)</h3>
+            
+            <div class="structure">
+                <h4>Amber Suppression (UAG)</h4>
+                <p>Pyrrolysine is incorporated at the <strong>UAG</strong> (Amber) stop codon. Unlike Selenocysteine, Pyl incorporation does <span style="color: #ff9ff3;">not</span> require a downstream mRNA hairpin structure (like SECIS) for the codon definition, making it biologically simpler and highly valuable for genetic engineering.</p>
+            </div>
+            
+            <div class="structure">
+                <h4>Interaction with EF-Tu</h4>
+                <p>The Pyl-tRNA<sup>Pyl</sup> is structurally unique but is still recognized by the canonical elongation factor <strong>EF-Tu</strong> (in bacteria).</p>
+            </div>
+        </div>
+        
+        <!-- Section 6: Conclusion -->
+        <div class="section" id="section6">
+            <div class="section-title">Conclusion</div>
+            
+            <p>Selenocysteine and Pyrrolysine represent fascinating expansions of the genetic code, demonstrating nature's ability to adapt and specialize protein synthesis.</p>
+            
+            <h3>Key Comparisons:</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+                <div class="info-card">
+                    <h4 style="color: #00d2ff; margin-bottom: 10px;">Selenocysteine</h4>
+                    <ul>
+                        <li><strong>One Letter Code:</strong> U</li>
+                        <li><strong>Genetic Code:</strong> UGA (Stop)</li>
+                        <li><strong>Distribution:</strong> Widespread across all domains of life</li>
+                        <li><strong>Incorporation:</strong> Requires specialized factors (SelB, SECIS)</li>
+                        <li><strong>Function:</strong> Antioxidant enzymes</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <h4 style="color: #ff9ff3; margin-bottom: 10px;">Pyrrolysine</h4>
+                    <ul>
+                        <li><strong>One Letter Code:</strong> O</li>
+                        <li><strong>Genetic Code:</strong> UAG (Stop)</li>
+                        <li><strong>Distribution:</strong> Limited to certain archaea and bacteria</li>
+                        <li><strong>Incorporation:</strong> Uses standard translation machinery</li>
+                        <li><strong>Function:</strong> Methyltransferases for methane metabolism</li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progress = document.getElementById('progress');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === totalSections - 1;
+                
+                // Update progress bar
+                progress.style.width = `${((currentSection + 1) / totalSections) * 100}%`;
+                
+                // Update section visibility
+                sections.forEach((section, index) => {
+                    section.classList.toggle('active', index === currentSection);
+                });
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateNavigation();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    updateNavigation();
+                }
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
