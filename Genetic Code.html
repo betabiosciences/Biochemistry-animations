@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties of the Genetic Code</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --accent-color: #0f3460;
+            --text-primary: #e6e6e6;
+            --text-secondary: #b3b3b3;
+            --highlight: #4cc9f0;
+            --highlight-secondary: #4361ee;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--highlight);
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin: 20px 0 15px;
+            color: var(--highlight-secondary);
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 15px 0 10px;
+            color: var(--highlight);
+        }
+        
+        .section {
+            display: none;
+            background-color: rgba(10, 15, 35, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: var(--text-primary);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background-color: var(--highlight-secondary);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #333;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            margin: 0 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--highlight);
+            transform: scale(1.2);
+        }
+        
+        ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .property-card {
+            background-color: rgba(15, 52, 96, 0.2);
+            border-left: 4px solid var(--highlight-secondary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .property-title {
+            font-weight: bold;
+            color: var(--highlight);
+            margin-bottom: 5px;
+        }
+        
+        .wobble-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .base-pair {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .nucleotide {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        
+        .adenine { background-color: #ff6b6b; }
+        .uracil { background-color: #4ecdc4; }
+        .guanine { background-color: #ffe66d; color: #333; }
+        .cytosine { background-color: #6a0572; }
+        
+        .wobble-pair {
+            border: 2px dashed var(--highlight);
+        }
+        
+        .bond {
+            width: 40px;
+            height: 2px;
+            background-color: var(--text-secondary);
+        }
+        
+        .info-box {
+            background-color: rgba(15, 52, 96, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid var(--highlight);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nucleotide {
+                width: 40px;
+                height: 40px;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Properties of the Genetic Code</h1>
+        </header>
+        
+        <div class="progress-indicator">
+            <div class="progress-dot active" data-section="0"></div>
+            <div class="progress-dot" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+            <div class="progress-dot" data-section="3"></div>
+        </div>
+        
+        <section id="section1" class="section active">
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Codon%20table.png" alt="Monohybrid Cross Diagram">
+                </div>
+            <h2>Fundamental Properties of the Genetic Code</h2>
+            
+            <div class="info-box">
+                <p>The genetic code is the set of rules by which information encoded in genetic material (DNA or RNA sequences) is translated into proteins by living cells. It defines how sequences of nucleotide triplets (codons) specify which amino acid will be added next during protein synthesis.</p>
+            </div>
+            
+            <h3>Key Properties</h3>
+            
+            <div class="property-card">
+                <div class="property-title">Triplet Nature</div>
+                <p>Each amino acid is encoded by a sequence of three nucleotides called a codon. There are 64 possible codons (4³) from the four nucleotide bases (A, U/T, G, C).</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Polarity</div>
+                <p>The genetic code has directionality. Codons are read in the 5' to 3' direction along the mRNA molecule, and protein synthesis proceeds from the amino terminus to the carboxyl terminus.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Number of Codons</div>
+                <p>There are 64 possible codons: 61 specify amino acids and 3 are stop codons that terminate protein synthesis. This means most amino acids are encoded by more than one codon.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Start Codon</div>
+                <p>AUG is the initiation codon that signals the start of protein synthesis. It codes for methionine.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Stop Codons</div>
+                <p>UAA, UAG, and UGA are termination codons that do not code for any amino acid and signal the end of protein synthesis. These are recognized by release factors rather than tRNAs.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Non-Overlapping</div>
+                <p>Each nucleotide is part of only one codon. The code is read in consecutive groups of three without overlapping, meaning each base is used in only one codon.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Commaless</div>
+                <p>There are no pauses or commas between codons. The reading is continuous from start to stop codon without any separating nucleotides or signals between codons.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Non-Ambiguous</div>
+                <p>Each codon specifies only one amino acid. There is no ambiguity in the code - a given codon always codes for the same amino acid across organisms.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Degeneracy</div>
+                <p>Most amino acids are encoded by more than one codon. This redundancy provides protection against mutations, as many point mutations won't change the amino acid specified.</p>
+            </div>
+        </section>
+        
+        <section id="section2" class="section">
+            <h2>Wobble Hypothesis</h2>
+            
+            <div class="info-box">
+                <p>The wobble hypothesis, proposed by Francis Crick in 1966, explains how a single tRNA can recognize multiple codons. This occurs through flexible pairing at the third position of the codon, allowing for the degeneracy observed in the genetic code.</p>
+            </div>
+            
+            <h3>Mechanism of Wobble</h3>
+            
+            <div class="wobble-diagram">
+                <div class="base-pair">
+                    <div class="nucleotide adenine">A</div>
+                    <div class="bond"></div>
+                    <div class="nucleotide uracil">U</div>
+                </div>
+                <p>Standard Watson-Crick base pairing</p>
+                
+                <div class="base-pair">
+                    <div class="nucleotide guanine">G</div>
+                    <div class="bond"></div>
+                    <div class="nucleotide uracil wobble-pair">U</div>
+                </div>
+                <p>Wobble pairing: G in anticodon can pair with U in codon</p>
+                
+                <div class="base-pair">
+                    <div class="nucleotide uracil">U</div>
+                    <div class="bond"></div>
+                    <div class="nucleotide adenine wobble-pair">A</div>
+                </div>
+                <p>Wobble pairing: U in anticodon can pair with A in codon</p>
+                
+                <div class="base-pair">
+                    <div class="nucleotide uracil">U</div>
+                    <div class="bond"></div>
+                    <div class="nucleotide guanine wobble-pair">G</div>
+                </div>
+                <p>Wobble pairing: U in anticodon can pair with G in codon</p>
+            </div>
+            
+            <h3>Key Points of the Wobble Hypothesis</h3>
+            <ul>
+                <li>The first two bases of the codon form strong Watson-Crick base pairs with the last two bases of the anticodon.</li>
+                <li>The third base of the codon can form less specific "wobble" pairs with the first base of the anticodon.</li>
+                <li>This flexibility allows a single tRNA to recognize multiple codons, reducing the number of tRNAs needed.</li>
+                <li>Wobble pairing explains the degeneracy of the genetic code at the third codon position.</li>
+                <li>Inosine (I), a modified base found in some tRNAs, can pair with A, C, or U, increasing wobble possibilities.</li>
+            </ul>
+            
+            <div class="property-card">
+                <div class="property-title">Wobble Rules</div>
+                <p>Base at 5' end of anticodon can pair with:</p>
+                <ul>
+                    <li>G ↔ C or U</li>
+                    <li>U ↔ A or G</li>
+                    <li>I ↔ A, C, or U</li>
+                    <li>C ↔ G only</li>
+                    <li>A ↔ U only</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <p>The wobble hypothesis explains why organisms need fewer than 64 tRNA molecules to translate all 64 codons, with most organisms having between 30-50 different tRNAs.</p>
+            </div>
+        </section>
+        
+        <section id="section3" class="section">
+            <h2>Codon Usage Bias</h2>
+            
+            <div class="info-box">
+                <p>Codon usage bias refers to the phenomenon where synonymous codons (different codons that encode the same amino acid) are used with different frequencies in the genome of an organism. This bias varies between species, between genes within a species, and can even vary within a single gene.</p>
+            </div>
+            
+            <h3>Causes of Codon Bias</h3>
+            <ul>
+                <li><strong>Mutation bias:</strong> Different mutation rates across the genome can influence codon usage. For example, GC-rich genomes tend to use codons ending in G or C.</li>
+                <li><strong>Natural selection:</strong> Selection for translational efficiency and accuracy favors certain codons that match abundant tRNAs.</li>
+                <li><strong>tRNA abundance:</strong> Codons corresponding to abundant tRNAs are used more frequently, especially in highly expressed genes.</li>
+                <li><strong>GC content:</strong> Organisms with high GC content tend to use codons ending in G or C, while those with low GC content prefer A or T/U endings.</li>
+                <li><strong>Gene expression level:</strong> Highly expressed genes show stronger codon bias toward optimal codons that match the most abundant tRNAs.</li>
+            </ul>
+            
+            <h3>Implications of Codon Bias</h3>
+            
+            <div class="property-card">
+                <div class="property-title">Translation Efficiency</div>
+                <p>Optimal codons that match abundant tRNAs are translated more quickly and accurately, enhancing protein production. This is particularly important for highly expressed genes.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Protein Folding</div>
+                <p>Codon usage can affect translation speed, which in turn influences co-translational protein folding. Slower translation at rare codons may allow proper folding of complex domains.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Evolutionary Studies</div>
+                <p>Codon usage patterns can reveal evolutionary relationships, horizontal gene transfer events, and selective pressures on genes.</p>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Genetic Engineering</div>
+                <p>Understanding codon bias is crucial for optimizing heterologous gene expression in biotechnology. Genes are often "codon optimized" for expression in specific host organisms.</p>
+            </div>
+            
+            <h3>Examples of Codon Bias</h3>
+            <ul>
+                <li>In <em>E. coli</em>, the codon CCG (Pro) is used 7 times more frequently than CCC (Pro) in highly expressed genes.</li>
+                <li>In humans, the codon CGC (Arg) is used much more frequently than CGA (Arg).</li>
+                <li>Thermophilic organisms show strong bias toward codons with G or C in the third position, which form stronger base pairs.</li>
+                <li>In <em>Saccharomyces cerevisiae</em> (yeast), there is a strong preference for codons ending in A or T in highly expressed genes.</li>
+            </ul>
+            
+            <div class="info-box">
+                <p>Codon adaptation index (CAI) is a measure of codon bias that compares the codon usage of a gene to a reference set of highly expressed genes. It ranges from 0 to 1, with higher values indicating stronger bias toward optimal codons.</p>
+            </div>
+        </section>
+        
+        <section id="section4" class="section">
+            <h2>Exceptions to Universality of the Genetic Code</h2>
+            
+            <div class="info-box">
+                <p>While the genetic code is largely universal across most organisms, exceptions have been discovered that challenge the concept of complete universality. These variations provide insights into evolutionary processes and the adaptability of the translation machinery.</p>
+            </div>
+            
+            <h3>Major Exceptions to the Standard Genetic Code</h3>
+            
+            <div class="property-card">
+                <div class="property-title">Mitochondrial Codes</div>
+                <p>Mitochondria have their own genetic code that differs from the standard nuclear code. For example:</p>
+                <ul>
+                    <li>In vertebrate mitochondria, AGA and AGG are stop codons (instead of coding for arginine)</li>
+                    <li>AUA codes for methionine (instead of isoleucine)</li>
+                    <li>UGA codes for tryptophan (instead of being a stop codon)</li>
+                </ul>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Nuclear Codes in Certain Organisms</div>
+                <p>Some organisms have variations in their nuclear genetic code:</p>
+                <ul>
+                    <li>In ciliates (e.g., <em>Paramecium</em>), UAA and UAG code for glutamine instead of being stop codons</li>
+                    <li>In some yeasts, CUG codes for serine instead of leucine</li>
+                    <li>In certain bacteria, UGA can code for selenocysteine (the 21st amino acid)</li>
+                </ul>
+            </div>
+            
+            <div class="property-card">
+                <div class="property-title">Selenocysteine and Pyrrolysine</div>
+                <p>Two unusual amino acids are incorporated into proteins through special mechanisms:</p>
+                <ul>
+                    <li><strong>Selenocysteine:</strong> Often called the 21st amino acid, it is incorporated at UGA codons in specific contexts with the help of SECIS elements</li>
+                    <li><strong>Pyrrolysine:</strong> The 22nd amino acid, incorporated at UAG codons in some archaea and bacteria</li>
+                </ul>
+            </div>
+            
+        </section>
+        
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update section visibility
+                sections.forEach((section, index) => {
+                    section.classList.toggle('active', index === currentSection);
+                });
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentSection);
+                });
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update button text for last section
+                nextBtn.textContent = currentSection === sections.length - 1 ? 'Finish' : 'Next';
+            }
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateNavigation();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    updateNavigation();
+                } else {
+                    // On last section, could add a completion action
+                    alert('You have completed the genetic code exploration!');
+                }
+            });
+            
+            // Add click functionality to progress dots
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-section'));
+                    updateNavigation();
+                });
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
