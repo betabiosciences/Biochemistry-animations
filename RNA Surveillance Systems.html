@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Surveillance in Protein Translation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a1f 0%, #1a1a3e 50%, #2d1b69 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(100, 150, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #8a9eff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(138, 158, 255, 0.5);
+        }
+
+        .section-indicator {
+            font-size: 0.9rem;
+            color: #a0a0d0;
+        }
+
+        .content-frame {
+            flex: 1;
+            background: rgba(20, 20, 50, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #b19fff;
+            margin-bottom: 20px;
+            border-left: 4px solid #7c6fff;
+            padding-left: 15px;
+        }
+
+        .mechanism-name {
+            font-size: 1.4rem;
+            color: #8a9eff;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+        }
+
+        .key-players {
+            background: rgba(100, 150, 255, 0.1);
+            border-left: 3px solid #7c6fff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .key-players h4 {
+            color: #c0b0ff;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        li {
+            margin: 8px 0;
+            color: #d0d0ff;
+            position: relative;
+        }
+
+        li::before {
+            content: "•";
+            color: #7c6fff;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            font-weight: bold;
+        }
+
+        .process-steps {
+            background: rgba(255, 200, 100, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 200, 100, 0.2);
+        }
+
+        .step-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ffaa66;
+        }
+
+        .step-number {
+            color: #ffaa66;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .biological-significance {
+            background: rgba(100, 255, 150, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid rgba(100, 255, 150, 0.2);
+        }
+
+        .biological-significance h4 {
+            color: #88ffaa;
+            margin-bottom: 10px;
+        }
+
+        .comparison-frame {
+            background: rgba(255, 100, 150, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 100, 150, 0.2);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .comparison-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-top: 3px solid #ff7799;
+        }
+
+        .comparison-item h5 {
+            color: #ff99aa;
+            margin-bottom: 10px;
+        }
+
+        .highlight-text {
+            color: #ffd700;
+            font-weight: 600;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .citation {
+            font-size: 0.85rem;
+            color: #a0a0c0;
+            font-style: italic;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #4a5fcf 0%, #6a5af9 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(106, 90, 249, 0.4);
+            min-width: 120px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #5a6fdf 0%, #7a6aff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 90, 249, 0.6);
+        }
+
+        .nav-btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(106, 90, 249, 0.4);
+        }
+
+        .nav-btn:disabled {
+            background: #3a3a5a;
+            color: #6a6a8a;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c6fff 0%, #8a9eff 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+
+            .content-frame {
+                padding: 20px;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glossary {
+            background: rgba(138, 158, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(138, 158, 255, 0.2);
+        }
+
+        .glossary h4 {
+            color: #8a9eff;
+            margin-bottom: 10px;
+        }
+
+        .glossary-item {
+            margin: 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .glossary-term {
+            color: #b19fff;
+            font-weight: 600;
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RNA Surveillance Mechanisms in Protein Translation</h1>
+            <div class="section-indicator">Section <span id="current-section">1</span> of <span id="total-sections">4</span></div>
+        </header>
+
+        <div class="content-frame">
+            <!-- Section 1: trans-translation in prokaryotes -->
+            <section class="active" data-section="1">
+                <h2>1. trans-translation in Prokaryotes</h2>
+                
+                <div class="mechanism-name">tmRNA-Mediated Ribosome Rescue</div>
+                
+                <p><span class="highlight-text">trans-translation</span> is a vital quality control mechanism in bacteria that rescues ribosomes stalled on non-stop or damaged mRNAs. This process is unique to prokaryotes and serves as the primary surveillance system for translational arrest.</p>
+
+                <div class="key-players">
+                    <h4>Key Molecular Players:</h4>
+                    <ul>
+                        <li><span class="glossary-term">tmRNA (ssrA RNA)</span>: A bifunctional RNA with both tRNA-like and mRNA-like domains</li>
+                        <li><span class="glossary-term">SmpB</span>: Small protein B, essential for tmRNA function</li>
+                        <li><span class="glossary-term">Alanyl-tRNA synthetase (AlaRS)</span>: Charges tmRNA with alanine</li>
+                        <li><span class="glossary-term">EF-Tu</span>: Elongation factor that delivers tmRNA to the ribosome</li>
+                    </ul>
+                </div>
+
+                <div class="process-steps">
+                    <h4>The trans-translation Process:</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Trans%20translation.png" alt="Monohybrid Cross Diagram">
+                </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 1:</span> Ribosome stalls at the 3' end of an mRNA lacking a stop codon or encounters a damaged mRNA
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 2:</span> tmRNA•SmpB complex recognizes the stalled ribosome and binds to the A site
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 3:</span> The nascent polypeptide chain is transferred to the alanine on tmRNA (peptidyl transfer)
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 4:</span> Ribosome switches templates from the original mRNA to the internal reading frame of tmRNA
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 5:</span> Translation continues to add a C-terminal <span class="highlight-text">ANDENYALAA</span> degradation tag
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 6:</span> Tagged protein is released and rapidly degraded by AAA+ proteases
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 7:</span> The damaged mRNA is released and degraded by RNases
+                    </div>
+                </div>
+
+                <div class="biological-significance">
+                    <h4>Biological Significance:</h4>
+                    <ul>
+                        <li>Prevents sequestration of ribosomes by defective mRNAs</li>
+                        <li>Eliminates potentially toxic truncated proteins</li>
+                        <li>Recycles amino acids through proteolysis</li>
+                        <li>Contributes to bacterial stress responses</li>
+                        <li>Essential for virulence in many pathogenic bacteria</li>
+                        <li>Quality control for ribosome biogenesis</li>
+                    </ul>
+                </div>
+
+            </section>
+
+            <!-- Section 2: Non-sense Mediated Decay -->
+            <section data-section="2">
+                <h2>2. Non-sense Mediated Decay (NMD)</h2>
+                
+                <div class="mechanism-name">Eukaryotic Surveillance for Premature Termination Codons</div>
+                
+                <p><span class="highlight-text">Nonsense-Mediated Decay (NMD)</span> is a sophisticated eukaryotic mechanism that degrades mRNAs containing premature termination codons (PTCs), preventing the production of truncated, potentially harmful proteins. This pathway integrates with translation and mRNA export to ensure transcript quality.</p>
+
+                <div class="key-players">
+                    <h4>Core NMD Factors:</h4>
+                    <ul>
+                        <li><span class="glossary-term">UPF1 (Up-frameshift protein 1)</span>: ATP-dependent RNA helicase, central regulator</li>
+                        <li><span class="glossary-term">UPF2</span>: Adaptor protein that bridges UPF1 and UPF3</li>
+                        <li><span class="glossary-term">UPF3A/UPF3B</span>: RNA-binding proteins that interact with EJC</li>
+                        <li><span class="glossary-term">SMG1 (Suppressor with morphological defects in genitalia 1)</span>: PI3K-like kinase that phosphorylates UPF1</li>
+                        <li><span class="glossary-term">SMG5, SMG6, SMG7</span>: Effectors that promote mRNA decapping and degradation</li>
+                        <li><span class="glossary-term">Exon Junction Complex (EJC)</span>: Deposited upstream of splicing junctions</li>
+                    </ul>
+                </div>
+
+                <div class="process-steps">
+                    <h4>NMD Activation Mechanism:</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NMD.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 1:</span> Splicing deposits EJCs 20-24 nucleotides upstream of exon-exon junctions
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 2:</span> Translation termination occurs at a stop codon located >50-55 nt upstream of an EJC (the "50-55 nucleotide rule")
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 3:</span> Terminating ribosome recruits UPF1-SMG1 complex via eRF1/eRF3 interaction
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 4:</span> UPF1 interacts with EJC-bound UPF2-UPF3, forming the <span class="highlight-text">SURF complex</span>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 5:</span> UPF1 is phosphorylated by SMG1, triggering NMD cascade
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 6:</span> Phosphorylated UPF1 recruits SMG5-SMG7 and SMG6
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 7a (SMG6):</span> Endonucleolytic cleavage 5' to the EJC
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 7b (SMG5-SMG7):</span> Recruitment of decapping complex (DCP1/DCP2) and deadenylases
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 8:</span> 5'→3' degradation by XRN1 or 3'→5' degradation by exosome
+                    </div>
+                </div>
+
+                <div class="biological-significance">
+                    <h4>Physiological Importance:</h4>
+                    <ul>
+                        <li>Eliminates transcripts with nonsense mutations</li>
+                        <li>Controls expression of alternatively spliced isoforms</li>
+                        <li>Eliminates transcripts with upstream open reading frames (uORFs)</li>
+                        <li>Prevents accumulation of PTC-containing mRNA from programmed frameshifting</li>
+                        <li>Linked to cancer, neurodevelopmental disorders, and autoimmune diseases</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 3: Non-stop Mediated Decay -->
+            <section data-section="3">
+                <h2>3. Non-stop Mediated Decay (NSD)</h2>
+                
+                <div class="mechanism-name">Ribosome Rescue at the 3' mRNA End</div>
+                
+                <p><span class="highlight-text">Non-stop Mediated Decay (NSD)</span> is an eukaryotic quality control pathway that targets mRNAs lacking in-frame stop codons. Similar to bacterial trans-translation, NSD rescues ribosomes stalled at the 3' end of mRNA and triggers degradation of both the defective mRNA and the incomplete polypeptide.</p>
+
+                <div class="key-players">
+                    <h4>Key NSD Factors:</h4>
+                    <ul>
+                        <li><span class="glossary-term">Dom34 (Pelota in mammals)</span>: Ribosome rescue factor, paralog of eRF1</li>
+                        <li><span class="glossary-term">Hbs1 (Hsp70 subfamily B suppressor 1)</span>: GTPase, paralog of eRF3</li>
+                        <li><span class="glossary-term">Ski complex</span>: Helicase complex for 3'→5' degradation</li>
+                        <li><span class="glossary-term">Exosome</span>: Multi-subunit 3'→5' exoribonuclease</li>
+                        <li><span class="glossary-term">Xrn1</span>: Major cytoplasmic 5'→3' exoribonuclease</li>
+                        <li><span class="glossary-term">E3 ubiquitin ligases</span>: Tag incomplete proteins for proteasomal degradation</li>
+                    </ul>
+                </div>
+
+                <div class="process-steps">
+                    <h4>NSD Pathway Steps:</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Non-stop%20mediated%20decay.png" alt="Monohybrid Cross Diagram">
+                </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 1:</span> Ribosome reaches the 3' end of poly(A) tail without encountering a stop codon
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 2:</span> Stalled ribosome is recognized by Dom34•Hbs1•GTP complex
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 3:</span> Dom34•Hbs1 binds to the empty A site, mimicking termination complex
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 4:</span> Dom34•Hbs1•GTP promotes peptidyl-tRNA hydrolysis and ribosome disassembly
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 5:</span> Incomplete polypeptide is released with C-terminal tRNA attached
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 6:</span> Listerin E3 ligase recognizes stalled ribosomes and ubiquitinates nascent chains
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 7:</span> Tagged proteins are degraded by the proteasome
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 8:</span> Non-stop mRNA targets for degradation:
+                        <ul style="margin-top: 10px; padding-left: 30px;">
+                            <li>Endonucleolytic cleavage near stalled ribosome</li>
+                            <li>3'→5' degradation by exosome-associated Ski complex</li>
+                            <li>5'→3' degradation by Xrn1 after decapping</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="biological-significance">
+                    <h4>Physiological Functions:</h4>
+                    <ul>
+                        <li>Rescues ribosomes from non-stop mRNAs arising from:
+                            <ul style="margin-left: 20px; margin-top: 8px;">
+                                <li>Premature transcription termination</li>
+                                <li>Polyadenylation within coding sequence</li>
+                                <li>Truncated mRNA fragments</li>
+                                <li>Endonucleolytic cleavage of mRNAs</li>
+                            </ul>
+                        </li>
+                        <li>Prevents accumulation of stalled ribosomes that could deplete translation machinery</li>
+                        <li>Eliminates incomplete proteins lacking functional C-terminal domains</li>
+                        <li>Interacts with no-go decay (NGD) pathway for comprehensive surveillance</li>
+                        <li>Critical during stress conditions when transcription fidelity decreases</li>
+                        <li>Quality control for defective mRNA nuclear export</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 4: No-go Mediated Decay -->
+            <section data-section="4">
+                <h2>4. No-Go Mediated Decay (NGD)</h2>
+                
+                <div class="mechanism-name">Resolution of Ribosome Stalling During Elongation</div>
+                
+                <p><span class="highlight-text">No-Go Mediated Decay (NGD)</span> is an eukaryotic mRNA surveillance pathway that responds to ribosomes stalled during translation elongation due to mRNA damage, stable secondary structures, or rare codon clusters. Unlike NSD, NGD handles stalls within the coding sequence and initiates endonucleolytic cleavage of the problematic mRNA.</p>
+
+                <div class="process-steps">
+                    <h4>NGD Molecular Mechanism:</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/No-go%20mediated%20decay.png" alt="Monohybrid Cross Diagram">
+                </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 1:</span> Ribosome stalls due to:
+                        <ul style="margin-top: 10px; padding-left: 30px;">
+                            <li>Stable RNA secondary structures (hairpins, pseudoknots)</li>
+                            <li>Chemical damage to mRNA (oxidation, UV-induced lesions)</li>
+                            <li>Clusters of rare codons (tRNA scarcity)</li>
+                            <li>Strong positive charge in nascent chain (poly-arginine)</li>
+                            <li>Drug-induced inhibition (e.g., cycloheximide)</li>
+                        </ul>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 2:</span> Following ribosomes collide with stalled ribosome, creating <span class="highlight-text">disome</span>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 3:</span> Ribosome collision is detected and ubiquitinates a ribosomal protein
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 4:</span> Dom34/Hbs1 is recruited to the ubiquitinated ribosome
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 5:</span> Endonucleolytic cleavage of mRNA near the stall site (3' side of stalled ribosome)
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 6:</span> Ribosome recycling by Dom34/Hbs1.
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 7:</span> mRNA fragments degraded:
+                        <ul style="margin-top: 10px; padding-left: 30px;">
+                            <li>5' fragment: degraded by Xrn1 after decapping</li>
+                            <li>3' fragment: degraded by exosome assisted by Ski complex</li>
+                        </ul>
+                    </div>
+                    <div class="step-box">
+                        <span class="step-number">Step 8:</span> Nascent polypeptide ubiquitinated and degraded by proteasome
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn" onclick="changeSection(-1)">Previous</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <button class="nav-btn" id="next-btn" onclick="changeSection(1)">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 4;
+
+        function updateSectionDisplay() {
+            // Hide all sections
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Show current section
+            const currentSectionElement = document.querySelector(`[data-section="${currentSection}"]`);
+            if (currentSectionElement) {
+                currentSectionElement.classList.add('active');
+            }
+            
+            // Update section indicator
+            document.getElementById('current-section').textContent = currentSection;
+            document.getElementById('total-sections').textContent = totalSections;
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentSection === 1;
+            nextBtn.disabled = currentSection === totalSections;
+            
+            // Update progress bar
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeSection(direction) {
+            const newSection = currentSection + direction;
+            
+            if (newSection >= 1 && newSection <= totalSections) {
+                currentSection = newSection;
+                updateSectionDisplay();
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentSection > 1) {
+                changeSection(-1);
+            } else if (e.key === 'ArrowRight' && currentSection < totalSections) {
+                changeSection(1);
+            }
+        });
+
+        // Swipe navigation for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0 && currentSection < totalSections) {
+                    // Swipe left - next
+                    changeSection(1);
+                } else if (diff < 0 && currentSection > 1) {
+                    // Swipe right - previous
+                    changeSection(-1);
+                }
+            }
+        }
+
+        // Initialize display
+        updateSectionDisplay();
+
+        // Add click feedback for mobile buttons
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(button => {
+            button.addEventListener('touchstart', () => {
+                if (!button.disabled) {
+                    button.style.transform = 'scale(0.95)';
+                }
+            });
+            
+            button.addEventListener('touchend', () => {
+                button.style.transform = '';
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
