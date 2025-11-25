@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Targeting to Endoplasmic Reticulum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f1a30, #1a2b4a);
+            color: #e0e0ff;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #3a4a7a;
+        }
+
+        h1 {
+            color: #7aa2f7;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #9ece6a;
+            font-size: 1.5rem;
+            margin: 20px 0 15px;
+            border-bottom: 1px solid #3a4a7a;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #bb9af7;
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+        }
+
+        .card {
+            background: rgba(30, 40, 70, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3a4a7a;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #c0caf5;
+        }
+
+        ul, ol {
+            margin: 0 0 15px 20px;
+            color: #c0caf5;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background-color: rgba(122, 162, 247, 0.2);
+            border-left: 4px solid #7aa2f7;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .special-note {
+            background-color: rgba(158, 206, 106, 0.2);
+            border-left: 4px solid #9ece6a;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            background: #7aa2f7;
+            color: #0f1a30;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: #9ece6a;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #3a4a7a;
+            color: #565f89;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #3a4a7a;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #7aa2f7;
+            width: 25%;
+            transition: width 0.3s ease;
+        }
+
+        .section-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3a4a7a;
+            margin: 0 5px;
+            transition: background 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            background: #7aa2f7;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Protein Targeting to Endoplasmic Reticulum</h1>
+        </header>
+
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="section-indicator">
+            <div class="indicator-dot active" data-section="0"></div>
+            <div class="indicator-dot" data-section="1"></div>
+            <div class="indicator-dot" data-section="2"></div>
+            <div class="indicator-dot" data-section="3"></div>
+        </div>
+
+        <!-- Section 1: Overall Features of Protein Targeting -->
+        <div class="section active" id="section1">
+            <div class="card">
+                <h2>Protein Targeting: An Overview</h2>
+                <p>Protein targeting, also known as protein sorting, is the mechanism by which cells transport proteins to their appropriate locations within or outside the cell. This process is crucial for maintaining cellular organization and function.</p>
+                
+                <h3>Key Features of Protein Targeting</h3>
+                <ul>
+                    <li><strong>Specificity:</strong> Proteins contain specific signal sequences that direct them to correct destinations</li>
+                    <li><strong>Energy Requirement:</strong> Most targeting processes require energy in the form of ATP or GTP</li>
+                    <li><strong>Receptor Recognition:</strong> Cellular receptors recognize and bind to signal sequences</li>
+                    <li><strong>Translocation:</strong> Proteins cross membrane barriers through specialized translocation channels (Translocons)</li>
+                    <li><strong>Folding Assistance:</strong> Molecular chaperones assist in protein folding during or after translocation</li>
+                </ul>
+                
+                <h3>Types of Protein Targeting</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/General%20targeting%20pathways.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <div class="highlight">
+                    <h3>Organellar Trafficking</h3>
+                    <p>Direct transport of proteins from cytosol to specific organelles such as:</p>
+                    <ul>
+                        <li>Endoplasmic Reticulum</li>
+                        <li>Mitochondria</li>
+                        <li>Chloroplasts (in plants)</li>
+                        <li>Peroxisomes</li>
+                        <li>Nucleus</li>
+                    </ul>
+                    <p>This process typically involves signal sequences and specific translocation machinery.</p>
+                </div>
+                
+                <div class="highlight">
+                    <h3>Vesicular Trafficking</h3>
+                    <p>Transport of proteins between membrane-bound compartments via vesicles:</p>
+                    <ul>
+                        <li>Endoplasmic Reticulum → Golgi Apparatus</li>
+                        <li>Golgi Apparatus → Plasma Membrane</li>
+                        <li>Golgi Apparatus → Lysosomes</li>
+                        <li>Endocytosis and Exocytosis</li>
+                    </ul>
+                    <p>This pathway involves budding and fusion of transport vesicles with target membranes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Mechanism of Organellar Trafficking -->
+        <div class="section" id="section2">
+            <div class="card">
+                <h2>Mechanism of Organellar Trafficking</h2>
+                <p>Organellar trafficking involves precise molecular mechanisms that ensure proteins reach their correct destinations within the cell.</p>
+                
+                <h3>Key Organelles Targeted</h3>
+                <ul>
+                    <li><strong>Endoplasmic Reticulum:</strong> Entry point for secretory pathway; proteins with ER signal sequences</li>
+                    <li><strong>Mitochondria:</strong> Proteins with mitochondrial targeting signals (MTS)</li>
+                    <li><strong>Chloroplasts:</strong> Proteins with chloroplast transit peptides</li>
+                    <li><strong>Peroxisomes:</strong> Proteins with peroxisomal targeting signals (PTS1 or PTS2)</li>
+                    <li><strong>Nucleus:</strong> Proteins with nuclear localization signals (NLS)</li>
+                </ul>
+                
+                <h3>Co-translational Translocation</h3>
+                <p>Proteins are translocated into the ER as they are being synthesized on ribosomes:</p>
+
+                <ul>
+                    <li>Signal Recognition Particle (SRP) binds to the signal sequence as it emerges from the ribosome</li>
+                    <li>SRP-ribosome complex binds to SRP receptor on ER membrane</li>
+                    <li>Ribosome transfers to the translocon (Sec61 complex)</li>
+                    <li>Translation continues with polypeptide chain passing through translocon into ER lumen</li>
+                    <li>Signal peptide is cleaved by signal peptidase</li>
+                    <li>Common for secretory proteins and membrane proteins</li>
+                </ul>
+                
+                <h3>Post-translational Translocation</h3>
+                <p>Proteins are fully synthesized in cytosol before translocation:</p>
+                <ul>
+                    <li><strong>Common in yeast ER</strong></li>
+                    <li><strong>Mitochondria</strong></li>
+                    <li><strong>Chloroplasts</strong></li>
+                    <li><strong>Peroxisomes</strong></li>
+                    <li><strong>Nucleus</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Targeting to Endoplasmic Reticulum -->
+        <div class="section" id="section3">
+            <div class="card">
+                <h2>Targeting to Endoplasmic Reticulum</h2>
+                <p>The endoplasmic reticulum serves as the entry point for the secretory pathway and is crucial for protein synthesis, folding, and modification.</p>
+                
+                <h3>Co-translational Translocation to ER</h3>
+                <p>This is the primary pathway for protein import into the ER in mammalian cells:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Co-translational%20translocation.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <ol>
+                    <li><strong>Signal Sequence Recognition:</strong> As the signal sequence emerges from the ribosome, it is recognized by the Signal Recognition Particle (SRP)</li>
+                    <li><strong>Targeting to ER Membrane:</strong> SRP-ribosome complex binds to SRP receptor on ER membrane</li>
+                    <li><strong>Translocon Engagement:</strong> Ribosome binds to Sec61 translocon complex</li>
+                    <li><strong>Translocation:</strong> Polypeptide chain passes through Sec61 channel as translation continues</li>
+                    <li><strong>Signal Cleavage:</strong> Signal peptidase cleaves the signal sequence</li>
+                    <li><strong>Protein Folding:</strong> Chaperones (BiP, calnexin) assist in proper folding</li>
+                </ol>
+                
+                <div class="highlight">
+                    <h3>Key Components</h3>
+                    <ul>
+                        <li><strong>Signal Sequence:</strong> Located at N-terminus with a Hydrophobic core flanked by polar regions (usually 15-30 amino acids)</li>
+                        <li><strong>SRP (Signal Recognition Particle):</strong> Ribonucleoprotein that recognizes signal sequences</li>
+                        <li><strong>Sec61 Complex:</strong> Protein-conducting channel in ER membrane</li>
+                        <li><strong>Signal Peptidase:</strong> Enzyme that removes signal sequences</li>
+                        <li><strong>Oligosaccharyl Transferase:</strong> Enzyme complex that adds N-linked glycans</li>
+                    </ul>
+                </div>
+                
+                <h3>Post-translational Translocation in Yeast</h3>
+                <p>Yeast cells extensively use post-translational translocation for ER import:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Post%20translational%20translocation.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <ul>
+                    <li>Proteins are fully synthesized in cytosol before translocation</li>
+                    <li>Requires Sec62/Sec63 complex in addition to Sec61</li>
+                    <li>Molecular chaperones (BiP) assist translocation</li>
+                    <li>ATP hydrolysis by BiP provides energy for translocation</li>
+                    <li>Sec72 and Sec71 proteins facilitate substrate recognition</li>
+                    <li>Common for smaller proteins and under stress conditions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 4: Targeting of Integral Membrane Proteins -->
+        <div class="section" id="section4">
+            <div class="card">
+                <h2>Targeting of Integral Membrane Proteins</h2>
+                <p>Integral membrane proteins require specialized targeting mechanisms to ensure proper insertion and orientation in the ER membrane.</p>
+                
+                <h3>Topology Classification of Integral Membrane Proteins</h3>
+                <p>Based on their orientation and number of transmembrane segments:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Types%20of%20integral%20membrane%20proteins.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <div class="highlight">
+                    <h3>Type I Membrane Proteins</h3>
+                    <ul>
+                        <li>N-terminus in ER lumen, C-terminus in cytosol</li>
+                        <li>Single transmembrane domain</li>
+                        <li>Cleavable signal sequence at N-terminus</li>
+                        <li>Example: LDL receptor</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight">
+                    <h3>Type II Membrane Proteins</h3>
+                    <ul>
+                        <li>N-terminus in cytosol, C-terminus in ER lumen</li>
+                        <li>Single transmembrane domain</li>
+                        <li>Non-cleavable signal-anchor sequence</li>
+                        <li>Example: Transferrin receptor</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight">
+                    <h3>Type III Membrane Proteins</h3>
+                    <ul>
+                        <li>Similar to Type I but with non-cleavable signal sequence</li>
+                        <li>N-terminus in ER lumen, C-terminus in cytosol</li>
+                        <li>Example: Cytochrome P450</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight">
+                    <h3>Type IV Membrane Proteins</h3>
+                    <ul>
+                        <li>Proteins with multiple transmembrane domains</li>
+                        <li>Alternating orientation across the membrane</li>
+                        <li>Example: G-protein coupled receptors</li>
+                    </ul>
+                </div>
+                
+                <h3>Targeting Mechanisms</h3>
+                <p>Membrane protein targeting follows similar initial steps as soluble proteins but with additional complexity:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Clamp%20shell%20opening%20sec%2061.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <ul>
+                    <li><strong>Signal-Anchor Sequences:</strong> Serve dual function as targeting signals and transmembrane anchors. These sequences contain a hydrophobic core that both targets the protein to the ER and remains embedded in the membrane as a transmembrane domain.</li>
+                    
+                    <li><strong>Stop-Transfer Sequences:</strong> Halt translocation and anchor protein in membrane. These hydrophobic sequences emerge from the translocon during protein synthesis and cause the translocon to open laterally, allowing the sequence to exit into the lipid bilayer.</li>
+                    
+                    <li><strong>Multipass Proteins:</strong> Use alternating signal-anchor and stop-transfer sequences. The first transmembrane segment typically functions as a signal-anchor sequence, while subsequent segments act as stop-transfer sequences, creating proteins with multiple membrane-spanning domains.</li>
+                    
+                    <li><strong>Positive-Inside Rule:</strong> Cytosolic domains tend to have more positively charged residues (lysine and arginine) flanking transmembrane segments. These charges influence orientation by interacting with the negatively charged phospholipid head groups on the cytosolic side of the membrane.</li>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Signals%20in%20integral%20proteins.png" alt="Monohybrid Cross Diagram">
+                </div>
+                </ul>
+                
+                <div class="special-note">
+                    <h3>Tail-Anchored (TA) Proteins</h3>
+                    <p>Tail-anchored proteins represent a specialized class of membrane proteins with unique targeting mechanisms:</p>
+                    <ul>
+                        <li><strong>Structural Features:</strong> Consist of an N-terminal functional domain in the cytosol and a single C-terminal transmembrane domain that anchors the protein to membranes</li>
+                        <li><strong>Targeting Challenge:</strong> Their C-terminal transmembrane domain emerges from the ribosome only after translation is complete, making co-translational targeting impossible</li>
+                        <li><strong>Targeting Pathways:</strong>
+                            <ul>
+                                <li><strong>GET Pathway (Guided Entry of Tail-anchored proteins):</strong> Primary pathway in yeast and mammals
+                                    <ul>
+                                        <li>SRP-independent targeting mechanism</li>
+                                        <li>Get3 ATPase acts as a targeting factor that binds to the transmembrane domain</li>
+                                        <li>Get1/Get2 complex serves as the ER membrane receptor</li>
+                                        <li>ATP hydrolysis drives membrane insertion</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><strong>Examples:</strong> SNARE proteins (syntaxins, synaptobrevins), Bcl-2 family proteins, protein translocation components</li>
+                    </ul>
+                </div>
+                
+                <div class="special-note">
+                    <h3>GPI-Linked Proteins</h3>
+                    <p>Glycosylphosphatidylinositol (GPI)-anchored proteins are membrane proteins attached to the lipid bilayer via a glycolipid anchor:</p>
+                    <ul>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/GPI%20linked%20proteins%202.png" alt="Monohybrid Cross Diagram">
+                </div>
+                        <li><strong>Biosynthesis:</strong> 
+                            <ul>
+                                <li>Synthesized as single-pass transmembrane proteins with both N-terminal signal sequence and C-terminal hydrophobic sequence</li>
+                                <li>After translocation into the ER lumen, the C-terminal sequence is cleaved and replaced with a pre-formed GPI anchor</li>
+                                <li>This transamidation reaction is catalyzed by GPI transamidase complex</li>
+                            </ul>
+                        </li>
+                        <li><strong>Structural Features:</strong>
+                            <ul>
+                                <li>Consist of a phosphoethanolamine linker, glycan core (mannose and glucosamine), and phosphatidylinositol lipid anchor</li>
+                                <li>The complete GPI anchor is assembled on the luminal side of the ER membrane before attachment</li>
+                            </ul>
+                        </li>
+                        <li><strong>Sorting Signals:</strong>
+                            <ul>
+                                <li>The C-terminal hydrophobic sequence serves as both a translocation signal and GPI attachment signal</li>
+                                <li>A cleavage/attachment site (ω site) is located approximately 10-12 amino acids upstream of the C-terminus</li>
+                            </ul>
+                        </li>
+                        <li><strong>Functional Significance:</strong>
+                            <ul>
+                                <li>Concentrated in lipid rafts due to saturated fatty acids in the GPI anchor</li>
+                                <li>Can be selectively released from membranes by specific phospholipases</li>
+                                <li>Important for cell signaling, adhesion, and immune recognition</li>
+                            </ul>
+                        </li>
+                        <li><strong>Examples:</strong> Alkaline phosphatase, acetylcholinesterase, prion proteins, Thy-1, and many cell surface antigens</li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progress = document.getElementById('progress');
+            const indicatorDots = document.querySelectorAll('.indicator-dot');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.textContent = currentSection === sections.length - 1 ? 'Finish' : 'Next';
+                
+                // Update progress bar
+                progress.style.width = `${(currentSection + 1) * 25}%`;
+                
+                // Update indicator dots
+                indicatorDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Update sections visibility
+                sections.forEach((section, index) => {
+                    if (index === currentSection) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Navigation button event listeners
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    updateNavigation();
+                } else {
+                    // Optionally reset to first section or show completion message
+                    alert('You have completed the guide!');
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateNavigation();
+                }
+            });
+            
+            // Indicator dot click event listeners
+            indicatorDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-section'));
+                    updateNavigation();
+                });
+            });
+            
+            // Initialize navigation
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
