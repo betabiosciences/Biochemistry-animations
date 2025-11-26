@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ER Protein Modifications</title>
+    <style>
+        :root {
+            --bg-primary: #0a0e29;
+            --bg-secondary: #1a1f4b;
+            --text-primary: #e0e0ff;
+            --text-secondary: #b8b8ff;
+            --accent: #6c63ff;
+            --accent-light: #8a84ff;
+            --highlight: #ff6b6b;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        h1 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .content-container {
+            background-color: rgba(26, 31, 75, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            min-height: 400px;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--accent-light);
+            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.8rem;
+        }
+        
+        h3 {
+            color: var(--text-secondary);
+            margin: 1.2rem 0 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        h4 {
+            color: var(--accent-light);
+            margin: 1rem 0 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .highlight {
+            color: var(--highlight);
+            font-weight: 600;
+        }
+        
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .mechanism-box {
+            background-color: rgba(108, 99, 255, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button:hover {
+            background-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            margin: 0 8px;
+            transition: var(--transition);
+        }
+        
+        .progress-dot.active {
+            background-color: var(--accent);
+            transform: scale(1.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .content-container {
+                padding: 1rem;
+            }
+            
+            button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Protein Processing in Endoplasmic Reticulum</h1>
+        </header>
+        
+        <div class="progress-bar">
+            <div class="progress-dot active" data-index="0"></div>
+            <div class="progress-dot" data-index="1"></div>
+            <div class="progress-dot" data-index="2"></div>
+            <div class="progress-dot" data-index="3"></div>
+        </div>
+        
+        <div class="content-container">
+            <!-- Section 1: Glycosylation -->
+            <div class="section active" id="section-1">
+                <h2>1. Glycosylation</h2>
+                
+                <h3>N-linked Glycosylation Mechanism</h3>
+                <p>N-linked glycosylation is a co-translational modification that occurs as proteins are synthesized in the rough endoplasmic reticulum. This process begins with the assembly of a <span class="highlight">dolichol-linked oligosaccharide precursor</span> on the cytosolic face of the ER membrane.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Glycosylations%20in%20ER.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <p>The core oligosaccharide (Glc₃Man₉GlcNAc₂) is assembled on a dolichol phosphate carrier through the sequential addition of monosaccharides by specific glycosyltransferases. Once the Man₅GlcNAc₂ intermediate is formed, the structure is <span class="highlight">flipped into the ER lumen</span> where additional mannose and glucose residues are added.</p>
+                
+                <p>The oligosaccharyltransferase (OST) complex recognizes the <span class="highlight">Asn-X-Ser/Thr consensus sequence</span> (where X is any amino acid except proline) and catalyzes the en bloc transfer of the preassembled oligosaccharide to the asparagine residue of the nascent polypeptide chain.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/OST%20interaction%20with%20polypeptide.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <h3>Significance of N-linked Glycosylation</h3>
+                <ul>
+                    <li><span class="highlight">Protein folding:</span> Glycans facilitate proper folding by recruiting chaperones</li>
+                    <li><span class="highlight">Quality control:</span> Glycan processing serves as a timer for folding attempts</li>
+                    <li><span class="highlight">Intracellular trafficking:</span> Glycans act as signals for protein localization</li>
+                    <li><span class="highlight">Stability:</span> Glycans protect against proteolytic degradation</li>
+                    <li><span class="highlight">Cell-cell recognition:</span> Surface glycoproteins mediate immune responses</li>
+                </ul>
+            </div>
+            
+            <!-- Section 2: Disulfide Bond Formation -->
+            <div class="section" id="section-2">
+                <h2>2. Disulfide Bond Formation and Rearrangement</h2>
+                
+                <h3>Oxidative Protein Folding Environment</h3>
+                <p>The ER provides an <span class="highlight">oxidizing environment</span> conducive to disulfide bond formation, contrasting with the reducing environment of the cytosol. This redox potential is maintained by a high ratio of oxidized to reduced glutathione and the action of ER oxidoreductases.</p>
+                
+                <h3>Protein Disulfide Isomerase (PDI) Family</h3>
+                <p>The PDI family of enzymes catalyzes disulfide bond formation, reduction, and isomerization:</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/PDI.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <ul>
+                    <li><span class="highlight">Active sites:</span> Contain CXXC motifs with reactive cysteine residues</li>
+                    <li><span class="highlight">Mechanism:</span> PDI transfers disulfide bonds to substrate proteins through thiol-disulfide exchange reactions</li>
+                    <li><span class="highlight">Chaperone activity:</span> Many PDIs also facilitate protein folding independent of their redox function</li>
+                </ul>
+                
+                <h3>ER Oxidoreductin 1 (Ero1) System</h3>
+                <p>Ero1 proteins regenerate oxidized PDI by transferring electrons to molecular oxygen, forming hydrogen peroxide:</p>
+                <ul>
+                    <li>Ero1 contains conserved cysteine pairs that form regulatory disulfides</li>
+                    <li>This system connects disulfide bond formation to cellular oxygen levels and metabolic state</li>
+                </ul>
+                
+                <h3>Disulfide Bond Rearrangement</h3>
+                <p>Initial disulfide bonds may not always be native, requiring rearrangement:</p>
+                <ul>
+                    <li>PDI catalyzes disulfide bond isomerization to correct non-native disulfides</li>
+                    <li>This process is particularly important for proteins with multiple disulfide bonds</li>
+                    <li>Rearrangement continues until the thermodynamically most stable configuration is achieved</li>
+                </ul>
+                
+                <h3>Quality Control of Disulfide Bonds</h3>
+                <p>The ER contains surveillance mechanisms to ensure proper disulfide bonding:</p>
+                <ul>
+                    <li>Persistent non-native disulfides target proteins for ERAD</li>
+                    <li>Oxidoreductases work in concert with chaperones to monitor folding status</li>
+                </ul>
+            </div>
+            
+            <!-- Section 3: Protein Folding -->
+            <div class="section" id="section-3">
+                <h2>3. Protein Folding</h2>
+                
+                <h3>Molecular Chaperones in the ER</h3>
+                <p>The ER contains a specialized set of chaperones that facilitate proper protein folding by preventing aggregation, promoting correct folding pathways, and participating in quality control mechanisms.</p>
+                
+                <h4>BiP (Binding immunoglobulin Protein)</h4>
+                <p>BiP is an Hsp70 family member that plays a central role in ER protein folding:</p>
+                <ul>
+                    <li><span class="highlight">Substrate recognition:</span> Binds hydrophobic regions exposed on unfolded or misfolded proteins</li>
+                    <li><span class="highlight">ATP-dependent mechanism:</span> Cycles between ATP-bound (low affinity) and ADP-bound (high affinity) states</li>
+                    <li><span class="highlight">Co-chaperones:</span> stimulate ATP hydrolysis and substrate binding</li>
+                    <li><span class="highlight">Nucleotide exchange:</span> factors promote ADP release, resetting the chaperone cycle</li>
+                </ul>
+                
+                <div class="mechanism-box">
+                    <h4>BiP Mechanism of Action:</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Bip%20mechanism.png" alt="Monohybrid Cross Diagram">
+                </div>
+                    <ol>
+                        <li>ATP-bound BiP has low affinity for substrates</li>
+                        <li>ERdj co-chaperones deliver unfolded proteins and stimulate ATP hydrolysis</li>
+                        <li>ADP-bound BiP tightly binds hydrophobic regions of substrates</li>
+                        <li>Nucleotide exchange factors promote ADP release and ATP rebinding</li>
+                        <li>ATP binding causes conformational change and substrate release</li>
+                    </ol>
+                </div>
+                
+                <h4>Calnexin and Calreticulin</h4>
+                <p>These lectin chaperones specifically recognize and assist glycoproteins:</p>
+                <ul>
+                    <li><span class="highlight">Substrate recognition:</span> Bind monoglucosylated N-glycans (Glc₁Man₉GlcNAc₂)</li>
+                    <li><span class="highlight">Membrane association:</span> Calnexin is transmembrane; calreticulin is soluble</li>
+                </ul>
+                
+                <h3>Chaperonins in the ER</h3>
+                <p>While classic chaperonins like GroEL/GroES are not present in the ER, specialized complexes perform analogous functions:</p>
+                
+                <h4>Mechanism of Chaperonin-Assisted Folding</h4>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/GroEL%20GroES%20folding%20fig%201.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <p>Chaperonins provide an isolated environment for protein folding:</p>
+                <div class="mechanism-box">
+                    <h4>Chaperonin Folding Cycle:</h4>
+                    <ol>
+                        <li>Unfolded protein substrate binds to the open chaperonin chamber</li>
+                        <li>ATP binding triggers conformational changes and chamber closure</li>
+                        <li>Folding occurs in the isolated, hydrophilic environment</li>
+                        <li>ATP hydrolysis promotes chamber reopening</li>
+                        <li>Folded protein is released; misfolded proteins may undergo additional cycles</li>
+                    </ol>
+                </div>
+                
+                <h3>Folding Cycles and Attempts</h3>
+                <p>Proteins undergo multiple folding attempts in the ER:</p>
+                <ul>
+                    <li>Chaperone binding prevents aggregation and promotes productive folding</li>
+                    <li>ATP hydrolysis drives conformational changes in chaperone-substrate complexes</li>
+                    <li>The calnexin/calreticulin cycle provides multiple folding attempts for glycoproteins</li>
+                    <li>UGGT (UDP-glucose:glycoprotein glucosyltransferase) acts as a folding sensor, reglucosylating misfolded proteins for another round of chaperone binding</li>
+                </ul>
+                
+                <h3>Collaborative Folding Networks</h3>
+                <p>ER chaperones work in coordinated networks to ensure efficient protein folding:</p>
+                <ul>
+                    <li><span class="highlight">Sequential assistance:</span> Different chaperones act at specific stages of folding</li>
+                    <li><span class="highlight">Substrate transfer:</span> Proteins may be passed between chaperones during folding</li>
+                    <li><span class="highlight">Quality control integration:</span> Chaperones collaborate with ERAD machinery to identify terminally misfolded proteins</li>
+                </ul>
+            </div>
+            
+            <!-- Section 4: Cis/Trans Isomerization -->
+            <div class="section" id="section-4">
+                <h2>4. Cis/Trans Isomerization</h2>
+                
+                <h3>Peptidyl-Prolyl Isomerases (PPIases)</h3>
+                <p>PPIases catalyze the interconversion between cis and trans isomers of peptide bonds preceding proline residues.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Cis-trans%20isomerization.png" alt="Monohybrid Cross Diagram">
+                </div>
+               
+                <h3>Kinetic Trapping in Protein Folding</h3>
+                <p>Proline isomerization can be a rate-limiting step in protein folding:</p>
+                <ul>
+                    <li>Non-native proline isomers can <span class="highlight">kinetically trap</span> folding intermediates</li>
+                    <li>Spontaneous isomerization is slow (half-times of minutes) at physiological temperatures</li>
+                    <li>PPIases accelerate this process by up to 10⁶-fold, preventing kinetic traps</li>
+                </ul>
+                
+                <h3>Biological Significance</h3>
+                <p>Proline isomerization plays critical roles in:</p>
+                <ul>
+                    <li><span class="highlight">Folding efficiency:</span> Accelerating the folding of proline-rich proteins</li>
+                    <li><span class="highlight">Regulation:</span> Acting as molecular switches in signaling pathways</li>
+                    <li><span class="highlight">Disease:</span> Mutations affecting proline isomerization are linked to various pathologies</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            let currentSection = 0;
+            
+            // Function to update the display of sections and navigation
+            function updateDisplay() {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                sections[currentSection].classList.add('active');
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update next button text on last section
+                if (currentSection === sections.length - 1) {
+                    nextBtn.textContent = 'Restart';
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+            
+            // Next button event listener
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                } else {
+                    // Restart from the beginning
+                    currentSection = 0;
+                }
+                updateDisplay();
+            });
+            
+            // Previous button event listener
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateDisplay();
+                }
+            });
+            
+            // Progress dot click event listeners
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-index'));
+                    updateDisplay();
+                });
+            });
+            
+            // Initialize display
+            updateDisplay();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
