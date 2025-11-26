@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ER Protein Quality Control Systems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #121212 100%);
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            flex: 1;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #00ffff;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            padding: 0 10px;
+            line-height: 1.3;
+        }
+
+        h2 {
+            color: #4da6ff;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+            border-left: 4px solid #4da6ff;
+            padding-left: 12px;
+            line-height: 1.3;
+        }
+
+        h3 {
+            color: #ff6b6b;
+            font-size: 1.1em;
+            margin: 20px 0 10px 0;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            color: #d0d0d0;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .mechanism-box {
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .key-protein {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .enzyme-highlight {
+            color: #4ecdc4;
+            font-weight: 600;
+            background: rgba(78, 205, 196, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .structure-highlight {
+            color: #ffe66d;
+            font-weight: 600;
+            background: rgba(255, 230, 109, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .nav-container {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 30px 0 20px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4da6ff 0%, #0066cc 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 160px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(77, 166, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .section-indicator {
+            text-align: center;
+            color: #888;
+            font-size: 0.85em;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4da6ff 0%, #00ffff 100%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(77, 166, 255, 0.6);
+        }
+
+        .intro-text {
+            background: rgba(77, 166, 255, 0.1);
+            border: 1px solid rgba(77, 166, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .pathway-step {
+            display: flex;
+            align-items: flex-start;
+            margin: 12px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+        }
+
+        .step-number {
+            background: #4da6ff;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            flex-shrink: 0;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .molecular-detail {
+            background: rgba(102, 51, 153, 0.15);
+            border: 1px solid rgba(102, 51, 153, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .reaction-arrow {
+            text-align: center;
+            color: #4ecdc4;
+            font-size: 1.5em;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6em; }
+            h2 { font-size: 1.3em; }
+            h3 { font-size: 1.05em; }
+            p { font-size: 0.9em; }
+            button { 
+                padding: 12px 20px; 
+                font-size: 0.95em;
+                max-width: 140px;
+            }
+            .container { padding: 15px; }
+            .nav-container { padding: 12px; }
+        }
+
+        /* Prevent zoom on input focus for iOS */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            select, textarea, input { font-size: 16px !important; }
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <!-- Section 1: ER Protein Folding QC -->
+        <div class="section active" id="section1">
+            <h1>ER Protein Quality Control: The Glycan Code</h1>
+            
+            <div class="intro-text">
+                The endoplasmic reticulum employs a sophisticated surveillance system that monitors protein folding status through specific carbohydrate modifications, collectively termed the "glycan code."
+            </div>
+
+            <div class="mechanism-box">
+                <h2>The Calnexin/Calreticulin Cycle</h2>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Quality%20control.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <div class="pathway-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Co-translational Modification</h3>
+                        <p>Newly synthesized proteins enter the ER with an <span class="structure-highlight">N-linked glycan</span> (Glc<sub>3</sub>Man<sub>9</sub>GlcNAc<sub>2</sub>) attached to Asn residues in the consensus sequence Asn-X-Ser/Thr.</p>
+                    </div>
+                </div>
+
+                <div class="reaction-arrow">↓</div>
+
+                <div class="pathway-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Glucosidase Trimming</h3>
+                        <p><span class="enzyme-highlight">Glucosidase I</span> removes terminal glucose, followed by <span class="enzyme-highlight">Glucosidase II</span> removing the second glucose, creating the monoglucosylated <span class="structure-highlight">GlcMan<sub>9</sub>GlcNAc<sub>2</span> structure.</p>
+                    </div>
+                </div>
+
+                <div class="reaction-arrow">↓</div>
+
+                <div class="pathway-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Lectin Binding</h3>
+                        <p>The monoglucosylated glycan is recognized by <span class="structure-highlight">calnexin</span> (membrane-bound) or <span class="structure-highlight">calreticulin</span> (soluble), which recruit <span class="structure-highlight">PDI</span> for disulfide bond formation.</p>
+                    </div>
+                </div>
+
+                <div class="reaction-arrow">↓</div>
+
+                <div class="pathway-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Glucose Release & Reglucosylation</h3>
+                        <p>Glucosidase II removes the final glucose. If misfolded, <span class="enzyme-highlight">UGGT (UDP-glucose:glycoprotein glucosyltransferase)</span> re-adds glucose, allowing another binding cycle.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="key-protein">
+                <h3>ERAD Recognition: The Mannose Timer</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Glucosidase%20and%20mannosidase.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <p>Prolonged folding attempts expose the protein to <span class="enzyme-highlight">ER mannosidase I</span> and <span class="enzyme-highlight">EDEMs</span> (ER degradation-enhancing α-mannosidase-like proteins), which trim mannose residues to <span class="structure-highlight">Man<sub>8</sub></span>, creating an degradation signal recognized by <span class="structure-highlight">OS-9</span> lectins.</p>
+            </div>
+
+            <div class="molecular-detail">
+                <h3>The ERAD Dislocation Complex</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Dislocation.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <p><strong>Membrane extraction:</strong> The ERAD complex forms a retrotranslocon channel. The p97 ATPase complex with cofactors, provides mechanical force for extracting proteins from the membrane. E3 ubiquitin ligases catalyze ubiquitination during extraction.</p>
+            </div>
+            
+            <!-- Navigation for Section 1 -->
+            <div class="section-indicator">Section 1 of 4</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 25%"></div>
+            </div>
+            <div class="nav-container">
+                <button id="prevBtn1" onclick="changeSection(-1)" disabled>← Previous</button>
+                <button id="nextBtn1" onclick="changeSection(1)">Next →</button>
+            </div>
+        </div>
+
+        <!-- Section 2: Ubiquitin Structure & Polyubiquitination -->
+        <div class="section" id="section2">
+            <h1>Ubiquitin Structure & Polyubiquitination Machinery</h1>
+            
+            <div class="intro-text">
+                Ubiquitination is a post-translational modification that targets proteins for proteasomal degradation. The process involves a highly conserved 76-amino acid protein with remarkable structural versatility.
+            </div>
+
+            <div class="mechanism-box">
+                <h2>Ubiquitin Structure: The β-grasp Fold</h2>
+                
+                <h3>Primary Sequence</h3>
+                <p>Ubiquitin is a 76-residue polypeptide (8.6 kDa) with the C-terminal sequence <span class="structure-highlight">-LRLRGG</span>, where Gly76 forms an essential isopeptide bond with target Lys residues.</p>
+
+                <div class="molecular-detail">
+                    <h3>Three-dimensional Architecture</h3>
+                    <p>The structure features a <span class="structure-highlight">β-grasp fold</span>: five β-strands forming a mixed β-sheet (β1-β5), with an α-helix packed against one face. This creates a compact globular domain with a hydrophobic core and a distinct surface patch for protein-protein interactions.</p>
+                    
+                </div>
+
+                <h3>Ubiquitin-binding Domains (UBDs)</h3>
+                <p>Proteins contain specialized domains that recognize the hydrophobic patch or specific linkages, determining downstream fate.</p>
+            </div>
+
+            <div class="key-protein">
+                <h3>The Three Enzyme Cascade</h3>
+                
+                <div class="pathway-step">
+                    <div class="step-number">E1</div>
+                    <div class="step-content">
+                        <p><span class="enzyme-highlight">Ubiquitin-activating enzyme (E1)</span> forms a high-energy thioester bond with ubiquitin's C-terminus in an ATP-dependent reaction.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">E2</div>
+                    <div class="step-content">
+                        <p><span class="enzyme-highlight">Ubiquitin-conjugating enzymes (E2s)</span> receive ubiquitin via transthiolation. ~40 E2s exist, each with specificity for different E3s and linkage types.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">E3</div>
+                    <div class="step-content">
+                        <p><span class="enzyme-highlight">Ubiquitin ligases (E3s)</span> catalyze transfer to substrate Lys residues.</p>
+                    </div>
+                </div>
+            </div>
+
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Poyubiquitination.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <div class="molecular-detail">
+                <h3>Polyubiquitin Linkage Specificity</h3>
+                <p><strong>K48-linkages:</strong> Form characteristic chains where each ubiquitin links via Lys48, creating a compact structure recognized by the proteasome. This is the canonical degradation signal.</p>
+                
+                <p><strong>K63-linkages:</strong> Typically non-degradative, involved in signaling and DNA repair. The linkage geometry differs, preventing proteasome recognition.</p>
+            </div>
+            
+            <!-- Navigation for Section 2 -->
+            <div class="section-indicator">Section 2 of 4</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
+            </div>
+            <div class="nav-container">
+                <button id="prevBtn2" onclick="changeSection(-1)">← Previous</button>
+                <button id="nextBtn2" onclick="changeSection(1)">Next →</button>
+            </div>
+        </div>
+
+        <!-- Section 3: Proteasome Structure & Degradation -->
+        <div class="section" id="section3">
+            <h1>The 26S Proteasome: Structure & Degradation Mechanism</h1>
+            
+            <div class="intro-text">
+                The 26S proteasome is a 2.5 MDa ATP-dependent protease that degrades ubiquitinated proteins. Its architecture provides sequence-unspecific but highly regulated proteolysis.
+            </div>
+
+            <div class="mechanism-box">
+                <h2>Overall Architecture</h2>
+                
+                <h3>19S Regulatory Particle (RP)</h3>
+                <p>The RP consists of <span class="structure-highlight">base</span> and <span class="structure-highlight">lid</span> subcomplexes. The base contains six AAA+ ATPases that form a heterohexameric ring, plus four non-ATPase subunits. The lid contains nine Rpn subunits including the deubiquitinating enzyme.</p>
+
+                <div class="molecular-detail">
+                    <h3>The 20S Core Particle (CP)</h3>
+                    <p>A barrel-shaped stack of four heptameric rings: α1-7 β1-7 β1-7 α1-7. The inner β-rings contain the catalytic subunits with caspase-like, trypsin-like, and chymotrypsin-like activities.</p>
+                    
+                    <p><strong>Gate mechanism:</strong> The α-subunit N-termini form a closed gate blocking substrate entry.</p>
+                </div>
+            </div>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Proteasome%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <div class="key-protein">
+                <h3>Substrate Processing Cascade</h3>
+                
+                <div class="pathway-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Recognition & Binding</h3>
+                        <p>Polyubiquitinated substrates bind proteasomal receptors via their Ubiquiting binding domain.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Deubiquitination</h3>
+                        <p><span class="enzyme-highlight">Dubs</span> cleaves the entire ubiquitin chain as the substrate is engaged. This ATP-dependent process recycles ubiquitin and prevents chain shredding.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Translocation & Unfolding</h3>
+                        <p>The AAA+ motor pulls substrates through a <1.3 nm pore, applying high force. Unfolding occurs when mechanical force overcomes protein stability.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Proteolysis</h3>
+                        <p>Substrate enters the proteolytic chamber where three active sites cleave peptide bonds. Processive degradation releases 3-25 residue peptides. The average peptide length is 7-9 amino acids.</p>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- Navigation for Section 3 -->
+            <div class="section-indicator">Section 3 of 4</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 75%"></div>
+            </div>
+            <div class="nav-container">
+                <button id="prevBtn3" onclick="changeSection(-1)">← Previous</button>
+                <button id="nextBtn3" onclick="changeSection(1)">Next →</button>
+            </div>
+        </div>
+
+        <!-- Section 4: Unfolded Protein Response -->
+        <div class="section" id="section4">
+            <h1>The Unfolded Protein Response: ER Stress Signaling</h1>
+            
+            <div class="intro-text">
+                When ER protein folding capacity is exceeded, three integrated signaling pathways activate transcriptional and translational programs to restore proteostasis or initiate apoptosis.
+            </div>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/UPR%20V2.jpg" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <div class="mechanism-box">
+                <h2>IRE1α Pathway: The Most Conserved Arm</h2>
+                
+                <div class="pathway-step">
+                    <div class="step-number">Sensing</div>
+                    <div class="step-content">
+                        <p>Under non-stress conditions, <span class="structure-highlight">BiP</span> binds IRE1α's luminal domain, maintaining it as inactive monomers. Accumulating unfolded proteins bind BiP, freeing IRE1α to dimerize and <span class="enzyme-highlight">trans-autophosphorylate</span> its kinase domain.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">Activation</div>
+                    <div class="step-content">
+                        <p>Phosphorylation induces conformational changes activating the cytosolic <span class="enzyme-highlight">RNase domain</span>. IRE1α oligomerizes into higher-order assemblies at the ER membrane.</p>
+                    </div>
+                </div>
+
+                <div class="pathway-step">
+                    <div class="step-number">Execution</div>
+                    <div class="step-content">
+                        <p>IRE1α excises a 26-nucleotide intron from <span class="structure-highlight">XBP1u mRNA</span>. This unconventional splicing creates a translational frameshift, generating <span class="structure-highlight">XBP1s</span> (spliced), a potent transcription factor.</p>
+                    </div>
+                </div>
+
+                <div class="molecular-detail">
+                    <h3>XBP1s Targets</h3>
+                    <p>XBP1s upregulates ER chaperones (BiP, calreticulin), ERAD components and lipid synthesis enzymes. It also induces <span class="enzyme-highlight">RIDD</span> (Regulated IRE1-Dependent Decay), cleaving select mRNAs and miRNAs to reduce ER load.</p>
+                </div>
+            </div>
+
+            <div class="key-protein">
+                <h2>PERK Pathway: Translational Control</h2>
+                
+                <p><strong>Activation mechanism:</strong> Similar to IRE1α, PERK dimerizes and autophosphorylates when released from BiP. Its cytosolic kinase domain phosphorylates <span class="structure-highlight">eIF2α</span> at Ser51.</p>
+                
+                <p><strong>Consequences:</strong> eIF2α-P inhibits global translation initiation by sequestering eIF2B, reducing protein load. Paradoxically, it <span class="structure-highlight">selectively enhances translation</span> of mRNAs with upstream ORFs, including <span class="structure-highlight">ATF4</span>.</p>
+                
+                <p><strong>ATF4 function:</strong> This bZIP transcription factor induces expression of amino acid metabolism genes, antioxidants, and pro-apoptotic <span class="structure-highlight">CHOP</span> (C/EBP homologous protein).</p>
+            </div>
+
+            <div class="mechanism-box">
+                <h2>ATF6 Pathway: Transcriptional Induction</h2>
+                
+                <h3>Stress Sensing & Activation</h3>
+                <p>ATF6α (90 kDa) is a type II transmembrane protein. Under stress, it translocates to the Golgi where proteases sequentially cleave it, releasing the cytosolic bZIP domain.</p>
+                
+                <h3>Nuclear Translocation</h3>
+                <p>The cleaved ATF6α fragment (50 kDa) enters the nucleus, binding ERSE (ER stress response element) and UPRE (unfolded protein response element) promoters.</p>
+                
+            </div>
+
+            <div class="molecular-detail">
+                <h3>Integrated Stress Response & Cross-talk</h3>
+                <p><strong>Temporal dynamics:</strong> ATF6α responds first (peak 2-4h), followed by PERK (peak 4-8h), then IRE1α (sustained >8h). This sequential activation allows graded responses.</p>
+                
+                <p><strong>Apoptotic switch:</strong> Persistent stress activates CHOP, which upregulates BIM, BAX, and downregulates BCL-2.</p>
+                
+                <p><strong>ER-phagy:</strong> Severe stress activates ER-resident autophagy receptors that fragment ER tubules for lysosomal degradation, reducing ER volume and protein synthesis capacity.</p>
+            </div>
+            
+            <!-- Navigation for Section 4 -->
+            <div class="section-indicator">Section 4 of 4</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 100%"></div>
+            </div>
+            <div class="nav-container">
+                <button id="prevBtn4" onclick="changeSection(-1)">← Previous</button>
+                <button id="nextBtn4" onclick="changeSection(1)" disabled>Complete</button>
+            </div>
+        </div>
+
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 4;
+
+        function changeSection(direction) {
+            const newSection = currentSection + direction;
+            if (newSection < 1 || newSection > totalSections) return;
+
+            // Hide current section
+            document.getElementById(`section${currentSection}`).classList.remove('active');
+            
+            // Show new section
+            currentSection = newSection;
+            document.getElementById(`section${currentSection}`).classList.add('active');
+            
+            // Update UI
+            updateNavigation();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateNavigation() {
+            // Update all navigation elements
+            for (let i = 1; i <= totalSections; i++) {
+                const prevBtn = document.getElementById(`prevBtn${i}`);
+                const nextBtn = document.getElementById(`nextBtn${i}`);
+                const indicator = document.querySelector(`#section${i} .section-indicator`);
+                const progressFill = document.querySelector(`#section${i} .progress-fill`);
+                
+                if (prevBtn) prevBtn.disabled = i === 1;
+                if (nextBtn) {
+                    if (i === totalSections) {
+                        nextBtn.disabled = true;
+                        nextBtn.textContent = 'Complete';
+                    } else {
+                        nextBtn.disabled = false;
+                        nextBtn.textContent = 'Next →';
+                    }
+                }
+                
+                if (indicator) indicator.textContent = `Section ${i} of ${totalSections}`;
+                if (progressFill) progressFill.style.width = `${(i / totalSections) * 100}%`;
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSection(-1);
+            if (e.key === 'ArrowRight') changeSection(1);
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - next section
+                    changeSection(1);
+                } else {
+                    // Swipe right - previous section
+                    changeSection(-1);
+                }
+            }
+        }
+
+        // Initialize
+        updateNavigation();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
