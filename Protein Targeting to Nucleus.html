@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuclear Protein Targeting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 1px solid #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #4cc9f0;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+        }
+
+        .subtitle {
+            color: #a9a9a9;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .content-area {
+            background-color: #121212;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2a2a;
+            min-height: 60vh;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #f72585;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        h3 {
+            color: #4361ee;
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4361ee;
+            margin: 15px 0;
+        }
+
+        .stepwise-mechanism {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #333;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            min-width: 120px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 8px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background-color: #4cc9f0;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            p, li {
+                font-size: 0.9rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nuclear Protein Targeting</h1>
+        </header>
+
+        <div class="progress-indicator">
+            <div class="progress-dot active" data-section="0"></div>
+            <div class="progress-dot" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+        </div>
+
+        <div class="content-area">
+            <!-- Section 1 -->
+            <div class="section active" id="section1">
+                <h2>Structure of Nuclear Pore Complex</h2>
+                
+                <p>The nuclear pore complex (NPC) is a massive protein assembly that perforates the nuclear envelope and regulates all transport between the nucleus and cytoplasm. With a molecular mass of approximately 125 MDa in vertebrates, it is one of the largest protein complexes in eukaryotic cells.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/NPC%20structure.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <h3>Membrane Nucleoporins</h3>
+                <p>Membrane nucleoporins (Nups) are integral membrane proteins that anchor the NPC to the nuclear envelope.</p>
+                <p>These proteins form a scaffold that stabilizes the curvature of the nuclear envelope around the pore and provides binding sites for other nucleoporins.</p>
+                
+                <h3>Structural Nucleoporins</h3>
+                <p>Structural nucleoporins form the core scaffold of the NPC, providing its characteristic eight-fold symmetric architecture:</p>
+                <ul>
+                    <li><strong>Nup107-160 complex</strong>: Forms the Y-shaped subcomplexes that create the outer rings of the NPC</li>
+                    <li><strong>Nup93 complex</strong>: Located in the inner ring, contributing to the structural integrity</li>
+                    <li><strong>Nup62 complex</strong>: Forms the central channel of the NPC</li>
+                </ul>
+                <p>These proteins assemble into stable subcomplexes that form the symmetric core, the inner ring, and the cytoplasmic and nuclear rings of the NPC.</p>
+                
+                <h3>FG Nucleoporins</h3>
+                <p>FG nucleoporins contain phenylalanine-glycine (FG) repeats and line the central channel of the NPC, forming a selective barrier:</p>
+                <ul>
+                    <li><strong>Function</strong>: Create a selective barrier that permits passive diffusion of small molecules while restricting larger molecules unless accompanied by transport receptors</li>
+                    <li><strong>FG-repeat domains</strong>: These unstructured, hydrophobic regions form a gel-like matrix that acts as a selective filter</li>
+                </ul>
+                <p>The FG-Nups create a permeability barrier through their cohesive FG-repeat domains, which can be overcome by nuclear transport receptors that specifically interact with these repeats.</p>
+                
+            </div>
+
+            <!-- Section 2 -->
+            <div class="section" id="section2">
+                <h2>Mechanism of Nuclear Import</h2>
+                
+                <p>Nuclear import is a highly regulated process that enables proteins with nuclear functions to enter the nucleus. This process relies on specific signal sequences and transport factors.</p>
+                
+                <h3>Classical Nuclear Localization Signals</h3>
+                <p>The classical nuclear import pathway utilizes nuclear localization signals (NLSs), which are short amino acid sequences that target proteins for nuclear import:</p>
+                <ul>
+                    <li><strong>Monopartite NLS</strong>: A single cluster of basic amino acids (e.g., PKKKRKV)</li>
+                    <li><strong>Bipartite NLS</strong>: Two clusters of basic amino acids separated by a linker region (e.g., KRPAATKKAGQAKKKK)</li>
+                </ul>
+                
+                <h3>Importin Receptors</h3>
+                <p>Importins are karyopherins that mediate nuclear import:</p>
+                <ul>
+                    <li><strong>Importin-α</strong>: Recognizes and binds to the NLS on cargo proteins</li>
+                    <li><strong>Importin-β</strong>: Interacts with importin-α and mediates translocation through the NPC</li>
+                    <li><strong>Importin-β family</strong>: Some importins can directly recognize cargo without importin-α</li>
+                </ul>
+                
+                <h3>Stepwise Mechanism of Nuclear Import</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Nuclear%20import.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="stepwise-mechanism">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Cargo Recognition</strong>
+                            <p>In the cytoplasm, importin-α binds to the NLS on the cargo protein, forming a cargo-importin-α complex. Importin-β then binds to importin-α, creating a trimeric complex.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Docking at NPC</strong>
+                            <p>The importin-β component of the complex interacts with FG repeats of cytoplasmic nucleoporins, initiating docking at the nuclear pore complex.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Translocation Through NPC</strong>
+                            <p>The complex moves through the central channel of the NPC via repeated binding and release interactions with FG nucleoporins, effectively diffusing through the permeability barrier.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Cargo Release in Nucleus</strong>
+                            <p>Inside the nucleus, RanGTP binds to importin-β, causing a conformational change that disrupts the importin-α-importin-β interaction, releasing the cargo protein.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <strong>Receptor Recycling</strong>
+                            <p>The importin-β-RanGTP complex returns to the cytoplasm through the NPC. In the cytoplasm, RanGAP stimulates GTP hydrolysis, releasing importin-β for another import cycle.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <strong>Importin-α Recycling</strong>
+                            <p>An Exportin binds to importin-α in a RanGTP-dependent manner and exports it back to the cytoplasm, completing the recycling of all components.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>The Ran GTPase Cycle</h3>
+                <p>The directionality of nuclear import is governed by the Ran GTPase cycle:</p>
+                <ol>
+                    <li>In the cytoplasm, Ran is predominantly in the GDP-bound state (RanGDP)</li>
+                    <li>In the nucleus, RanGEF converts RanGDP to RanGTP</li>
+                    <li>Importin-cargo complexes move through the NPC into the nucleus</li>
+                    <li>In the nucleus, RanGTP binds to importin-β, causing conformational changes that release the cargo</li>
+                    <li>The importin-RanGTP complex returns to the cytoplasm</li>
+                    <li>In the cytoplasm, RanGAP stimulates GTP hydrolysis, converting RanGTP to RanGDP and releasing importin for another round of transport</li>
+                </ol>
+                
+                <div class="highlight">
+                    <p><strong>Note:</strong> The RanGTP gradient across the nuclear envelope (high in the nucleus, low in the cytoplasm) provides the energy and directionality for nuclear import, ensuring cargo is released only in the nuclear compartment.</p>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div class="section" id="section3">
+                <h2>Mechanism of Nuclear Export</h2>
+                
+                <p>Nuclear export facilitates the movement of molecules from the nucleus to the cytoplasm, including RNAs, proteins, and ribosomal subunits.</p>
+                
+                <h3>Nuclear Export Signals</h3>
+                <p>Proteins destined for export from the nucleus typically contain nuclear export signals (NESs):</p>
+                <ul>
+                    <li><strong>Classical NES</strong>: Characterized by a pattern of hydrophobic residues (e.g., LxxLxLxxL, where L is a hydrophobic residue)</li>
+                    <li><strong>Other export signals</strong>: RNA molecules have specific sequences or structural motifs that serve as export signals</li>
+                </ul>
+                
+                <h3>Exportin Receptors</h3>
+                <p>Exportins are karyopherins that mediate nuclear export:</p>
+                <ul>
+                    <li><strong>Exportin-1</strong>: The major export receptor for proteins with classical NESs</li>
+                    <li><strong>Exportin-t</strong>: Specifically exports tRNAs from the nucleus</li>
+                    <li><strong>Exportin-5</strong>: Exports double-stranded RNA and pre-microRNAs</li>
+                    <li><strong>Exportin-2</strong>: Exports importin-α back to the cytoplasm</li>
+                </ul>
+                
+                <h3>Stepwise Mechanism of Nuclear Export</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Nuclear%20export.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <div class="stepwise-mechanism">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Cargo Recognition</strong>
+                            <p>In the nucleus, exportins bind to cargo proteins containing nuclear export signals (NES). This binding occurs in a RanGTP-dependent manner, forming a trimeric export complex.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Docking at NPC</strong>
+                            <p>The export complex docks at the nuclear side of the NPC through interactions between the exportin and FG nucleoporins, particularly those with phenylalanine-glycine repeats.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Translocation Through NPC</strong>
+                            <p>The export complex moves through the central channel of the NPC via transient interactions with FG nucleoporins, effectively diffusing through the permeability barrier toward the cytoplasm.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Cargo Release in Cytoplasm</strong>
+                            <p>In the cytoplasm, RanGAP stimulates GTP hydrolysis on Ran, converting RanGTP to RanGDP. This causes a conformational change in the exportin, leading to cargo release.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <strong>Receptor Recycling</strong>
+                            <p>The exportin-RanGDP complex dissociates, and the free exportin returns to the nucleus for another export cycle. RanGDP is imported back into the nucleus by NTF2 for regeneration.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>The Ran GTPase Cycle in Export</h3>
+                <p>Nuclear export also relies on the Ran GTPase gradient:</p>
+                <ol>
+                    <li>In the nucleus, exportins bind cargo in a RanGTP-dependent manner</li>
+                    <li>The trimeric exportin-cargo-RanGTP complex translocates through the NPC to the cytoplasm</li>
+                    <li>In the cytoplasm, RanGAP stimulates GTP hydrolysis on Ran, causing dissociation of the complex</li>
+                    <li>Cargo is released in the cytoplasm</li>
+                    <li>Exportin returns to the nucleus for another round of transport</li>
+                </ol>
+                
+                <h3>RNA Export Pathways</h3>
+                <p>Different classes of RNA utilize distinct export mechanisms:</p>
+                <ul>
+                    <li><strong>mRNA export</strong>: Mediated by the NXF1-NXT1 (in metazoans)</li>
+                    <li><strong>tRNA export</strong>: Primarily mediated by exportin-t</li>
+                    <li><strong>rRNA export</strong>: Ribosomal subunits are exported as pre-ribosomal particles using multiple export factors</li>
+                </ul>
+                
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button id="prevBtn" disabled>Previous</button>
+            <button id="nextBtn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            
+            // Function to update section visibility
+            function updateSections() {
+                sections.forEach((section, index) => {
+                    if (index === currentSection) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update next button text on last section
+                nextBtn.textContent = currentSection === sections.length - 1 ? 'Finish' : 'Next';
+            }
+            
+            // Next button event listener
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    currentSection++;
+                    updateSections();
+                }
+            });
+            
+            // Previous button event listener
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    updateSections();
+                }
+            });
+            
+            // Progress dot click events
+            progressDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSection = parseInt(this.getAttribute('data-section'));
+                    updateSections();
+                });
+            });
+            
+            // Initialize sections
+            updateSections();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
