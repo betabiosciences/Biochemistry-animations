@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Targeting to Chloroplasts</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
+        /* Header styles */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(to right, #0a0a0a, #1a3a1a, #0a0a0a);
+            border-bottom: 1px solid #2a5c2a;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .subtitle {
+            color: #8BC34A;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+
+        /* Section styles */
+        .section {
+            display: none;
+            background-color: #121212;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2a2a;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid #2a5c2a;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #8BC34A;
+            margin: 15px 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Navigation styles */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #2a5c2a;
+            color: #e0e0e0;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: #3a7c3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:disabled {
+            background-color: #1a3a1a;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #1a1a1a;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .section-counter {
+            text-align: center;
+            color: #8BC34A;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Diagrams and illustrations */
+        .diagram {
+            width: 100%;
+            max-width: 300px;
+            margin: 15px auto;
+            display: block;
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            padding: 10px;
+        }
+
+        .highlight {
+            background-color: #1a3a1a;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border-left: 3px solid #4CAF50;
+            margin: 15px 0;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Protein Targeting to Chloroplasts</h1>
+        </header>
+
+        <div class="section-counter">
+            <span id="current-section">1</span> of <span id="total-sections">5</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- Section 1: Chloroplast Structure -->
+        <div class="section active" id="section1">
+            <h2>Chloroplast Structure and Compartments</h2>
+            <p>Chloroplasts contain several distinct compartments, each requiring specific protein targeting mechanisms.</p>
+            
+            <h3>Major Chloroplast Compartments:</h3>
+            <ul>
+                <li><strong>Outer Envelope Membrane</strong> - The outermost membrane containing non-specific porins that allow passive diffusion of small molecules. It serves as the initial barrier and recognition site for protein import.</li>
+                <li><strong>Intermembrane Space</strong> - The narrow space between the two envelope membranes. While few proteins reside here permanently, it's a transient location during protein import.</li>
+                <li><strong>Inner Envelope Membrane</strong> - A highly selective membrane with specific transporters for metabolites and ions. It contains the protein import machinery and establishes the proton gradient.</li>
+                <li><strong>Stroma</strong> - The protein-rich aqueous interior containing the Calvin cycle enzymes, chloroplast genome, transcription/translation machinery, and various metabolic pathways.</li>
+                <li><strong>Thylakoid Membrane</strong> - The internal membrane system where photosynthesis occurs, organized into stacked grana and unstacked stroma lamellae. It houses photosystems I and II, cytochrome b6f complex, and ATP synthase.</li>
+                <li><strong>Thylakoid Lumen</strong> - The interior space of the thylakoid network where the water-splitting complex of photosystem II and other luminal proteins reside.</li>
+            </ul>
+            
+            <div class="highlight">
+                <p>Each of these compartments requires distinct targeting signals and translocation mechanisms for proper protein localization. The complexity arises from the endosymbiotic origin of chloroplasts, which necessitated the evolution of sophisticated protein targeting systems.</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Targeting Signals -->
+        <div class="section" id="section2">
+            <h2>Targeting Signals: The Transit Peptide</h2>
+            <p>Nuclear-encoded chloroplast proteins contain an N-terminal extension called the transit peptide, which serves as a targeting signal for chloroplast import. This peptide is both necessary and sufficient for targeting proteins to chloroplasts.</p>
+            
+            <h3>Characteristics of Transit Peptides:</h3>
+            <ul>
+                <li>Typically 30-100 amino acids in length, with variability depending on the final destination within the chloroplast</li>
+                <li>Enriched in serine, threonine, and small hydrophobic amino acids, creating an overall hydrophilic character</li>
+                <li>Devoid of acidic residues (aspartate and glutamate), which is a key feature distinguishing them from mitochondrial targeting signals</li>
+                <li>Contain loosely conserved motifs but lack strict consensus sequences, making prediction challenging</li>
+                <li>Often contain phosphorylation sites for regulation by cytosolic kinases and 14-3-3 proteins</li>
+                <li>May form amphipathic α-helices or random coil structures that interact with import receptors</li>
+            </ul>
+            
+            <p>The transit peptide is recognized by receptors on the chloroplast surface, initiating the import process. After successful import, the transit peptide is cleaved off by stromal processing peptidases (SPP).</p>
+            
+            <div class="highlight">
+                <p>For proteins destined to thylakoids, the transit peptide is often bipartite - the first part (stromal targeting domain) directs import into the chloroplast, while the second part (thylakoid transfer domain) contains additional information for thylakoid localization.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: TOC and TIC Complexes -->
+        <div class="section" id="section3">
+            <h2>TOC and TIC Translocon Complexes</h2>
+            <p>Protein import into chloroplasts is mediated by two translocon complexes in the envelope membranes that work in coordination:</p>
+            
+            <h3>TOC Complex (Translocon at the Outer envelope membrane of Chloroplasts):</h3>
+            <ul>
+                <li><strong>Toc159</strong> - Primary receptor for transit peptide recognition.</li>
+                <li><strong>Toc34</strong> - Secondary receptor and GTPase regulating import. It works in concert with Toc159.</li>
+                <li><strong>Toc75</strong> - The protein-conducting β-barrel channel in the outer membrane.</li>
+            </ul>
+            
+            <h3>TIC Complex (Translocon at the Inner envelope membrane of Chloroplasts):</h3>
+            <ul>
+                <li><strong>Tic20/Tic21</strong> - Forms the translocation channel.</li>
+                <li><strong>Import Motor</strong> - This provides the driving force. By hydrolyzing ATP, it acts as a molecular ratchet, pulling the protein into the stroma and preventing back-sliding.</li>
+                <li><strong>The Redox Regulator</strong> - Regulatory components that respond to the NADP+/NADPH ratio in the stroma.</li>
+            </ul>
+            
+            <div class="highlight">
+                <p>The current model suggests that the TOC and TIC complexes can form supercomplexes that span both envelope membranes, creating a continuous translocation pathway for preproteins. These supercomplexes may be dynamic, assembling and disassembling in response to import demands.</p>
+            </div>
+        </div>
+
+        <!-- Section 4: Import Mechanism -->
+        <div class="section" id="section4">
+            <h2>Mechanism of Protein Import</h2>
+            <p>The import of proteins into chloroplasts follows a multi-step process that requires coordination between cytosolic factors, envelope translocons, and stromal components:</p>
+            
+            <ol>
+                <li><strong>Recognition and Guidance</strong> - Cytosolic chaperones (Hsp70/Hsp90) maintain preproteins in an import-competent unfolded state and deliver them to the TOC complex. 14-3-3 proteins may bind phosphorylated transit peptides, enhancing import efficiency.</li>
+                <li><strong>Initial Binding</strong> - The transit peptide binds to Toc159 and Toc34 receptors via GTP-dependent interactions. The specific isoform composition of the TOC complex determines substrate specificity.</li>
+                <li><strong>Translocation Initiation</strong> - GTP hydrolysis by Toc159 and Toc34 drives conformational changes that insert the preprotein into the Toc75 channel.</li>
+                <li><strong>Membrane Translocation</strong> - The preprotein traverses both outer and inner membranes through coordinated TOC-TIC supercomplexes.</li>
+                <li><strong>Stromal Import and Chaperone Action</strong> - Stromal Hsp chaperones facilitate complete translocation using ATP hydrolysis.</li>
+                <li><strong>Processing and Folding</strong> - The stromal processing peptidase (SPP) cleaves the transit peptide.</li>
+                <li><strong>Sorting to Final Destination</strong> - Proteins with additional targeting signals are redirected to their final suborganellar locations (envelope membranes, thylakoids).</li>
+            </ol>
+            
+            <div class="highlight">
+                <p>Energy requirements: Import requires both GTP (for receptor function) and ATP (for chaperone activity and translocation).</p>
+            </div>
+        </div>
+
+        <!-- Section 5: Intra-organellar Sorting -->
+        <div class="section" id="section5">
+            <h2>Intra-organellar Sorting</h2>
+            <p>After entering the stroma, proteins must be sorted to their final destinations within the chloroplast. This represents a second level of targeting complexity beyond initial chloroplast import.</p>
+            
+            <h3>Sorting Pathways:</h3>
+            <ul>
+                <li><strong>Stromal Proteins</strong> - Remain in the stroma after transit peptide cleavage. These include Calvin cycle enzymes, transcription/translation machinery, and various metabolic enzymes. They typically lack additional targeting signals beyond the basic transit peptide.</li>
+                <li><strong>Thylakoid Proteins</strong> - Require additional targeting signals and one of four distinct translocation systems:
+                    <ul>
+                        <li><strong>Sec pathway (Secretory)</strong> - This pathway is homologous to bacterial protein secretion. Proteins are imported into the stroma (where the first transit peptide is cleaved) and retain a second, prokaryotic-like signal sequence. The core machinery consists of the SecA ATPase, which drives the protein through the SecYEG translocon (membrane channel). Since the protein must remain unfolded to pass, stromal Hsp70 chaperones assist in maintaining the conformation.</li>
+                        <li><strong>Tat pathway (Twin-arginine translocation)</strong> - The Tat pathway is unique as it transports proteins that are already fully folded or assembled in the stroma, which is critical for cofactor insertion (like iron-sulfur clusters). The signal peptide contains a conserved S-R-R-X-F-L-K motif (the Twin-Arginine). The driving force is entirely the proton motive force across the thylakoid membrane, making it electrogenic.</li>
+                        <li><strong>SRP pathway (Signal Recognition Particle)</strong> - Targets membrane proteins to the thylakoid membrane using GTP hydrolysis. The stromal SRP complex binds the hydrophobic signal sequence. This complex docks with the FtsY receptor (GTPase-dependent), and the protein is inserted into the membrane.</li>
+                        <li><strong>Spontaneous insertion</strong> - Some small hydrophobic proteins can insert into the thylakoid membrane without requiring proteinaceous machinery. These proteins typically have strong hydrophobic domains that can partition directly into the lipid bilayer.</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <p>Thylakoid-targeted proteins contain a bipartite transit peptide: the first part (N-terminal stromal targeting domain) targets to the chloroplast, the second part (C-terminal thylakoid-transfer domain) contains information for thylakoid localization and is cleaved by thylakoid processing peptidase (TPP) after translocation.</p>
+            
+            <div class="highlight">
+                <p>The complexity of intra-chloroplast sorting reflects the evolutionary origin of chloroplasts from free-living cyanobacteria, which already possessed multiple protein targeting systems. The eukaryotic host cell repurposed and adapted these bacterial systems for organellar protein sorting.</p>
+            </div>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                Previous
+            </button>
+            <button id="next-btn">
+                Next
+            </button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentSectionElement = document.getElementById('current-section');
+            const totalSectionsElement = document.getElementById('total-sections');
+            const progressBar = document.getElementById('progress-bar');
+            
+            let currentSection = 0;
+            const totalSections = sections.length;
+            
+            // Initialize display
+            totalSectionsElement.textContent = totalSections;
+            updateProgressBar();
+            
+            // Navigation functions
+            function showSection(index) {
+                sections.forEach(section => section.classList.remove('active'));
+                sections[index].classList.add('active');
+                currentSection = index;
+                
+                // Update buttons
+                prevBtn.disabled = (index === 0);
+                nextBtn.disabled = (index === totalSections - 1);
+                
+                // Update section counter
+                currentSectionElement.textContent = index + 1;
+                
+                // Update progress bar
+                updateProgressBar();
+                
+                // Scroll to top of section
+                window.scrollTo(0, 0);
+            }
+            
+            function updateProgressBar() {
+                const progress = ((currentSection + 1) / totalSections) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            // Event listeners
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < totalSections - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            // Initialize first section
+            showSection(0);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
