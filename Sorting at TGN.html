@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trans-Golgi Network: Sorting and Assembly</title>
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --primary: #bb86fc;
+            --secondary: #03dac6;
+            --text: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --error: #cf6679;
+            --warning: #ffb74d;
+            --info: #64b5f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+        }
+        
+        h4 {
+            color: var(--warning);
+            font-size: 1.1rem;
+            margin: 12px 0 8px;
+        }
+        
+        .section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .emphasis {
+            color: var(--warning);
+            font-weight: bold;
+        }
+        
+        .info {
+            color: var(--info);
+            font-weight: bold;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--darker-bg);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #9a67ea;
+        }
+        
+        button:disabled {
+            background-color: #555;
+            color: #777;
+            cursor: not-allowed;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 8px;
+            transition: background-color 0.3s;
+        }
+        
+        .progress-dot.active {
+            background-color: var(--primary);
+        }
+        
+        .disease-list {
+            background-color: rgba(207, 102, 121, 0.1);
+            border-left: 4px solid var(--error);
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .process-box {
+            background-color: rgba(3, 218, 198, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .removal-box {
+            background-color: rgba(255, 183, 77, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .granin-box {
+            background-color: rgba(100, 181, 246, 0.1);
+            border-left: 4px solid var(--info);
+            padding: 10px 15px;
+            margin: 15px 0;
+        }
+        
+        .enzyme-highlight {
+            background-color: rgba(187, 134, 252, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .protein-highlight {
+            background-color: rgba(3, 218, 198, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sorting and Assembly from Trans-Golgi Network</h1>
+        </header>
+        
+        <div class="progress">
+            <div class="progress-dot active" data-section="0"></div>
+            <div class="progress-dot" data-section="1"></div>
+            <div class="progress-dot" data-section="2"></div>
+        </div>
+        
+        <div class="section active" id="section-1">
+            <h2>Overall Features of Sorting and Assembly from Trans-Golgi Network</h2>
+            
+            <p>The <span class="highlight">Trans-Golgi Network (TGN)</span> is a major sorting and distribution center within the secretory pathway of eukaryotic cells. It represents the final compartment of the Golgi apparatus where proteins and lipids are packaged into specific transport vesicles for delivery to their final destinations.</p>
+            
+            <h3>Key Functions:</h3>
+            <ul>
+                <li><span class="highlight">Protein Sorting:</span> The TGN sorts proteins into different vesicle types based on specific sorting signals and receptors.</li>
+                <li><span class="highlight">Vesicle Formation:</span> It mediates the formation of various transport vesicles including clathrin-coated vesicles, COPI vesicles, and others.</li>
+                <li><span class="highlight">Post-translational Modifications:</span> Final modifications such as phosphorylation, sulfation, and proteolytic processing occur in the TGN.</li>
+                <li><span class="highlight">Lipid Sorting:</span> The TGN also sorts lipids for delivery to different cellular membranes.</li>
+            </ul>
+            
+           
+            <h3>Vesicle Types Formed at the TGN:</h3>
+            <ul>
+                <li><span class="highlight">Clathrin-coated vesicles</span> for transport to endosomes and lysosomes</li>
+                <li><span class="highlight">AP-1-coated vesicles</span> for transport to endosomes</li>
+                <li><span class="highlight">AP-3-coated vesicles</span> for transport to lysosomes and related organelles</li>
+                <li><span class="highlight">AP-4-coated vesicles</span> for transport to endosomes and the plasma membrane</li>
+                <li><span class="highlight">Secretory vesicles</span> for constitutive and regulated secretion</li>
+            </ul>
+        </div>
+        
+        <div class="section" id="section-2">
+            <h2>Targeting to Lysosome: Mechanism and Associated Diseases</h2>
+            
+            <p>Lysosomal targeting from the TGN is a highly specific process that ensures hydrolytic enzymes reach the lysosome, where they degrade various biomolecules.</p>
+            
+          
+            <h3>Synthesis of Mannose-6-Phosphate Tag:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/Mannose%206%20phosphate%20synthesis%20diag2.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <div class="process-box">
+                <h4>Step-by-Step Process:</h4>
+                <ol>
+                    <li><span class="highlight">Recognition in the cis-Golgi:</span> Lysosomal hydrolases contain a specific <span class="emphasis">signal patch</span> (a three-dimensional structural feature) that is recognized by the enzyme <span class="enzyme-highlight">N-acetylglucosamine-1-phosphotransferase (GlcNAc-phosphotransferase)</span>.</li>
+                    
+                    <li><span class="highlight">First Catalytic Step:</span> GlcNAc-phosphotransferase transfers N-acetylglucosamine-1-phosphate from UDP-GlcNAc to the 6-position of specific mannose residues on the high-mannose oligosaccharides of lysosomal enzymes, forming a <span class="emphasis">phosphodiester intermediate</span>.</li>
+                    
+                    <li><span class="highlight">Formation of Blocked M6P Residue:</span> This creates a <span class="emphasis">covered M6P residue</span> where the phosphate group is blocked by the attached N-acetylglucosamine (GlcNAc).</li>
+                    
+                    <li><span class="highlight">Uncovering Enzyme Action:</span> In the trans-Golgi network, the enzyme <span class="enzyme-highlight">N-acetylglucosamine-1-phosphodiester α-N-acetylglucosaminidase</span> (commonly called the "uncovering enzyme") removes the GlcNAc cap.</li>
+                    
+                    <li><span class="highlight">Exposure of M6P Signal:</span> This uncovers the M6P residue, making it accessible for recognition by M6P receptors in the TGN.</li>
+                    
+                    <li><span class="highlight">Quality Control:</span> The M6P tag ensures that only lysosomal enzymes are efficiently targeted to lysosomes, while secretory proteins lacking this tag continue through the secretory pathway.</li>
+                </ol>
+                
+                <p><span class="emphasis">Key Enzymes:</span></p>
+                <ul>
+                    <li><span class="enzyme-highlight">GlcNAc-phosphotransferase</span>: A hexameric enzyme (α₂β₂γ₂) that recognizes lysosomal enzymes and catalyzes the initial phosphorylation</li>
+                    <li><span class="enzyme-highlight">Uncovering enzyme</span>: Removes the GlcNAc cap to expose the M6P signal</li>
+                </ul>
+            </div>
+
+            <h3>Mechanism of Lysosomal Targeting:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/M6P%20receptor%20endocytosis.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <ul>
+                <li><span class="highlight">Mannose-6-Phosphate (M6P) Tagging:</span> In the cis-Golgi network, N-linked oligosaccharides on lysosomal enzymes are modified to contain mannose-6-phosphate residues.</li>
+                <li><span class="highlight">M6P Receptor Binding:</span> In the TGN, M6P receptors recognize and bind to the M6P tags on lysosomal enzymes.</li>
+                <li><span class="highlight">Vesicle Formation:</span> The receptor-enzyme complexes are packaged into clathrin-coated vesicles with the help of adaptor proteins (AP-1 and GGA).</li>
+                <li><span class="highlight">Transport and Unloading:</span> Vesicles deliver their cargo to late endosomes, where the acidic environment causes dissociation of enzymes from receptors.</li>
+                <li><span class="highlight">Receptor Recycling:</span> M6P receptors return to the TGN for another round of sorting.</li>
+            </ul>
+
+            
+            <h3>Removal of Mannose-6-Phosphate Tag:</h3>
+            <div class="removal-box">
+                <p>After lysosomal enzymes reach their destination, the M6P tag is removed to prevent re-binding to M6P receptors and ensure proper enzyme function within the lysosome.</p>
+                
+                <h4>Mechanism of M6P Removal:</h4>
+                <ol>
+                    <li><span class="highlight">Lysosomal Delivery:</span> M6P-tagged enzymes are delivered to late endosomes, which mature into lysosomes.</li>
+                    
+                    <li><span class="highlight">Acidic Environment:</span> The late endosome maintains an acidic pH (approximately ~5.0) which:</li>
+                    <ul>
+                        <li>Causes dissociation of enzymes from M6P receptors</li>
+                        <li>Activates acid phosphatases that remove the phosphate group</li>
+                    </ul>
+                    
+                    <li><span class="highlight">Functional Consequences:</span></li>
+                    <ul>
+                        <li>Prevents re-binding to M6P receptors, ensuring enzymes remain in the lysosome</li>
+                        <li>May enhance enzymatic activity by removing potentially interfering modifications</li>
+                    </ul>
+                </ol>
+                
+                <p><span class="emphasis">Clinical Significance:</span> Defects in M6P removal are rare but can contribute to lysosomal storage disorders by affecting enzyme stability or function within the lysosome.</p>
+            </div>
+           
+            <div class="disease-list">
+                <p><span class="highlight">I-cell Disease (Mucolipidosis II):</span> Caused by deficiency in <span class="enzyme-highlight">GlcNAc-phosphotransferase</span>, the enzyme responsible for adding M6P tags to lysosomal enzymes. This results in mistargeting of multiple lysosomal enzymes to the extracellular space instead of lysosomes.</p>
+                
+            </div>
+        </div>
+        
+        <div class="section" id="section-3">
+            <h2>Targeting to Plasma Membrane</h2>
+            
+            <p>The TGN plays a crucial role in directing proteins to the plasma membrane through two main pathways: constitutive and regulated secretion.</p>
+            
+            <h3>Constitutive Secretion Pathway:</h3>
+            <ul>
+                <li><span class="highlight">Default Pathway:</span> Many membrane proteins and secreted proteins travel to the plasma membrane without specific sorting signals.</li>
+                <li><span class="highlight">Continuous Process:</span> Vesicles continuously bud from the TGN and fuse with the plasma membrane.</li>
+                <li><span class="highlight">Role in Membrane Maintenance:</span> Delivers lipids and proteins needed for membrane expansion and turnover.</li>
+            </ul>
+            
+            <h3>Regulated Secretion Pathway:</h3>
+            <ul>
+                <li><span class="highlight">Signal-dependent:</span> Proteins are stored in secretory granules and released only upon specific signals (e.g., hormonal or neuronal stimulation).</li>
+                <li><span class="highlight">Granule Biogenesis:</span> Involves selective aggregation of secretory proteins in the TGN, followed by budding of immature secretory granules.</li>
+                <li><span class="highlight">Examples:</span> Hormone secretion (insulin), neurotransmitter release, digestive enzyme secretion.</li>
+            </ul>
+            
+            <h3>Role of Granins in Regulated Secretion:</h3>
+            <div class="granin-box">
+                <p><span class="protein-highlight">Chromogranins</span> and <span class="protein-highlight">secretogranins</span> are acidic proteins that play crucial roles in the sorting and packaging of regulatory peptides in the TGN for regulated secretion.</p>
+                
+                <h4>Chromogranin A (CgA):</h4>
+                <ul>
+                    <li><span class="highlight">Functions:</span></li>
+                    <ul>
+                        <li>Promotes granule biogenesis by aggregating with other granule components in the TGN</li>
+                        <li>Helps sort soluble proteins into secretory granules through its aggregation properties</li>
+                        <li>Acts as a calcium buffer in secretory granules</li>
+                    </ul>
+                </ul>
+                
+                <h4>Chromogranin B (CgB) / Secretogranin I:</h4>
+                <ul>
+                    <li><span class="highlight">Functions:</span></li>
+                    <ul>
+                        <li>Similar to CgA in promoting granule formation through aggregation</li>
+                    </ul>
+                </ul>
+                
+                <h4>Secretogranin II (SgII) / Chromogranin C:</h4>
+                <ul>
+                    <li><span class="highlight">Functions:</span></li>
+                    <ul>
+                        <li>Processed to generate secretoneurin, a neuroactive peptide</li>
+                        <li>Contributes to the sorting of specific peptide hormones</li>
+                    </ul>
+                </ul>
+                
+                <h4>Mechanism of Granin-Mediated Sorting:</h4>
+                <ol>
+                    <li><span class="highlight">Aggregation in the TGN:</span> Granins self-aggregate and co-aggregate with other granule proteins in the mildly acidic, high-calcium environment of the TGN</li>
+                    <li><span class="highlight">Selective Concentration:</span> This aggregation selectively concentrates regulated secretory proteins while excluding constitutive secretory proteins</li>
+                    <li><span class="highlight">Membrane Budding:</span> The aggregated core induces membrane curvature and budding of immature secretory granules</li>
+                    <li><span class="highlight">Granule Maturation:</span> During maturation, granins are processed to generate bioactive peptides</li>
+                    <li><span class="highlight">Calcium Binding:</span> Granins bind calcium, which helps stabilize the granule matrix and regulates processing</li>
+                </ol>
+                
+            </div>
+            
+        </div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressDots = document.querySelectorAll('.progress-dot');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress dots
+                progressDots.forEach((dot, index) => {
+                    if (index === currentSection) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the current section
+                sections[index].classList.add('active');
+                
+                // Update current section index
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            // Event listeners for progress dots
+            progressDots.forEach((dot, index) => {
+                dot.addEventListener('click', function() {
+                    showSection(index);
+                });
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
