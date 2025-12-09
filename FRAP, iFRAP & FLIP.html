@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Targeting Study Techniques</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        h1 {
+            color: #4fc3f7;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #81c784;
+            font-size: 1rem;
+            font-weight: normal;
+        }
+
+        .section-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            display: none;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #4fc3f7;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #81c784;
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        ul {
+            margin: 10px 0 15px 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background-color: #2a2a2a;
+            padding: 10px 15px;
+            border-left: 4px solid #4fc3f7;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #2a2a2a;
+            color: #4fc3f7;
+            border: 1px solid #4fc3f7;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        button:hover {
+            background-color: #4fc3f7;
+            color: #0a0a0a;
+        }
+
+        button:disabled {
+            background-color: #1a1a1a;
+            color: #666;
+            border-color: #333;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4fc3f7;
+            width: 33.33%;
+            transition: width 0.3s ease;
+        }
+
+        .section-indicators {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 50%;
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .indicator.active {
+            background-color: #4fc3f7;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            button {
+                padding: 10px 15px;
+                min-width: 100px;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Protein Targeting Study Techniques</h1>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="section-indicators">
+                <div class="indicator active" data-section="0"></div>
+                <div class="indicator" data-section="1"></div>
+                <div class="indicator" data-section="2"></div>
+            </div>
+        </div>
+        
+        <div class="section-container">
+            <!-- Section 1: FRAP -->
+            <section class="section active" id="section-1">
+                <h2>Fluorescence Recovery After Photobleaching (FRAP)</h2>
+                
+                <p>FRAP is a powerful technique used to study the dynamics of molecules in living cells. It involves selectively bleaching a small region of fluorescently labeled molecules and monitoring the recovery of fluorescence in that region over time.</p>
+                
+                <h3>Principle</h3>
+                <p>The fundamental principle of FRAP relies on the diffusion of fluorescent molecules from unbleached regions into the bleached area. The rate and extent of fluorescence recovery provide quantitative information about:</p>
+                <ul>
+                    <li>Molecular mobility (diffusion coefficients)</li>
+                    <li>Binding interactions</li>
+                    <li>Immobile fractions within cellular compartments</li>
+                </ul>
+                
+                <h3>Experimental Procedure</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/FRAP%20exeriment%20real.png" alt="Monohybrid Cross Diagram">
+                </div>
+                <ol>
+                    <li>Label the protein of interest with a fluorescent tag (e.g., GFP)</li>
+                    <li>Select a region of interest (ROI) within the cell</li>
+                    <li>Apply a high-intensity laser pulse to bleach the fluorophores in the ROI</li>
+                    <li>Monitor fluorescence recovery in the bleached area at regular intervals</li>
+                    <li>Analyze the recovery curve to extract kinetic parameters</li>
+                </ol>
+                
+                <div class="highlight">
+                    <h3>Applications in Protein Targeting</h3>
+                    <p>FRAP is particularly valuable for studying:</p>
+                    <ul>
+                        <li>Membrane protein dynamics and confinement</li>
+                        <li>Nuclear-cytoplasmic shuttling of transcription factors</li>
+                        <li>Protein exchange rates at specific organelles</li>
+                        <li>Assessment of protein binding to immobile structures</li>
+                    </ul>
+                </div>
+                
+                <h3>Data Analysis</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/FRAP%20datas.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <p>The fluorescence recovery curve is typically fitted to exponential functions to determine:</p>
+                <ul>
+                    <li>Recovery half-time (t<sub>1/2</sub>)</li>
+                    <li>Mobile fraction (M<sub>f</sub>)</li>
+                    <li>Immobile fraction (I<sub>f</sub>)</li>
+                    <li>Effective diffusion coefficient (D)</li>
+                </ul>
+            </section>
+            
+            <!-- Section 2: Inverse FRAP -->
+            <section class="section" id="section-2">
+                <h2>Inverse FRAP (iFRAP)</h2>
+                
+                <p>Inverse FRAP is a complementary technique to conventional FRAP where instead of bleaching a specific region, the entire cell except for a small region of interest is photobleached.</p>
+                
+                <h3>Principle</h3>
+                <p>In iFRAP, fluorescence is preserved only in a defined region while the surrounding area is bleached. The subsequent decrease in fluorescence intensity in the unbleached region is monitored over time as fluorescent molecules diffuse out into the bleached area.</p>
+                
+                <h3>Experimental Procedure</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/iFRAP%20steps.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ol>
+                    <li>Label the protein of interest with a fluorescent tag</li>
+                    <li>Select and protect a small ROI from bleaching</li>
+                    <li>Bleach the entire cellular area except for the protected ROI</li>
+                    <li>Monitor fluorescence loss in the unbleached ROI over time</li>
+                    <li>Analyze the fluorescence decay curve</li>
+                </ol>
+                
+                <div class="highlight">
+                    <h3>Advantages Over Conventional FRAP</h3>
+                    <ul>
+                        <li>Better suited for studying rapidly diffusing molecules</li>
+                        <li>More accurate for quantifying protein exchange between compartments</li>
+                        <li>Ideal for studying protein dynamics in small organelles</li>
+                    </ul>
+                </div>
+                
+                <h3>Applications in Protein Targeting</h3>
+                <p>iFRAP is particularly useful for:</p>
+                <ul>
+                    <li>Quantifying protein export rates from organelles</li>
+                    <li>Studying nucleocytoplasmic transport kinetics</li>
+                    <li>Analyzing protein dynamics in small cellular compartments</li>
+                    <li>Measuring turnover rates of organelle-specific proteins</li>
+                </ul>
+                
+                <h3>Data Interpretation</h3>
+                <p>The fluorescence decay in iFRAP experiments follows first-order kinetics. The rate constant (k) obtained from fitting the decay curve directly relates to the dissociation rate of the protein from the compartment of interest.</p>
+            </section>
+            
+            <!-- Section 3: FLIP -->
+            <section class="section" id="section-3">
+                <h2>Fluorescence Loss in Photobleaching (FLIP)</h2>
+                
+                <p>FLIP is a technique used to study molecular connectivity and continuity between cellular compartments by repeatedly bleaching a specific region and monitoring fluorescence loss in other areas of the cell.</p>
+                
+                <h3>Principle</h3>
+                <p>In FLIP experiments, a specific region is subjected to repeated bleaching cycles. If molecules can move between the bleached region and other cellular areas, fluorescence will gradually decrease throughout the entire cell as molecules diffuse into the bleaching zone and become irreversibly bleached.</p>
+                
+                <h3>Experimental Procedure</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/FLIP%20steps.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+                <ol>
+                    <li>Label the protein of interest with a fluorescent tag</li>
+                    <li>Select a bleaching ROI</li>
+                    <li>Acquire a pre-bleach image of the entire cell</li>
+                    <li>Apply repeated bleaching pulses to the ROI</li>
+                    <li>After each bleach pulse, acquire images of the entire cell</li>
+                    <li>Continue until fluorescence stabilizes or is completely lost</li>
+                </ol>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/FLIP%20graph.png" alt="Monohybrid Cross Diagram">
+                </div>
+                
+                <div class="highlight">
+                    <h3>Key Applications</h3>
+                    <ul>
+                        <li>Mapping connectivity between cellular compartments</li>
+                        <li>Studying continuity of membranous organelles</li>
+                        <li>Analyzing nucleocytoplasmic transport pathways</li>
+                        <li>Investigating protein dynamics in interconnected networks</li>
+                    </ul>
+                </div>
+                
+                
+                <h3>Comparison with FRAP and iFRAP</h3>
+                <p>While FRAP and iFRAP measure local mobility and exchange rates, FLIP provides information about long-range connectivity and the existence of barriers to molecular movement within the cell.</p>
+                
+            </section>
+        </div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progress = document.getElementById('progress');
+            const indicators = document.querySelectorAll('.indicator');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress bar
+                progress.style.width = `${((currentSection + 1) / sections.length) * 100}%`;
+                
+                // Update indicators
+                indicators.forEach((indicator, index) => {
+                    if (index === currentSection) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                sections[index].classList.add('active');
+                
+                // Update current section
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Navigation button event listeners
+            nextBtn.addEventListener('click', function() {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            prevBtn.addEventListener('click', function() {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            // Indicator click event listeners
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    const sectionIndex = parseInt(this.getAttribute('data-section'));
+                    showSection(sectionIndex);
+                });
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
