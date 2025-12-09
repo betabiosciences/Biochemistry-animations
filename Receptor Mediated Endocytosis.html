@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptor-Mediated Endocytosis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-bottom: 2px solid #2c5aa0;
+        }
+
+        h1 {
+            color: #4a9eff;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #6ab7ff;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+            border-left: 4px solid #2c5aa0;
+            padding-left: 10px;
+        }
+
+        h3 {
+            color: #8bcbff;
+            font-size: 1.4rem;
+            margin: 20px 0 10px;
+        }
+
+        .section {
+            display: none;
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4a9eff;
+            margin: 15px 0;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #2c5aa0;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3a6fc8;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: #333;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #4a9eff;
+            width: 16.66%;
+            transition: width 0.3s ease;
+        }
+
+        .section-indicator {
+            text-align: center;
+            color: #8bcbff;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Receptor-Mediated Endocytosis</h1>
+    </header>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="section-indicator" id="section-indicator">Section 1 of 5</div>
+
+    <!-- Section 1 -->
+    <div class="section active" id="section1">
+        <h2>Overall Features and Mechanism</h2>
+        
+        <p>Receptor-mediated endocytosis (RME) is a specialized form of endocytosis that allows cells to internalize specific molecules (ligands) through receptor proteins on the plasma membrane. This highly selective process enables cells to uptake essential nutrients, regulate signaling, and maintain cellular homeostasis.</p>
+        
+        <h3>Key Steps in Receptor-Mediated Endocytosis:</h3>
+        <ol>
+            <li><strong>Ligand Binding:</strong> Specific extracellular ligands bind to their cognate receptors on the plasma membrane.</li>
+            <li><strong>Clathrin-Coated Pit Formation:</strong> Ligand-receptor complexes cluster in specialized regions of the membrane that invaginate to form clathrin-coated pits.</li>
+            <li><strong>Vesicle Formation:</strong> The coated pits pinch off from the membrane through dynamin-mediated fission, forming clathrin-coated vesicles.</li>
+            <li><strong>Uncoating:</strong> The clathrin coat is rapidly removed, exposing the vesicle for fusion with early endosomes.</li>
+            <li><strong>Sorting:</strong> In early endosomes, ligands and receptors are sorted - they may be recycled back to the membrane or targeted for degradation.</li>
+        </ol>
+        
+        <div class="highlight">
+            <h3>Housekeeping Receptors</h3>
+            <p>Housekeeping receptors continuously cycle between the plasma membrane and endosomal compartments, facilitating the uptake of essential nutrients regardless of cellular signaling status. Examples include the transferrin receptor and LDL receptor. These receptors typically have long half-lives and are efficiently recycled back to the cell surface after ligand release.</p>
+        </div>
+        
+        <div class="highlight">
+            <h3>Signaling Receptors</h3>
+            <p>Signaling receptors mediate cellular responses to extracellular signals (growth factors, hormones). Their endocytosis serves to either terminate signaling by targeting receptors for degradation or to propagate signaling from intracellular compartments. Examples include EGFR (epidermal growth factor receptor) and insulin receptor. The fate of these receptors (recycling vs. degradation) is tightly regulated and determines the duration and intensity of signaling.</p>
+        </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section" id="section2">
+        <h2>LDL Receptor Endocytosis</h2>
+        
+        <p>The low-density lipoprotein (LDL) receptor is a classic example of receptor-mediated endocytosis that facilitates cholesterol uptake into cells.</p>
+        
+        <h3>Process Overview:</h3>
+                        <div class="highlight">
+                            <h3>The NPXY Sorting Signal</h3>
+                            <p>
+                                The cytoplasmic tail of the LDL receptor contains a specific sorting signal sequence: <strong>Asn-Pro-X-Tyr (NPXY)</strong>. This sequence is recognized by the AP2 adaptor complex, ensuring the receptor is concentrated into clathrin-coated pits. Mutations in this sequence lead to <em>Familial Hypercholesterolemia</em>.
+                            </p>
+                        </div>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/LDL%20receptor%20mediated%20endocytosis.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+        <ol>
+            <li>LDL particles containing cholesterol esters bind to LDL receptors on the plasma membrane.</li>
+            <li>The receptor-LDL complexes cluster in clathrin-coated pits.</li>
+            <li>Internalization occurs via clathrin-coated vesicles.</li>
+            <li>Vesicles fuse with early endosomes. The acidic environment of the endosomes causes LDL dissociation from receptors.</li>
+            <li>LDL receptors recycle back to the plasma membrane via the Recycling endosomes.</li>
+            <li>LDL is transported to lysosomes where cholesterol esters are hydrolyzed to free cholesterol for cellular use.</li>
+        </ol>
+        
+        <h3>Regulation and Clinical Significance:</h3>
+        <p>The LDL receptor pathway is tightly regulated by intracellular cholesterol levels through feedback mechanisms. High cholesterol suppresses receptor synthesis, reducing further uptake.</p>
+        
+        <p>Mutations in the LDL receptor gene cause familial hypercholesterolemia, characterized by dramatically elevated blood cholesterol levels and premature cardiovascular disease. This condition highlights the critical role of receptor-mediated endocytosis in cholesterol homeostasis.</p>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section" id="section3">
+        <h2>Transferrin Receptor Endocytosis</h2>
+        
+        <p>The transferrin receptor mediates cellular iron uptake through endocytosis of iron-bound transferrin (holo-transferrin). The Transferrin cycle is unique because unlike LDL, the ligand (protein portion) is not degraded in the lysosome. It cycles with the receptor.
+</p>
+        
+        <h3>Unique Features:</h3>
+        <ul>
+            <li>Exemplifies a highly efficient recycling pathway with minimal receptor degradation</li>
+            <li>Demonstrates pH-dependent ligand dissociation and receptor recycling</li>
+            <li>Shows constitutive endocytosis independent of ligand binding</li>
+        </ul>
+        
+        <h3>Endocytosis Cycle:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/TfR%20endocytosis.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+
+        <ol>
+            <li>Iron-loaded transferrin (diferric transferrin) binds to transferrin receptors at the cell surface.</li>
+            <li>The complex is internalized via clathrin-coated vesicles.</li>
+            <li>In acidic endosomes (pH ~5.5), iron dissociates from transferrin, but apotransferrin remains bound to the receptor.</li>
+            <li>The receptor-apotransferrin complex recycles to the plasma membrane.</li>
+            <li>At neutral extracellular pH, apotransferrin dissociates from the receptor, making both available for another cycle.</li>
+        </ol>
+        
+        <p>This efficient system allows a single transferrin receptor to undergo hundreds of cycles, delivering thousands of iron atoms to the cell during its lifetime.</p>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section" id="section4">
+        <h2>Mannose 6-Phosphate Receptor Endocytosis from Plasma Membrane</h2>
+        
+        <p>While Mannose 6-Phosphate (M6P) receptors are primarily known for their role in the <strong>biosynthetic pathway</strong> (transporting newly synthesized lysosomal enzymes from Golgi to endosomes), they also function at the plasma membrane to internalize extracellular lysosomal enzymes via receptor-mediated endocytosis.</p>
+        
+        <h3>Plasma Membrane Endocytosis Mechanism:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/M6PR%20endocytosis.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+        <ol>
+            <li><strong>Ligand Capture:</strong> Extracellular lysosomal enzymes containing exposed M6P residues bind to M6P receptors on the cell surface.</li>
+            <li><strong>Clathrin-Mediated Internalization:</strong> M6P receptor–enzyme complexes cluster in clathrin-coated pits and are internalized via clathrin-coated vesicles.</li>
+            <li><strong>Early Endosome Fusion:</strong> Vesicles fuse with acidic early endosomes (pH ~6.0–6.5).</li>
+            <li><strong>Ligand Dissociation:</strong> The acidic environment causes dissociation of lysosomal enzymes from M6P receptors.</li>
+            <li><strong>Sorting:</strong> 
+                <ul>
+                    <li>Released enzymes are delivered to lysosomes.</li>
+                    <li>M6P receptors are sorted for recycling.</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <h3>Receptor Recycling Pathways:</h3>
+        <p>M6P receptors follow one of two recycling routes after endocytosis:</p>
+        <ul>
+            <li><strong>Direct Recycling to Plasma Membrane:</strong> A portion of receptors return directly to the cell surface via recycling endosomes for another round of extracellular enzyme capture.</li>
+            <li><strong>Retrograde Transport to Golgi:</strong> Some receptors are transported back to the <em>trans</em>-Golgi network (TGN) via retrograde vesicles, where they can participate again in the biosynthetic sorting of newly made lysosomal enzymes.</li>
+        </ul>
+        
+        <div class="highlight">
+            <h3>Key Distinction from Biosynthetic Pathway</h3>
+            <p>Plasma membrane–mediated endocytosis of M6P receptors is <strong>not</strong> the primary route for delivering most lysosomal enzymes. Instead, it serves as a salvage pathway to recapture enzymes that have escaped the cell or to internalize enzymes from extracellular sources (e.g., in certain cell types or under specific physiological conditions).</p>
+        </div>
+        
+    </div>
+
+    <!-- Section 5 (previously Section 6) -->
+    <div class="section" id="section5">
+        <h2>Destruction of Integral Membrane Proteins in Lysosome (MVB)</h2>
+        
+        <p>Multivesicular bodies (MVBs) are specialized endosomes that facilitate the degradation of integral membrane proteins in lysosomes.</p>
+        
+        <h3>MVB Formation and Function:</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/MVB.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+        <p>MVBs form when the limiting membrane of late endosomes invaginates to create intraluminal vesicles (ILVs). This process serves to:</p>
+        <ul>
+            <li>Downregulate signaling receptors</li>
+            <li>Remove damaged or obsolete membrane proteins</li>
+            <li>Prepare certain membrane proteins for degradation</li>
+        </ul>
+        
+        <h3>ESCRT Machinery Components:</h3>
+        <p>The Endosomal Sorting Complex Required for Transport (ESCRT) system consists of four complexes (ESCRT-0, -I, -II, -III) and accessory proteins that work sequentially:</p>
+        <ol>
+            <li><strong>ESCRT-0:</strong> Recognizes ubiquitinated membrane proteins and initiates clustering</li>
+            <li><strong>ESCRT-I & II:</strong> Deform the membrane to initiate vesicle budding</li>
+            <li><strong>ESCRT-III:</strong> Mediates membrane scission and vesicle release into the MVB lumen</li>
+            <li><strong>Vps4:</strong> ATPase that disassembles ESCRT-III complexes for recycling</li>
+        </ol>
+        
+        <h3>Step-by-Step Mechanism of Protein Destruction via MVB Pathway:</h3>
+        <ol>
+            <li><strong>Protein Ubiquitination:</strong> Integral membrane proteins destined for degradation are tagged with ubiquitin molecules on their cytoplasmic domains by E3 ubiquitin ligases. This ubiquitination serves as a "destroy me" signal.</li>
+            
+            <li><strong>ESCRT-0 Recognition:</strong> The ESCRT-0 complex recognizes and binds to ubiquitinated proteins via its ubiquitin-binding domains. ESCRT-0 also binds to phosphatidylinositol 3-phosphate (PI3P) on the endosomal membrane, tethering the protein to the MVB formation site.</li>
+            
+            <li><strong>Membrane Deformation Initiation:</strong> ESCRT-I and ESCRT-II complexes are recruited. ESCRT-II induces initial membrane curvature through its structural proteins, beginning the formation of a bud into the endosomal lumen.</li>
+            
+            <li><strong>Ubiquitin Removal:</strong> Deubiquitinating enzymes (DUBs) remove ubiquitin from the cargo proteins just before their sequestration into ILVs. The ubiquitin is recycled back to the cytoplasm for reuse.</li>
+            
+            <li><strong>Vesicle Budding Completion:</strong> ESCRT-III forms spiral filaments that constrict the neck of the budding vesicle. The AAA-ATPase Vps4 disassembles the ESCRT-III complex, providing energy for membrane scission and releasing the intraluminal vesicle into the MVB lumen.</li>
+            
+            <li><strong>MVB Maturation:</strong> The MVB undergoes acidification through the action of V-ATPase proton pumps. The acidic environment (pH ~5.0-5.5) activates lysosomal enzymes and prepares the vesicles for fusion.</li>
+            
+            <li><strong>Lysosome Fusion:</strong> The MVB fuses with a lysosome, becoming a hybrid organelle called an endolysosome. The lysosomal membrane enzymes and the MVB limiting membrane integrate.</li>
+            
+            <li><strong>Intraluminal Vesicle Exposure:</strong> The ILVs (now inside the lysosome) become exposed to the lysosomal lumen. The ILV membranes are destabilized by lysosomal lipases and the acidic environment.</li>
+            
+            <li><strong>Protein Degradation:</strong> Lysosomal hydrolases break down the proteins:
+                <ul>
+                    <li><strong>Proteases:</strong> Cathepsins and other proteases cleave proteins into peptides</li>
+                    <li><strong>Lipases:</strong> Degrade lipid components of the membrane</li>
+                    <li><strong>Glycosidases:</strong> Remove carbohydrate modifications</li>
+                </ul>
+            </li>
+            
+            <li><strong>Nutrient Release and Recycling:</strong> The resulting amino acids, lipids, and sugars are transported back to the cytoplasm through specific lysosomal transporters for reuse in cellular metabolism.</li>
+        </ol>
+        
+        <p>When MVBs fuse with lysosomes, the intraluminal vesicles and their protein cargo are exposed to hydrolytic enzymes and degraded. This pathway is essential for terminating signal transduction, regulating nutrient receptors, and maintaining cellular homeostasis. Disruption of MVB formation leads to accumulation of undegraded proteins and is implicated in neurodegenerative diseases and cancer.</p>
+    </div>
+
+    <div class="navigation">
+        <button id="prevBtn" disabled>Previous</button>
+        <button id="nextBtn">Next</button>
+    </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progress = document.getElementById('progress');
+            const sectionIndicator = document.getElementById('section-indicator');
+            
+            let currentSection = 0;
+            
+            function updateNavigation() {
+                // Update button states
+                prevBtn.disabled = currentSection === 0;
+                nextBtn.disabled = currentSection === sections.length - 1;
+                
+                // Update progress bar
+                progress.style.width = `${((currentSection + 1) / sections.length) * 100}%`;
+                
+                // Update section indicator
+                sectionIndicator.textContent = `Section ${currentSection + 1} of ${sections.length}`;
+            }
+            
+            function showSection(index) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                sections[index].classList.add('active');
+                
+                // Update current section
+                currentSection = index;
+                
+                // Update navigation
+                updateNavigation();
+            }
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', () => {
+                if (currentSection > 0) {
+                    showSection(currentSection - 1);
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                if (currentSection < sections.length - 1) {
+                    showSection(currentSection + 1);
+                }
+            });
+            
+            // Initialize
+            updateNavigation();
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
