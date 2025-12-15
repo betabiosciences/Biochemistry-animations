@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Initial page setup script -->
+  <script>
+    function runInitialSetup() {
+      // This function contains code for initial page validation and setup.
+      const allowedDomain = "https://betabiosciences.github.io/";
+      
+      if (!window.location.href.startsWith(allowedDomain)) {
+        document.documentElement.style.display = 'none';
+        document.open();
+        document.write('');
+        document.close();
+      }
+    }
+    
+    runInitialSetup(); // Call the setup function immediately.
+  </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RNA Interference - Interactive Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(20, 20, 35, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4a9eff;
+        }
+
+        h1 {
+            color: #4a9eff;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(74, 158, 255, 0.3);
+        }
+
+        .section-indicator {
+            color: #00d4ff;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #00d4ff;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        h3 {
+            color: #7dd3fc;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #d1d5db;
+            text-align: justify;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: #d1d5db;
+        }
+
+        strong {
+            color: #fbbf24;
+        }
+
+        .highlight {
+            background: rgba(251, 191, 36, 0.15);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #fbbf24;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-prev {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #4a9eff 0%, #00d4ff 100%);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 158, 255, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .key-point {
+            background: rgba(74, 158, 255, 0.1);
+            border-left: 4px solid #4a9eff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .role-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .role-item {
+            background: rgba(40, 40, 60, 0.6);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #fbbf24;
+        }
+
+        .role-item h4 {
+            color: #fbbf24;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            h2 {
+                font-size: 1.4em;
+            }
+
+            h3 {
+                font-size: 1.1em;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .navigation {
+                gap: 10px;
+            }
+        }
+.image-container {
+    width: 100%;
+    margin: 1.5rem 0;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.image-caption {
+    padding: 10px 15px;
+    background: rgba(15, 23, 42, 0.8);
+    font-size: 0.9rem;
+    color: var(--highlight);
+    border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+        /* Footer */
+        footer {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .footer-logo {
+            width: 65px;
+            height: auto;
+            margin-bottom: 0rem;
+        }
+
+        .footer-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            line-height: 1.2;
+            margin: 0; 
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden !important;
+            }
+            
+            body:before {
+                content: "Printing is disabled on this page!";
+                display: block !important;
+                visibility: visible !important;
+                font-size: 24px;
+                text-align: center;
+                margin-top: 50px;
+            }
+
+       /* Disable text selection */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent image dragging */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RNA Interference</h1>
+            <div class="section-indicator">Section <span id="current-section">1</span> of 6</div>
+        </div>
+
+        <!-- Section 1: Overview -->
+        <div class="content-section active" id="section-1">
+            <h2>Overview of RNA Interference</h2>
+            
+            <p>RNA interference (RNAi) is a highly conserved biological mechanism of post-transcriptional gene regulation. This fundamental process involves small non-coding RNA molecules that regulate gene expression by targeting complementary messenger RNA (mRNA) sequences, leading to their degradation or translational repression.</p>
+
+            <h3>Molecular Mechanism</h3>
+            <p>The RNAi pathway is initiated when double-stranded RNA (dsRNA) molecules are processed by the ribonuclease enzyme <span class="highlight">Dicer</span> into small RNAs of approximately 21-23 nucleotides in length. These RNAs are then incorporated into the <span class="highlight">RNA-Induced Silencing Complex (RISC)</span>, a multi-protein complex that mediates gene silencing.</p>
+
+            <div class="key-point">
+                <strong>Key Components:</strong> The RISC complex contains Argonaute (AGO) proteins as its catalytic engine, which use the guide strand of the regulatory RNA to identify target mRNAs through Watson-Crick base pairing. Upon target recognition, RISC either cleaves the mRNA or represses translation.
+            </div>
+
+            <h3>Types of Small Regulatory RNAs</h3>
+            <p>The RNAi pathway encompasses three major classes of small regulatory RNAs, each with distinct biogenesis pathways and functional roles:</p>
+            <ul>
+                <li><strong>MicroRNAs (miRNAs):</strong> Endogenous ~22 nucleotide RNAs that regulate gene expression by binding to complementary sequences in target mRNAs, primarily in the 3' untranslated region (UTR). They play crucial roles in development, cell differentiation, apoptosis, and metabolism.</li>
+                <li><strong>Small Interfering RNAs (siRNAs):</strong> Exogenous or endogenous dsRNA-derived molecules that mediate sequence-specific gene silencing through perfect complementarity with target mRNAs, resulting in their cleavage and degradation.</li>
+                <li><strong>PIWI-Interacting RNAs (piRNAs):</strong> Germline-specific 24-31 nucleotide RNAs that protect genome integrity by silencing transposable elements and regulating germline gene expression through epigenetic mechanisms.</li>
+            </ul>
+
+            <h3>Functional Roles in Cellular Physiology</h3>
+            <p><strong>Gene Expression Regulation:</strong> RNAi serves as a master regulator of gene expression networks, fine-tuning protein levels in response to developmental cues, environmental stimuli, and cellular stress. This regulation occurs at multiple levels including transcriptional gene silencing through chromatin modification and post-transcriptional control via mRNA degradation or translational repression.</p>
+
+            <p><strong>Developmental Programs:</strong> RNAi pathways are essential for proper embryonic development, tissue differentiation, and organogenesis..</p>
+
+            <p><strong>Genome Defense:</strong> The RNAi machinery provides an ancient immune system against invasive nucleic acids, including viruses and transposable elements.</p>
+
+            <p><strong>Chromatin Organization:</strong> RNAi components participate in heterochromatin formation and maintenance through the recruitment of histone-modifying enzymes and DNA methyltransferases to specific genomic loci. This epigenetic regulation is particularly important for silencing repetitive sequences and maintaining chromosome structure.</p>
+
+        </div>
+
+        <!-- Section 2: miRNA -->
+        <div class="content-section" id="section-2">
+            <h2>MicroRNA (miRNA)</h2>
+
+            <h3>Canonical Biogenesis Pathway</h3>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/miRNA.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <p>MicroRNA biogenesis is a precisely coordinated multi-step process that begins in the nucleus and concludes in the cytoplasm. The canonical pathway involves sequential processing by two RNase III enzymes, generating mature miRNAs that regulate gene expression with exquisite specificity.</p>
+
+            <p><strong>Transcription:</strong> MiRNA genes are transcribed by RNA polymerase II to produce long primary transcripts called <span class="highlight">pri-miRNAs</span>, which can be several kilobases in length. These transcripts contain a 5' cap structure and 3' poly(A) tail, similar to protein-coding mRNAs. Pri-miRNAs may encode single miRNAs or polycistronic clusters containing multiple miRNA sequences.</p>
+
+            <p><strong>Nuclear Processing:</strong> Within the nucleus, the pri-miRNA is recognized and cleaved by the <span class="highlight">Microprocessor complex</span>, consisting of the RNase III enzyme Drosha and its essential cofactor DGCR8 (DiGeorge syndrome critical region 8).This cleavage releases a ~70 nucleotide stem-loop structure called the <span class="highlight">precursor miRNA (pre-miRNA)</span>, which has a characteristic 2-nucleotide 3' overhang.</p>
+
+            <div class="key-point">
+                <strong>Nuclear Export:</strong> The pre-miRNA is actively transported from the nucleus to the cytoplasm by Exportin-5 (XPO5) in a RAN-GTP-dependent manner.
+            </div>
+
+            <p><strong>Cytoplasmic Processing:</strong> In the cytoplasm, the pre-miRNA is cleaved by <span class="highlight">Dicer</span>, another RNase III enzyme that works in complex with the double-stranded RNA-binding protein TRBP (TAR RNA-binding protein).Dicer contains multiple functional domains: a PAZ domain that recognizes the 3' overhangs of dsRNA, RNase III domains that cleave both strands simultaneously, a platform domain, and a helicase domain. Through its molecular ruler mechanism, Dicer measures approximately 21-23 nucleotides from the dsRNA terminus and cleaves to generate miRNA duplexes with characteristic 2-nucleotide 3' overhangs and 5' phosphate groups. This duplex consists of the mature miRNA strand (guide strand) and the complementary miRNA* strand (passenger strand).</p>
+
+            <h3>Non-Canonical Pathways</h3>
+            <p><strong>Drosha-Independent Pathway:</strong> Some miRNAs, termed <span class="highlight">mirtrons</span>, bypass Drosha processing. These miRNAs are encoded within introns of protein-coding genes and are released by the splicing machinery. After splicing, the lariat intron is debranched and refolded into a pre-miRNA-like hairpin that directly enters the Exportin-5 pathway.</p>
+
+            <h3>RISC Assembly and Target Recognition</h3>
+            <p>The miRNA duplex is loaded onto <span class="highlight">Argonaute (AGO) proteins</span>, the core components of the RISC. In mammals, four AGO proteins (AGO1-4) can bind miRNAs, though only AGO2 possesses endonucleolytic "slicer" activity. During RISC assembly, one strand (guide strand) is preferentially retained based on thermodynamic stability—the strand with the less stable 5' end becomes the mature miRNA, while the other strand (passenger strand) is typically discarded.</p>
+
+            <div class="key-point">
+                <strong>Seed Sequence Recognition:</strong> The mature miRNA guides RISC to target mRNAs through base pairing between the miRNA "seed region" (nucleotides 2-8 from the 5' end) and complementary sequences in target mRNAs, most commonly located in the 3' UTR. This seed pairing is the primary determinant of target specificity, though additional pairing at the 3' end of the miRNA enhances binding affinity and silencing efficiency.
+            </div>
+
+            <h3>Mechanisms of Gene Silencing</h3>
+            <p><strong>Translational Repression:</strong> When miRNA-target complementarity is imperfect (typical for mammalian miRNAs), RISC inhibits translation through multiple mechanisms: blocking ribosome assembly at the 5' cap, interfering with ribosome elongation, or promoting premature ribosome drop-off. The GW182 family of proteins plays a crucial scaffolding role by recruiting deadenylase complexes and decapping enzymes.</p>
+
+            <p><strong>mRNA Degradation:</strong> RISC-bound mRNAs are destabilized through deadenylation (removal of the poly(A) tail) followed by decapping and 5'-to-3' exonucleolytic decay, or alternatively, 3'-to-5' degradation by the exosome complex. This represents the predominant mechanism of miRNA-mediated silencing, leading to reduced steady-state mRNA levels.</p>
+
+            <p><strong>Transcriptional Silencing:</strong> Some miRNAs can induce transcriptional gene silencing by directing AGO proteins to the nucleus, where they recruit chromatin-modifying complexes to promoter regions, leading to histone modifications and DNA methylation.</p>
+
+        </div>
+
+        <!-- Section 3: siRNA -->
+        <div class="content-section" id="section-3">
+            <h2>Small Interfering RNA (siRNA)</h2>
+
+            <h3>Origins and Biogenesis</h3>
+            <p>Unlike miRNAs, which are endogenously encoded in genomes, siRNAs can arise from both exogenous sources (such as viral infections or experimentally introduced dsRNA) and endogenous sources.</p>
+                <div class="image-container">
+                <img src="https://betabiosciences.github.io//Biochemistry-animations/siRNA.png" alt="Monohybrid Cross Diagram">
+                </div>
+
+            <p><strong>Exogenous siRNA Pathway:</strong> When long double-stranded RNA (dsRNA) enters the cell—either through viral infection, laboratory introduction—it is recognized by <span class="highlight">Dicer</span>, an RNase III family enzyme. Through its molecular ruler mechanism, Dicer measures approximately 21-23 nucleotides from the dsRNA terminus and cleaves to generate siRNA duplexes with characteristic 2-nucleotide 3' overhangs and 5' phosphate groups.</p>
+
+            <div class="key-point">
+                <strong>Processivity:</strong> Dicer can processively cleave long dsRNA substrates, repeatedly binding and cleaving at regular intervals to generate multiple siRNA duplexes from a single dsRNA molecule. This processivity is enhanced by cofactors such as TRBP in mammals, which stabilize Dicer's interaction with dsRNA and facilitate efficient processing.
+            </div>
+
+            <p><strong>Endogenous siRNA Pathways:</strong> Mammalian cells produce endogenous siRNAs (endo-siRNAs) from various sources. These include naturally occurring antisense transcripts that form dsRNA with sense transcripts, hairpin-forming transcripts with extensive intramolecular base pairing, and transposon-derived sequences. Endo-siRNAs are processed by the same Dicer machinery but may be expressed constitutively or induced under specific conditions such as cellular stress or differentiation.</p>
+
+            <h3>RISC Loading and Strand Selection</h3>
+            <p>Following Dicer processing, the siRNA duplex is transferred to the <span class="highlight">RNA-Induced Silencing Complex (RISC)</span> through a coordinated handoff mechanism.</p>
+
+            <p><strong>Asymmetry Rule:</strong> RISC assembly involves critical strand selection, where one strand (guide strand) is preferentially retained while the other (passenger strand) is discarded. This selection follows the <span class="highlight">asymmetry rule</span>: the strand with the thermodynamically less stable 5' end is preferentially loaded as the guide strand. This asymmetry is measured by comparing the base-pairing strength at positions 1-4 versus positions 15-19 of the duplex. Additionally, the presence of uridine at position 1 and adenine at position 19 enhances guide strand selection.</p>
+
+            <p><strong>Passenger Strand Removal:</strong> After loading, the passenger strand must be removed to activate RISC. In Drosophila and mammals expressing AGO2, perfect complementarity between guide and passenger strands allows AGO2's endonuclease activity to cleave the passenger strand, which is then discarded.</p>
+
+            <h3>Target Recognition and Cleavage</h3>
+            <p>The mature RISC, now containing a single-stranded siRNA guide, scans cellular mRNAs for complementary target sequences. The mechanism of target recognition involves:</p>
+
+            <p><strong>Seed-Dependent and Seed-Independent Scanning:</strong> While miRNAs rely heavily on seed region (positions 2-8) complementarity, siRNAs typically require extensive complementarity along their entire length for efficient target cleavage. However, the seed region still plays an important role in initial target binding and can mediate off-target effects when partially complementary to unintended mRNAs.</p>
+
+            <div class="key-point">
+                <strong>Catalytic Mechanism:</strong> When an siRNA achieves near-perfect complementarity with its target mRNA, AGO2's PIWI domain catalyzes endonucleolytic cleavage.
+            </div>
+
+            <p><strong>Post-Cleavage Events:</strong> After cleavage, the 5' fragment (lacking a protective poly(A) tail) and 3' fragment (lacking a 5' cap) are rapidly degraded by cellular exonucleases. The siRNA-loaded RISC is recycled and can catalyze multiple rounds of target cleavage, amplifying the silencing effect.</p>
+
+            <h3>Amplification Mechanisms</h3>
+            <p>In some organisms, particularly plants, nematodes, and fungi, the RNAi response is amplified through the production of secondary siRNAs. This amplification involves <span class="highlight">RNA-dependent RNA polymerases (RdRPs)</span>, which use cleaved mRNA fragments as templates to synthesize new dsRNA. This newly synthesized dsRNA is then processed by Dicer into secondary siRNAs, creating a self-reinforcing silencing response that can spread both intracellularly and between cells. Mammals lack RdRP activity, limiting the amplification and systemic spread of RNAi responses.</p>
+
+        </div>
+
+        <!-- Section 4: piRNA -->
+        <div class="content-section" id="section-4">
+            <h2>PIWI-Interacting RNA (piRNA)</h2>
+
+            <h3>Discovery and Characteristics</h3>
+            <p>PIWI-interacting RNAs (piRNAs) represent the largest class of small non-coding RNAs in animal cells, distinguished by their longer length (24-31 nucleotides), exclusive association with PIWI proteins (a subfamily of Argonaute proteins), and predominant expression in germline tissues.</p>
+
+            <p>Unlike miRNAs and siRNAs, piRNA biogenesis is <span class="highlight">Dicer-independent</span> and occurs through two distinct but interconnected pathways: the primary processing pathway and the ping-pong amplification cycle. PiRNAs are transcribed from discrete genomic loci called piRNA clusters, which can span from tens of kilobases to megabases and are often enriched in repetitive sequences and transposon fragments.</p>
+
+            <h3>Primary piRNA Biogenesis</h3>
+            <p><strong>Transcription and Processing:</strong> PiRNA clusters are transcribed by RNA polymerase II to generate long, single-stranded precursor transcripts. These precursors are exported to the cytoplasm where they undergo primary processing. Unlike the double-stranded intermediates of miRNA and siRNA pathways, piRNA biogenesis processes single-stranded RNA precursors through a series of endonucleolytic cleavages.</p>
+
+
+            <h3>Ping-Pong Amplification Cycle</h3>
+            <p>The ping-pong cycle represents a sophisticated amplification mechanism unique to the piRNA pathway, enabling robust and adaptive silencing of transposable elements. This cycle operates through reciprocal cleavage events involving two PIWI proteins with slicer activity, typically PIWI/Aubergine and Argonaute 3 (AGO3) in Drosophila.</p>
+
+            <div class="key-point">
+                <strong>Adaptive Immunity:</strong> The ping-pong cycle provides an adaptive immunity-like response to new transposon invasions. When a novel transposon begins to mobilize, its transcripts can be processed into piRNAs through the ping-pong cycle, even if the transposon is not represented in existing piRNA clusters. These newly generated piRNAs can then silence the invading element and may eventually be incorporated into piRNA clusters, providing heritable immunity to future generations.
+            </div>
+
+        </div>
+
+        <!-- Section 5: Therapeutic Roles (REPLACED SECTION) -->
+        <div class="content-section" id="section-5">
+            <h2>Therapeutic Roles of RNA Interference</h2>
+            <div>
+                <p>The specificity and potency of RNAi make it an attractive platform for developing novel therapeutics targeting previously "undruggable" genes and pathways.</p>
+                
+                <h3>Key Therapeutic Applications</h3>
+                <div class="role-list">
+                    <div class="role-item">
+                        <h4>Oncology</h4>
+                        <p>Silencing oncogenes, drug-resistance genes, and genes involved in angiogenesis or metastasis. Several siRNA-based cancer therapies are in clinical trials.</p>
+                    </div>
+                    <div class="role-item">
+                        <h4>Genetic Disorders</h4>
+                        <p>Targeting mutant alleles in dominantly inherited diseases (e.g., Huntington's disease, amyloidosis) while sparing wild-type alleles.</p>
+                    </div>
+                    <div class="role-item">
+                        <h4>Infectious Diseases</h4>
+                        <p>Inhibiting viral replication by targeting essential viral genes (e.g., Hepatitis B, HIV, respiratory viruses).</p>
+                    </div>
+                    <div class="role-item">
+                        <h4>Ocular Diseases</h4>
+                        <p>Local delivery to treat age-related macular degeneration (AMD) and other retinal disorders with minimal systemic exposure.</p>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <h3>Challenges and Solutions</h3>
+                    <ul>
+                        <li><span class="highlight">Delivery:</span> Lipid nanoparticles, GalNAc conjugates, and viral vectors improve tissue-specific delivery</li>
+                        <li><span class="highlight">Specificity:</span> Careful design minimizes off-target effects and immune stimulation</li>
+                        <li><span class="highlight">Stability:</span> Chemical modifications (2'-O-methyl, phosphorothioate) enhance resistance to nucleases</li>
+                        <li><span class="highlight">Duration:</span> Formulation strategies extend silencing duration for chronic conditions</li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Section 6: Comparative Analysis -->
+        <div class="content-section" id="section-6">
+            <h2>Comparative Analysis: miRNA vs siRNA vs piRNA</h2>
+
+            <div style="overflow-x: auto; margin: 30px 0;">
+                <table style="width: 100%; border-collapse: collapse; background: rgba(30, 30, 50, 0.6); border: 1px solid rgba(74, 158, 255, 0.3);">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #4a9eff 0%, #00d4ff 100%);">
+                            <th style="padding: 15px; text-align: left; color: #0a0a0a; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2);">Feature</th>
+                            <th style="padding: 15px; text-align: left; color: #0a0a0a; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2);">miRNA</th>
+                            <th style="padding: 15px; text-align: left; color: #0a0a0a; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2);">siRNA</th>
+                            <th style="padding: 15px; text-align: left; color: #0a0a0a; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.2);">piRNA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Length</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">~22 nucleotides</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">21-23 nucleotides</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">24-31 nucleotides</td>
+                        </tr>
+                        <tr style="background: rgba(74, 158, 255, 0.05);">
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Origin</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Endogenous (genomically encoded)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Exogenous or endogenous dsRNA</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Endogenous (piRNA clusters)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Precursor Structure</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Hairpin RNA (pri-miRNA/pre-miRNA)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Long double-stranded RNA</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Single-stranded precursor transcripts</td>
+                        </tr>
+                        <tr style="background: rgba(74, 158, 255, 0.05);">
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Processing Enzymes</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Drosha/DGCR8 (nucleus)<br>Dicer/TRBP (cytoplasm)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Dicer/TRBP (cytoplasm)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Dicer-independent<br</td>
+                        </tr>
+                        <tr style="background: rgba(74, 158, 255, 0.05);">
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Target Complementarity</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Partial (seed region 2-8)<br>Primarily 3' UTR binding</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Perfect or near-perfect complementarity</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Partial to perfect complementarity</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Mechanism of Action</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Translational repression<br>mRNA deadenylation<br>mRNA degradation</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Target mRNA cleavage<br>(AGO2 slicer activity)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Transcriptional silencing<br>Target cleavage<br>Chromatin modification</td>
+                        </tr>
+                        <tr style="background: rgba(74, 158, 255, 0.05);">
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Tissue Expression</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Ubiquitous (all tissues)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Ubiquitous when induced</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Germline-specific (testis/ovary)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Amplification</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">No amplification</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">RdRP-dependent in some organisms (not mammals)</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Ping-pong amplification cycle</td>
+                        </tr>
+                        <tr style="background: rgba(74, 158, 255, 0.05);">
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Primary Targets</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Endogenous mRNAs<br>Regulatory genes</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Viral RNAs<br>Exogenous sequences<br>Transposons</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Transposable elements<br>Repetitive sequences</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #fbbf24; font-weight: 600;">Biological Functions</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Development<br>Differentiation<br>Metabolism<br>Apoptosis<br>Immunity</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Antiviral defense<br>Transposon silencing<br>Chromosome segregation</td>
+                            <td style="padding: 12px; border: 1px solid rgba(74, 158, 255, 0.2); color: #d1d5db;">Germline genome defense<br>Transposon silencing<br>Epigenetic programming</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation">
+            <button class="btn-prev" id="prevBtn" onclick="navigate(-1)">Previous</button>
+            <button class="btn-next" id="nextBtn" onclick="navigate(1)">Next</button>
+        </div>
+<footer>
+    <div class="footer-content">
+        <img src="https://betabiosciences.github.io//Biochemistry-animations/Logo%20transparent.png" 
+             alt="BETA Biosciences Logo" class="footer-logo">
+        <p class="footer-text">© 2025 BETA Biosciences. All rights reserved.</p>
+        <p class="footer-text">Email: betabiosciences@gmail.com</p>
+        <p class="footer-text">Contact: +91 97 47 53 35 97</p>
+    </div>
+</footer>
+
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 6;
+
+        function showSection(n) {
+            const sections = document.querySelectorAll('.content-section');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const sectionIndicator = document.getElementById('current-section');
+
+            // Hide all sections
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show current section
+            sections[n - 1].classList.add('active');
+
+            // Update section indicator
+            sectionIndicator.textContent = n;
+
+            // Update button states
+            prevBtn.disabled = (n === 1);
+            nextBtn.disabled = (n === totalSections);
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigate(direction) {
+            currentSection += direction;
+            if (currentSection < 1) currentSection = 1;
+            if (currentSection > totalSections) currentSection = totalSections;
+            showSection(currentSection);
+        }
+
+        // Initialize
+        showSection(1);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable print functionality
+            document.addEventListener('keydown', function(e) {
+                // Disable Ctrl+P
+                if (e.ctrlKey && e.keyCode === 80) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Print Screen key
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable F12 (DevTools)
+                if (e.keyCode === 123) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+Shift+I (DevTools)
+                if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Disable Ctrl+U (View Source)
+                if (e.ctrlKey && e.keyCode === 85) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection and dragging
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Detect print command from browser menu (using beforeprint event)
+            window.addEventListener('beforeprint', function(event) {
+                // Cancel the print event
+                event.preventDefault();
+                return false;
+            });
+            
+            // Another approach to catch print attempts from browser menu
+            if (window.matchMedia) {
+                const mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        // Cancel the print by immediately closing the print dialog
+                        setTimeout(function() {
+                            window.print = function() {};
+                        }, 100);
+                    }
+                });
+            }
+        });
+        
+        // Override the window.print function
+        window.print = function() {
+            return false;
+        };
+        
+        // Add an event listener for the print event
+        window.onbeforeprint = function() {
+            return false;
+        };
+        
+        // Make it difficult to iframe the content
+        if (window !== window.top) {
+            window.top.location = window.location;
+        }
+    </script>
+</body>
+</html>
